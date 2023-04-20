@@ -17,7 +17,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
 				<link rel="stylesheet" href="https://use.typekit.net/txr1eez.css" />
 			</head>
 
-			<body>{children}</body>
+			<body className="font-sans leading-normal font-normal">
+				<main id="main">{children}</main>
+			</body>
 		</html>
 	)
 }

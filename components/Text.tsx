@@ -1,8 +1,8 @@
-import React from "react"
+import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "@radix-ui/react-slot"
 
-const text = cva("", {
+export const text = cva("", {
 	variants: {
 		size: {
 			64: "text-[64px]",
@@ -40,7 +40,7 @@ const text = cva("", {
 })
 
 type TextVariants = VariantProps<typeof text>
-type TextProps = React.ComponentPropsWithoutRef<"div"> &
+type TextProps = Omit<React.ComponentPropsWithoutRef<"div">, "style"> &
 	TextVariants & { asChild?: boolean }
 
 /**

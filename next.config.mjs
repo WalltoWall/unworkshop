@@ -1,9 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-    scrollRestoration: true
-  },
+	reactStrictMode: true,
+	experimental: {
+		appDir: true,
+		scrollRestoration: true,
+	},
 }
 
-module.exports = nextConfig
+export default nextConfig
