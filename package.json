@@ -1,25 +1,36 @@
 {
-  "name": "workshop-v2",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "@types/node": "18.15.12",
-    "@types/react": "18.0.37",
-    "@types/react-dom": "18.0.11",
-    "autoprefixer": "10.4.14",
-    "eslint": "8.38.0",
-    "eslint-config-next": "13.3.0",
-    "next": "13.3.0",
-    "postcss": "8.4.23",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "tailwindcss": "3.3.1",
-    "typescript": "5.0.4"
-  }
+	"name": "workshop-v2",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint"
+	},
+	"dependencies": {
+		"next": "13.3.0",
+		"react": "18.2.0",
+		"react-dom": "18.2.0"
+	},
+	"devDependencies": {
+		"@tailwindcss/forms": "^0.5.3",
+		"@types/node": "18.15.12",
+		"@types/react": "18.0.37",
+		"@types/react-dom": "18.0.11",
+		"autoprefixer": "10.4.14",
+		"eslint": "8.38.0",
+		"eslint-config-next": "13.3.0",
+		"postcss": "8.4.23",
+		"prettier": "^2.8.7",
+		"tailwindcss": "3.3.1",
+		"typescript": "5.0.4"
+	},
+	"prettier": {
+		"semi": false,
+		"printWidth": 80,
+		"proseWrap": "always",
+		"useTabs": true,
+		"trailingComma": "all"
+	}
 }
