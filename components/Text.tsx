@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "@radix-ui/react-slot"
@@ -5,14 +7,14 @@ import { Slot } from "@radix-ui/react-slot"
 export const text = cva("", {
 	variants: {
 		size: {
-			64: "text-[64px]",
-			56: "text-[56px]",
-			48: "text-[48px]",
-			40: "text-[40px]",
-			32: "text-[32px]",
-			24: "text-[24px]",
-			16: "text-[16px]",
-			12: "text-[12px]",
+			64: "text-64",
+			56: "text-56",
+			48: "text-48",
+			40: "text-40",
+			32: "text-32",
+			24: "text-24",
+			16: "text-16",
+			12: "text-12",
 		},
 		style: {
 			heading: "font-heading uppercase font-bold leading-[0.9]",
@@ -23,17 +25,17 @@ export const text = cva("", {
 		{
 			size: 24,
 			style: "copy",
-			className: "leading-[1.3]",
+			className: "leading-copyMega",
 		},
 		{
 			size: 16,
 			style: "copy",
-			className: "leading-[1.4]",
+			className: "leading-copy",
 		},
 		{
 			size: 12,
 			style: "copy",
-			className: "leading-[1.5]",
+			className: "leading-copyMicro",
 		},
 	],
 	defaultVariants: {},

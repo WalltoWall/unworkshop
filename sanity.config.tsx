@@ -25,7 +25,24 @@ export default defineConfig({
 		},
 	},
 
-	plugins: [deskTool(), media(), visionTool()],
+	plugins: [
+		deskTool({
+			// Customize the content sidebar.
+			structure: (S) => {
+				const hideFromNav = ["media.tag"]
+
+				return S.list()
+					.title("Content")
+					.items([
+						...S.documentTypeListItems().filter(
+							(item) => !hideFromNav.includes(String(item.getId())),
+						),
+					])
+			},
+		}),
+		media(),
+		visionTool(),
+	],
 
 	schema: { types: schemaTypes },
 })

@@ -6,18 +6,39 @@ export default {
 		"./components/**/*.{js,ts,jsx,tsx}",
 		"./app/**/*.{js,ts,jsx,tsx}",
 	],
+	experimental: { optimizeUniversalDefaults: true },
 	theme: {
 		fontFamily: {
-			sans: ["trade-gothic-next", "system-ui"],
-			heading: ["trade-gothic-next-condensed", "system-ui"],
+			sans: ["var(--font-trade-gothic)", "system-ui"],
+			heading: ["var(--font-trade-gothic-bold-condensed)", "system-ui"],
+		},
+
+		lineHeight: {
+			none: "1",
+			copyMega: "1.3",
+			copy: "1.4",
+			copyMicro: "1.5",
+			heading: "0.9",
+		},
+
+		fontSize: {
+			64: "4rem",
+			56: "3.5rem",
+			48: "3rem",
+			40: "2.5rem",
+			32: "2rem",
+			24: "1.5rem",
+			16: "1rem",
+			12: ".75rem",
 		},
 
 		colors: {
-			white: "hsl(0 0% 100%)",
-			black: "hsl(0 0% 0%)",
+			white: "#fff",
+			black: "#000",
 
 			gray: {
 				82: "#cdd6d4",
+				75: "#bfbfbf",
 				58: "#8ca09c",
 				38: "#5a6c69",
 				19: "#2c3533",
@@ -80,5 +101,5 @@ export default {
 			},
 		},
 	},
-	plugins: [require("@tailwindcss/forms")],
+	plugins: [],
 } satisfies Config

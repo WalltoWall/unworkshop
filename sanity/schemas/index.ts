@@ -1,3 +1,3 @@
-import { Settings } from "./documents/Settings"
+import { Kickoff } from "./documents/Kickoff"
 
-export const schemaTypes = [Settings.schema()]
+export const schemaTypes = [Kickoff.schema()]

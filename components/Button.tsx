@@ -2,9 +2,23 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import Link from "next/link"
 
-const button = cva("", {
-	variants: {},
-})
+const button = cva(
+	"uppercase font-heading text-16 leading-none inline-flex justify-center items-center text-center h-8 rounded-2xl focus:ring-1 outline-none",
+	{
+		variants: {
+			border: {
+				true: "border border-solid",
+			},
+			color: {
+				gray: "border-gray-75 text-gray-75 ring-gray-75",
+			},
+		},
+		defaultVariants: {
+			border: true,
+			color: "gray",
+		},
+	},
+)
 
 type PlainButtonProps = React.ComponentPropsWithoutRef<"button">
 type PlainAnchorProps = React.ComponentPropsWithoutRef<"a">

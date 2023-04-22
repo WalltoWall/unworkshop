@@ -1,35 +1,26 @@
-import { cx } from "class-variance-authority"
-import styles from "./page.module.css"
 import { Logo } from "@/components/Logo"
 import { Text } from "@/components/Text"
-import { Button } from "@/components/Button"
+import { ExerciseCodeForm } from "./ExerciseCodeForm"
 
-export default function Home() {
+const Home = () => {
 	return (
-		<div
-			className={cx(
-				styles.dynamicHeight,
-				"bg-black text-white flex flex-col overflow-hidden justify-between",
-			)}
+		<main
+			id="main"
+			className="dynamic-screen overflow-hidden bg-black text-white"
 		>
-			<Logo className="relative -top-10 ml-auto -right-10 w-11/12" />
+			<div className="mx-auto flex h-full max-w-md flex-col justify-between">
+				<Logo className="relative -right-10 -top-10 ml-auto w-[325px]" />
 
-			<div className="px-7">
-				<Text style="heading" size={40} className="max-w-[206px] text-right">
-					Brand WWorkshop
-				</Text>
+				<div className="px-7">
+					<Text style="heading" size={40} className="max-w-[206px] text-right">
+						Brand WWorkshop
+					</Text>
+				</div>
+
+				<ExerciseCodeForm />
 			</div>
-
-			<div className="px-7 pb-20 space-y-4 text-center">
-				<Text style="heading" size={24}>
-					Enter your group code
-				</Text>
-
-				<form className="flex flex-col">
-					<input type="text" name="code" />
-					<Button>Continue</Button>
-				</form>
-			</div>
-		</div>
+		</main>
 	)
 }
+
+export default Home

@@ -1,24 +1,7 @@
 export const Logo = (props: React.ComponentPropsWithoutRef<"svg">) => {
 	return (
 		<svg fill="none" viewBox="0 0 325 325" {...props}>
-			<mask
-				id="a"
-				width={325}
-				height={325}
-				x={0}
-				y={0}
-				maskUnits="userSpaceOnUse"
-				style={{ maskType: "luminance" }}
-			>
-				<path
-					fill="currentColor"
-					fillRule="evenodd"
-					d="M0 0h325v325H0V0Z"
-					clipRule="evenodd"
-				/>
-			</mask>
-
-			<g mask="url(#a)">
+			<g>
 				<path
 					fill="currentColor"
 					fillRule="evenodd"
@@ -31,7 +14,7 @@ export const Logo = (props: React.ComponentPropsWithoutRef<"svg">) => {
 				fill="currentColor"
 				fillRule="evenodd"
 				d="m108.137 176.906-11.183-56.544-.071-.362H79.135L67.18 176.906l-10.729-56.54-.07-.366H40l18.214 87.643.07.357h17.511l12.096-60.216 12.376 59.859.07.357h17.502l18.047-87.457L136 120h-16.372l-11.491 56.906ZM268.627 120l-11.49 56.906-11.193-56.544-.07-.362h-17.739l-11.964 56.906-10.72-56.54-.069-.366H189l18.204 87.643.08.357h17.502l12.096-60.216 12.385 59.859.07.357h17.502l18.047-87.457L285 120h-16.373ZM176 115l-.002-37H171v2.3l2.015-.001V115H176ZM170.999 230 171 77.71c0-2.6-1.194-4.712-2.658-4.71H157.66c-1.104-.002-2.047 1.185-2.45 2.876l-.207 2.32L155 230M165.999 64.183C166 62.424 164.431 61 162.501 61c-1.934 0-3.5 1.426-3.501 3.181l.001 6.817L166 71l-.001-6.817ZM171 232h-16l8 19 8-19Z"
-				clip-rule="evenodd"
+				clipRule="evenodd"
 			/>
 		</svg>
 	)
