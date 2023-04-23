@@ -1,20 +1,25 @@
 "use client"
 
+import * as React from "react"
 import { zfd } from "zod-form-data"
 import { useRouter } from "next/navigation"
 import { Text } from "@/components/Text"
 import { Button } from "@/components/Button"
+import { cx } from "class-variance-authority"
 
 const FormSchema = zfd.formData({ code: zfd.text() })
 
 export const ExerciseCodeForm = () => {
 	const router = useRouter()
+	const [error, setError] = React.useState("")
 
 	function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault()
-		const data = FormSchema.parse(new FormData(e.currentTarget))
 
-		router.push(`/kickoff/${data.code}`)
+		const res = FormSchema.safeParse(new FormData(e.currentTarget))
+		if (!res.success) return setError("Please try again.")
+
+		router.push(`/kickoff/${res.data.code}`)
 	}
 
 	return (
@@ -27,8 +32,12 @@ export const ExerciseCodeForm = () => {
 				<input
 					type="text"
 					name="code"
-					className="h-[72px] rounded-2xl bg-gray-75 p-4 text-center font-heading text-56 uppercase leading-heading text-black outline-none ring-gray-82 ring-offset-2 ring-offset-black placeholder:text-gray-38 focus:ring-1"
+					className={cx(
+						error && "ring-1 ring-red-63",
+						"h-[72px] rounded-2xl bg-gray-75 p-4 text-center font-heading text-56 uppercase leading-heading text-black outline-none ring-gray-82 ring-offset-2 ring-offset-black placeholder:text-gray-38 focus:ring-1",
+					)}
 					placeholder="WTW-1234"
+					required
 				/>
 
 				<Button>Continue</Button>
