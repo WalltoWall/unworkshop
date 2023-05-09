@@ -6,7 +6,6 @@ export const Participant = s.document({
 	name: "participant",
 	title: "Participants",
 	icon: () => <User width={24} height={24} />,
-	readOnly: true,
 	preview: {
 		select: { name: "name", kickoff: "kickoff.title" },
 		prepare(select) {
@@ -31,6 +30,13 @@ export const Participant = s.document({
 			title: "Kickoff",
 			description: "The kickoff that this participant is in.",
 			type: s.reference({ to: [Kickoff], weak: true }),
+		},
+		{
+			name: "onboarded",
+			title: "Onboarded?",
+			description:
+				"Has this participant seen the on-boarding process previously.",
+			type: s.boolean({ initialValue: false }),
 		},
 	],
 })

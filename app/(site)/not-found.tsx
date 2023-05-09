@@ -1,6 +1,6 @@
 import { Button } from "@/components/Button"
 import { Text } from "@/components/Text"
-import { DarkLayout } from "./DarkLayout"
+import { DarkLayout } from "@/components/DarkLayout"
 
 const NotFound = () => {
 	return (

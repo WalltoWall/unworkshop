@@ -2,7 +2,7 @@ import { Button } from "@/components/Button"
 import { Text } from "@/components/Text"
 import { redirect } from "next/navigation"
 import { zfd } from "zod-form-data"
-import { DarkLayout } from "./DarkLayout"
+import { DarkLayout } from "@/components/DarkLayout"
 
 const Form = zfd.formData({ code: zfd.text() })
 async function register(data: FormData) {
