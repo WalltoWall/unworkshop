@@ -6,11 +6,11 @@ import Link from "next/link"
 import * as client from "@/sanity/client"
 import { Text } from "@/components/Text"
 import { notFound, redirect } from "next/navigation"
-import { Arrow } from "@/components/icons/Arrow"
 import { Chevron } from "@/components/icons/Chevron"
 import { zfd } from "zod-form-data"
 import { PARTICIPANT_COOKIE } from "@/constants"
 import { cookies } from "next/headers"
+import { RegisterInput } from "./RegisterInput"
 import registerIllustration from "@/assets/images/register-illustration.jpg"
 
 type Props = {
@@ -72,32 +72,20 @@ const KickoffRegisterPage = async (props: Props) => {
 					className="mt-4"
 				/>
 
-				<div className="mt-8 flex flex-col items-center text-center">
+				<form
+					action={register}
+					className="mt-8 flex flex-col items-center text-center"
+				>
 					<Text style="heading" size={24} asChild>
 						<h2>Let's get started</h2>
 					</Text>
 
-					<form
-						action={register}
-						className="relative mt-6 flex w-full items-center rounded-md bg-black/10 px-3 ring-black ring-offset-4 ring-offset-white focus-within:ring-2"
-					>
-						<input
-							type="text"
-							placeholder="Add your first & last name here"
-							className="h-12 w-full bg-transparent outline-none leading-none placeholder:text-black/60"
-							name="name"
-							autoComplete="name"
-						/>
-
-						<button className="w-3.5 shrink-0">
-							<Arrow />
-						</button>
-					</form>
+					<RegisterInput />
 
 					<Text style="copy" size={12} className="mt-3 text-black/50">
 						Don't worry, your answers will be anonymous.
 					</Text>
-				</div>
+				</form>
 			</main>
 		</div>
 	)

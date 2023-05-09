@@ -19,9 +19,6 @@ const KickoffLayout = async ({ children, params }: KickoffLayoutProps) => {
 
 	const participant = await findParticipant(participantId)
 	if (!participant) {
-		//@ts-expect-error - NextJS types are incorrect.
-		cookiesStore.delete(PARTICIPANT_COOKIE)
-
 		redirect("/kickoff/register?" + urlParams.toString())
 	}
 
