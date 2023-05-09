@@ -4,7 +4,7 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "@radix-ui/react-slot"
 
-export const text = cva("", {
+export const text = cva("capsize", {
 	variants: {
 		size: {
 			64: "text-64",

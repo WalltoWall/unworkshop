@@ -10,8 +10,8 @@ export default defineConfig({
 	title: "W|W Workshop",
 	basePath: "/admin",
 
-	projectId: env.projectId,
-	dataset: env.dataset,
+	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+	dataset: env.NEXT_PUBLIC_SANITY_DATASET,
 
 	form: {
 		// Only use the media plugin for images.

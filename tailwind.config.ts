@@ -13,6 +13,29 @@ export default {
 			heading: ["var(--font-trade-gothic-bold-condensed)", "system-ui"],
 		},
 
+		capsize: {
+			metrics: {
+				sans: {
+					capHeight: 722,
+					ascent: 722,
+					descent: -278,
+					lineGap: 200,
+					unitsPerEm: 1000,
+					xHeight: 520,
+					xWidthAvg: 437,
+				},
+				heading: {
+					capHeight: 722,
+					ascent: 722,
+					descent: -278,
+					lineGap: 200,
+					unitsPerEm: 1000,
+					xHeight: 520,
+					xWidthAvg: 365,
+				},
+			},
+		},
+
 		lineHeight: {
 			none: "1",
 			copyMega: "1.3",
@@ -33,6 +56,7 @@ export default {
 		},
 
 		colors: {
+			transparent: "#fff0",
 			white: "#fff",
 			black: "#000",
 
@@ -101,5 +125,5 @@ export default {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [require("@asyarb/tailwind-capsize")],
 } satisfies Config

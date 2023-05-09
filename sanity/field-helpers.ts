@@ -6,8 +6,8 @@ import {
 } from "@sanity/asset-utils"
 
 const builder = createImageUrlBuilder({
-	projectId: env.projectId,
-	dataset: env.dataset,
+	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+	dataset: env.NEXT_PUBLIC_SANITY_DATASET,
 })
 
 export const urlFor = (img: ST.Image) => {

@@ -1,9 +1,17 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import Link from "next/link"
+import Link, { type LinkProps } from "next/link"
+
+const InnerButton = (props: { children: React.ReactNode }) => {
+	return (
+		<div className="uppercase text-16 leading-none font-heading capsize">
+			{props.children}
+		</div>
+	)
+}
 
 const button = cva(
-	"uppercase font-heading text-16 leading-none inline-flex justify-center items-center text-center h-8 rounded-2xl focus:ring-1 outline-none",
+	"inline-flex justify-center items-center text-center h-8 rounded-2xl focus:ring-1 outline-none px-5",
 	{
 		variants: {
 			border: {
@@ -21,7 +29,8 @@ const button = cva(
 )
 
 type PlainButtonProps = React.ComponentPropsWithoutRef<"button">
-type PlainAnchorProps = React.ComponentPropsWithoutRef<"a">
+type PlainAnchorProps = Omit<React.ComponentPropsWithRef<"a">, "href"> &
+	Pick<LinkProps<string>, "href">
 type ButtonVariants = VariantProps<typeof button>
 
 export type ButtonProps = (PlainButtonProps | PlainAnchorProps) & ButtonVariants
@@ -49,16 +58,13 @@ export const Button = React.forwardRef<
 	className = button({ className })
 
 	if ("href" in props && props.href) {
-		const { href } = props
-
 		return (
 			<Link
 				className={className}
 				ref={ref as React.ForwardedRef<HTMLAnchorElement>}
-				href={href}
 				{...props}
 			>
-				{children}
+				<InnerButton>{children}</InnerButton>
 			</Link>
 		)
 	}
@@ -69,7 +75,7 @@ export const Button = React.forwardRef<
 			className={className}
 			{...(props as PlainButtonProps)}
 		>
-			{children}
+			<InnerButton>{children}</InnerButton>
 		</button>
 	)
 })
