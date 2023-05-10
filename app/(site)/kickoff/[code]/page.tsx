@@ -1,47 +1,25 @@
-import { cookies } from "next/headers"
-import { PARTICIPANT_COOKIE } from "@/constants"
 import type { Metadata } from "next"
-import {
-	findKickoff,
-	findParticipant,
-	onboardParticipant,
-} from "@/sanity/client"
-import { notFound, redirect } from "next/navigation"
+import { onboardParticipant } from "@/sanity/client"
+import { redirect } from "next/navigation"
 import { LightLayout } from "@/components/LightLayout"
 import { Text } from "@/components/Text"
 import { Scroller } from "./Scroller"
+import { getParticipantOrThrow } from "@/lib/getParticipantOrThrow"
 
 type Props = {
 	params: { code: string }
 	searchParams: { [key: string]: string | string[] | undefined }
 }
 
-function redirectToRegister(code: string): never {
-	redirect("/kickoff/register?code=" + code)
-}
-
 const KickoffPage = async (props: Props) => {
-	const participantId = cookies().get(PARTICIPANT_COOKIE)?.value
-
-	if (!participantId) redirectToRegister(props.params.code)
-
-	const [participant, kickoff] = await Promise.all([
-		findParticipant(participantId),
-		findKickoff(props.params.code),
-	])
-
-	// If this participant was registered to a different Kickoff, redirect them
-	// to re-register too.
-	if (!participant || participant.kickoff._ref !== kickoff?._id)
-		redirectToRegister(props.params.code)
-	if (!kickoff) notFound()
+	const participant = await getParticipantOrThrow()
 
 	if (participant.onboarded) redirect(`/kickoff/${props.params.code}/exercises`)
 
 	async function onboard() {
 		"use server"
 
-		await onboardParticipant(participant!._id)
+		await onboardParticipant(participant._id)
 		redirect(`/kickoff/${props.params.code}/exercises`)
 	}
 
