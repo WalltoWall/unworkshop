@@ -1,6 +1,7 @@
 import { Warehouse } from "lucide-react"
 import type { Slug } from "sanity"
 import { s } from "sanity-typed-schema-builder"
+import { Exercise } from "./Exercise"
 
 export const Kickoff = s.document({
 	name: "kickoff",
@@ -39,6 +40,14 @@ export const Kickoff = s.document({
 
 						return true
 					}),
+			}),
+		},
+		{
+			name: "exercises",
+			title: "Exercises",
+			description: "The list of exercises.",
+			type: s.array({
+				of: [s.reference({ to: [Exercise] })],
 			}),
 		},
 	],
