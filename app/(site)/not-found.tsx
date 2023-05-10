@@ -10,7 +10,9 @@ const NotFound = () => {
 					Not Found
 				</Text>
 
-				<Button href="/">Go back</Button>
+				<Button color="gray" outline size="sm" href="/">
+					Go back
+				</Button>
 			</div>
 		</DarkLayout>
 	)

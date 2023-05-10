@@ -36,6 +36,16 @@ export const registerParticipant = async (args: {
 	return res
 }
 
+export const onboardParticipant = async (id: string) => {
+	const data: Pick<Participant, "onboarded"> = {
+		onboarded: true,
+	}
+
+	const res: Participant = await sanity.patch(id).set(data).commit()
+
+	return res
+}
+
 export const findParticipant = React.cache(async (id: string) => {
 	const data = await sanity.fetch<Participant | null>(
 		groq`*[_type == "participant" && _id == $id][0]`,

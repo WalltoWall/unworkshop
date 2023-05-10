@@ -5,9 +5,9 @@ export const DarkLayout = (props: { children: React.ReactNode }) => {
 	return (
 		<main
 			id="main"
-			className="dynamic-screen overflow-hidden bg-black text-white"
+			className="dynamic-screen grid overflow-hidden bg-black text-white"
 		>
-			<div className="mx-auto flex h-full max-w-md flex-col justify-between">
+			<div className="mx-auto flex max-w-md flex-col justify-between">
 				<Link href="/">
 					<Logo className="relative -right-10 -top-10 ml-auto w-[325px]" />
 				</Link>

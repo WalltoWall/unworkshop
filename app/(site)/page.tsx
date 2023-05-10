@@ -30,12 +30,14 @@ const Home = () => {
 					<input
 						type="text"
 						name="code"
-						className="h-[72px] rounded-2xl bg-gray-75 px-4 text-center align-middle uppercase text-black outline-none ring-gray-82 ring-offset-2 ring-offset-black text-56 leading-heading font-heading placeholder:text-gray-38 focus:ring-1"
+						className="h-[72px] w-full rounded-2xl bg-gray-75 px-4 text-center align-middle uppercase text-black outline-none ring-gray-82 ring-offset-2 ring-offset-black text-56 leading-heading font-heading placeholder:text-gray-38 focus:ring-1"
 						placeholder="WTW-1234"
 						required
 					/>
 
-					<Button>Continue</Button>
+					<Button size="sm" color="gray" outline>
+						Continue
+					</Button>
 				</form>
 			</div>
 		</DarkLayout>

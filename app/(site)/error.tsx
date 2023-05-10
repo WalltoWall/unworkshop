@@ -12,7 +12,9 @@ const Error = (props: { error: Error; reset: () => void }) => {
 					Oops! Something went wrong
 				</Text>
 
-				<Button onClick={() => props.reset()}>Go back</Button>
+				<Button color="gray" outline size="sm" onClick={() => props.reset()}>
+					Go back
+				</Button>
 			</div>
 		</DarkLayout>
 	)

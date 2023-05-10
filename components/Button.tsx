@@ -2,36 +2,79 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import Link, { type LinkProps } from "next/link"
 
-const InnerButton = (props: { children: React.ReactNode }) => {
+const innerButton = cva("capsize font-heading leading-none", {
+	variants: {
+		uppercase: {
+			true: "uppercase",
+		},
+		size: {
+			sm: "text-16",
+			base: "text-24",
+		},
+	},
+	defaultVariants: {
+		uppercase: true,
+		size: "base",
+	},
+})
+
+type InnerButtonProps = VariantProps<typeof innerButton> & {
+	children: React.ReactNode
+}
+
+const InnerButton = (props: InnerButtonProps) => {
 	return (
-		<div className="uppercase text-16 leading-none font-heading capsize">
+		<div
+			className={innerButton({ uppercase: props.uppercase, size: props.size })}
+		>
 			{props.children}
 		</div>
 	)
 }
 
 const button = cva(
-	"inline-flex justify-center items-center text-center h-8 rounded-2xl focus:ring-1 outline-none px-5",
+	[
+		"inline-flex justify-center items-center text-center rounded-2xl focus:ring-1 outline-none px-5",
+		"border border-solid",
+	],
 	{
 		variants: {
-			border: {
-				true: "border border-solid",
-			},
 			color: {
-				gray: "border-gray-75 text-gray-75 ring-gray-75",
+				gray: "border-gray-75 text-black ring-gray-75 bg-gray-75",
+				black: "border-black text-white ring-black bg-black",
+			},
+			size: {
+				sm: "h-8",
+				base: "h-11",
+			},
+			outline: {
+				true: "bg-transparent",
 			},
 		},
 		defaultVariants: {
-			border: true,
-			color: "gray",
+			size: "base",
+			outline: false,
+			color: "black",
 		},
+		compoundVariants: [
+			{
+				outline: true,
+				color: "gray",
+				className: "text-gray-75",
+			},
+			{
+				outline: true,
+				color: "black",
+				className: "text-black",
+			},
+		],
 	},
 )
 
 type PlainButtonProps = React.ComponentPropsWithoutRef<"button">
 type PlainAnchorProps = Omit<React.ComponentPropsWithRef<"a">, "href"> &
 	Pick<LinkProps<string>, "href">
-type ButtonVariants = VariantProps<typeof button>
+type ButtonVariants = VariantProps<typeof button> & InnerButtonProps
 
 export type ButtonProps = (PlainButtonProps | PlainAnchorProps) & ButtonVariants
 
@@ -54,8 +97,9 @@ export type ButtonProps = (PlainButtonProps | PlainAnchorProps) & ButtonVariants
 export const Button = React.forwardRef<
 	HTMLButtonElement | HTMLAnchorElement,
 	ButtonProps
->(({ children, className, ...props }, ref) => {
-	className = button({ className })
+>(({ children, className, color, size, outline, uppercase, ...props }, ref) => {
+	className = button({ className, color, size, outline })
+	const innerButtonProps: InnerButtonProps = { size, uppercase, children }
 
 	if ("href" in props && props.href) {
 		return (
@@ -64,7 +108,7 @@ export const Button = React.forwardRef<
 				ref={ref as React.ForwardedRef<HTMLAnchorElement>}
 				{...props}
 			>
-				<InnerButton>{children}</InnerButton>
+				<InnerButton {...innerButtonProps} />
 			</Link>
 		)
 	}
@@ -75,7 +119,7 @@ export const Button = React.forwardRef<
 			className={className}
 			{...(props as PlainButtonProps)}
 		>
-			<InnerButton>{children}</InnerButton>
+			<InnerButton {...innerButtonProps} />
 		</button>
 	)
 })

@@ -1,7 +1,11 @@
 import { cookies } from "next/headers"
 import { PARTICIPANT_COOKIE } from "@/constants"
 import type { Metadata } from "next"
-import { findKickoff, findParticipant } from "@/sanity/client"
+import {
+	findKickoff,
+	findParticipant,
+	onboardParticipant,
+} from "@/sanity/client"
 import { notFound, redirect } from "next/navigation"
 import { LightLayout } from "@/components/LightLayout"
 import { Text } from "@/components/Text"
@@ -34,6 +38,13 @@ const KickoffPage = async (props: Props) => {
 
 	if (participant.onboarded) redirect(`/kickoff/${props.params.code}/exercises`)
 
+	async function onboard() {
+		"use server"
+
+		await onboardParticipant(participant!._id)
+		redirect(`/kickoff/${props.params.code}/exercises`)
+	}
+
 	return (
 		<LightLayout mainClassName="mt-2">
 			<div>
@@ -46,7 +57,12 @@ const KickoffPage = async (props: Props) => {
 				</Text>
 			</div>
 
-			<Scroller />
+			<form
+				action={onboard}
+				className="relative flex grow flex-col py-10 text-center"
+			>
+				<Scroller />
+			</form>
 		</LightLayout>
 	)
 }
