@@ -24,6 +24,12 @@ export const Exercise = s.document({
 			type: s.string(),
 		},
 		{
+			name: "slug",
+			title: "Slug",
+			description: "Determines the URL of the exercise page.",
+			type: s.slug({ options: { source: "name" } }),
+		},
+		{
 			name: "type",
 			title: "Type",
 			description: "The type of exercise that this is.",

@@ -3,7 +3,6 @@ const nextConfig = {
 	reactStrictMode: true,
 	experimental: {
 		serverActions: true,
-		typedRoutes: true,
 	},
 }
 
