@@ -1,6 +1,7 @@
 import { Text } from "@/components/Text"
 import { findExerciseBySlug } from "@/sanity/client"
 import { notFound } from "next/navigation"
+import { BrainstormExercise } from "./BrainstormExercise"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -15,6 +16,8 @@ const ExercisePage = async (props: Props) => {
 			<Text style="heading" size={40} asChild>
 				<h1>{exercise.name}</h1>
 			</Text>
+
+			{exercise.type === "brainstorm" && <BrainstormExercise />}
 		</div>
 	)
 }
