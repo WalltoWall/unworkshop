@@ -22,10 +22,11 @@ const variants = {
 		imageClassName:
 			"mix-blend-multiply h-[175%] translate-x-[27%] -translate-y-[3%]",
 	},
+	// TODO: Get Illustration and style it.
 	quadrants: {
 		gradientClassName: "from-[#4BEEE1] to-[#90E477]",
-		imageSrc: brainstormIllustration,
-		imageClassName: "",
+		imageSrc: formIllustration,
+		imageClassName: "h-[170%] translate-x-[37%] -translate-y-[16%]",
 	},
 	form: {
 		gradientClassName: "from-[#FA927F] to-[#D7F082]",

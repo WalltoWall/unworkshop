@@ -69,3 +69,12 @@ export const findParticipant = React.cache(async (id: string) => {
 
 	return data
 })
+
+export const findExerciseBySlug = React.cache(async (slug: string) => {
+	const data = await sanity.fetch<Exercise | null>(
+		groq`*[_type == "exercise" && slug.current == $slug][0]`,
+		{ slug },
+	)
+
+	return data
+})
