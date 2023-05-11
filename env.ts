@@ -12,8 +12,6 @@ export const env = createEnv({
 
 	/*
 	 * Environment variables available on the client (and server).
-	 *
-	 * 💡 You'll get typeerrors if these are not prefixed with NEXT_PUBLIC_.
 	 */
 	client: {
 		NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
@@ -24,8 +22,6 @@ export const env = createEnv({
 	/*
 	 * Due to how Next.js bundles environment variables on Edge and Client,
 	 * we need to manually destructure them to make sure all are included in bundle.
-	 *
-	 * 💡 You'll get typeerrors if not all variables from `server` & `client` are included here.
 	 */
 	runtimeEnv: {
 		SANITY_TOKEN: process.env.SANITY_TOKEN,
