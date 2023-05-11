@@ -20,6 +20,9 @@ const button = cva(
 			outline: {
 				true: "bg-transparent",
 			},
+			disabled: {
+				true: "bg-transparent cursor-not-allowed",
+			},
 			uppercase: {
 				true: "uppercase",
 			},
@@ -39,7 +42,12 @@ const button = cva(
 			{
 				outline: true,
 				color: "black",
-				className: "text-black",
+				className: "!text-black",
+			},
+			{
+				disabled: true,
+				color: "black",
+				className: "!text-black",
 			},
 		],
 	},
@@ -71,30 +79,52 @@ export type ButtonProps = (PlainButtonProps | PlainAnchorProps) & ButtonVariants
 export const Button = React.forwardRef<
 	HTMLButtonElement | HTMLAnchorElement,
 	ButtonProps
->(({ children, className, color, size, outline, uppercase, ...props }, ref) => {
-	className = button({ className, color, size, outline, uppercase })
+>(
+	(
+		{
+			children,
+			className,
+			color,
+			size,
+			outline,
+			uppercase,
+			disabled,
+			...props
+		},
+		ref,
+	) => {
+		className = button({
+			className,
+			color,
+			size,
+			outline,
+			disabled,
+			uppercase,
+		})
 
-	if ("href" in props && props.href) {
+		if ("href" in props && props.href) {
+			return (
+				<Link
+					className={className}
+					ref={ref as React.ForwardedRef<HTMLAnchorElement>}
+					{...props}
+				>
+					{children}
+				</Link>
+			)
+		}
+
 		return (
-			<Link
+			<button
+				ref={ref as React.ForwardedRef<HTMLButtonElement>}
 				className={className}
-				ref={ref as React.ForwardedRef<HTMLAnchorElement>}
-				{...props}
+				disabled={disabled ?? false}
+				{...(props as PlainButtonProps)}
 			>
 				{children}
-			</Link>
+			</button>
 		)
-	}
-
-	return (
-		<button
-			ref={ref as React.ForwardedRef<HTMLButtonElement>}
-			className={className}
-			{...(props as PlainButtonProps)}
-		>
-			{children}
-		</button>
-	)
-})
+	},
+)
 
 Button.displayName = "Button"
