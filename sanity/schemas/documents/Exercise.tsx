@@ -6,14 +6,8 @@ export const Exercise = s.document({
 	title: "Exercises",
 	icon: () => <Dumbbell width={24} height={24} />,
 	preview: {
-		select: { name: "name" },
-		prepare(select) {
-			const { name } = select as { name: string }
-
-			return {
-				title: name,
-			}
-		},
+		// TODO: Uppercase subtitle
+		select: { title: "name", subtitle: "type" },
 	},
 
 	fields: [
@@ -51,7 +45,9 @@ export const Exercise = s.document({
 			name: "steps",
 			title: "Steps",
 			description: "The steps of this brainstorm exercise.",
+			optional: true,
 			type: s.array({
+				initialValue: [],
 				hidden: ({ document }) => document?.type !== "brainstorm",
 				of: [
 					s.object({
@@ -89,4 +85,6 @@ export const Exercise = s.document({
 		// Form fields.
 	],
 })
-export type Exercise = s.infer<typeof Exercise>
+export type Exercise = Omit<s.infer<typeof Exercise>, "type"> & {
+	type: "brainstorm" | "sliders" | "quadrants" | "form"
+}
