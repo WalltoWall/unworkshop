@@ -62,6 +62,7 @@ export default {
 			black: "#000",
 
 			gray: {
+				97: "#f7f7f7",
 				82: "#cdd6d4",
 				75: "#bfbfbf",
 				50: "#7f7f7f",

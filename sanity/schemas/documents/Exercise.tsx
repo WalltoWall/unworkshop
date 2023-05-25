@@ -1,5 +1,6 @@
-import { Dumbbell, ListOrdered } from "lucide-react"
+import { Dumbbell, ListOrdered, LayoutGrid } from "lucide-react"
 import { s } from "sanity-typed-schema-builder"
+import { altText } from "../fields/altText"
 
 export const Exercise = s.document({
 	name: "exercise",
@@ -81,6 +82,114 @@ export const Exercise = s.document({
 		// Slider fields.
 
 		// Quadrant fields.
+		{
+			name: "quadrants",
+			title: "Quadrants",
+			description: "The group of quadrant selectors for this exercise.",
+			optional: true,
+			type: s.array({
+				initialValue: [],
+				hidden: ({ document }) => document?.type !== "quadrants",
+				of: [
+					s.object({
+						icon: () => <LayoutGrid width={24} height={24} />,
+						preview: {
+							select: { title: "instructions" },
+						},
+						fields: [
+							{
+								name: "instructions",
+								title: "Instructions",
+								description: "Instructions on how to do this exercise",
+								type: s.array({
+									of: [
+										s.block({
+											styles: [],
+											lists: [],
+											marks: {
+												decorators: [{ title: "Bold", value: "strong" }],
+												annotations: [],
+											},
+										}),
+									],
+								}),
+							},
+							{
+								name: "time",
+								title: "Time",
+								description:
+									"Either it is your business's current situation, or what you'd like it to be.",
+								type: s.string({
+									initialValue: "today",
+									options: {
+										list: [
+											{ title: "Today", value: "today" },
+											{ title: "Tomorrow", value: "tomorrow" },
+										],
+									},
+								}),
+							},
+							{
+								name: "topValue",
+								title: "Top Value",
+								description: "The value at the top of the Y axis",
+								type: s.string(),
+							},
+							{
+								name: "bottomValue",
+								title: "Bottom Value",
+								description: "The value at the bottom of the Y axis",
+								type: s.string(),
+							},
+							{
+								name: "leftValue",
+								title: "Left Value",
+								description: "The value at the left of the X axis",
+								type: s.string(),
+							},
+							{
+								name: "rightValue",
+								title: "Right Value",
+								description: "The value at the right of the X axis",
+								type: s.string(),
+							},
+							{
+								title: "Top-Left Image",
+								name: "topLeftImage",
+								type: s.image({
+									fields: [altText],
+								}),
+								optional: true,
+							},
+							{
+								title: "Top-Right Image",
+								name: "topRightImage",
+								type: s.image({
+									fields: [altText],
+								}),
+								optional: true,
+							},
+							{
+								title: "Bottom-Left Image",
+								name: "bottomLeftImage",
+								type: s.image({
+									fields: [altText],
+								}),
+								optional: true,
+							},
+							{
+								title: "Bottom-Right Image",
+								name: "bottomRightImage",
+								type: s.image({
+									fields: [altText],
+								}),
+								optional: true,
+							},
+						],
+					}),
+				],
+			}),
+		},
 
 		// Form fields.
 	],
