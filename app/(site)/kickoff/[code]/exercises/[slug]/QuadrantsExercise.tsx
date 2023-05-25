@@ -159,7 +159,7 @@ export const QuadrantsExercise = ({ quadrants }: Props) => {
 			))}
 
 			<Steps
-				count={12}
+				count={quadrants.length}
 				active={active}
 				onActiveChange={setActive}
 				onFinish={() => alert("done")}
