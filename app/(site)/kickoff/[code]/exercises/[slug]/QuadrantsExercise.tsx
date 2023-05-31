@@ -6,6 +6,7 @@ import Image from "next/image"
 import { urlFor, altFor } from "@/sanity/field-helpers"
 import { useEffect, useRef, useState } from "react"
 import { Steps } from "@/components/Steps"
+import styles from "./QuadrantExercise.module.css"
 
 interface QuadrantItem {
 	id: number
@@ -28,15 +29,26 @@ type Props = {
 	quadrants: Array<QuadrantItem>
 }
 
+type QuadrantProps = {
+	item: QuadrantItem
+	index: number
+	results: Array<unknown>
+	setResults: unknown
+}
+
 const serializers = {
 	strong: (props) => (
 		<strong className="text-indigo-68">{props.children}</strong>
 	),
 }
 
-const Quadrant = ({ item }: QuadrantItem) => {
+const Quadrant = ({ item, index, results, setResults }: QuadrantProps) => {
+	const arrowBetween = useRef(null)
 	const clickTarget = useRef(null)
+	const prevMarker = useRef(null)
 	const clickMarker = useRef(null)
+
+	const prevResults = results[index - 1]
 
 	useEffect(() => {
 		if (clickTarget.current) {
@@ -48,21 +60,68 @@ const Quadrant = ({ item }: QuadrantItem) => {
 		}
 	}, [clickTarget])
 
+	useEffect(() => {
+		if (prevResults && prevMarker.current && arrowBetween.current) {
+			prevMarker.current.style.opacity = 1
+			prevMarker.current.style.top = prevResults[0]
+			prevMarker.current.style.left = prevResults[1]
+
+			arrowBetween.current.style.top = prevResults[0]
+			arrowBetween.current.style.left = prevResults[1]
+		}
+	}, [prevResults])
+
 	const handleClick = (event) => {
 		if (clickMarker?.current) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
 
 			clickMarker.current.style.opacity = 1
-			clickMarker.current.style.top = `${event.clientY - parentRect.top}px`
-			clickMarker.current.style.left = `${event.clientX - parentRect.left}px`
+			const top = `${
+				((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
+				100
+			}%`
+			const left = `${
+				((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
+				100
+			}%`
+
+			clickMarker.current.style.top = top
+			clickMarker.current.style.left = left
+
+			if (prevMarker.current) {
+				// get distance of arrow between points
+				const todayPos = prevMarker.current.getBoundingClientRect()
+				const tomorrowPos = clickMarker.current.getBoundingClientRect()
+
+				const arrowY = tomorrowPos.x - todayPos.x
+				const arrowX = tomorrowPos.y - todayPos.y
+				const arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
+				arrowBetween.current.style.width = `${
+					(arrowWidth / parentRect.width) * 100
+				}%`
+
+				// get angle of arrow between points
+				const arrowAngle =
+					(Math.atan2(tomorrowPos.y - todayPos.y, tomorrowPos.x - todayPos.x) *
+						180) /
+					Math.PI
+				arrowBetween.current.style.transform = `rotate(${arrowAngle}deg)`
+			}
+
+			const newResults = [...results]
+			newResults[index] = [top, left]
+
+			setResults(newResults)
 		}
 	}
 
 	return (
 		<>
 			<div className="mx-auto flex max-w-[255px] content-center items-center rounded-2xl bg-gray-97 px-7 pb-6 pt-7">
-				{item.time === "today" && (
+				{item.time === "today" ? (
 					<div className="mr-2 h-8 w-8 flex-none rounded-full border-4 border-indigo-68" />
+				) : (
+					<div className="mr-2 h-8 w-8 flex-none rounded-full bg-indigo-68" />
 				)}
 				<Text style="heading" size={18} asChild>
 					<h2 className="mt-1">
@@ -137,7 +196,22 @@ const Quadrant = ({ item }: QuadrantItem) => {
 					</div>
 
 					<div
-						ref={clickMarker}
+						ref={arrowBetween}
+						className={`${styles.arrowBetween} absolute h-1 origin-left`}
+					>
+						<div className="bg-indigo-68"></div>
+						<div className="border-l-indigo-68"></div>
+					</div>
+
+					{item.time === "tomorrow" && (
+						<div
+							ref={clickMarker}
+							className="pointer-events-none absolute left-0 top-0 -ml-4 -mt-4 h-8 w-8 rounded-full bg-indigo-68 opacity-0 transition-opacity"
+						/>
+					)}
+
+					<div
+						ref={item.time === "tomorrow" ? prevMarker : clickMarker}
 						className="pointer-events-none absolute left-0 top-0 -ml-4 -mt-4 h-8 w-8 rounded-full border-4 border-indigo-68 opacity-0 transition-opacity"
 					/>
 				</div>
@@ -147,6 +221,7 @@ const Quadrant = ({ item }: QuadrantItem) => {
 }
 
 export const QuadrantsExercise = ({ quadrants }: Props) => {
+	const [results, setResults] = useState([])
 	const [active, setActive] = useState(0)
 	if (!quadrants) return null
 
@@ -154,7 +229,14 @@ export const QuadrantsExercise = ({ quadrants }: Props) => {
 		<div className="mt-8">
 			{quadrants.map((quadrant, index) => (
 				<div key={quadrant._key}>
-					{index === active && <Quadrant item={quadrant} />}
+					{index === active && (
+						<Quadrant
+							item={quadrant}
+							index={index}
+							results={results}
+							setResults={setResults}
+						/>
+					)}
 				</div>
 			))}
 
