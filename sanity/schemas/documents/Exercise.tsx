@@ -94,12 +94,12 @@ export const Exercise = s.document({
 					s.object({
 						icon: () => <LayoutGrid width={24} height={24} />,
 						preview: {
-							select: { title: "instructions" },
+							select: { title: "today_instructions" },
 						},
 						fields: [
 							{
-								name: "instructions",
-								title: "Instructions",
+								name: "today_instructions",
+								title: "Today Instructions",
 								description: "Instructions on how to do this exercise",
 								type: s.array({
 									of: [
@@ -115,18 +115,20 @@ export const Exercise = s.document({
 								}),
 							},
 							{
-								name: "time",
-								title: "Time",
-								description:
-									"Either it is your business's current situation, or what you'd like it to be.",
-								type: s.string({
-									initialValue: "today",
-									options: {
-										list: [
-											{ title: "Today", value: "today" },
-											{ title: "Tomorrow", value: "tomorrow" },
-										],
-									},
+								name: "tomorrow_instructions",
+								title: "Tomorrow Instructions",
+								description: "Instructions on how to do this exercise",
+								type: s.array({
+									of: [
+										s.block({
+											styles: [],
+											lists: [],
+											marks: {
+												decorators: [{ title: "Bold", value: "strong" }],
+												annotations: [],
+											},
+										}),
+									],
 								}),
 							},
 							{

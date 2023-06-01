@@ -1,27 +1,43 @@
 "use client"
 
+import { DndProvider, useDrop, useDrag } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
 import { Text } from "@/components/Text"
 import { RichText } from "@/components/RichText"
 import Image from "next/image"
 import { urlFor, altFor } from "@/sanity/field-helpers"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Steps } from "@/components/Steps"
 import styles from "./QuadrantExercise.module.css"
 
+interface Point {
+	top: number
+	left: number
+	placed: boolean
+}
+interface Points {
+	[key: string]: Point
+}
+export interface DragItem {
+	type: string
+	id: string
+	top: number
+	left: number
+}
+
 interface QuadrantItem {
 	id: number
-	label: string
 	key: any
-	bottomLeftImage?: any
-	bottomRightImage?: any
+	today_instructions: any
+	tomorrow_instructions: any
+	topValue: string
 	bottomValue: string
 	leftValue: string
 	rightValue: string
-	time: "today" | "tomorrow"
 	topLeftImage?: any
 	topRightImage?: any
-	topValue: string
-	topic: string
+	bottomLeftImage?: any
+	bottomRightImage?: any
 	_key: string
 }
 
@@ -32,8 +48,19 @@ type Props = {
 type QuadrantProps = {
 	item: QuadrantItem
 	index: number
+	active: number
 	results: Array<unknown>
 	setResults: unknown
+}
+
+const getTime = (active, index) => {
+	if (active === index * 2) {
+		return "today"
+	} else if (active === index * 2 + 1) {
+		return "tomorrow"
+	}
+
+	return false
 }
 
 const serializers = {
@@ -42,83 +69,145 @@ const serializers = {
 	),
 }
 
-const Quadrant = ({ item, index, results, setResults }: QuadrantProps) => {
+const DraggablePoint = ({ id, top, left, placed }: Point & { id: string }) => {
+	const [{ isDragging }, drag] = useDrag(
+		() => ({
+			type: "time",
+			item: { id, left, top, placed },
+			collect: (monitor) => ({
+				isDragging: monitor.isDragging(),
+			}),
+		}),
+		[id, left, top, placed],
+	)
+
+	const dotStyle = id === "today" ? "border-4 border-indigo-68" : "bg-indigo-68"
+	const opacity = placed ? "opacity-1" : "opacity-0"
+
+	return (
+		<div
+			ref={drag}
+			className={`absolute left-0 top-0 -ml-4 -mt-4 h-8 w-8 rounded-full ${dotStyle} ${opacity} transition-opacity`}
+			style={{
+				top,
+				left,
+			}}
+		/>
+	)
+}
+
+const Quadrant = ({
+	item,
+	index,
+	active,
+	results,
+	setResults,
+}: QuadrantProps) => {
+	const [points, setPoints] = useState<Points>({
+		today: { top: 0, left: 0, placed: false },
+		tomorrow: { top: 0, left: 0, placed: false },
+	})
 	const arrowBetween = useRef(null)
 	const clickTarget = useRef(null)
-	const prevMarker = useRef(null)
-	const clickMarker = useRef(null)
 
-	const prevResults = results[index - 1]
+	const movePoint = useCallback(
+		(id: string, left: number, top: number) => {
+			setPoints({
+				...points,
+				[id]: {
+					top,
+					left,
+					placed: true,
+				},
+			})
 
-	useEffect(() => {
-		if (clickTarget.current) {
-			clickTarget.current?.addEventListener("click", handleClick)
+			if (id === "today") {
+				moveArrow(id, points.tomorrow?.left, left, points.tomorrow?.top, top)
+			} else {
+				moveArrow(id, left, points.today?.left, top, points.today?.top)
+			}
+		},
+		[points, setPoints],
+	)
+
+	const moveArrow = (
+		id: string,
+		leftOne: number,
+		leftTwo: number,
+		topOne: number,
+		topTwo: number,
+	) => {
+		if (id === "tomorrow") {
+			arrowBetween.current.style.opacity = 1
 		}
 
-		return () => {
-			clickTarget?.current?.removeEventListener("click", handleClick)
-		}
-	}, [clickTarget])
+		const arrowY = parseFloat(leftOne) - parseFloat(leftTwo)
+		const arrowX = parseFloat(topOne) - parseFloat(topTwo)
 
-	useEffect(() => {
-		if (prevResults && prevMarker.current && arrowBetween.current) {
-			prevMarker.current.style.opacity = 1
-			prevMarker.current.style.top = prevResults[0]
-			prevMarker.current.style.left = prevResults[1]
+		const arrowAngle =
+			(Math.atan2(
+				parseFloat(topOne) - parseFloat(topTwo),
+				parseFloat(leftOne) - parseFloat(leftTwo),
+			) *
+				180) /
+			Math.PI
 
-			arrowBetween.current.style.top = prevResults[0]
-			arrowBetween.current.style.left = prevResults[1]
-		}
-	}, [prevResults])
+		arrowBetween.current.style.left = leftTwo
+		arrowBetween.current.style.top = topTwo
 
-	const handleClick = (event) => {
-		if (clickMarker?.current) {
-			const parentRect = clickTarget.current.getBoundingClientRect()
+		const arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
 
-			clickMarker.current.style.opacity = 1
-			const top = `${
-				((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
-				100
-			}%`
-			const left = `${
-				((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
-				100
-			}%`
+		arrowBetween.current.style.width = `${arrowWidth}%`
+		arrowBetween.current.style.transform = `rotate(${arrowAngle}deg)`
+	}
 
-			clickMarker.current.style.top = top
-			clickMarker.current.style.left = left
+	const [, drop] = useDrop(
+		() => ({
+			accept: "time",
+			drop(item: DragItem, monitor) {
+				const offset = monitor.getClientOffset()
 
-			if (prevMarker.current) {
-				// get distance of arrow between points
-				const todayPos = prevMarker.current.getBoundingClientRect()
-				const tomorrowPos = clickMarker.current.getBoundingClientRect()
+				const parentRect = clickTarget.current.getBoundingClientRect()
 
-				const arrowY = tomorrowPos.x - todayPos.x
-				const arrowX = tomorrowPos.y - todayPos.y
-				const arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
-				arrowBetween.current.style.width = `${
-					(arrowWidth / parentRect.width) * 100
+				const top = `${
+					((offset.y - parentRect.top) / clickTarget.current.clientHeight) * 100
+				}%`
+				const left = `${
+					((offset.x - parentRect.left) / clickTarget.current.clientWidth) * 100
 				}%`
 
-				// get angle of arrow between points
-				const arrowAngle =
-					(Math.atan2(tomorrowPos.y - todayPos.y, tomorrowPos.x - todayPos.x) *
-						180) /
-					Math.PI
-				arrowBetween.current.style.transform = `rotate(${arrowAngle}deg)`
-			}
+				movePoint(item.id, left, top)
 
-			const newResults = [...results]
-			newResults[index] = [top, left]
+				return undefined
+			},
+		}),
+		[moveArrow, movePoint],
+	)
 
-			setResults(newResults)
+	const handleClick = (event) => {
+		const parentRect = clickTarget.current.getBoundingClientRect()
+		const time = getTime(active, index)
+
+		const top = `${
+			((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
+			100
+		}%`
+		const left = `${
+			((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
+			100
+		}%`
+
+		if (time === "today") {
+			movePoint("today", left, top)
+		} else if (time === "tomorrow") {
+			movePoint("tomorrow", left, top)
 		}
 	}
 
 	return (
 		<>
 			<div className="mx-auto flex max-w-[255px] content-center items-center rounded-2xl bg-gray-97 px-7 pb-6 pt-7">
-				{item.time === "today" ? (
+				{getTime(active, index) === "today" ? (
 					<div className="mr-2 h-8 w-8 flex-none rounded-full border-4 border-indigo-68" />
 				) : (
 					<div className="mr-2 h-8 w-8 flex-none rounded-full bg-indigo-68" />
@@ -126,7 +215,11 @@ const Quadrant = ({ item, index, results, setResults }: QuadrantProps) => {
 				<Text style="heading" size={18} asChild>
 					<h2 className="mt-1">
 						<RichText
-							content={item.instructions}
+							content={
+								getTime(active, index) === "today"
+									? item.today_instructions
+									: item.tomorrow_instructions
+							}
 							components={{ ...serializers }}
 						/>
 					</h2>
@@ -196,24 +289,31 @@ const Quadrant = ({ item, index, results, setResults }: QuadrantProps) => {
 					</div>
 
 					<div
+						ref={drop}
+						className="absolute left-0 top-0 h-full w-full"
+						onClick={handleClick}
+					>
+						{Object.keys(points).map((key) => {
+							const { left, top, placed } = points[key] as Point
+							return (
+								<DraggablePoint
+									key={key}
+									id={key}
+									left={left}
+									top={top}
+									placed={placed}
+								/>
+							)
+						})}
+					</div>
+
+					<div
 						ref={arrowBetween}
-						className={`${styles.arrowBetween} absolute h-1 origin-left`}
+						className={`${styles.arrowBetween} absolute h-1 origin-left opacity-0`}
 					>
 						<div className="bg-indigo-68"></div>
 						<div className="border-l-indigo-68"></div>
 					</div>
-
-					{item.time === "tomorrow" && (
-						<div
-							ref={clickMarker}
-							className="pointer-events-none absolute left-0 top-0 -ml-4 -mt-4 h-8 w-8 rounded-full bg-indigo-68 opacity-0 transition-opacity"
-						/>
-					)}
-
-					<div
-						ref={item.time === "tomorrow" ? prevMarker : clickMarker}
-						className="pointer-events-none absolute left-0 top-0 -ml-4 -mt-4 h-8 w-8 rounded-full border-4 border-indigo-68 opacity-0 transition-opacity"
-					/>
 				</div>
 			</div>
 		</>
@@ -227,25 +327,29 @@ export const QuadrantsExercise = ({ quadrants }: Props) => {
 
 	return (
 		<div className="mt-8">
-			{quadrants.map((quadrant, index) => (
-				<div key={quadrant._key}>
-					{index === active && (
-						<Quadrant
-							item={quadrant}
-							index={index}
-							results={results}
-							setResults={setResults}
-						/>
-					)}
-				</div>
-			))}
+			<DndProvider backend={HTML5Backend}>
+				{quadrants.map((quadrant, index) => (
+					<div key={quadrant._key}>
+						{(getTime(active, index) === "today" ||
+							getTime(active, index) === "tomorrow") && (
+							<Quadrant
+								item={quadrant}
+								index={index}
+								active={active}
+								results={results}
+								setResults={setResults}
+							/>
+						)}
+					</div>
+				))}
 
-			<Steps
-				count={quadrants.length}
-				active={active}
-				onActiveChange={setActive}
-				onFinish={() => alert("done")}
-			/>
+				<Steps
+					count={quadrants.length * 2}
+					active={active}
+					onActiveChange={setActive}
+					onFinish={() => alert("done")}
+				/>
+			</DndProvider>
 		</div>
 	)
 }

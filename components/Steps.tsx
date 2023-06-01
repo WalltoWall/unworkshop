@@ -18,7 +18,7 @@ export const Steps = ({
 	if (!count) return null
 
 	const handleNext = () => {
-		if (active === count - 1) {
+		if (active === count) {
 			onFinish()
 		} else {
 			onActiveChange(active + 1)
@@ -38,7 +38,7 @@ export const Steps = ({
 					className="flex h-8 w-8 items-center justify-center rounded-full bg-black px-2 text-white"
 					onClick={handleNext}
 				>
-					{active === count - 1 ? (
+					{active === count ? (
 						<Checkmark />
 					) : (
 						<Chevron className="ml-1 rotate-180" />
@@ -46,7 +46,7 @@ export const Steps = ({
 				</button>
 
 				<div className="absolute left-full top-1/2 ml-2 flex -translate-y-1/2">
-					{[...Array(count - active - 1)].map((_, i) => (
+					{[...Array(count - active)].map((_, i) => (
 						<div key={i} className="mx-1 h-3 w-3 rounded-full bg-gray-75"></div>
 					))}
 				</div>
@@ -54,7 +54,7 @@ export const Steps = ({
 
 			<Text style="heading" size={16}>
 				<p className="mt-3 whitespace-pre text-center font-bold uppercase">
-					{active === count - 1 ? "Finish" : "Next Step"}
+					{active === count ? "Finish" : "Next Step"}
 				</p>
 			</Text>
 		</div>
