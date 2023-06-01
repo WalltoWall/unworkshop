@@ -132,6 +132,23 @@ export const Exercise = s.document({
 								}),
 							},
 							{
+								name: "finalize_instructions",
+								title: "Finalize Instructions",
+								description: "Instructions on how to finalize your answers.",
+								type: s.array({
+									of: [
+										s.block({
+											styles: [],
+											lists: [],
+											marks: {
+												decorators: [{ title: "Bold", value: "strong" }],
+												annotations: [],
+											},
+										}),
+									],
+								}),
+							},
+							{
 								name: "topValue",
 								title: "Top Value",
 								description: "The value at the top of the Y axis",

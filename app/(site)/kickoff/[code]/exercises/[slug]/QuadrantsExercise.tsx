@@ -6,7 +6,7 @@ import { Text } from "@/components/Text"
 import { RichText } from "@/components/RichText"
 import Image from "next/image"
 import { urlFor, altFor } from "@/sanity/field-helpers"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import { Steps } from "@/components/Steps"
 import styles from "./QuadrantExercise.module.css"
 
@@ -15,9 +15,7 @@ interface Point {
 	left: number
 	placed: boolean
 }
-interface Points {
-	[key: string]: Point
-}
+
 export interface DragItem {
 	type: string
 	id: string
@@ -28,16 +26,17 @@ export interface DragItem {
 interface QuadrantItem {
 	id: number
 	key: any
-	today_instructions: any
-	tomorrow_instructions: any
+	today_instructions: Array<unknown>
+	tomorrow_instructions: Array<unknown>
+	finalize_instructions: Array<unknown>
 	topValue: string
 	bottomValue: string
 	leftValue: string
 	rightValue: string
-	topLeftImage?: any
-	topRightImage?: any
-	bottomLeftImage?: any
-	bottomRightImage?: any
+	topLeftImage?: unknown
+	topRightImage?: unknown
+	bottomLeftImage?: unknown
+	bottomRightImage?: unknown
 	_key: string
 }
 
@@ -103,31 +102,31 @@ const Quadrant = ({
 	results,
 	setResults,
 }: QuadrantProps) => {
-	const [points, setPoints] = useState<Points>({
-		today: { top: 0, left: 0, placed: false },
-		tomorrow: { top: 0, left: 0, placed: false },
-	})
 	const arrowBetween = useRef(null)
 	const clickTarget = useRef(null)
 
 	const movePoint = useCallback(
 		(id: string, left: number, top: number) => {
-			setPoints({
-				...points,
+			const newResults = [...results]
+			newResults[index] = {
+				...newResults[index],
 				[id]: {
 					top,
 					left,
 					placed: true,
 				},
-			})
+			}
 
+			setResults(newResults)
+
+			const points = newResults[index]
 			if (id === "today") {
 				moveArrow(id, points.tomorrow?.left, left, points.tomorrow?.top, top)
 			} else {
 				moveArrow(id, left, points.today?.left, top, points.today?.top)
 			}
 		},
-		[points, setPoints],
+		[results, setResults],
 	)
 
 	const moveArrow = (
@@ -209,15 +208,17 @@ const Quadrant = ({
 			<div className="mx-auto flex max-w-[255px] content-center items-center rounded-2xl bg-gray-97 px-7 pb-6 pt-7">
 				{getTime(active, index) === "today" ? (
 					<div className="mr-2 h-8 w-8 flex-none rounded-full border-4 border-indigo-68" />
-				) : (
+				) : getTime(active, index) === "tomorrow" ? (
 					<div className="mr-2 h-8 w-8 flex-none rounded-full bg-indigo-68" />
-				)}
+				) : null}
 				<Text style="heading" size={18} asChild>
 					<h2 className="mt-1">
 						<RichText
 							content={
 								getTime(active, index) === "today"
 									? item.today_instructions
+									: active === results.length * 2
+									? item.finalize_instructions
 									: item.tomorrow_instructions
 							}
 							components={{ ...serializers }}
@@ -293,8 +294,8 @@ const Quadrant = ({
 						className="absolute left-0 top-0 h-full w-full"
 						onClick={handleClick}
 					>
-						{Object.keys(points).map((key) => {
-							const { left, top, placed } = points[key] as Point
+						{Object.keys(results[index]).map((key) => {
+							const { left, top, placed } = results[index][key] as Point
 							return (
 								<DraggablePoint
 									key={key}
@@ -321,9 +322,26 @@ const Quadrant = ({
 }
 
 export const QuadrantsExercise = ({ quadrants }: Props) => {
-	const [results, setResults] = useState([])
+	const [results, setResults] = useState(
+		quadrants.map(() => ({
+			today: { top: 0, left: 0, placed: false },
+			tomorrow: { top: 0, left: 0, placed: false },
+		})),
+	)
 	const [active, setActive] = useState(0)
 	if (!quadrants) return null
+
+	const handleDisabled = () => {
+		const tomorrow = (active / 2) % 1 > 0 ? true : false
+
+		if (tomorrow) {
+			return !results[(active - 1) / 2]?.tomorrow?.placed
+		} else if (active !== results.length * 2) {
+			return !results[active / 2]?.today?.placed
+		}
+
+		return false
+	}
 
 	return (
 		<div className="mt-8">
@@ -331,7 +349,8 @@ export const QuadrantsExercise = ({ quadrants }: Props) => {
 				{quadrants.map((quadrant, index) => (
 					<div key={quadrant._key}>
 						{(getTime(active, index) === "today" ||
-							getTime(active, index) === "tomorrow") && (
+							getTime(active, index) === "tomorrow" ||
+							active === results.length * 2) && (
 							<Quadrant
 								item={quadrant}
 								index={index}
@@ -344,11 +363,14 @@ export const QuadrantsExercise = ({ quadrants }: Props) => {
 				))}
 
 				<Steps
+					disabled={handleDisabled()}
 					count={quadrants.length * 2}
 					active={active}
 					onActiveChange={setActive}
 					onFinish={() => alert("done")}
 				/>
+
+				{JSON.stringify(results)}
 			</DndProvider>
 		</div>
 	)

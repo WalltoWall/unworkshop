@@ -3,6 +3,7 @@ import { Checkmark } from "./icons/Checkmark"
 import { Chevron } from "./icons/Chevron"
 
 interface Props {
+	disabled: boolean
 	count: number
 	active: number
 	onActiveChange: any
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export const Steps = ({
+	disabled,
 	count,
 	active = 0,
 	onActiveChange,
@@ -37,6 +39,7 @@ export const Steps = ({
 				<button
 					className="flex h-8 w-8 items-center justify-center rounded-full bg-black px-2 text-white"
 					onClick={handleNext}
+					disabled={disabled}
 				>
 					{active === count ? (
 						<Checkmark />
