@@ -80,7 +80,60 @@ export const Exercise = s.document({
 		},
 
 		// Slider fields.
-
+		{
+			name: "sliders",
+			title: "Sliders",
+			description: "The left and right values for this exercise.",
+			optional: true,
+			type: s.array({
+				initialValue: [],
+				hidden: ({ document }) => document?.type !== "sliders",
+				of: [
+					s.object({
+						icon: () => <LayoutGrid width={24} height={24} />,
+						preview: {
+							select: { title: "today_instructions" },
+						},
+						fields: [
+							{
+								name: "question_text",
+								title: "Question Text",
+								description: "This text shows at the top of the slider",
+								type: s.string(),
+							},
+							{
+								name: "left_value",
+								title: "Left Value",
+								description: "This text is on the left side of the slider",
+								type: s.string(),
+							},
+							{
+								name: "left_image",
+								title: "Left Image",
+								description: "This image is on the left side of the slider",
+								type: s.image({
+									fields: [altText],
+								}),
+							},
+							{
+								name: "right_value",
+								title: "Right Value",
+								description: "This text is on the right side of the slider",
+								type: s.string(),
+							},
+							{
+								name: "right_image",
+								title: "Right Image",
+								description: "This Image is on the right side of the slider",
+								type: s.image({
+									fields: [altText],
+								}),
+							},
+						],
+					}),
+				],
+			}),
+		},
 		// Quadrant fields.
 		{
 			name: "quadrants",
