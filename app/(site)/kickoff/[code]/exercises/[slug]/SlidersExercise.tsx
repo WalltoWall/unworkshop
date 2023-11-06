@@ -19,10 +19,25 @@ type Props = {
 	sliders: Array<SliderItem>
 }
 
+const handleValue = (event) => {
+    const leftImage = document.getElementById("image-left")
+    const rightImage = document.getElementById("image-right")
+    const value = event.target.value
+    console.log(leftImage)
+    if(rightImage != null && leftImage != null){
+        if(value > 3.5){
+            console.log('right')
+            rightImage.style.opacity = '1'
+        } else{
+            console.log('left')
+            rightImage.style.opacity = '0'
+        }
+    }
+}
+
 export const SlidersExercise = ({ sliders }: Props) => {
     const progressRef = useRef(null)
     const [setValue, useValue] = useState(0)
-
 	return (
         <div className="mt-8">
             {/* <h3>{useValue}</h3> */}
@@ -36,7 +51,8 @@ export const SlidersExercise = ({ sliders }: Props) => {
                                     <Image
                                         src={urlFor(slider.left_image.asset).toString()}
                                         alt={altFor(slider.left_image)}
-                                        className="object-over object center h-full w-full"
+                                        className="object-over object center h-full w-full opacity-1"
+                                        id="image-left"
                                         width={300}
                                         height={300}
                                     />
@@ -49,7 +65,8 @@ export const SlidersExercise = ({ sliders }: Props) => {
                                     <Image
                                         src={urlFor(slider.right_image.asset).toString()}
                                         alt={altFor(slider.right_image)}
-                                        className="object-over object center h-full w-full"
+                                        className="object-over object center h-full w-full transition ease-in-out opacity-1"
+                                        id="image-right"
                                         width={300}
                                         height={300}
                                     />
