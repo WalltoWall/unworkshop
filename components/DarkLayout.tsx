@@ -1,11 +1,11 @@
-import { Logo } from "@/components/Logo"
 import Link from "next/link"
+import { Logo } from "@/components/Logo"
 
 export const DarkLayout = (props: { children: React.ReactNode }) => {
 	return (
 		<main
 			id="main"
-			className="dynamic-screen grid overflow-hidden bg-black text-white"
+			className="grid h-[100svh] overflow-hidden bg-black text-white"
 		>
 			<div className="mx-auto flex max-w-md flex-col justify-between">
 				<Link href="/">

@@ -1,7 +1,7 @@
-import { PARTICIPANT_COOKIE } from "@/constants"
-import { findKickoff, findParticipant } from "@/sanity/client"
 import { cookies } from "next/headers"
 import { notFound, redirect } from "next/navigation"
+import { client } from "@/sanity/client"
+import { PARTICIPANT_COOKIE } from "@/constants"
 
 function redirectToRegister(code: string): never {
 	redirect("/kickoff/register?code=" + code)
@@ -17,8 +17,8 @@ const KickoffLayout = async (props: Props) => {
 	if (!participantId) redirectToRegister(props.params.code)
 
 	const [participant, kickoff] = await Promise.all([
-		findParticipant(participantId),
-		findKickoff(props.params.code),
+		client.findParticipant(participantId),
+		client.findKickoff(props.params.code),
 	])
 
 	// If this participant was registered to a different Kickoff, redirect them

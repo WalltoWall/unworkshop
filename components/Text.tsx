@@ -1,8 +1,8 @@
 "use client"
 
+import { Slot } from "@radix-ui/react-slot"
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Slot } from "@radix-ui/react-slot"
 
 export const text = cva("", {
 	variants: {
@@ -19,6 +19,10 @@ export const text = cva("", {
 		style: {
 			heading: "font-heading uppercase font-bold leading-[0.9]",
 			copy: "font-sans",
+		},
+		trim: {
+			true: "capsize",
+			false: "no-capsize",
 		},
 	},
 	compoundVariants: [
@@ -38,7 +42,9 @@ export const text = cva("", {
 			className: "leading-copyMicro",
 		},
 	],
-	defaultVariants: {},
+	defaultVariants: {
+		trim: true,
+	},
 })
 
 type TextVariants = VariantProps<typeof text>
@@ -67,13 +73,13 @@ type TextProps = Omit<React.ComponentPropsWithoutRef<"div">, "style"> &
  * ```
  */
 export const Text = React.forwardRef<HTMLParagraphElement, TextProps>(
-	({ className, size, style, asChild, ...props }, ref) => {
+	({ className, size, style, trim, asChild, ...props }, ref) => {
 		const Element = asChild ? Slot : "p"
 
 		return (
 			<Element
 				ref={ref}
-				className={text({ className, size, style })}
+				className={text({ className, size, style, trim })}
 				{...props}
 			/>
 		)

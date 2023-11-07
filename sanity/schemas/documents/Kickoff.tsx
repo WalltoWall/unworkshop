@@ -1,12 +1,13 @@
 import { Warehouse } from "lucide-react"
-import type { Slug } from "sanity"
-import { s } from "sanity-typed-schema-builder"
-import { Exercise } from "./Exercise"
+import { defineArrayMember, defineField, defineType } from "@sanity-typed/types"
+import { type Slug } from "sanity"
 
-export const Kickoff = s.document({
+export const Kickoff = defineType({
 	name: "kickoff",
 	title: "Kickoff",
+	type: "document",
 	icon: () => <Warehouse width={24} height={24} />,
+
 	preview: {
 		select: { code: "code", title: "title" },
 		prepare(select) {
@@ -20,36 +21,41 @@ export const Kickoff = s.document({
 	},
 
 	fields: [
-		{
+		defineField({
 			name: "title",
 			title: "Title",
 			description:
 				"The name of this kickoff. Will be shown to attendees on the site.",
-			type: s.string(),
-		},
-		{
+			type: "string",
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
 			name: "code",
 			title: "Code",
 			description:
 				"The project code for this kickoff. Will be used as the URL.",
-			type: s.slug({
-				validation: (rule) =>
-					rule.custom((val) => {
-						if (val?.current?.toLowerCase() !== val?.current)
-							return "Code must be lowercase."
+			type: "slug",
+			validation: (Rule) => [
+				Rule.required(),
+				Rule.custom((val) => {
+					if (val?.current?.toLowerCase() !== val?.current)
+						return "Code must be lowercase."
 
-						return true
-					}),
-			}),
-		},
-		{
+					return true
+				}),
+			],
+		}),
+		defineField({
 			name: "exercises",
 			title: "Exercises",
 			description: "The list of exercises.",
-			type: s.array({
-				of: [s.reference({ to: [Exercise] })],
-			}),
-		},
+			type: "array",
+			of: [
+				defineArrayMember({
+					type: "reference",
+					to: [{ type: "exercise" as const }],
+				}),
+			],
+		}),
 	],
 })
-export type Kickoff = s.infer<typeof Kickoff>

@@ -1,80 +1,100 @@
-import * as React from "react"
-import { groq } from "next-sanity"
-import type { Kickoff } from "./schemas/documents/Kickoff"
-import type { Participant } from "./schemas/documents/Participant"
-import type { Exercise } from "./schemas/documents/Exercise"
-import { sanity } from "./sanity-client"
+import "server-only"
+import { createClient, groq } from "next-sanity"
+import { cookies } from "next/headers"
+import type { Reference } from "sanity"
+import { z } from "zod"
+import type { ST } from "@/sanity/config"
+import { PARTICIPANT_COOKIE } from "@/constants"
+import { env } from "@/env"
 
-// By using React's built-in caching, we can de-dupe and cache requests
-// when on the server. This allows us to make multiple calls in different parts
-// of our app and ultimately only make one request on the server.
+export const sanity = createClient({
+	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+	dataset: env.NEXT_PUBLIC_SANITY_DATASET,
+	apiVersion: env.NEXT_PUBLIC_SANITY_API_VERSION,
+	token: env.SANITY_TOKEN,
+	useCdn: false,
+})
 
-export const findKickoff = React.cache(async (code: string) => {
-	type KickoffWithExercises = Omit<Kickoff, "exercises"> & {
-		exercises: Exercise[]
-	}
+export const client = {
+	async findKickoff(code: string) {
+		type KickoffWithExercises = Omit<ST["kickoff"], "exercises"> & {
+			exercises: Array<ST["exercise"]>
+		}
 
-	const data = await sanity.fetch<KickoffWithExercises | null>(
-		groq`*[_type == "kickoff" && code.current == $code][0] {
+		const data = await sanity.fetch<KickoffWithExercises | null>(
+			groq`*[_type == "kickoff" && code.current == $code][0] {
             ...,
             exercises[]->
         }`,
-		{ code: code.toLowerCase() },
-	)
+			{ code: code.toLowerCase() },
+		)
 
-	return data
-})
+		return data
+	},
 
-export const findKickoffOrThrow = React.cache(async (code: string) => {
-	const kickoff = await findKickoff(code)
-	if (!kickoff) throw new Error("Kickoff not found, when expected.")
+	async findParticipant(id: string) {
+		const data = await sanity.fetch<ST["participant"] | null>(
+			groq`*[_type == "participant" && _id == $id][0]`,
+			{ id },
+		)
 
-	return kickoff
-})
+		return data
+	},
 
-export const registerParticipant = async (args: {
-	name: string
-	kickoffId: string
-}) => {
-	const data: Pick<Participant, "name" | "kickoff" | "_type"> = {
-		_type: "participant",
-		name: args.name,
-		kickoff: {
-			_type: "reference",
-			_weak: true,
-			_ref: args.kickoffId,
-		},
-	}
+	async findParticipantOrThrow() {
+		const participantId = z
+			.string()
+			.parse(cookies().get(PARTICIPANT_COOKIE)?.value)
 
-	const res = await sanity.create(data)
+		const participant = await client.findParticipant(participantId)
+		if (!participant) throw new Error("No onboarded participant found.")
 
-	return res
+		return participant
+	},
+
+	async findKickoffOrThrow(code: string) {
+		const kickoff = await client.findKickoff(code)
+		if (!kickoff) throw new Error("Kickoff not found, when expected.")
+
+		return kickoff
+	},
+
+	async registerParticipant(args: { name: string; kickoffId: string }) {
+		type Data = Pick<ST["participant"], "name" | "_type"> & {
+			kickoff: Reference
+		}
+
+		const data: Data = {
+			_type: "participant",
+			name: args.name,
+			kickoff: {
+				_type: "reference",
+				_weak: true,
+				_ref: args.kickoffId,
+			},
+		}
+
+		const res = await sanity.create(data)
+
+		return res
+	},
+
+	async onboardParticipant(id: string) {
+		const data: Pick<ST["participant"], "onboarded"> = {
+			onboarded: true,
+		}
+
+		const res: ST["participant"] = await sanity.patch(id).set(data).commit()
+
+		return res
+	},
+
+	async findExerciseBySlug(slug: string) {
+		const data = await sanity.fetch<ST["exercise"] | null>(
+			groq`*[_type == "exercise" && slug.current == $slug][0]`,
+			{ slug },
+		)
+
+		return data
+	},
 }
-
-export const onboardParticipant = async (id: string) => {
-	const data: Pick<Participant, "onboarded"> = {
-		onboarded: true,
-	}
-
-	const res: Participant = await sanity.patch(id).set(data).commit()
-
-	return res
-}
-
-export const findParticipant = React.cache(async (id: string) => {
-	const data = await sanity.fetch<Participant | null>(
-		groq`*[_type == "participant" && _id == $id][0]`,
-		{ id },
-	)
-
-	return data
-})
-
-export const findExerciseBySlug = React.cache(async (slug: string) => {
-	const data = await sanity.fetch<Exercise | null>(
-		groq`*[_type == "exercise" && slug.current == $slug][0]`,
-		{ slug },
-	)
-
-	return data
-})

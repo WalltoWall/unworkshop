@@ -1,15 +1,15 @@
-import Image from "next/image"
-import { z } from "zod"
 import type { Metadata } from "next"
-import * as client from "@/sanity/client"
-import { Text } from "@/components/Text"
-import { notFound, redirect } from "next/navigation"
-import { zfd } from "zod-form-data"
-import { PARTICIPANT_COOKIE } from "@/constants"
 import { cookies } from "next/headers"
-import { RegisterInput } from "./RegisterInput"
-import registerIllustration from "@/assets/images/register-illustration.jpg"
+import Image from "next/image"
+import { notFound, redirect } from "next/navigation"
+import { z } from "zod"
+import { zfd } from "zod-form-data"
 import { LightLayout } from "@/components/LightLayout"
+import { Text } from "@/components/Text"
+import { client } from "@/sanity/client"
+import registerIllustration from "@/assets/images/register-illustration.jpg"
+import { PARTICIPANT_COOKIE } from "@/constants"
+import { RegisterInput } from "./RegisterInput"
 
 type Props = {
 	params: { code: string }
@@ -32,7 +32,6 @@ const KickoffRegisterPage = async (props: Props) => {
 			kickoffId: kickoff!._id,
 		})
 
-		//@ts-expect-error - NextJS types are incorrect.
 		cookies().set({
 			name: PARTICIPANT_COOKIE,
 			value: participant._id,

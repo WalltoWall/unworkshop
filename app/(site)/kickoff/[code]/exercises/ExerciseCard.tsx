@@ -1,13 +1,12 @@
-import Link from "next/link"
 import Image from "next/image"
-import { Text } from "@/components/Text"
-import { Arrow } from "@/components/icons/Arrow"
-import type { Exercise } from "@/sanity/schemas/documents/Exercise"
+import Link from "next/link"
 import { cx } from "class-variance-authority"
-
+import { Arrow } from "@/components/icons/Arrow"
+import { Text } from "@/components/Text"
+import type { ST } from "@/sanity/config"
 import brainstormIllustration from "@/assets/images/brainstorm-illustration.jpg"
-import slidersIllustration from "@/assets/images/sliders-illustration.jpg"
 import formIllustration from "@/assets/images/form-illustration.png"
+import slidersIllustration from "@/assets/images/sliders-illustration.jpg"
 
 const variants = {
 	brainstorm: {
@@ -40,7 +39,7 @@ type Props = {
 	kickoffCode: string | undefined
 	slug: string | undefined
 	name: string
-	type: Exercise["type"]
+	type: ST["exercise"]["type"]
 }
 
 export const ExerciseCard = (props: Props) => {

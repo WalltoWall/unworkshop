@@ -1,14 +1,15 @@
-import { Button } from "@/components/Button"
-import { Text } from "@/components/Text"
 import { redirect } from "next/navigation"
 import { zfd } from "zod-form-data"
+import { Button } from "@/components/Button"
 import { DarkLayout } from "@/components/DarkLayout"
+import { Text } from "@/components/Text"
 
-const Form = zfd.formData({ code: zfd.text() })
-async function register(data: FormData) {
+const FormSchema = zfd.formData({ code: zfd.text() })
+
+async function navigateToWorkshop(data: FormData) {
 	"use server"
 
-	const form = Form.parse(data)
+	const form = FormSchema.parse(data)
 	redirect(`/kickoff/${form.code}`)
 }
 
@@ -21,16 +22,16 @@ const Home = () => {
 				</Text>
 			</div>
 
-			<div className="space-y-4 px-7 pb-20 text-center">
+			<div className="space-y-4 px-7 py-8 text-center">
 				<Text style="heading" size={24}>
 					Enter your group code
 				</Text>
 
-				<form className="flex flex-col space-y-1.5" action={register}>
+				<form className="flex flex-col space-y-1.5" action={navigateToWorkshop}>
 					<input
 						type="text"
 						name="code"
-						className="h-[72px] w-full rounded-2xl bg-gray-75 px-4 text-center align-middle uppercase text-black outline-none ring-gray-82 ring-offset-2 ring-offset-black text-56 leading-heading font-heading placeholder:text-gray-38 focus:ring-1"
+						className="h-[4.5rem] w-full rounded-2xl bg-gray-75 px-4 text-center align-middle uppercase text-black text-56 leading-heading font-heading placeholder:text-gray-38"
 						placeholder="WTW-1234"
 						required
 					/>
