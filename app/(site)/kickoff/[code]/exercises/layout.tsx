@@ -1,9 +1,9 @@
-import { Text } from "@/components/Text"
 import { LightLayout } from "@/components/LightLayout"
-import { getParticipantOrThrow } from "@/lib/getParticipantOrThrow"
+import { Text } from "@/components/Text"
+import { client } from "@/sanity/client"
 
 const ExercisesLayout = async (props: { children: React.ReactNode }) => {
-	const participant = await getParticipantOrThrow()
+	const participant = await client.findParticipantOrThrow()
 
 	return (
 		<LightLayout

@@ -1,6 +1,6 @@
-import { Text } from "@/components/Text"
-import { findExerciseBySlug } from "@/sanity/client"
 import { notFound } from "next/navigation"
+import { Text } from "@/components/Text"
+import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./BrainstormExercise"
 import { SlidersExercise } from "./SlidersExercise"
 import { QuadrantsExercise } from "./QuadrantsExercise"
@@ -10,7 +10,7 @@ type Props = {
 }
 
 const ExercisePage = async (props: Props) => {
-	const exercise = await findExerciseBySlug(props.params.slug)
+	const exercise = await client.findExerciseBySlug(props.params.slug)
 	if (!exercise) notFound()
 
 	return (

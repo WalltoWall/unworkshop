@@ -1,10 +1,9 @@
-"use client"
+import { Studio } from "./Studio"
 
-import { NextStudio } from "next-sanity/studio"
-import config from "@/sanity.config"
-
-const AdminPage = () => {
-	return <NextStudio config={config} />
+const StudioPage = () => {
+	return <Studio />
 }
 
-export default AdminPage
+export { metadata } from "next-sanity/studio/metadata"
+export { viewport } from "next-sanity/studio/viewport"
+export default StudioPage

@@ -1,16 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	reactStrictMode: true,
+	logging: { fetches: { fullUrl: true } },
 	images: {
-		formats: ["image/avif", "image/webp"],
-		remotePatterns: [
-			{
-				hostname: "cdn.sanity.io",
-			},
-		],
-	},
-	experimental: {
-		serverActions: true,
+		formats: ["image/webp"],
+		remotePatterns: [{ hostname: "cdn.sanity.io" }],
 	},
 }
 

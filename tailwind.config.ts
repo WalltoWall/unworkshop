@@ -1,3 +1,4 @@
+import tailwindCapsize from "@asyarb/tailwind-capsize"
 import type { Config } from "tailwindcss"
 import plugin from "tailwindcss/plugin"
 
@@ -129,7 +130,7 @@ export default {
 		},
 	},
 	plugins: [
-		require("@asyarb/tailwind-capsize"),
+		tailwindCapsize,
 		plugin(({ addUtilities }) => {
 			addUtilities({
 				".scrollbar-hide": {
