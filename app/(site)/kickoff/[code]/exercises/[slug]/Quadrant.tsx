@@ -13,6 +13,7 @@ import Image from "next/image"
 import { cx } from "class-variance-authority"
 import { RichText } from "@/components/RichText"
 import { Text } from "@/components/Text"
+import type { ST } from "@/sanity/config"
 import { altFor, urlFor } from "@/sanity/helpers"
 import styles from "./QuadrantExercise.module.css"
 import { getTime } from "./QuadrantsExercise"
@@ -81,7 +82,7 @@ export interface QuadrantItem {
 }
 
 type QuadrantProps = {
-	item: QuadrantItem
+	item: ST["exercise"]["quadrants"][number]
 	index: number
 	active: number
 	results: Array<unknown>

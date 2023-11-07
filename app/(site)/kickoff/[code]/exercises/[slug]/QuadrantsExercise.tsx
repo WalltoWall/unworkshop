@@ -4,7 +4,8 @@ import { useState } from "react"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 import { Steps } from "@/components/Steps"
-import { Quadrant, type QuadrantItem } from "./Quadrant"
+import type { ST } from "@/sanity/config"
+import { Quadrant } from "./Quadrant"
 
 export const getTime = (active: number, index: number) => {
 	if (active === index * 2) {
@@ -17,12 +18,12 @@ export const getTime = (active: number, index: number) => {
 }
 
 type QuadrantsExerciseProps = {
-	quadrants: Array<QuadrantItem>
+	quadrants: ST["exercise"]["quadrants"]
 }
 
 export const QuadrantsExercise = ({ quadrants }: QuadrantsExerciseProps) => {
 	const [results, setResults] = useState(
-		quadrants.map(() => ({
+		quadrants?.map(() => ({
 			today: { top: 0, left: 0, placed: false },
 			tomorrow: { top: 0, left: 0, placed: false },
 			arrow: { top: 0, left: 0, width: 0, angle: 0 },
