@@ -2,8 +2,8 @@ import { notFound } from "next/navigation"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./BrainstormExercise"
-import { SlidersExercise } from "./SlidersExercise"
 import { QuadrantsExercise } from "./QuadrantsExercise"
+import { SlidersExercise } from "./SlidersExercise"
 
 type Props = {
 	params: { code: string; slug: string }

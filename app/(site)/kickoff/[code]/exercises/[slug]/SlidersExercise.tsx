@@ -37,7 +37,7 @@ const handleValue = (event) => {
 	}
 }
 
-export const SlidersExercise = ({ sliders }: Props) => {
+export const SlidersExercise = ({ sliders = [] }: Props) => {
 	const progressRef = useRef(null)
 	const [setValue, useValue] = useState(0)
 

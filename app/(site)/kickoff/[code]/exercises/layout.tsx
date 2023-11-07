@@ -9,7 +9,7 @@ const ExercisesLayout = async (props: { children: React.ReactNode }) => {
 		<LightLayout
 			mainClassName="mt-3.5"
 			headerChildren={
-				<Text style="copy" size={16} className="ml-6 mr-auto">
+				<Text style="copy" size={16} className="ml-4 mr-auto">
 					Hi, <span className="underline">{participant.name}</span>
 				</Text>
 			}
