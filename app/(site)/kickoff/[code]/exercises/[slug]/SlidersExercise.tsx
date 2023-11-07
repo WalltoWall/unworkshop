@@ -6,7 +6,7 @@
  *    help setting up an integration with your editor! This would catch any
  *    un-used imports, variables, console statements, etc.
  */
-import { useRef, useState } from "react"
+import { useState } from "react"
 import Image from "next/image"
 import type { ST } from "@/sanity/config"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
