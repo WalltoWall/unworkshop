@@ -10,6 +10,7 @@ import {
 } from "react"
 import { useDrag, useDrop } from "react-dnd"
 import Image from "next/image"
+import { cx } from "class-variance-authority"
 import { RichText } from "@/components/RichText"
 import { Text } from "@/components/Text"
 import { altFor, urlFor } from "@/sanity/helpers"
@@ -358,7 +359,11 @@ export const Quadrant = ({
 					</div>
 
 					<div
-						className={`${styles.arrowBetween} ${opacity} absolute h-1 origin-left`}
+						className={cx(
+							`absolute h-1 origin-left`,
+							styles.arrowBetween,
+							opacity,
+						)}
 						style={{
 							top: results[index]?.arrow?.top,
 							left: results[index]?.arrow?.left,
