@@ -1,7 +1,9 @@
 "use client"
+
+import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
-import { urlFor, altFor } from "@/sanity/field-helpers"
-import { useState, useEffect, useRef } from "react"
+import { altFor, urlFor } from "@/sanity/helpers"
+
 // import { Steps } from "@/components/Steps"
 
 interface SliderItem {
@@ -20,84 +22,83 @@ type Props = {
 }
 
 const handleValue = (event) => {
-    const leftImage = document.getElementById("image-left")
-    const rightImage = document.getElementById("image-right")
-    const value = event.target.value
-    console.log(leftImage)
-    if(rightImage != null && leftImage != null){
-        if(value > 3.5){
-            console.log('right')
-            rightImage.style.opacity = '1'
-        } else{
-            console.log('left')
-            rightImage.style.opacity = '0'
-        }
-    }
+	const leftImage = document.getElementById("image-left")
+	const rightImage = document.getElementById("image-right")
+	const value = event.target.value
+	console.log(leftImage)
+	if (rightImage != null && leftImage != null) {
+		if (value > 3.5) {
+			console.log("right")
+			rightImage.style.opacity = "1"
+		} else {
+			console.log("left")
+			rightImage.style.opacity = "0"
+		}
+	}
 }
 
 export const SlidersExercise = ({ sliders }: Props) => {
-    const progressRef = useRef(null)
-    const [setValue, useValue] = useState(0)
-	return (
-        <div className="mt-8">
-            {/* <h3>{useValue}</h3> */}
-            {sliders.map((slider, index) => (
-					<div className="p-4 bg-gray-97 rounded-lg" key={slider._key}>
-                        <h3>{slider.question_text}</h3>
-                        
-                        <div className="relative my-3 h-32 rounded-lg overflow-hidden">
-                            <div className="absolute top-0 left-0 right-0 bottom-0 h-32">
-                                {slider.left_image?.asset && (
-                                    <Image
-                                        src={urlFor(slider.left_image.asset).toString()}
-                                        alt={altFor(slider.left_image)}
-                                        className="object-over object center h-full w-full opacity-1"
-                                        id="image-left"
-                                        width={300}
-                                        height={300}
-                                    />
-                                )}
-                                <p>{slider.left_value}</p>
-                            </div>
-                            
-                            <div className="absolute top-0 left-0 right-0 bottom-0 h-32">
-                                {slider.right_image?.asset && (
-                                    <Image
-                                        src={urlFor(slider.right_image.asset).toString()}
-                                        alt={altFor(slider.right_image)}
-                                        className="object-over object center h-full w-full transition ease-in-out opacity-1"
-                                        id="image-right"
-                                        width={300}
-                                        height={300}
-                                    />
-                                )}
-                                
-                            </div>
-                        </div>
+	const progressRef = useRef(null)
+	const [setValue, useValue] = useState(0)
 
-                        <input 
-                            type="range" 
-                            min="1" 
-                            max="6" 
-                            className="my-4 w-full appearance-none cursor-pointer rounded-[10px] bg-gray-75 h-3 range-lg focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-no-repeat [&::-webkit-slider-thumb]:bg-center"
-                            onChange={handleValue}
-                            />
-                        
-                        <div className="pt-2 flex justify-between text-gray-50">
-                            <p>{slider.left_value}</p>
-                            <p>{slider.right_value}</p>
-                        </div>
-                    </div>
-                )
-            )}
-    
-            {/* <Steps
+	return (
+		<div className="mt-8">
+			{/* <h3>{useValue}</h3> */}
+			{sliders.map((slider, index) => (
+				<div className="rounded-lg bg-gray-97 p-4" key={slider._key}>
+					<h3>{slider.question_text}</h3>
+
+					<div className="relative my-3 h-32 overflow-hidden rounded-lg">
+						<div className="absolute bottom-0 left-0 right-0 top-0 h-32">
+							{slider.left_image?.asset && (
+								<Image
+									src={urlFor(slider.left_image.asset).toString()}
+									alt={altFor(slider.left_image)}
+									className="object-over object center opacity-1 h-full w-full"
+									id="image-left"
+									width={300}
+									height={300}
+								/>
+							)}
+							<p>{slider.left_value}</p>
+						</div>
+
+						<div className="absolute bottom-0 left-0 right-0 top-0 h-32">
+							{slider.right_image?.asset && (
+								<Image
+									src={urlFor(slider.right_image.asset).toString()}
+									alt={altFor(slider.right_image)}
+									className="object-over object center opacity-1 h-full w-full transition ease-in-out"
+									id="image-right"
+									width={300}
+									height={300}
+								/>
+							)}
+						</div>
+					</div>
+
+					<input
+						type="range"
+						min="1"
+						max="6"
+						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
+						onChange={handleValue}
+					/>
+
+					<div className="flex justify-between pt-2 text-gray-50">
+						<p>{slider.left_value}</p>
+						<p>{slider.right_value}</p>
+					</div>
+				</div>
+			))}
+
+			{/* <Steps
                 disabled={sliders.length == 1}
                 count={sliders.length * 2}
                 active={active}
                 onActiveChange={setActive}
                 onFinish={() => alert("done")}
             /> */}
-        </div>
-    )
+		</div>
+	)
 }
