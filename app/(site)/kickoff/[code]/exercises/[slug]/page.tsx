@@ -13,6 +13,8 @@ const ExercisePage = async (props: Props) => {
 	const exercise = await client.findExerciseBySlug(props.params.slug)
 	if (!exercise) notFound()
 
+	console.log({ exercise })
+
 	return (
 		<div>
 			<Text style="heading" size={40} asChild>
