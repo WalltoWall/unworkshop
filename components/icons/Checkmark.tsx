@@ -4,7 +4,7 @@ export const Checkmark = (props: React.ComponentPropsWithoutRef<"svg">) => {
 			<path
 				fill="none"
 				stroke="#FFF"
-				stroke-width="2"
+				strokeWidth="2"
 				d="M.708 4.062l3.201 3.202L10.465.707"
 			/>
 		</svg>

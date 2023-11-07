@@ -14,6 +14,8 @@ const ExercisePage = async (props: Props) => {
 	const exercise = await client.findExerciseBySlug(props.params.slug)
 	if (!exercise) notFound()
 
+	console.log(exercise)
+
 	return (
 		<div>
 			<Text style="heading" size={40} asChild>
@@ -22,7 +24,12 @@ const ExercisePage = async (props: Props) => {
 
 			{exercise.type === "brainstorm" && <BrainstormExercise />}
 			{exercise.type === "quadrants" && (
-				<QuadrantsExercise quadrants={exercise.quadrants} />
+				<QuadrantsExercise
+					quadrants={exercise.quadrants}
+					todayInstructions={exercise.today_instructions}
+					tomorrowInstructions={exercise.tomorrow_instructions}
+					finalInstructions={exercise.finalize_instructions}
+				/>
 			)}
 		</div>
 	)

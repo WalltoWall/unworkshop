@@ -45,6 +45,64 @@ export const Exercise = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 
+		// Quadrant Instructions
+		defineField({
+			name: "today_instructions",
+			title: "Today Instructions",
+			description: "Instructions on how to do this exercise",
+			type: "array",
+
+			of: [
+				defineArrayMember({
+					type: "block",
+					styles: [],
+					lists: [],
+					marks: {
+						decorators: [{ title: "Bold", value: "strong" }],
+						annotations: [],
+					},
+				}),
+			],
+			hidden: ({ document }) => document?.type !== "quadrants",
+		}),
+		defineField({
+			name: "tomorrow_instructions",
+			title: "Tomorrow Instructions",
+			description: "Instructions on how to do this exercise",
+			type: "array",
+			of: [
+				defineArrayMember({
+					type: "block",
+					styles: [],
+					lists: [],
+					marks: {
+						decorators: [{ title: "Bold", value: "strong" }],
+						annotations: [],
+					},
+				}),
+			],
+			hidden: ({ document }) => document?.type !== "quadrants",
+		}),
+		defineField({
+			name: "finalize_instructions",
+			title: "Finalize Instructions",
+			description: "Instructions on how to finalize your answers.",
+			type: "array",
+
+			of: [
+				defineArrayMember({
+					type: "block",
+					styles: [],
+					lists: [],
+					marks: {
+						decorators: [{ title: "Bold", value: "strong" }],
+						annotations: [],
+					},
+				}),
+			],
+			hidden: ({ document }) => document?.type !== "quadrants",
+		}),
+
 		// Brainstorm fields.
 		defineField({
 			name: "steps",
@@ -103,59 +161,6 @@ export const Exercise = defineType({
 						select: { title: "today_instructions" },
 					},
 					fields: [
-						defineField({
-							name: "today_instructions",
-							title: "Today Instructions",
-							description: "Instructions on how to do this exercise",
-							type: "array",
-
-							of: [
-								defineArrayMember({
-									type: "block",
-									styles: [],
-									lists: [],
-									marks: {
-										decorators: [{ title: "Bold", value: "strong" }],
-										annotations: [],
-									},
-								}),
-							],
-						}),
-						defineField({
-							name: "tomorrow_instructions",
-							title: "Tomorrow Instructions",
-							description: "Instructions on how to do this exercise",
-							type: "array",
-							of: [
-								defineArrayMember({
-									type: "block",
-									styles: [],
-									lists: [],
-									marks: {
-										decorators: [{ title: "Bold", value: "strong" }],
-										annotations: [],
-									},
-								}),
-							],
-						}),
-						defineField({
-							name: "finalize_instructions",
-							title: "Finalize Instructions",
-							description: "Instructions on how to finalize your answers.",
-							type: "array",
-
-							of: [
-								defineArrayMember({
-									type: "block",
-									styles: [],
-									lists: [],
-									marks: {
-										decorators: [{ title: "Bold", value: "strong" }],
-										annotations: [],
-									},
-								}),
-							],
-						}),
 						defineField({
 							name: "topValue",
 							title: "Top Value",

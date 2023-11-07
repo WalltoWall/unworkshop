@@ -8,7 +8,7 @@ import {
 	type Dispatch,
 	type SetStateAction,
 } from "react"
-import { useDrag, useDrop } from "react-dnd"
+import { useDrag, useDrop, type XYCoord } from "react-dnd"
 import Image from "next/image"
 import { cx } from "class-variance-authority"
 import { RichText } from "@/components/RichText"
@@ -16,7 +16,7 @@ import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
 import { altFor, urlFor } from "@/sanity/helpers"
 import styles from "./QuadrantExercise.module.css"
-import { getTime } from "./QuadrantsExercise"
+import { getTime, type Result } from "./QuadrantsExercise"
 
 const serializers = {
 	strong: ({ children }: { children: React.ReactNode }) => (
@@ -42,16 +42,17 @@ const DraggablePoint = ({ id, top, left, placed }: Point & { id: string }) => {
 		[id, left, top, placed],
 	)
 
-	const dotStyle = id === "today" ? "border-4 border-indigo-68" : "bg-indigo-68"
-	const opacity = placed ? "opacity-1" : "opacity-0"
-
 	return (
 		<div
 			ref={drag}
-			className={`absolute left-0 top-0 -ml-4 -mt-4 h-8 w-8 rounded-full ${dotStyle} ${opacity} transition-opacity`}
+			className={cx(
+				`absolute left-0 top-0 -ml-4 -mt-4 h-8 w-8 rounded-full transition-opacity`,
+				id === "today" ? "border-4 border-indigo-68" : "bg-indigo-68",
+				placed ? "opacity-1" : "opacity-0",
+			)}
 			style={{
-				top,
-				left,
+				top: `${top}%`,
+				left: `${left}%`,
 			}}
 		/>
 	)
@@ -64,50 +65,15 @@ export interface DragItem {
 	left: number
 }
 
-export interface QuadrantItem {
-	id: number
-	key: any
-	today_instructions: Array<unknown>
-	tomorrow_instructions: Array<unknown>
-	finalize_instructions: Array<unknown>
-	topValue: string
-	bottomValue: string
-	leftValue: string
-	rightValue: string
-	topLeftImage?: unknown
-	topRightImage?: unknown
-	bottomLeftImage?: unknown
-	bottomRightImage?: unknown
-	_key: string
-}
-
 type QuadrantProps = {
-	item: ST["exercise"]["quadrants"][number]
+	item: NonNullable<ST["exercise"]["quadrants"]>[number]
 	index: number
 	active: number
-	results: Array<unknown>
-	setResults: Dispatch<
-		SetStateAction<
-			{
-				today: {
-					top: number
-					left: number
-					placed: boolean
-				}
-				tomorrow: {
-					top: number
-					left: number
-					placed: boolean
-				}
-				arrow: {
-					top: number
-					left: number
-					width: number
-					angle: number
-				}
-			}[]
-		>
-	>
+	results: Result[]
+	setResults: Dispatch<SetStateAction<Result[] | undefined>>
+	todayInstructions?: ST["exercise"]["today_instructions"]
+	tomorrowInstructions?: ST["exercise"]["tomorrow_instructions"]
+	finalInstructions?: ST["exercise"]["finalize_instructions"]
 }
 
 export const Quadrant = ({
@@ -116,6 +82,9 @@ export const Quadrant = ({
 	active,
 	results,
 	setResults,
+	todayInstructions,
+	tomorrowInstructions,
+	finalInstructions,
 }: QuadrantProps) => {
 	const [opacity, setOpacity] = useState("opacity-0")
 	const clickTarget = useRef(null)
@@ -132,9 +101,10 @@ export const Quadrant = ({
 
 	const movePoint = useCallback(
 		(id: string, left: number, top: number) => {
-			const newResults = [...results]
-			newResults[index] = {
-				...newResults[index],
+			const newResults = [...results] as Result[]
+			let updatedPositions = { ...newResults[index] }
+			updatedPositions = {
+				...updatedPositions,
 				[id]: {
 					top,
 					left,
@@ -142,14 +112,23 @@ export const Quadrant = ({
 				},
 			}
 
-			const points = newResults[index]
-			newResults[index] = moveArrow(
-				left,
-				points.today?.left,
-				top,
-				points.today?.top,
-				points,
-			)
+			if (id === "tomorrow") {
+				updatedPositions.arrow = moveArrow(
+					left,
+					updatedPositions.today.left,
+					top,
+					updatedPositions.today.top,
+				)
+			} else {
+				updatedPositions.arrow = moveArrow(
+					updatedPositions.tomorrow.left,
+					left,
+					updatedPositions.tomorrow.top,
+					top,
+				)
+			}
+
+			newResults[index] = updatedPositions
 
 			setResults(newResults)
 		},
@@ -161,47 +140,44 @@ export const Quadrant = ({
 		leftTwo: number,
 		topOne: number,
 		topTwo: number,
-		resultValue: unknown,
 	) => {
-		const arrowY = parseFloat(leftOne) - parseFloat(leftTwo)
-		const arrowX = parseFloat(topOne) - parseFloat(topTwo)
+		const arrowY = leftOne - leftTwo
+		const arrowX = topOne - topTwo
 
 		const arrowAngle =
-			(Math.atan2(
-				parseFloat(topOne) - parseFloat(topTwo),
-				parseFloat(leftOne) - parseFloat(leftTwo),
-			) *
-				180) /
-			Math.PI
+			(Math.atan2(topOne - topTwo, leftOne - leftTwo) * 180) / Math.PI
 
 		const arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
 
-		resultValue.arrow = {
+		const arrow = {
 			top: topTwo,
 			left: leftTwo,
-			width: `${arrowWidth}%`,
+			width: arrowWidth,
 			angle: arrowAngle,
 		}
 
-		return resultValue
+		return arrow
 	}
 
 	const [, drop] = useDrop(
 		() => ({
 			accept: "time",
 			drop(item: DragItem, monitor) {
-				const offset = monitor.getClientOffset()
+				if (clickTarget?.current) {
+					const offset = monitor.getClientOffset() as XYCoord
 
-				const parentRect = clickTarget.current.getBoundingClientRect()
+					const parentRect = clickTarget.current?.getBoundingClientRect()
 
-				const top = `${
-					((offset.y - parentRect.top) / clickTarget.current.clientHeight) * 100
-				}%`
-				const left = `${
-					((offset.x - parentRect.left) / clickTarget.current.clientWidth) * 100
-				}%`
+					const top =
+						((offset.y - parentRect.top) / clickTarget.current?.clientHeight) *
+						100
 
-				movePoint(item.id, left, top)
+					const left =
+						((offset.x - parentRect.left) / clickTarget.current?.clientWidth) *
+						100
+
+					movePoint(item.id, left, top)
+				}
 
 				return undefined
 			},
@@ -210,22 +186,23 @@ export const Quadrant = ({
 	)
 
 	const handleClick = (event) => {
-		const parentRect = clickTarget.current.getBoundingClientRect()
-		const time = getTime(active, index)
+		if (clickTarget?.current) {
+			const parentRect = clickTarget.current.getBoundingClientRect()
+			const time = getTime(active, index)
 
-		const top = `${
-			((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
-			100
-		}%`
-		const left = `${
-			((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
-			100
-		}%`
+			const top =
+				((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
+				100
 
-		if (time === "today") {
-			movePoint("today", left, top)
-		} else if (time === "tomorrow") {
-			movePoint("tomorrow", left, top)
+			const left =
+				((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
+				100
+
+			if (time === "today") {
+				movePoint("today", left, top)
+			} else if (time === "tomorrow") {
+				movePoint("tomorrow", left, top)
+			}
 		}
 	}
 
@@ -245,10 +222,10 @@ export const Quadrant = ({
 								<RichText
 									content={
 										getTime(active, index) === "today"
-											? item.today_instructions
+											? todayInstructions
 											: active === results.length * 2
-											? item.finalize_instructions
-											: item.tomorrow_instructions
+											? finalInstructions
+											: tomorrowInstructions
 									}
 									components={{ ...serializers }}
 								/>
@@ -343,7 +320,7 @@ export const Quadrant = ({
 						onClick={handleClick}
 					>
 						{Object.keys(results[index]).map((key) => {
-							const { left, top, placed } = results[index][key] as Point
+							const { left, top, placed } = results[index][key]
 
 							if (key === "arrow") return null
 
@@ -366,9 +343,9 @@ export const Quadrant = ({
 							opacity,
 						)}
 						style={{
-							top: results[index]?.arrow?.top,
-							left: results[index]?.arrow?.left,
-							width: results[index]?.arrow?.width,
+							top: `${results[index]?.arrow?.top}%`,
+							left: `${results[index]?.arrow?.left}%`,
+							width: `${results[index]?.arrow?.width}%`,
 							transform: `rotate(${results[index]?.arrow?.angle}deg)`,
 						}}
 					>
