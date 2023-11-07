@@ -55,10 +55,12 @@ export const Steps = ({
 				</div>
 			</div>
 
-			<Text style="heading" size={16}>
-				<p className="mt-3 whitespace-pre text-center font-bold uppercase">
-					{active === count ? "Finish" : "Next Step"}
-				</p>
+			<Text
+				style="heading"
+				size={16}
+				className="mt-3 whitespace-pre text-center font-bold uppercase"
+			>
+				{active === count ? "Finish" : "Next Step"}
 			</Text>
 		</div>
 	)

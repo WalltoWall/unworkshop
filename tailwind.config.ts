@@ -53,6 +53,7 @@ export default {
 			40: "2.5rem",
 			32: "2rem",
 			24: "1.5rem",
+			18: "1.125rem",
 			16: "1rem",
 			12: ".75rem",
 		},
@@ -64,6 +65,7 @@ export default {
 
 			gray: {
 				97: "#f7f7f7",
+				90: "#e5e5e5",
 				82: "#cdd6d4",
 				75: "#bfbfbf",
 				50: "#7f7f7f",

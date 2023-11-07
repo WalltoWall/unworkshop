@@ -4,6 +4,8 @@ import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./BrainstormExercise"
 import { QuadrantsExercise } from "./QuadrantsExercise"
 
+// import { QuadrantsExercise } from "./QuadrantsExercise"
+
 type Props = {
 	params: { code: string; slug: string }
 }
