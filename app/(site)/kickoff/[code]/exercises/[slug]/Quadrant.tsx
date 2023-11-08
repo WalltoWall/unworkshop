@@ -19,7 +19,7 @@ import styles from "./QuadrantExercise.module.css"
 import { getTime, type Result } from "./QuadrantsExercise"
 
 const serializers = {
-	strong: ({ children }: { children: React.ReactNode }) => (
+	strong: ({ children }: { children?: string[] | React.ReactNode }) => (
 		<strong className="text-indigo-68">{children}</strong>
 	),
 }
@@ -31,7 +31,7 @@ interface Point {
 }
 
 const DraggablePoint = ({ id, top, left, placed }: Point & { id: string }) => {
-	const [{ isDragging }, drag] = useDrag(
+	const [_, drag] = useDrag(
 		() => ({
 			type: "time",
 			item: { id, left, top, placed },
@@ -87,7 +87,7 @@ export const Quadrant = ({
 	finalInstructions,
 }: QuadrantProps) => {
 	const [opacity, setOpacity] = useState("opacity-0")
-	const clickTarget = useRef(null)
+	const clickTarget = useRef<HTMLDivElement>(null)
 
 	useEffect(() => {
 		const time = getTime(active, index)
@@ -185,7 +185,7 @@ export const Quadrant = ({
 		[moveArrow, movePoint],
 	)
 
-	const handleClick = (event) => {
+	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (clickTarget?.current) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
 			const time = getTime(active, index)
