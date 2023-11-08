@@ -319,8 +319,18 @@ export const Quadrant = ({
 							transform: `rotate(${results[index]?.arrow?.angle}deg)`,
 						}}
 					>
-						<div className="bg-indigo-68"></div>
-						<div className="border-l-indigo-68"></div>
+						<div
+							className={cx(
+								"bg-indigo-68",
+								!getTime(active, index) && "!w-full",
+							)}
+						></div>
+						<div
+							className={cx(
+								"border-l-indigo-68",
+								!getTime(active, index) && "opacity-0",
+							)}
+						></div>
 					</div>
 				</div>
 			</div>
