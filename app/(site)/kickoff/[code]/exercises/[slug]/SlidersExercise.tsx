@@ -1,20 +1,11 @@
 "use client"
 
-/**
- * Nits:
- *  - Adhere to `eslint` warnings. Please let me know if you would like any
- *    help setting up an integration with your editor! This would catch any
- *    un-used imports, variables, console statements, etc.
- */
 import { useState } from "react"
 import Image from "next/image"
 import type { ST } from "@/sanity/config"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
 import { cx } from "class-variance-authority"
 
-
-// NOTE: Here, we can use the ST type to extract out our types instead of defining
-// them by hand.
 type SliderItem = NonNullable<ST["exercise"]["sliders"]>[number]
 type Props = {
 	sliders: Array<SliderItem>
