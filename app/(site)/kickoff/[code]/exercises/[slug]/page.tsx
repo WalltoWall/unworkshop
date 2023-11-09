@@ -18,7 +18,9 @@ const ExercisePage = async (props: Props) => {
 				<h1>{exercise.name}</h1>
 			</Text>
 
-			{exercise.type === "brainstorm" && <BrainstormExercise />}
+			{exercise.type === "brainstorm" && (
+				<BrainstormExercise steps={exercise.steps} />
+			)}
 			{exercise.type === "quadrants" && (
 				<QuadrantsExercise quadrants={exercise.quadrants} />
 			)}
