@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { DndProvider } from "react-dnd"
-import { HTML5Backend } from "react-dnd-html5-backend"
+import { TouchBackend } from "react-dnd-touch-backend"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { Quadrant } from "./Quadrant"
@@ -75,7 +75,7 @@ export const QuadrantsExercise = ({
 	return (
 		<div className="mt-8">
 			{results && (
-				<DndProvider backend={HTML5Backend}>
+				<DndProvider backend={TouchBackend}>
 					{quadrants.map((quadrant, index) => (
 						<div key={index}>
 							{(getTime(active, index) === "today" ||
