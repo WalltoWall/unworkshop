@@ -13,7 +13,7 @@ const ExercisePage = async (props: Props) => {
 	if (!exercise) notFound()
 
 	return (
-		<div>
+		<div className="h-full">
 			<Text style="heading" size={40} asChild>
 				<h1>{exercise.name}</h1>
 			</Text>
