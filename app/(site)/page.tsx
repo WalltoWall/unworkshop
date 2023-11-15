@@ -10,7 +10,7 @@ async function navigateToWorkshop(data: FormData) {
 	"use server"
 
 	const form = FormSchema.parse(data)
-	redirect(`/kickoff/${form.code}`)
+	redirect(`/kickoff/${form.code.toLowerCase()}`)
 }
 
 const Home = () => {
