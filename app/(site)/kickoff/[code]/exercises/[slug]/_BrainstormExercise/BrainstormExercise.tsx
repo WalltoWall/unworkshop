@@ -5,6 +5,7 @@ import clsx from "clsx"
 import { PlusIcon } from "@/components/icons/Plus"
 import { XCircleIcon } from "@/components/icons/XCircle"
 import { Steps } from "@/components/Steps"
+import { submitResponse } from "./SubmitResponse"
 
 export interface BrainstormExerciseProps {
 	steps: Array<{
@@ -16,13 +17,24 @@ export interface BrainstormExerciseProps {
 
 export const BrainstormExercise = ({ steps }: BrainstormExerciseProps) => {
 	const [step, setStep] = React.useState<number>(1)
-	const [isScrollable, setIsScrollable] = React.useState(false)
 	const [cards, setCards] = React.useState<Array<string>>([""])
-	const cardContainerRef = React.useRef<HTMLDivElement>(null)
+	const [response, setResponse] = React.useState<string>("")
+	const [pending, startTransition] = React.useTransition()
 
 	const handleDisabled = () => {
 		return false
 	}
+
+	React.useEffect(() => {
+
+		const debounce = setTimeout(() => {	
+				startTransition(() => {
+					await submitResponse(formData);
+				})
+		}, 5000)
+		
+		return () => clearTimeout(debounce)
+	}, [response])
 
 	return (
 		<div className="mt-4 flex h-full flex-col">
@@ -41,7 +53,6 @@ export const BrainstormExercise = ({ steps }: BrainstormExerciseProps) => {
 				className={clsx(
 					"scroll-shadow scroll-shadow-4 relative mx-auto my-8 grid max-h-full grow grid-cols-2 content-start gap-2.5 overflow-y-scroll py-4 scrollbar-hide sm:grid-cols-[163px_163px]",
 				)}
-				ref={cardContainerRef}
 			>
 				<button
 					className="flex flex-col items-center justify-center gap-3"
