@@ -48,7 +48,7 @@ export const BrainstormExercise = ({ steps }: BrainstormExerciseProps) => {
 					onClick={() => setCards([...cards, ""])}
 				>
 					<PlusIcon className="h-7 w-7 text-black" />
-					<span className="max-w-[5rem] text-14 leading-none font-sans">
+					<span className="text-14 max-w-[5rem] leading-none font-sans">
 						Add another perception
 					</span>
 				</button>
@@ -59,8 +59,9 @@ export const BrainstormExercise = ({ steps }: BrainstormExerciseProps) => {
 						key={idx}
 					>
 						<textarea
-							className="card-input h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:text-18 placeholder:leading-[1.25] focus:outline-none"
+							className="card-input placeholder:text-18 h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:leading-[1.25] focus:outline-none"
 							placeholder="Type something here to add your perception"
+							name="perceptions_response"
 						/>
 
 						<button
