@@ -40,14 +40,19 @@ type Props = {
 	slug: string | undefined
 	name: string
 	type: ST["exercise"]["type"]
+	presenter?: boolean
 }
 
 export const ExerciseCard = (props: Props) => {
 	const variant = variants[props.type]
 
+	const href = props.presenter
+		? `/presenter/${props.kickoffCode}/${props.slug}`
+		: `/kickoff/${props.kickoffCode}/exercises/${props.slug}`
+
 	return (
 		<Link
-			href={`/kickoff/${props.kickoffCode}/exercises/${props.slug}`}
+			href={href}
 			className={cx(
 				"relative grid aspect-[289/160] grid-cols-[4fr,6fr] overflow-hidden rounded-lg bg-gradient-to-r",
 				variant.gradientClassName,
