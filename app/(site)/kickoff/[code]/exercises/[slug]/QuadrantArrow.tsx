@@ -10,7 +10,7 @@ interface QuadrantArrowProps {
 		angle: number
 	}
 	opacity: string
-	time: string | null
+	time: false | "today" | "tomorrow"
 }
 
 export const QuadrantArrow = ({
