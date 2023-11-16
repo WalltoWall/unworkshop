@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { DndProvider } from "react-dnd"
-import { TouchBackend } from "react-dnd-touch-backend"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { Quadrant } from "./Quadrant"
@@ -73,9 +71,9 @@ export const QuadrantsExercise = ({
 	}
 
 	return (
-		<div className="mt-8">
+		<div className="mt-8 h-full">
 			{results && (
-				<DndProvider backend={TouchBackend}>
+				<>
 					{quadrants.map((quadrant, index) => (
 						<div key={index}>
 							{(getTime(active, index) === "today" ||
@@ -102,7 +100,7 @@ export const QuadrantsExercise = ({
 						onActiveChange={setActive}
 						onFinish={() => alert("done")}
 					/>
-				</DndProvider>
+				</>
 			)}
 		</div>
 	)

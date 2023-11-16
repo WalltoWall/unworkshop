@@ -8,14 +8,15 @@ import {
 	type Dispatch,
 	type SetStateAction,
 } from "react"
-import { useDrag, useDrop, type XYCoord } from "react-dnd"
 import Image from "next/image"
-import { cx } from "class-variance-authority"
+import { DndContext, type DragEndEvent } from "@dnd-kit/core"
 import { RichText } from "@/components/RichText"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
-import { altFor, urlFor } from "@/sanity/helpers"
-import styles from "./QuadrantExercise.module.css"
+import { altFor, urlFor, type SanityImage } from "@/sanity/helpers"
+import { QuadrantArrow } from "./QuadrantArrow"
+import { QuadrantDraggable } from "./QuadrantDraggable"
+import { QuadrantDroppable } from "./QuadrantDroppable"
 import { getTime, type Result } from "./QuadrantsExercise"
 
 const serializers = {
@@ -24,48 +25,7 @@ const serializers = {
 	),
 }
 
-interface Point {
-	top: number
-	left: number
-	placed: boolean
-}
-
-const DraggablePoint = ({ id, top, left, placed }: Point & { id: string }) => {
-	const [_, drag] = useDrag(
-		() => ({
-			type: "time",
-			item: { id, left, top, placed },
-			collect: (monitor) => ({
-				isDragging: monitor.isDragging(),
-			}),
-		}),
-		[id, left, top, placed],
-	)
-
-	return (
-		<div
-			ref={drag}
-			className={cx(
-				`absolute left-0 top-0 -ml-4 -mt-4 h-8 w-8 rounded-full transition-opacity`,
-				id === "today" ? "border-4 border-indigo-68" : "bg-indigo-68",
-				placed ? "opacity-1" : "opacity-0",
-			)}
-			style={{
-				top: `${top}%`,
-				left: `${left}%`,
-			}}
-		/>
-	)
-}
-
-export interface DragItem {
-	type: string
-	id: string
-	top: number
-	left: number
-}
-
-const QuadrantImage = ({ image }) => (
+const QuadrantImage = ({ image }: { image: SanityImage }) => (
 	<Image
 		src={urlFor(image).width(150).height(150).format("webp").toString()}
 		alt={altFor(image)}
@@ -169,45 +129,39 @@ export const Quadrant = ({
 		return arrow
 	}
 
-	const [, drop] = useDrop(
-		() => ({
-			accept: "time",
-			drop(item: DragItem, monitor) {
-				if (clickTarget?.current) {
-					const offset = monitor.getClientOffset() as XYCoord
+	const handleDragEnd = (event: DragEndEvent) => {
+		if (clickTarget?.current) {
+			const { type, ref } = event.active.data.current
+			const parentRect = clickTarget.current.getBoundingClientRect()
 
-					const parentRect = clickTarget.current?.getBoundingClientRect()
+			if (ref) {
+				var pointRect = ref.getBoundingClientRect()
+				const top =
+					((pointRect.top + 16 - parentRect.top) /
+						clickTarget.current.clientHeight) *
+					100
+				const left =
+					((pointRect.left + 16 - parentRect.left) /
+						clickTarget.current.clientWidth) *
+					100
 
-					const top =
-						((offset.y - parentRect.top) / clickTarget.current?.clientHeight) *
-						100
-
-					const left =
-						((offset.x - parentRect.left) / clickTarget.current?.clientWidth) *
-						100
-
-					movePoint(item.id, left, top)
+				if (top >= 0 && top <= 100 && left >= 0 && left <= 100) {
+					movePoint(type, left, top)
 				}
-
-				return undefined
-			},
-		}),
-		[moveArrow, movePoint],
-	)
+			}
+		}
+	}
 
 	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (clickTarget?.current) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
 			const time = getTime(active, index)
-
 			const top =
 				((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
 				100
-
 			const left =
 				((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
 				100
-
 			if (time === "today") {
 				movePoint("today", left, top)
 			} else if (time === "tomorrow") {
@@ -284,54 +238,25 @@ export const Quadrant = ({
 						)}
 					</div>
 
-					<div
-						ref={drop}
-						className="absolute left-0 top-0 h-full w-full"
-						onClick={handleClick}
-					>
-						{Object.keys(results[index]).map((key) => {
-							const { left, top, placed } = results[index][key]
-
-							if (key === "arrow") return null
-
-							return (
-								<DraggablePoint
-									key={key}
-									id={key}
-									left={left}
-									top={top}
-									placed={placed}
-								/>
-							)
-						})}
-					</div>
-
-					<div
-						className={cx(
-							`absolute h-1 origin-left`,
-							styles.arrowBetween,
-							opacity,
-						)}
-						style={{
-							top: `${results[index]?.arrow?.top}%`,
-							left: `${results[index]?.arrow?.left}%`,
-							width: `${results[index]?.arrow?.width}%`,
-							transform: `rotate(${results[index]?.arrow?.angle}deg)`,
-						}}
-					>
-						<div
-							className={cx(
-								"bg-indigo-68",
-								!getTime(active, index) && "!w-full",
-							)}
-						></div>
-						<div
-							className={cx(
-								"border-l-indigo-68",
-								!getTime(active, index) && "opacity-0",
-							)}
-						></div>
-					</div>
+					<DndContext onDragEnd={handleDragEnd}>
+						<QuadrantDroppable index={index} onClick={handleClick}>
+							<QuadrantDraggable
+								index={index}
+								result={results[index].today}
+								type="today"
+							/>
+							<QuadrantArrow
+								result={results[index].arrow}
+								opacity={opacity}
+								time={getTime(active, index)}
+							/>
+							<QuadrantDraggable
+								index={index}
+								result={results[index].tomorrow}
+								type="tomorrow"
+							/>
+						</QuadrantDroppable>
+					</DndContext>
 				</div>
 			</div>
 
