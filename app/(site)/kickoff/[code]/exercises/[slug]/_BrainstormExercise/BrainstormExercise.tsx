@@ -1,44 +1,24 @@
-"use client"
-
 import React from "react"
-import clsx from "clsx"
-import { PlusIcon } from "@/components/icons/Plus"
-import { XCircleIcon } from "@/components/icons/XCircle"
-import { Steps } from "@/components/Steps"
-import { submitResponse } from "./SubmitResponse"
+import { client } from "@/sanity/client"
+import type { ST } from "@/sanity/config"
+import { CardScroller } from "./CardScroller"
+import type { BrainstormParticipant } from "./types"
 
 export interface BrainstormExerciseProps {
-	steps: Array<{
-		helpText: string | undefined
-		_key: string | undefined
-		prompt: string | undefined
-	}>
+	exercise: ST["exercise"]
 }
 
-export const BrainstormExercise = ({ steps }: BrainstormExerciseProps) => {
-	const [step, setStep] = React.useState<number>(1)
-	const [cards, setCards] = React.useState<Array<string>>([""])
-	const [response, setResponse] = React.useState<string>("")
-	const [pending, startTransition] = React.useTransition()
-
-	const handleDisabled = () => {
-		return false
-	}
-
-	React.useEffect(() => {
-
-		const debounce = setTimeout(() => {	
-				startTransition(() => {
-					await submitResponse(formData);
-				})
-		}, 5000)
-		
-		return () => clearTimeout(debounce)
-	}, [response])
+export const BrainstormExercise = async ({
+	exercise,
+}: BrainstormExerciseProps) => {
+	const participant =
+		await client.findParticipantOrThrow<BrainstormParticipant>()
+	const cards = participant.answers?.[exercise._id]?.answers ?? []
+	const groups = exercise.groups ?? []
 
 	return (
 		<div className="mt-4 flex h-full flex-col">
-			{steps.at(step - 1) && (
+			{/* {steps.at(step - 1) && (
 				<div>
 					<h4 className="max-w-[16rem] text-16 leading-[1.4] font-sans capsize">
 						{steps.at(step - 1)?.prompt}
@@ -47,51 +27,12 @@ export const BrainstormExercise = ({ steps }: BrainstormExerciseProps) => {
 						{steps.at(step - 1)?.helpText}
 					</p>
 				</div>
-			)}
+			)} */}
 
-			<div
-				className={clsx(
-					"scroll-shadow scroll-shadow-4 relative mx-auto my-8 grid max-h-full grow grid-cols-2 content-start gap-2.5 overflow-y-scroll py-4 scrollbar-hide sm:grid-cols-[163px_163px]",
-				)}
-			>
-				<button
-					className="flex flex-col items-center justify-center gap-3"
-					onClick={() => setCards([...cards, ""])}
-				>
-					<PlusIcon className="h-7 w-7 text-black" />
-					<span className="text-14 max-w-[5rem] leading-none font-sans">
-						Add another perception
-					</span>
-				</button>
-
-				{cards.reverse().map((card, idx) => (
-					<div
-						className="animate-fadeIn relative h-[187px] rounded-lg bg-green-78 p-3.5 scrollbar-hide"
-						key={idx}
-					>
-						<textarea
-							className="card-input placeholder:text-18 h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:leading-[1.25] focus:outline-none"
-							placeholder="Type something here to add your perception"
-							name="perceptions_response"
-						/>
-
-						<button
-							className="absolute bottom-2 right-1.5"
-							onClick={() => setCards(cards.filter((_, i) => i !== idx))}
-						>
-							<XCircleIcon className="h-6 w-6" />
-						</button>
-					</div>
-				))}
-			</div>
-
-			<Steps
-				disabled={handleDisabled()}
-				count={steps.length}
-				active={step}
-				onActiveChange={setStep}
-				onFinish={() => alert("done")}
-				className="mt-auto"
+			<CardScroller
+				cards={cards}
+				exerciseId={exercise._id}
+				group={groups.length > 0}
 			/>
 		</div>
 	)

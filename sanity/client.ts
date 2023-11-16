@@ -34,21 +34,25 @@ export const client = {
 		return data
 	}),
 
-	async findParticipant(id: string) {
-		const data = await sanity.fetch<ST["participant"] | null>(
+	async findParticipant<T extends ST["participant"] = ST["participant"]>(
+		id: string,
+	) {
+		const data = await sanity.fetch<T | null>(
 			groq`*[_type == "participant" && _id == $id][0]`,
 			{ id },
+			{ next: { tags: [`participant-${id}`] } },
 		)
 
 		return data
 	},
 
-	async findParticipantOrThrow() {
+	// prettier-ignore
+	async findParticipantOrThrow<T extends ST["participant"] = ST["participant"]>() {
 		const participantId = z
 			.string()
 			.parse(cookies().get(PARTICIPANT_COOKIE)?.value)
 
-		const participant = await client.findParticipant(participantId)
+		const participant = await client.findParticipant<T>(participantId)
 		if (!participant) throw new Error("No onboarded participant found.")
 
 		return participant

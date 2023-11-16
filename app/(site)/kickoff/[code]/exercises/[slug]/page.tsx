@@ -19,7 +19,7 @@ const ExercisePage = async (props: Props) => {
 			</Text>
 
 			{exercise.type === "brainstorm" && (
-				<BrainstormExercise steps={exercise.steps} />
+				<BrainstormExercise exercise={exercise} />
 			)}
 			{exercise.type === "quadrants" && (
 				<QuadrantsExercise quadrants={exercise.quadrants} />
