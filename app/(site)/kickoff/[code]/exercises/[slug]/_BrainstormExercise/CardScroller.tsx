@@ -20,7 +20,13 @@ export const CardScroller = ({
 	const [optimisticCards, addOptimisticCard] = React.useOptimistic<
 		Array<Answer>,
 		Answer
-	>(cards, (state, newCard) => [...state, newCard])
+	>(cards, (state, newCard) => {
+		if (newCard.delete) {
+			return state.filter((card) => card.id !== newCard.id)
+		} else {
+			return [...state, newCard]
+		}
+	})
 
 	return (
 		<div
@@ -34,7 +40,12 @@ export const CardScroller = ({
 				addOptimisticCard={addOptimisticCard}
 			/>
 			{optimisticCards.reverse().map((card, idx) => (
-				<CardForm key={idx} exerciseId={exerciseId} cardId={card.id} />
+				<CardForm
+					key={idx}
+					exerciseId={exerciseId}
+					cardId={card.id}
+					addOptimisticCard={addOptimisticCard}
+				/>
 			))}
 		</div>
 	)

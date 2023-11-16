@@ -3,14 +3,23 @@
 import React from "react"
 import { XCircleIcon } from "@/components/icons/XCircle"
 import { removeCardAction, submitResponseAction } from "./actions"
+import type { Answer } from "./types"
 
 interface CardFormProps {
 	exerciseId: string
 	cardId: string
+	response: string
+	addOptimisticCard: (action: Answer) => void
 }
 
-export const CardForm = ({ exerciseId, cardId }: CardFormProps) => {
+export const CardForm = ({
+	exerciseId,
+	cardId,
+	response,
+	addOptimisticCard,
+}: CardFormProps) => {
 	const formRef = React.useRef<HTMLFormElement>(null)
+
 	return (
 		<div className="relative">
 			<form
@@ -21,8 +30,12 @@ export const CardForm = ({ exerciseId, cardId }: CardFormProps) => {
 				<input type="hidden" value={exerciseId} name="exerciseId" />
 				<input type="hidden" value={cardId} name="cardId" />
 				<textarea
-					className="card-input h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:text-18 placeholder:leading-[1.25] focus:outline-none"
-					placeholder="Type something here to add your perception"
+					className="card-input placeholder:text-18 h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:leading-[1.25] focus:outline-none"
+					placeholder={
+						response !== undefined
+							? response
+							: "Type something here to add your perception"
+					}
 					name="response"
 					onKeyDown={(e) => {
 						if (formRef.current === null) return
@@ -33,10 +46,16 @@ export const CardForm = ({ exerciseId, cardId }: CardFormProps) => {
 					}}
 				/>
 			</form>
-			<form action={removeCardAction} className="absolute bottom-2 right-1.5">
+			<form
+				action={async (formData: FormData) => {
+					addOptimisticCard({ id: cardId, response: "", delete: true })
+					await removeCardAction(formData)
+				}}
+				className="absolute bottom-2 right-1.5"
+			>
 				<input type="hidden" value={exerciseId} name="exerciseId" />
 				<input type="hidden" value={cardId} name="cardId" />
-				<button>
+				<button type="submit">
 					<XCircleIcon className="h-6 w-6" />
 				</button>
 			</form>

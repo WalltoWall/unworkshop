@@ -58,14 +58,38 @@ export async function addCardAction(formData: FormData) {
 
 export async function submitResponseAction(formData: FormData) {
 	const data = submitCardSchema.parse(formData)
-	console.log(data)
+
 	const participant =
 		await client.findParticipantOrThrow<BrainstormParticipant>()
 
-	const answers = participant.answers?.[data.exerciseId]?.answers
+	if (!participant.answers) return
 
-	// iterate over whole array, see if it matches the id of card looking to change response of
-	// and change that response and then put back new array and overwrite answers array
+	const answers = participant.answers[data.exerciseId]?.answers ?? []
+
+	if (answers.length < 0) return
+
+	answers?.forEach((card) => {
+		if (card.id === data.cardId) {
+			card.response = data.response
+		}
+	})
+
+	const newAnswers: BrainstormParticipant["answers"] = {
+		...participant.answers,
+		[data.exerciseId]: {
+			...participant.answers[data.exerciseId],
+			answers,
+		},
+	}
+
+	const res = await sanity
+		.patch(participant._id)
+		.set({ answers: newAnswers })
+		.commit()
+		.catch(console.error)
+
+	console.dir(res, { depth: null })
+	revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
 }
 
 export async function removeCardAction(formData: FormData) {
