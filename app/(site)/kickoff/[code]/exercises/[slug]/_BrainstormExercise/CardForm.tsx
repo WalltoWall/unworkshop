@@ -15,10 +15,11 @@ interface CardFormProps {
 export const CardForm = ({
 	exerciseId,
 	cardId,
-	response,
+	response = "",
 	addOptimisticCard,
 }: CardFormProps) => {
 	const formRef = React.useRef<HTMLFormElement>(null)
+	const [message, setMessage] = React.useState<string>(response)
 
 	return (
 		<div className="relative">
@@ -31,11 +32,9 @@ export const CardForm = ({
 				<input type="hidden" value={cardId} name="cardId" />
 				<textarea
 					className="card-input placeholder:text-18 h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:leading-[1.25] focus:outline-none"
-					placeholder={
-						response !== undefined
-							? response
-							: "Type something here to add your perception"
-					}
+					placeholder="Type something here to add your perception"
+					value={message}
+					onChange={(e) => setMessage(e.target.value)}
 					name="response"
 					onKeyDown={(e) => {
 						if (formRef.current === null) return

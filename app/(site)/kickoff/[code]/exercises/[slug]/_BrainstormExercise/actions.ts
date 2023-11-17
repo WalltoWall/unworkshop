@@ -88,7 +88,6 @@ export async function submitResponseAction(formData: FormData) {
 		.commit()
 		.catch(console.error)
 
-	console.dir(res, { depth: null })
 	revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
 }
 

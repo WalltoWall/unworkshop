@@ -45,6 +45,7 @@ export const CardScroller = ({
 					exerciseId={exerciseId}
 					cardId={card.id}
 					addOptimisticCard={addOptimisticCard}
+					response={card.response}
 				/>
 			))}
 		</div>
