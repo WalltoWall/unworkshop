@@ -15,10 +15,11 @@ export const BrainstormExercise = async ({
 		await client.findParticipantOrThrow<BrainstormParticipant>()
 	const cards = participant.answers?.[exercise._id]?.answers ?? []
 	const groups = exercise.groups ?? []
+	const steps = exercise.steps
 
 	return (
 		<div className="mt-4 flex h-full flex-col">
-			{/* {steps.at(step - 1) && (
+			{/* {steps && steps.at(step - 1) && (
 				<div>
 					<h4 className="max-w-[16rem] text-16 leading-[1.4] font-sans capsize">
 						{steps.at(step - 1)?.prompt}

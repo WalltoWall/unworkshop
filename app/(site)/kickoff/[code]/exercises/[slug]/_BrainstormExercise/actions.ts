@@ -82,7 +82,7 @@ export async function submitResponseAction(formData: FormData) {
 		},
 	}
 
-	const res = await sanity
+	await sanity
 		.patch(participant._id)
 		.set({ answers: newAnswers })
 		.commit()
