@@ -14,11 +14,12 @@ export const text = cva("", {
 			32: "text-32",
 			24: "text-24",
 			16: "text-16",
+			14: "text-14",
 			12: "text-12",
 		},
 		style: {
 			heading: "font-heading uppercase font-bold leading-[0.9]",
-			copy: "font-sans",
+			copy: "font-sans leading-[1.25]",
 		},
 		trim: {
 			true: "capsize",
