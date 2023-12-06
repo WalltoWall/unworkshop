@@ -13,6 +13,7 @@ export const text = cva("", {
 			40: "text-40",
 			32: "text-32",
 			24: "text-24",
+			18: "text-18",
 			16: "text-16",
 			14: "text-14",
 			12: "text-12",

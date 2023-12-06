@@ -7,9 +7,13 @@ import { Text } from "@/components/Text"
 
 interface InstructionsModalProps {
 	exerciseName: string
+	instructions: string
 }
 
-export const InstructionsModal = ({ exerciseName }: InstructionsModalProps) => {
+export const InstructionsModal = ({
+	exerciseName,
+	instructions,
+}: InstructionsModalProps) => {
 	return (
 		<Dialog.Root>
 			<div className="flex items-start gap-2">
@@ -42,13 +46,7 @@ export const InstructionsModal = ({ exerciseName }: InstructionsModalProps) => {
 						size={14}
 						className="mt-5 max-w-[320px] text-gray-50"
 					>
-						Curabitur cursus iaculis consectetur. Lorem ipsum dolor sit amet,
-						consectetur adipiscing elit. <br /> Quisque accumsan eget felis
-						blandit lacinia. Nunc a turpis nec lacus consectetur semper eget ac
-						erat. Fusce dictum, metus ut porttitor feugiat, tortor dui iaculis
-						nisi. Phasellus eget mi mi. Morbi vulputate lacus eu enim placerat,
-						sed mollis metus interdum. <br /> Ut ac vulputate sem. Maecenas
-						pharetra faucibus leo, a fermentum turpis feugiat eget.
+						{instructions}
 					</Text>
 				</Dialog.Content>
 			</Dialog.Portal>

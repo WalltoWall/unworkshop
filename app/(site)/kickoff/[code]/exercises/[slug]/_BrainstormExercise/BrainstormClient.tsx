@@ -48,7 +48,7 @@ const BrainstormClient = ({
 	}
 
 	return (
-		<div>
+		<div className="h-full">
 			{steps && steps.at(step - 1) && (
 				<div>
 					<h4 className="max-w-[16rem] text-16 leading-[1.4] font-sans capsize">
@@ -64,6 +64,7 @@ const BrainstormClient = ({
 				cards={cards}
 				exerciseId={exerciseId}
 				group={groups.length > 0}
+				color={steps?.at(step - 1).color}
 			/>
 
 			<button

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { client } from "@/sanity/client"
 import { PresenterHeader } from "../../PresenterHeader"
+import { BrainstormPresenterView } from "./_BrainstormExercise/BrainstormPresenterView"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -13,6 +14,8 @@ const PresenterExercisePage = async (props: Props) => {
 	return (
 		<>
 			<PresenterHeader heading={exercise.name} />
+
+			{exercise.type === "brainstorm" && <BrainstormPresenterView />}
 		</>
 	)
 }

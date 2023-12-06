@@ -1,9 +1,7 @@
 import React from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { client } from "@/sanity/client"
 import type { ST } from "@/sanity/config"
 import BrainstormClient from "./BrainstormClient"
-import { CardScroller } from "./CardScroller"
 import type { BrainstormParticipant } from "./types"
 
 export interface BrainstormExerciseProps {

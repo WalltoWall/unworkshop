@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import clsx from "clsx"
 import { XCircleIcon } from "@/components/icons/XCircle"
 import { removeCardAction, submitResponseAction } from "./actions"
 import type { Answer } from "./types"
@@ -9,6 +10,7 @@ interface CardFormProps {
 	exerciseId: string
 	cardId: string
 	response: string
+	color: string
 	addOptimisticCard: (action: Answer) => void
 }
 
@@ -16,6 +18,7 @@ export const CardForm = ({
 	exerciseId,
 	cardId,
 	response = "",
+	color,
 	addOptimisticCard,
 }: CardFormProps) => {
 	const formRef = React.useRef<HTMLFormElement>(null)
@@ -26,12 +29,15 @@ export const CardForm = ({
 			<form
 				action={submitResponseAction}
 				ref={formRef}
-				className="animate-fadeIn h-[187px] rounded-lg bg-green-78 p-3.5 scrollbar-hide"
+				className={clsx(
+					"h-[187px] animate-fadeIn rounded-lg p-3.5 scrollbar-hide",
+					color,
+				)}
 			>
 				<input type="hidden" value={exerciseId} name="exerciseId" />
 				<input type="hidden" value={cardId} name="cardId" />
 				<textarea
-					className="card-input placeholder:text-18 h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:leading-[1.25] focus:outline-none"
+					className="card-input h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:text-18 placeholder:leading-[1.25] focus:outline-none"
 					placeholder="Type something here to add your perception"
 					value={message}
 					onChange={(e) => setMessage(e.target.value)}
