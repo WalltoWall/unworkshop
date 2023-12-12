@@ -1,6 +1,6 @@
 import type { ST } from "@/sanity/config"
 
-type InvdividualAnswer = { type: "individual"; leader: undefined }
+type IndividualAnswer = { type: "individual"; leader: undefined }
 type GroupAnswer = { type: "group"; leader: string }
 
 export type Answer = {
@@ -12,7 +12,7 @@ export type Answer = {
 export type BrainstormParticipant = ST["participant"] & {
 	answers?: {
 		[exerciseId: string]: {
-			meta: InvdividualAnswer | GroupAnswer
+			meta: IndividualAnswer | GroupAnswer
 			answers?: Array<Answer>
 		}
 	}

@@ -15,7 +15,9 @@ const PresenterExercisePage = async (props: Props) => {
 		<>
 			<PresenterHeader heading={exercise.name} />
 
-			{exercise.type === "brainstorm" && <BrainstormPresenterView />}
+			{exercise.type === "brainstorm" && (
+				<BrainstormPresenterView exercise={exercise} />
+			)}
 		</>
 	)
 }
