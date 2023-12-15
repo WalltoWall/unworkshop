@@ -67,7 +67,7 @@ const BrainstormClient = ({
 				color={steps?.at(step - 1).color}
 			/>
 
-			<button
+			{/* <button
 				className="mx-auto mt-auto flex flex-col items-center gap-4"
 				onClick={() => {
 					if (step >= steps?.length!) {
@@ -84,7 +84,7 @@ const BrainstormClient = ({
 				<span className="font-extrabold uppercase text-14 leading-[1.5] font-sans capsize">
 					{isFinished ? "Finish" : "Next Step"}
 				</span>
-			</button>
+			</button> */}
 		</div>
 	)
 }

@@ -4,6 +4,7 @@ import React from "react"
 import clsx from "clsx"
 import { XCircleIcon } from "@/components/icons/XCircle"
 import { removeCardAction, submitResponseAction } from "./actions"
+import { useDebounce } from "./debounce"
 import type { Answer } from "./types"
 
 interface CardFormProps {
@@ -24,6 +25,8 @@ export const CardForm = ({
 	const formRef = React.useRef<HTMLFormElement>(null)
 	const [message, setMessage] = React.useState<string>(response)
 
+	const debounceSubmitMessage = useDebounce(formRef.current!, 3000)
+
 	return (
 		<div className="relative">
 			<form
@@ -40,15 +43,12 @@ export const CardForm = ({
 					className="card-input h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:text-18 placeholder:leading-[1.25] focus:outline-none"
 					placeholder="Type something here to add your perception"
 					value={message}
-					onChange={(e) => setMessage(e.target.value)}
-					name="response"
-					onKeyDown={(e) => {
-						if (formRef.current === null) return
-
-						if (e.key === "Enter") {
-							formRef.current.requestSubmit()
-						}
+					onChange={(e) => {
+						setMessage(e.target.value)
+						if (!formRef.current) return
+						debounceSubmitMessage()
 					}}
+					name="response"
 				/>
 			</form>
 			<form

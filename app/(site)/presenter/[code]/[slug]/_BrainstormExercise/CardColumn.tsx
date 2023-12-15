@@ -35,7 +35,7 @@ export const CardColumn = ({ cards }: CardColumnProps) => {
 	]
 
 	return (
-		<div className="mt-5 w-[306px] rounded-2xl bg-gray-90  px-2 py-3">
+		<div className="w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
 			<div className="flex items-center justify-between">
 				<div className="relative flex items-center gap-2">
 					<SwatchesPicker
