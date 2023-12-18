@@ -1,6 +1,8 @@
 "use client"
 
 import React from "react"
+import { DndProvider } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
 import { CardColumn } from "./CardColumn"
@@ -24,7 +26,7 @@ export const BrainstormPresenterViewClient = ({
 	})
 
 	return (
-		<div>
+		<DndProvider backend={HTML5Backend}>
 			<div className="flex w-full gap-2 rounded-2xl bg-gray-90 px-4 py-5">
 				{cards.map((card, idx) => (
 					<div
@@ -54,6 +56,6 @@ export const BrainstormPresenterViewClient = ({
 					</Text>
 				</button>
 			</div>
-		</div>
+		</DndProvider>
 	)
 }

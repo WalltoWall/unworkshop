@@ -2,6 +2,7 @@
 
 import React from "react"
 import { SwatchesPicker } from "react-color"
+import { useDrag, useDrop } from "react-dnd"
 import clsx from "clsx"
 import { BarChart } from "@/components/icons/BarChart"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
@@ -11,9 +12,14 @@ interface CardColumnProps {
 	cards: string[]
 }
 
+export const ItemTypes = {
+	CARD: "card",
+}
+
 export const CardColumn = ({ cards }: CardColumnProps) => {
-	const [color, setColor] = React.useState("#96fad1")
+	const [color, setColor] = React.useState<string>("#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
+	const [title, setTitle] = React.useState<string>("Service")
 	const colorGroups = [
 		["#ff9488", "#ff7566", "#ff5745", "#e8503f", "#ba4033"],
 		["#ff9e77", "#ff8655", "#ff7a45", "#e86f3f", "#d16439"],
@@ -34,6 +40,28 @@ export const CardColumn = ({ cards }: CardColumnProps) => {
 		],
 	]
 
+	function moveCard(x: number, y: number) {
+		console.log(x, y)
+	}
+
+	const [{ isDragging }, drag] = useDrag(() => ({
+		type: ItemTypes.CARD,
+		collect: (monitor) => ({
+			isDragging: !!monitor.isDragging(),
+		}),
+	}))
+
+	const [{ isOver }, drop] = useDrop(
+		() => ({
+			accept: ItemTypes.CARD,
+			drop: () => moveCard(1, 2),
+			collect: (monitor) => ({
+				isOver: !!monitor.isOver(),
+			}),
+		}),
+		[],
+	)
+
 	return (
 		<div className="w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
 			<div className="flex items-center justify-between">
@@ -51,9 +79,11 @@ export const CardColumn = ({ cards }: CardColumnProps) => {
 						style={{ backgroundColor: color }}
 						onClick={() => setShowPicker(!showPicker)}
 					></button>
-					<Text style={"heading"} size={18}>
-						Service
-					</Text>
+					<input
+						onChange={(e) => setTitle(e.target.value)}
+						value={title}
+						className="mt-1 bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
+					/>
 				</div>
 				<div className="flex items-center gap-3">
 					<button>
@@ -65,12 +95,17 @@ export const CardColumn = ({ cards }: CardColumnProps) => {
 				</div>
 			</div>
 
-			<div className="mt-5 flex flex-col gap-2">
+			<div className=" mt-5 flex h-full w-full flex-col gap-2" ref={drop}>
 				{cards.map((card, idx) => (
 					<div
 						key={idx}
-						className="rounded-lg px-3.5 py-4"
-						style={{ backgroundColor: color }}
+						className=" rounded-lg px-3.5 py-4"
+						style={{
+							backgroundColor: color,
+							opacity: isDragging ? 0.5 : 1,
+							cursor: "move",
+						}}
+						ref={drag}
 					>
 						<Text style={"copy"} size={18}>
 							{card}
