@@ -1,20 +1,21 @@
 import { cx } from "class-variance-authority"
+import type { Result } from "../QuadrantsExercise"
 import styles from "./QuadrantExercise.module.css"
-import type { Result } from "./QuadrantsExercise"
 
 interface QuadrantArrowProps {
-	result: {
-		top: number
-		left: number
-		width: number
-		angle: number
-	}
+	top: number
+	left: number
+	width: number
+	angle: number
 	opacity: string
 	time: false | "today" | "tomorrow"
 }
 
 export const QuadrantArrow = ({
-	result,
+	top,
+	left,
+	width,
+	angle,
 	opacity,
 	time,
 }: QuadrantArrowProps) => {
@@ -22,10 +23,10 @@ export const QuadrantArrow = ({
 		<div
 			className={cx("absolute h-1 origin-left", styles.arrowBetween, opacity)}
 			style={{
-				top: `${result.top}%`,
-				left: `${result.left}%`,
-				width: `${result.width}%`,
-				transform: `rotate(${result.angle}deg)`,
+				top: `${top}%`,
+				left: `${left}%`,
+				width: `${width}%`,
+				transform: `rotate(${angle}deg)`,
 			}}
 		>
 			<div className={cx("bg-indigo-68", !time && "!w-full")} />

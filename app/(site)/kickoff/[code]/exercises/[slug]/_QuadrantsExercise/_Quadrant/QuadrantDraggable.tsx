@@ -7,17 +7,17 @@ import { cx } from "class-variance-authority"
 interface QuadrantDraggableProps {
 	index: number
 	type: "today" | "tomorrow"
-	result: {
-		top: number
-		left: number
-		placed: boolean
-	}
+	top: number
+	left: number
+	placed: boolean
 }
 
 export const QuadrantDraggable = ({
 	index,
 	type,
-	result,
+	top,
+	left,
+	placed,
 }: QuadrantDraggableProps) => {
 	const draggableRef = useRef<HTMLDivElement>(null)
 	const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -39,12 +39,12 @@ export const QuadrantDraggable = ({
 			ref={setNodeRef}
 			className={cx(
 				`absolute left-0 top-0 z-10 -ml-4 -mt-4 touch-none transition-opacity`,
-				result.placed ? "opacity-1" : "opacity-0",
+				placed ? "opacity-1" : "opacity-0",
 			)}
 			style={{
 				...style,
-				top: `${result.top}%`,
-				left: `${result.left}%`,
+				top: `${top}%`,
+				left: `${left}%`,
 			}}
 			{...listeners}
 			{...attributes}

@@ -13,13 +13,7 @@ export const QuadrantsExercise = async ({
 }: QuadrantsExerciseProps) => {
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
-	const answers =
-		participant.answers?.[exercise._id]?.answers ??
-		exercise.quadrants?.map(() => ({
-			today: { top: 0, left: 0, placed: false },
-			tomorrow: { top: 0, left: 0, placed: false },
-			arrow: { top: 0, left: 0, width: 0, angle: 0 },
-		}))
+	const answers = participant.answers?.[exercise._id]?.answers ?? []
 	const groups = exercise.groups ?? []
 
 	return (

@@ -14,9 +14,9 @@ import { RichText, type RichTextContent } from "@/components/RichText"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
 import { altFor, urlFor, type SanityImage } from "@/sanity/helpers"
-import { QuadrantArrow } from "./QuadrantArrow"
-import { QuadrantDraggable } from "./QuadrantDraggable"
-import { QuadrantDroppable } from "./QuadrantDroppable"
+import { QuadrantArrow } from "./_Quadrant/QuadrantArrow"
+import { QuadrantDraggable } from "./_Quadrant/QuadrantDraggable"
+import { QuadrantDroppable } from "./_Quadrant/QuadrantDroppable"
 import { getTime } from "./QuadrantSteps"
 import type { Answer } from "./types"
 
@@ -38,6 +38,7 @@ const QuadrantImage = ({ image }: { image: SanityImage }) => (
 
 type QuadrantProps = {
 	item: NonNullable<ST["exercise"]["quadrants"]>[number]
+	exerciseId: string
 	index: number
 	active: number
 	results: Answer[]
@@ -49,6 +50,7 @@ type QuadrantProps = {
 
 export const Quadrant = ({
 	item,
+	exerciseId,
 	index,
 	active,
 	results,

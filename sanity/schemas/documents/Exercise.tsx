@@ -66,7 +66,48 @@ export const Exercise = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 
-		// Quadrant Instructions
+		// Brainstorm fields.
+		defineField({
+			name: "steps",
+			title: "Steps",
+			description: "The steps of this brainstorm exercise.",
+			type: "array",
+
+			initialValue: [],
+			hidden: ({ document }) => document?.type !== "brainstorm",
+			of: [
+				defineArrayMember({
+					type: "object",
+					icon: () => <ListOrdered width={24} height={24} />,
+
+					preview: {
+						select: { title: "prompt", subtitle: "helpText" },
+					},
+
+					fields: [
+						defineField({
+							name: "prompt",
+							title: "Prompt",
+							description:
+								"The main set of instructions for this step of the brainstorm.",
+							type: "text",
+							rows: 3,
+						}),
+						defineField({
+							name: "helpText",
+							title: "Help Text",
+							description: "Small additional help text shown below the prompt.",
+							type: "string",
+							initialValue: "Single or short word responses are preferred.",
+						}),
+					],
+				}),
+			],
+		}),
+
+		// Slider fields.
+
+		// Quadrant fields.
 		defineField({
 			name: "today_instructions",
 			title: "Today Instructions",
@@ -123,49 +164,6 @@ export const Exercise = defineType({
 			],
 			hidden: ({ document }) => document?.type !== "quadrants",
 		}),
-
-		// Brainstorm fields.
-		defineField({
-			name: "steps",
-			title: "Steps",
-			description: "The steps of this brainstorm exercise.",
-			type: "array",
-
-			initialValue: [],
-			hidden: ({ document }) => document?.type !== "brainstorm",
-			of: [
-				defineArrayMember({
-					type: "object",
-					icon: () => <ListOrdered width={24} height={24} />,
-
-					preview: {
-						select: { title: "prompt", subtitle: "helpText" },
-					},
-
-					fields: [
-						defineField({
-							name: "prompt",
-							title: "Prompt",
-							description:
-								"The main set of instructions for this step of the brainstorm.",
-							type: "text",
-							rows: 3,
-						}),
-						defineField({
-							name: "helpText",
-							title: "Help Text",
-							description: "Small additional help text shown below the prompt.",
-							type: "string",
-							initialValue: "Single or short word responses are preferred.",
-						}),
-					],
-				}),
-			],
-		}),
-
-		// Slider fields.
-
-		// Quadrant fields.
 		defineField({
 			name: "quadrants",
 			title: "Quadrants",
@@ -179,9 +177,16 @@ export const Exercise = defineType({
 					type: "object",
 					icon: () => <LayoutGrid width={24} height={24} />,
 					preview: {
-						select: { title: "today_instructions" },
+						select: { title: "name" },
 					},
 					fields: [
+						defineField({
+							name: "name",
+							title: "Name",
+							description: "The name of this quadrant exercise",
+							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
 						defineField({
 							name: "topValue",
 							title: "Top Value",

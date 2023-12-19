@@ -3,7 +3,7 @@
 import React from "react"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
-import { Quadrant } from "./Quadrant"
+import { Quadrant } from "./_Quadrant/Quadrant"
 import type { Answer } from "./types"
 
 export const getTime = (active: number, index: number) => {
@@ -19,7 +19,7 @@ export const getTime = (active: number, index: number) => {
 type QuadrantStepsProps = {
 	answers: Answer[]
 	exerciseId: string
-	quadrants: ST["exercise"]["quadrants"]
+	quadrants: NonNullable<ST["exercise"]["quadrants"]>
 	group: boolean
 	todayInstructions: ST["exercise"]["today_instructions"]
 	tomorrowInstructions: ST["exercise"]["tomorrow_instructions"]
@@ -35,33 +35,26 @@ export const QuadrantSteps = ({
 	tomorrowInstructions,
 	finalInstructions,
 }: QuadrantStepsProps) => {
-	// const [optimisticAnswers, addOptimisticAnswer] = React.useOptimistic<
-	// 	Answer[],
-	// 	Answer
-	// >(answers, (state, newAnswer) => {
-	// 	const existingIndex = state.findIndex((a) => a.id === newAnswer.id)
-
-	// 	console.log(existingIndex)
-	// 	return [...state]
-	// })
-	const [results, setResults] = React.useState<Answer[]>(answers)
 	const [active, setActive] = React.useState(0)
+
+	const handleDisabled = () => {
+		return false
+	}
 
 	return (
 		<>
-			{quadrants?.map((quadrant, index) => (
+			{quadrants.map((quadrant, index) => (
 				<div key={quadrant._key}>
-					{(getTime(active, index) === "today" ||
-						getTime(active, index) === "tomorrow" ||
-						(answers.length > 0 && active === answers.length * 2)) && (
+					{(getTime(active, index) ||
+						(answers.length > 0 && active === quadrants.length * 2)) && (
 						<Quadrant
 							item={quadrant}
 							exerciseId={exerciseId}
+							isGroup={group}
 							index={index}
 							active={active}
-							isGroup={group}
-							results={results}
-							setResults={setResults}
+							answers={answers}
+							answer={answers.find((a) => a.name === quadrant.name)}
 							todayInstructions={todayInstructions}
 							tomorrowInstructions={tomorrowInstructions}
 							finalInstructions={finalInstructions}
@@ -71,8 +64,8 @@ export const QuadrantSteps = ({
 			))}
 
 			<Steps
-				disabled={false}
-				count={quadrants!.length * 2}
+				disabled={handleDisabled()}
+				count={quadrants.length * 2}
 				active={active}
 				onActiveChange={setActive}
 				onFinish={() => alert("done")}
