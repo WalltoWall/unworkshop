@@ -29,6 +29,27 @@ export const Exercise = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
+			name: "groups",
+			title: "Groups",
+			description: "If provided, turns this exercise into a group exercise.",
+			type: "array",
+			initialValue: [],
+			of: [
+				defineArrayMember({
+					type: "object",
+					fields: [
+						defineField({
+							name: "name",
+							title: "Name",
+							type: "string",
+							description: "The name of this group.",
+							validation: (Rule) => Rule.required(),
+						}),
+					],
+				}),
+			],
+		}),
+		defineField({
 			name: "type",
 			title: "Type",
 			description: "The type of exercise that this is.",

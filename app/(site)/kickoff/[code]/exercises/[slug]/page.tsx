@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
-import { BrainstormExercise } from "./BrainstormExercise"
+import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "./QuadrantsExercise"
 
 // import { QuadrantsExercise } from "./QuadrantsExercise"
@@ -23,7 +23,7 @@ const ExercisePage = async (props: Props) => {
 			</Text>
 
 			{exercise.type === "brainstorm" && (
-				<BrainstormExercise steps={exercise.steps} />
+				<BrainstormExercise exercise={exercise} />
 			)}
 			{exercise.type === "quadrants" && (
 				<QuadrantsExercise
