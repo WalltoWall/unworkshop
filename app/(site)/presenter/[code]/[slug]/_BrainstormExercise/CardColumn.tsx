@@ -126,7 +126,12 @@ export const CardColumn = ({ cards, id, removeColumn }: CardColumnProps) => {
 					<ul className="mt-5 flex h-full w-full flex-col gap-2">
 						{columnCards.length > 0 ? (
 							columnCards.map((card) => (
-								<SortableItem key={card.id} id={card.id} color={color}>
+								<SortableItem
+									key={card.id}
+									id={card.id}
+									color={color}
+									className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4"
+								>
 									<Draggable response={card.response} />
 								</SortableItem>
 							))
@@ -147,7 +152,11 @@ export const CardColumn = ({ cards, id, removeColumn }: CardColumnProps) => {
 
 				<SortableOverlay>
 					{activeItem ? (
-						<SortableItem color={color} id={id}>
+						<SortableItem
+							color={color}
+							id={id}
+							className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4"
+						>
 							<Text style={"copy"} size={18}>
 								{activeItem.response}
 							</Text>

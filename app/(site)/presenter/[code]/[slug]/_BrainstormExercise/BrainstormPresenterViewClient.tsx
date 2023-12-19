@@ -1,13 +1,25 @@
 "use client"
 
 import React from "react"
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core"
+import {
+	DndContext,
+	KeyboardSensor,
+	PointerSensor,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core"
+import {
+	arrayMove,
+	SortableContext,
+	sortableKeyboardCoordinates,
+} from "@dnd-kit/sortable"
 import clsx from "clsx"
 import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
 import { CardColumn } from "./CardColumn"
+import { Draggable, SortableItem } from "./SortableItem"
 
 export type ColumnDispatch = {
 	type: "add" | "delete"
@@ -47,71 +59,60 @@ export const BrainstormPresenterViewClient = ({
 		addOptimisticColumn({ type: "delete", payload: { columnId: id } })
 	}
 
-	const { isOver, setNodeRef } = useDroppable({
-		id: "droppable",
-	})
-
-	const {
-		attributes,
-		listeners,
-		setNodeRef: setDragRef,
-		transform,
-	} = useDraggable({
-		id: "draggable",
-	})
+	const sensors = useSensors(
+		useSensor(PointerSensor),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		}),
+	)
 
 	return (
-		<DndContext>
+		<DndContext sensors={sensors}>
 			<div className="relative">
-				<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
-					<button
-						className="flex w-fit items-center gap-3 rounded-lg border-2 border-gray-50 px-2.5 py-2"
-						onClick={() => setShowSorter(!showSorter)}
-					>
-						<Text style={"heading"} size={16} className="text-gray-50">
-							Hide Sorter
-						</Text>
-						<Chevron
+				<SortableContext items={cards}>
+					<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
+						<button
+							className="flex w-fit items-center gap-3 rounded-lg border-2 border-gray-50 px-2.5 py-2"
+							onClick={() => setShowSorter(!showSorter)}
+						>
+							<Text style={"heading"} size={16} className="text-gray-50">
+								Hide Sorter
+							</Text>
+							<Chevron
+								className={clsx(
+									"w-1.5 text-gray-50 transition duration-150 ease-in",
+									showSorter ? "rotate-[270deg]" : "rotate-90",
+								)}
+							/>
+						</button>
+						<div
 							className={clsx(
-								"w-1.5 text-gray-50 transition duration-150 ease-in",
-								showSorter ? "rotate-[270deg]" : "rotate-90",
+								"flex w-full gap-2",
+								showSorter ? "block" : "hidden",
 							)}
-						/>
-					</button>
-					<div
-						className={clsx(
-							"flex w-full gap-2",
-							showSorter ? "block" : "hidden",
-						)}
-					>
-						{cards.map((card) => (
-							<div
-								className="aspect-square w-[135px] cursor-move rounded-lg bg-white px-3 py-2"
-								style={{
-									opacity: transform ? 0.5 : 1,
-									transform: transform
-										? `translate3d(${transform.x}px, ${transform.y}px, 0)`
-										: undefined,
-								}}
-								ref={setDragRef}
-								{...listeners}
-								{...attributes}
-								key={card.id}
-							>
-								{card.response}
-							</div>
-						))}
+						>
+							{cards.map((card) => (
+								<SortableItem
+									id={card.id}
+									color={""}
+									className="box-border aspect-square w-[135px] list-none rounded-lg bg-white px-3 py-2"
+									key={card.id}
+								>
+									<Draggable response={card.response} />
+								</SortableItem>
+							))}
+						</div>
 					</div>
-				</div>
-
+				</SortableContext>
 				<div className="flex gap-4 pt-5">
 					{optimisticColumn.map((column, idx) => (
-						<CardColumn
-							cards={columnCards}
-							id={column.columnId}
-							removeColumn={removeColumn}
-							key={idx}
-						/>
+						<SortableContext key={column.columnId} items={columnCards}>
+							<CardColumn
+								cards={columnCards}
+								id={column.columnId}
+								removeColumn={removeColumn}
+							/>
+						</SortableContext>
 					))}
 
 					<button

@@ -16,6 +16,7 @@ import { Text } from "@/components/Text"
 interface Props {
 	id: UniqueIdentifier
 	color: string
+	className?: string
 }
 
 interface Context {
@@ -34,6 +35,7 @@ export function SortableItem({
 	children,
 	id,
 	color,
+	className,
 }: PropsWithChildren<Props>) {
 	const {
 		attributes,
@@ -62,11 +64,7 @@ export function SortableItem({
 
 	return (
 		<SortableItemContext.Provider value={context}>
-			<li
-				className="box-border flex cursor-move items-center rounded-lg px-3.5 py-4"
-				ref={setNodeRef}
-				style={style}
-			>
+			<li className={className} ref={setNodeRef} style={style}>
 				{children}
 			</li>
 		</SortableItemContext.Provider>
@@ -83,7 +81,7 @@ export function Draggable({ response }: { response: string }) {
 			ref={ref}
 			{...attributes}
 			{...listeners}
-			className="w-full cursor-move"
+			className="h-full w-full cursor-move"
 		>
 			{response}
 		</Text>
