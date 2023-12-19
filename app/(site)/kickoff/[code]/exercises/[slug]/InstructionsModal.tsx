@@ -46,7 +46,9 @@ export const InstructionsModal = ({
 						size={14}
 						className="mt-5 max-w-[320px] text-gray-50"
 					>
-						{instructions}
+						{instructions
+							? instructions
+							: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis malesuada consectetur arcu ut pretium. Nam placerat augue libero, a varius lacus eleifend sed. Etiam bibendum justo vitae vehicula vulputate. Donec hendrerit, felis id ornare blandit, turpis purus hendrerit enim, malesuada mollis sem ex sed eros. "}
 					</Text>
 				</Dialog.Content>
 			</Dialog.Portal>

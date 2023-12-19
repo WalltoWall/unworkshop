@@ -1,12 +1,12 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { uid } from "uid"
 import { zfd } from "zod-form-data"
 import { client, sanity } from "@/sanity/client"
 import { type BrainstormParticipant } from "./types"
 
 const addCardSchema = zfd.formData({
+	cardId: zfd.text(),
 	exerciseId: zfd.text(),
 	isGroup: zfd.checkbox(),
 })
@@ -26,7 +26,6 @@ const submitCardSchema = zfd.formData({
 
 export async function addCardAction(formData: FormData) {
 	const data = addCardSchema.parse(formData)
-	const id = uid()
 	const participant =
 		await client.findParticipantOrThrow<BrainstormParticipant>()
 
@@ -43,15 +42,11 @@ export async function addCardAction(formData: FormData) {
 		[data.exerciseId]: {
 			...participant.answers?.[data.exerciseId],
 			meta,
-			answers: [...oldAnswers, { id, response: "" }],
+			answers: [...oldAnswers, { id: data.cardId, response: "" }],
 		},
 	}
 
-	await sanity
-		.patch(participant._id)
-		.set({ answers })
-		.commit()
-		.catch(console.error)
+	await sanity.patch(participant._id).set({ answers }).commit()
 
 	revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
 }
@@ -82,11 +77,7 @@ export async function submitResponseAction(formData: FormData) {
 		},
 	}
 
-	await sanity
-		.patch(participant._id)
-		.set({ answers: newAnswers })
-		.commit()
-		.catch(console.error)
+	await sanity.patch(participant._id).set({ answers: newAnswers }).commit()
 
 	revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
 }
@@ -111,11 +102,7 @@ export async function removeCardAction(formData: FormData) {
 		},
 	}
 
-	await sanity
-		.patch(participant._id)
-		.set({ answers: newAnswers })
-		.commit()
-		.catch(console.error)
+	await sanity.patch(participant._id).set({ answers: newAnswers }).commit()
 
 	revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
 }

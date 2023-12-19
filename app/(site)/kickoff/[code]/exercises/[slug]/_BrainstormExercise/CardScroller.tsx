@@ -2,9 +2,16 @@
 
 import React from "react"
 import clsx from "clsx"
+import { uid } from "uid"
+import { addCardAction } from "./actions"
 import { AddCardButton } from "./AddCardButton"
 import { CardForm } from "./CardForm"
 import type { Answer } from "./types"
+
+export type CardDispatch = {
+	type: "add" | "delete"
+	payload: Answer
+}
 
 type Color = "green" | "red" | "yellow"
 
@@ -25,14 +32,14 @@ export const CardScroller = ({
 	group,
 	color = "green",
 }: CardScrollerProps) => {
-	const [optimisticCards, addOptimisticCard] = React.useOptimistic<
+	const [optimisticCards, cardsDispatch] = React.useOptimistic<
 		Array<Answer>,
-		Answer
-	>(cards, (state, newCard) => {
-		if (newCard.delete) {
-			return state.filter((card) => card.id !== newCard.id)
+		CardDispatch
+	>(cards, (state, action) => {
+		if (action.type === "delete") {
+			return state.filter((card) => card.id !== action.payload.id)
 		} else {
-			return [...state, newCard]
+			return [...state, action.payload]
 		}
 	})
 
@@ -48,6 +55,14 @@ export const CardScroller = ({
 		},
 	}
 
+	const addOptimisticCard = (id: string) => {
+		cardsDispatch({ type: "add", payload: { id, response: "" } })
+	}
+
+	const deleteOptimisticCard = (id: string) => {
+		cardsDispatch({ type: "delete", payload: { id, response: "" } })
+	}
+
 	return (
 		<div
 			className={clsx(
@@ -58,13 +73,14 @@ export const CardScroller = ({
 				exerciseId={exerciseId}
 				isGroup={group}
 				addOptimisticCard={addOptimisticCard}
+				cardId={uid()}
 			/>
-			{optimisticCards.reverse().map((card, idx) => (
+			{optimisticCards.toReversed().map((card) => (
 				<CardForm
-					key={idx}
+					key={card.id}
 					exerciseId={exerciseId}
 					cardId={card.id}
-					addOptimisticCard={addOptimisticCard}
+					deleteOptimisticCard={deleteOptimisticCard}
 					response={card.response}
 					color={Colors[color].bgColor}
 				/>

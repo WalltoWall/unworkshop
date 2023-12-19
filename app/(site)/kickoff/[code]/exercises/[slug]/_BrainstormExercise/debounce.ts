@@ -2,7 +2,7 @@ import React from "react"
 
 type Timer = ReturnType<typeof setTimeout>
 
-export function useDebounce(formRefCurrent: HTMLFormElement, delay = 3000) {
+export function useDebounce(callback: () => void, delay = 250) {
 	const timer = React.useRef<Timer>()
 
 	React.useEffect(() => {
@@ -14,7 +14,7 @@ export function useDebounce(formRefCurrent: HTMLFormElement, delay = 3000) {
 
 	const debouncedFunction = () => {
 		const newTimer = setTimeout(() => {
-			formRefCurrent.requestSubmit()
+			callback()
 		}, delay)
 		clearTimeout(timer.current)
 		timer.current = newTimer

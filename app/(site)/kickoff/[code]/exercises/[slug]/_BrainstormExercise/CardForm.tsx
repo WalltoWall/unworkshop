@@ -5,14 +5,13 @@ import clsx from "clsx"
 import { XCircleIcon } from "@/components/icons/XCircle"
 import { removeCardAction, submitResponseAction } from "./actions"
 import { useDebounce } from "./debounce"
-import type { Answer } from "./types"
 
 interface CardFormProps {
 	exerciseId: string
 	cardId: string
 	response: string
 	color: string
-	addOptimisticCard: (action: Answer) => void
+	deleteOptimisticCard: (id: string) => void
 }
 
 export const CardForm = ({
@@ -20,12 +19,11 @@ export const CardForm = ({
 	cardId,
 	response = "",
 	color,
-	addOptimisticCard,
+	deleteOptimisticCard,
 }: CardFormProps) => {
 	const formRef = React.useRef<HTMLFormElement>(null)
-	const [message, setMessage] = React.useState<string>(response)
 
-	const debounceSubmitMessage = useDebounce(formRef.current!, 3000)
+	const submitForm = useDebounce(() => formRef.current?.requestSubmit(), 250)
 
 	return (
 		<div className="relative">
@@ -42,18 +40,16 @@ export const CardForm = ({
 				<textarea
 					className="card-input h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:text-18 placeholder:leading-[1.25] focus:outline-none"
 					placeholder="Type something here to add your perception"
-					value={message}
+					defaultValue={response}
 					onChange={(e) => {
-						setMessage(e.target.value)
-						if (!formRef.current) return
-						debounceSubmitMessage()
+						submitForm()
 					}}
 					name="response"
 				/>
 			</form>
 			<form
 				action={async (formData: FormData) => {
-					addOptimisticCard({ id: cardId, response: "", delete: true })
+					deleteOptimisticCard(cardId)
 					await removeCardAction(formData)
 				}}
 				className="absolute bottom-2 right-1.5"
