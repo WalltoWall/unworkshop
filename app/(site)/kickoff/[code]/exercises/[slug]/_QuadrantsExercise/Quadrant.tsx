@@ -10,14 +10,15 @@ import {
 } from "react"
 import Image from "next/image"
 import { DndContext, type DragEndEvent } from "@dnd-kit/core"
-import { RichText } from "@/components/RichText"
+import { RichText, type RichTextContent } from "@/components/RichText"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
 import { altFor, urlFor, type SanityImage } from "@/sanity/helpers"
 import { QuadrantArrow } from "./QuadrantArrow"
 import { QuadrantDraggable } from "./QuadrantDraggable"
 import { QuadrantDroppable } from "./QuadrantDroppable"
-import { getTime, type Result } from "./QuadrantsExercise"
+import { getTime } from "./QuadrantSteps"
+import type { Answer } from "./types"
 
 const serializers = {
 	strong: ({ children }: { children?: string[] | React.ReactNode }) => (
@@ -39,8 +40,8 @@ type QuadrantProps = {
 	item: NonNullable<ST["exercise"]["quadrants"]>[number]
 	index: number
 	active: number
-	results: Result[]
-	setResults: Dispatch<SetStateAction<Result[] | undefined>>
+	results: Answer[]
+	setResults: Dispatch<SetStateAction<Answer[]>>
 	todayInstructions?: ST["exercise"]["today_instructions"]
 	tomorrowInstructions?: ST["exercise"]["tomorrow_instructions"]
 	finalInstructions?: ST["exercise"]["finalize_instructions"]
@@ -71,7 +72,7 @@ export const Quadrant = ({
 
 	const movePoint = useCallback(
 		(id: string, left: number, top: number) => {
-			const newResults = [...results] as Result[]
+			const newResults = [...results] as Answer[]
 			let updatedPositions = { ...newResults[index] }
 			updatedPositions = {
 				...updatedPositions,
@@ -102,7 +103,7 @@ export const Quadrant = ({
 
 			setResults(newResults)
 		},
-		[results, setResults],
+		[results, setResults, index],
 	)
 
 	const moveArrow = (
@@ -131,7 +132,7 @@ export const Quadrant = ({
 
 	const handleDragEnd = (event: DragEndEvent) => {
 		if (clickTarget?.current) {
-			const { type, ref } = event.active.data.current
+			const { type, ref } = event.active.data.current!
 			const parentRect = clickTarget.current.getBoundingClientRect()
 
 			if (ref) {
@@ -186,10 +187,10 @@ export const Quadrant = ({
 								<RichText
 									content={
 										getTime(active, index) === "today"
-											? todayInstructions
+											? (todayInstructions as RichTextContent)
 											: active === results.length * 2
-											? finalInstructions
-											: tomorrowInstructions
+											? (finalInstructions as RichTextContent)
+											: (tomorrowInstructions as RichTextContent)
 									}
 									components={{ ...serializers }}
 								/>
@@ -238,7 +239,10 @@ export const Quadrant = ({
 						)}
 					</div>
 
-					<DndContext onDragEnd={handleDragEnd}>
+					<DndContext
+						onDragEnd={handleDragEnd}
+						onDragMove={() => setOpacity("opacity-0")}
+					>
 						<QuadrantDroppable index={index} onClick={handleClick}>
 							<QuadrantDraggable
 								index={index}

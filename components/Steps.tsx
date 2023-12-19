@@ -40,7 +40,7 @@ export const Steps = ({
 				</div>
 
 				<button
-					className="flex h-8 w-8 items-center justify-center rounded-full bg-black px-2 text-white"
+					className="flex h-8 w-8 items-center justify-center rounded-full bg-black px-2 text-white disabled:bg-gray-50"
 					onClick={handleNext}
 					disabled={disabled}
 				>
