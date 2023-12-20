@@ -3,7 +3,7 @@ import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { InstructionsModal } from "./InstructionsModal"
 import { QuadrantsExercise } from "./QuadrantsExercise"
-import { SlidersExercise } from "./SlidersExercise"
+import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -26,7 +26,7 @@ const ExercisePage = async (props: Props) => {
 				<BrainstormExercise exercise={exercise} />
 			)}
 			{exercise.type === "sliders" && (
-				<SlidersExercise sliders={exercise.sliders} />
+				<SlidersExercise exercise={exercise} />
 			)}
 			{exercise.type === "quadrants" && (
 				<QuadrantsExercise quadrants={exercise.quadrants} />
