@@ -42,10 +42,10 @@ export const Quadrant = ({
 	const [opacity, setOpacity] = React.useState("opacity-0")
 
 	const [todayPlaced, setTodayPlaced] = React.useState(
-		answer?.today?.top !== undefined,
+		Boolean(answer?.today?.placed),
 	)
 	const [tomorrowPlaced, setTomorrowPlaced] = React.useState(
-		answer?.tomorrow?.top !== undefined,
+		Boolean(answer?.tomorrow?.placed),
 	)
 	const [todayTop, setTodayTop] = React.useState(answer?.today?.top ?? 0)
 	const [todayLeft, setTodayLeft] = React.useState(answer?.today?.left ?? 0)
@@ -191,6 +191,12 @@ export const Quadrant = ({
 							value={todayLeft}
 						/>
 						<input
+							type="checkbox"
+							checked={todayPlaced}
+							name="todayPlaced"
+							className="hidden"
+						/>
+						<input
 							type="number"
 							className="hidden"
 							name="tomorrowTop"
@@ -201,6 +207,12 @@ export const Quadrant = ({
 							className="hidden"
 							name="tomorrowLeft"
 							value={tomorrowLeft}
+						/>
+						<input
+							type="checkbox"
+							checked={tomorrowPlaced}
+							name="tomorrowPlaced"
+							className="hidden"
 						/>
 
 						<DndContext

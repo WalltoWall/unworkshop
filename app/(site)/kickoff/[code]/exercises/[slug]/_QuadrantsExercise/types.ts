@@ -5,8 +5,8 @@ type GroupAnswer = { type: "group"; leader: string }
 
 export type Answer = {
 	name: string
-	today: { top: number; left: number }
-	tomorrow: { top: number; left: number }
+	today: { top: number; left: number; placed: boolean }
+	tomorrow: { top: number; left: number; placed: boolean }
 }
 
 export type QuadrantsParticipant = ST["participant"] & {

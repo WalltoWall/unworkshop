@@ -38,6 +38,16 @@ export const QuadrantSteps = ({
 	const [active, setActive] = React.useState(0)
 
 	const handleDisabled = () => {
+		const tomorrow = (active / 2) % 1 > 0 ? true : false
+
+		if (answers.length > 0 && answers.length * 2 === active) {
+			return false
+		} else if (tomorrow) {
+			return !answers[(active - 1) / 2]?.tomorrow?.placed
+		} else {
+			return !answers[active / 2]?.today?.placed
+		}
+
 		return false
 	}
 
@@ -73,5 +83,3 @@ export const QuadrantSteps = ({
 		</>
 	)
 }
-
-// TODO: disable steps until data is saved
