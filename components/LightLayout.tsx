@@ -41,7 +41,10 @@ export const LightLayout = (props: {
 
 				<main
 					id="main"
-					className={cx("flex grow flex-col", props.mainClassName)}
+					className={cx(
+						"flex grow flex-col overflow-hidden",
+						props.mainClassName,
+					)}
 				>
 					{props.children}
 				</main>

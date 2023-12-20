@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import { Text } from "@/components/Text"
 import { Checkmark } from "./icons/Checkmark"
 import { Chevron } from "./icons/Chevron"
@@ -8,6 +9,7 @@ interface Props {
 	active: number
 	onActiveChange: any
 	onFinish: any
+	className?: string
 }
 
 export const Steps = ({
@@ -16,6 +18,7 @@ export const Steps = ({
 	active = 0,
 	onActiveChange,
 	onFinish,
+	className,
 }: Props) => {
 	if (!count) return null
 
@@ -28,7 +31,7 @@ export const Steps = ({
 	}
 
 	return (
-		<div className="my-6">
+		<div className={clsx("my-6", className)}>
 			<div className="relative mx-auto h-8 w-8">
 				<div className="absolute right-full top-1/2 mr-2 flex -translate-y-1/2">
 					{[...Array(count - (count - active))].map((_, i) => (

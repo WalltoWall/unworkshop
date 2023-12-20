@@ -1,4 +1,5 @@
 import "server-only"
+import React from "react"
 import { createClient, groq } from "next-sanity"
 import { cookies } from "next/headers"
 import type { Reference } from "sanity"
@@ -16,7 +17,7 @@ export const sanity = createClient({
 })
 
 export const client = {
-	async findKickoff(code: string) {
+	findKickoff: React.cache(async (code: string) => {
 		type KickoffWithExercises = Omit<ST["kickoff"], "exercises"> & {
 			exercises: Array<ST["exercise"]>
 		}
@@ -27,10 +28,11 @@ export const client = {
             exercises[]->
         }`,
 			{ code: code.toLowerCase() },
+			{ cache: "no-store" },
 		)
 
 		return data
-	},
+	}),
 
 	async findParticipant(id: string) {
 		const data = await sanity.fetch<ST["participant"] | null>(

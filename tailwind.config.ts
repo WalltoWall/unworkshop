@@ -53,7 +53,9 @@ export default {
 			40: "2.5rem",
 			32: "2rem",
 			24: "1.5rem",
+			18: "1.125rem",
 			16: "1rem",
+			14: "0.875rem",
 			12: ".75rem",
 		},
 
@@ -128,10 +130,28 @@ export default {
 				63: "#e165bd",
 			},
 		},
+
+		extend: {
+			keyframes: {
+				fadeIn: {
+					from: { opacity: "0" },
+					to: { opacity: "1" },
+				},
+				fadeOut: {
+					from: { opacity: "1" },
+					to: { opacity: "0" },
+				},
+			},
+
+			animation: {
+				fadeIn: "fadeIn 300ms linear",
+				fadeOut: "fadeOut 300ms linear",
+			},
+		},
 	},
 	plugins: [
 		tailwindCapsize,
-		plugin(({ addUtilities }) => {
+		plugin(({ addUtilities, matchUtilities, theme }) => {
 			addUtilities({
 				".scrollbar-hide": {
 					/* IE and Edge */
@@ -158,7 +178,20 @@ export default {
 						display: "block",
 					},
 				},
+
+				".scroll-shadow": {
+					"mask-image":
+						"linear-gradient(#000,#000,transparent 0,#000 var(--scroll-shadow-size),#000 calc(100% - var(--scroll-shadow-size)),transparent)",
+				},
 			})
+			matchUtilities(
+				{
+					"scroll-shadow": (value) => ({
+						"--scroll-shadow-size": value,
+					}),
+				},
+				{ values: theme("spacing") },
+			)
 		}),
 	],
 } satisfies Config

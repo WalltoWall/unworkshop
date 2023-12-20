@@ -16,12 +16,14 @@ const ExercisePage = async (props: Props) => {
 	console.log({ exercise })
 
 	return (
-		<div>
+		<div className="h-full">
 			<Text style="heading" size={40} asChild>
 				<h1>{exercise.name}</h1>
 			</Text>
 
-			{exercise.type === "brainstorm" && <BrainstormExercise />}
+			{exercise.type === "brainstorm" && (
+				<BrainstormExercise steps={exercise.steps} />
+			)}
 			{exercise.type === "sliders" && (
 				<SlidersExercise sliders={exercise.sliders} />
 			)}
