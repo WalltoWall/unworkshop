@@ -29,6 +29,27 @@ export const Exercise = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
+			name: "groups",
+			title: "Groups",
+			description: "If provided, turns this exercise into a group exercise.",
+			type: "array",
+			initialValue: [],
+			of: [
+				defineArrayMember({
+					type: "object",
+					fields: [
+						defineField({
+							name: "name",
+							title: "Name",
+							type: "string",
+							description: "The name of this group.",
+							validation: (Rule) => Rule.required(),
+						}),
+					],
+				}),
+			],
+		}),
+		defineField({
 			name: "type",
 			title: "Type",
 			description: "The type of exercise that this is.",
@@ -42,6 +63,14 @@ export const Exercise = defineType({
 					{ title: "Form", value: "form" },
 				],
 			},
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: "instructions",
+			title: "Instructions",
+			description:
+				"Instructions associated with the specific exercise. To be seen when user clicks on the question mark near the title.",
+			type: "text",
 			validation: (Rule) => Rule.required(),
 		}),
 
@@ -78,6 +107,21 @@ export const Exercise = defineType({
 							description: "Small additional help text shown below the prompt.",
 							type: "string",
 							initialValue: "Single or short word responses are preferred.",
+						}),
+						defineField({
+							name: "color",
+							title: "Color",
+							type: "string",
+							description:
+								"Choose what color post it note you want for each step of the brainstorm.",
+							initialValue: "green",
+							options: {
+								list: [
+									{ title: "Green", value: "green" },
+									{ title: "Red", value: "red" },
+									{ title: "Yellow", value: "yellow" },
+								],
+							},
 						}),
 					],
 				}),
