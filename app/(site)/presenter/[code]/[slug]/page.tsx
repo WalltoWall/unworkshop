@@ -8,12 +8,20 @@ type Props = {
 }
 
 const PresenterExercisePage = async (props: Props) => {
+	const kickoff = await client.findKickoffOrThrow(props.params.code)
+	if (!kickoff) notFound()
+
 	const exercise = await client.findExerciseBySlug(props.params.slug)
 	if (!exercise) notFound()
 
 	return (
 		<>
-			<PresenterHeader heading={exercise.name} />
+			<PresenterHeader
+				kickoffCode={props.params.code}
+				exercises={kickoff.exercises}
+				activeExercise={exercise}
+				heading={exercise.name}
+			/>
 
 			{exercise.type === "brainstorm" && (
 				<BrainstormPresenterView exercise={exercise} />
