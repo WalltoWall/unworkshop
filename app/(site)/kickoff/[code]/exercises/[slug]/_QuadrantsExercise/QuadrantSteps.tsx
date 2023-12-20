@@ -47,8 +47,6 @@ export const QuadrantSteps = ({
 		} else {
 			return !answers[active / 2]?.today?.placed
 		}
-
-		return false
 	}
 
 	return (
