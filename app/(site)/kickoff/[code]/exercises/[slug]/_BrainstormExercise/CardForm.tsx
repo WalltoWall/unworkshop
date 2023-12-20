@@ -1,53 +1,55 @@
 "use client"
 
 import React from "react"
+import clsx from "clsx"
 import { XCircleIcon } from "@/components/icons/XCircle"
 import { removeCardAction, submitResponseAction } from "./actions"
-import type { Answer } from "./types"
+import { useDebounce } from "./debounce"
 
 interface CardFormProps {
 	exerciseId: string
 	cardId: string
 	response: string
-	addOptimisticCard: (action: Answer) => void
+	color: string
+	deleteOptimisticCard: (id: string) => void
 }
 
 export const CardForm = ({
 	exerciseId,
 	cardId,
 	response = "",
-	addOptimisticCard,
+	color,
+	deleteOptimisticCard,
 }: CardFormProps) => {
 	const formRef = React.useRef<HTMLFormElement>(null)
-	const [message, setMessage] = React.useState<string>(response)
+
+	const submitForm = useDebounce(() => formRef.current?.requestSubmit(), 250)
 
 	return (
 		<div className="relative">
 			<form
 				action={submitResponseAction}
 				ref={formRef}
-				className="animate-fadeIn h-[187px] rounded-lg bg-green-78 p-3.5 scrollbar-hide"
+				className={clsx(
+					"h-[187px] animate-fadeIn rounded-lg p-3.5 scrollbar-hide",
+					color,
+				)}
 			>
 				<input type="hidden" value={exerciseId} name="exerciseId" />
 				<input type="hidden" value={cardId} name="cardId" />
 				<textarea
-					className="card-input placeholder:text-18 h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:leading-[1.25] focus:outline-none"
+					className="card-input h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:text-18 placeholder:leading-[1.25] focus:outline-none"
 					placeholder="Type something here to add your perception"
-					value={message}
-					onChange={(e) => setMessage(e.target.value)}
-					name="response"
-					onKeyDown={(e) => {
-						if (formRef.current === null) return
-
-						if (e.key === "Enter") {
-							formRef.current.requestSubmit()
-						}
+					defaultValue={response}
+					onChange={(e) => {
+						submitForm()
 					}}
+					name="response"
 				/>
 			</form>
 			<form
 				action={async (formData: FormData) => {
-					addOptimisticCard({ id: cardId, response: "", delete: true })
+					deleteOptimisticCard(cardId)
 					await removeCardAction(formData)
 				}}
 				className="absolute bottom-2 right-1.5"

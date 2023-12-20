@@ -1,16 +1,17 @@
 import React from "react"
 import { PlusIcon } from "@/components/icons/Plus"
 import { addCardAction } from "./actions"
-import type { Answer } from "./types"
 
 interface AddCardButton {
+	cardId: string
 	exerciseId: string
 	isGroup?: boolean
-	addOptimisticCard: (action: Answer) => void
+	addOptimisticCard: (id: string) => void
 }
 
 // TODO: Error handling for optimistic ui
 export const AddCardButton = ({
+	cardId,
 	exerciseId,
 	isGroup,
 	addOptimisticCard,
@@ -18,11 +19,12 @@ export const AddCardButton = ({
 	return (
 		<form
 			action={async (formData: FormData) => {
-				addOptimisticCard({ id: "placeholder", response: "" })
+				addOptimisticCard(cardId)
 				await addCardAction(formData)
 			}}
 			className="flex flex-col items-center justify-center"
 		>
+			<input type="hidden" value={cardId} name="cardId" />
 			<input type="hidden" value={exerciseId} name="exerciseId" />
 			<input
 				type="checkbox"

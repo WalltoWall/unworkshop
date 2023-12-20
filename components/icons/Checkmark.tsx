@@ -1,6 +1,6 @@
 export const Checkmark = (props: React.ComponentPropsWithoutRef<"svg">) => {
 	return (
-		<svg width="11.172" height="8.677" viewBox="0 0 11.172 8.677">
+		<svg width="11.172" height="8.677" viewBox="0 0 11.172 8.677" {...props}>
 			<path
 				fill="none"
 				stroke="#FFF"

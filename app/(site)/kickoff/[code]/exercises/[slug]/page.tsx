@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation"
-import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
-
-// import { QuadrantsExercise } from "./QuadrantsExercise"
+import { InstructionsModal } from "./InstructionsModal"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -16,9 +14,10 @@ const ExercisePage = async (props: Props) => {
 
 	return (
 		<div className="h-full">
-			<Text style="heading" size={40} asChild>
-				<h1>{exercise.name}</h1>
-			</Text>
+			<InstructionsModal
+				exerciseName={exercise.name}
+				instructions={exercise.instructions}
+			/>
 
 			{exercise.type === "brainstorm" && (
 				<BrainstormExercise exercise={exercise} />

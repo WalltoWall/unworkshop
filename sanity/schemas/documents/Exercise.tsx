@@ -65,6 +65,14 @@ export const Exercise = defineType({
 			},
 			validation: (Rule) => Rule.required(),
 		}),
+		defineField({
+			name: "instructions",
+			title: "Instructions",
+			description:
+				"Instructions associated with the specific exercise. To be seen when user clicks on the question mark near the title.",
+			type: "text",
+			validation: (Rule) => Rule.required(),
+		}),
 
 		// Brainstorm fields.
 		defineField({
@@ -99,6 +107,21 @@ export const Exercise = defineType({
 							description: "Small additional help text shown below the prompt.",
 							type: "string",
 							initialValue: "Single or short word responses are preferred.",
+						}),
+						defineField({
+							name: "color",
+							title: "Color",
+							type: "string",
+							description:
+								"Choose what color post it note you want for each step of the brainstorm.",
+							initialValue: "green",
+							options: {
+								list: [
+									{ title: "Green", value: "green" },
+									{ title: "Red", value: "red" },
+									{ title: "Yellow", value: "yellow" },
+								],
+							},
 						}),
 					],
 				}),

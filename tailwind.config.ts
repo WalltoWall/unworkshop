@@ -66,7 +66,7 @@ export default {
 
 			gray: {
 				97: "#f7f7f7",
-				90: "#e5e5e5",
+				90: "#E5E5E5",
 				82: "#cdd6d4",
 				75: "#bfbfbf",
 				50: "#7f7f7f",
@@ -125,6 +125,7 @@ export default {
 
 			pink: {
 				85: "#ffb7f1",
+				80: "#fab99e",
 				78: "#ff93ea",
 				74: "#ff7be6",
 				67: "#e870d2",

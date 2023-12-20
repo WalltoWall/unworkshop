@@ -58,6 +58,20 @@ export const client = {
 		return participant
 	},
 
+	// prettier-ignore
+	async findAllParticipantsInExercise(exerciseId: string) {
+
+		const participants = await sanity.fetch<Array<ST["participant"]>>(
+			groq`*[_type == "participant" && answers[$exerciseId] != null]{
+				...,
+				answers
+			}`,
+			{exerciseId},
+		)
+
+		return participants
+	},
+
 	async findKickoffOrThrow(code: string) {
 		const kickoff = await client.findKickoff(code)
 		if (!kickoff) throw new Error("Kickoff not found, when expected.")
