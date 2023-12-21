@@ -51,25 +51,33 @@ export const QuadrantSteps = ({
 
 	return (
 		<>
-			{quadrants.map((quadrant, index) => (
-				<div key={quadrant._key}>
-					{(getTime(active, index) ||
-						(answers.length > 0 && active === quadrants.length * 2)) && (
-						<Quadrant
-							item={quadrant}
-							exerciseId={exerciseId}
-							isGroup={group}
-							index={index}
-							active={active}
-							answers={answers}
-							answer={answers.find((a) => a.name === quadrant.name)}
-							todayInstructions={todayInstructions}
-							tomorrowInstructions={tomorrowInstructions}
-							finalInstructions={finalInstructions}
-						/>
-					)}
-				</div>
-			))}
+			<div className="mb-10">
+				{quadrants.map((quadrant, index) => (
+					<div key={quadrant._key}>
+						{answers.length > 0 &&
+							active === quadrants.length * 2 &&
+							index !== 0 && (
+								<div className="-ml-7 h-[0.125rem] w-[calc(100%+3.5rem)] bg-gray-90" />
+							)}
+
+						{(getTime(active, index) ||
+							(answers.length > 0 && active === quadrants.length * 2)) && (
+							<Quadrant
+								item={quadrant}
+								exerciseId={exerciseId}
+								isGroup={group}
+								index={index}
+								active={active}
+								answers={answers}
+								answer={answers.find((a) => a.name === quadrant.name)}
+								todayInstructions={todayInstructions}
+								tomorrowInstructions={tomorrowInstructions}
+								finalInstructions={finalInstructions}
+							/>
+						)}
+					</div>
+				))}
+			</div>
 
 			<Steps
 				disabled={handleDisabled()}

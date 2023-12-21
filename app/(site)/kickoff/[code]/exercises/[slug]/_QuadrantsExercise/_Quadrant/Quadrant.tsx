@@ -156,7 +156,7 @@ export const Quadrant = ({
 				tomorrowInstructions={tomorrowInstructions}
 				finalInstructions={finalInstructions}
 			/>
-			<div className="relative p-7 md:p-12">
+			<div className="relative my-6 p-7 md:p-12">
 				<QuadrantAxes item={item} />
 
 				<div
