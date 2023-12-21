@@ -2,6 +2,7 @@ import { notFound } from "next/navigation"
 import { client } from "@/sanity/client"
 import { PresenterHeader } from "../../PresenterHeader"
 import { BrainstormPresenterView } from "./_BrainstormExercise/BrainstormPresenterView"
+import { QuadrantsPresenterView } from "./_QuadrantsExercise/QuadrantsPresenterView"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -25,6 +26,9 @@ const PresenterExercisePage = async (props: Props) => {
 
 			{exercise.type === "brainstorm" && (
 				<BrainstormPresenterView exercise={exercise} />
+			)}
+			{exercise.type === "quadrants" && (
+				<QuadrantsPresenterView exercise={exercise} />
 			)}
 		</>
 	)
