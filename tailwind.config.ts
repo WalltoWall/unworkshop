@@ -94,6 +94,7 @@ export default {
 			yellow: {
 				77: "#ffee8b",
 				70: "#ffe96a",
+				68: "#fecb2f",
 				64: "#ffe54a",
 				58: "#e8d144",
 				52: "#d1bc3d",
