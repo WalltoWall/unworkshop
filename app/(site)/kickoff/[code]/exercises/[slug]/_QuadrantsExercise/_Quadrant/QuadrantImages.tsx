@@ -6,7 +6,7 @@ const QuadrantImage = ({ image }: { image: SanityImage }) => (
 	<Image
 		src={urlFor(image).width(150).height(150).format("webp").toString()}
 		alt={altFor(image)}
-		className="max-h-[45px] w-full max-w-[45px] object-contain sm:max-h-[90px] sm:max-w-[90px]"
+		className="pointer-events-none max-h-[45px] w-full max-w-[45px] object-contain sm:max-h-[90px] sm:max-w-[90px]"
 		width={150}
 		height={150}
 	/>

@@ -14,6 +14,7 @@ interface PresentQuadrantProps {
 	showPhotos: boolean
 	showLabels: boolean
 	color: string
+	animating: boolean
 }
 
 export const PresentQuadrant = ({
@@ -25,6 +26,7 @@ export const PresentQuadrant = ({
 	showPhotos,
 	showLabels,
 	color,
+	animating,
 }: PresentQuadrantProps) => {
 	return (
 		<div
@@ -78,6 +80,7 @@ export const PresentQuadrant = ({
 						showLabels={showLabels}
 						showLines={showLines}
 						color={color}
+						animating={animating}
 					/>
 				))}
 			</div>
@@ -89,7 +92,7 @@ const QuadrantImage = ({ image }: { image: SanityImage }) => (
 	<Image
 		src={urlFor(image).width(150).height(150).format("webp").toString()}
 		alt={altFor(image)}
-		className="max-h-[45px] w-full max-w-[45px] object-contain opacity-20 sm:max-h-[90px] sm:max-w-[90px]"
+		className="pointer-events-none max-h-[45px] w-full max-w-[45px] object-contain opacity-20 sm:max-h-[90px] sm:max-w-[90px]"
 		width={150}
 		height={150}
 	/>

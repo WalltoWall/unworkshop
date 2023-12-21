@@ -4,8 +4,10 @@ import useEmblaCarousel, { type EmblaCarouselType } from "embla-carousel-react"
 import React, { useEffect } from "react"
 import { CirclePicker } from "react-color"
 import { cx } from "class-variance-authority"
+import { Button } from "@/components/Button"
 import { Arrow } from "@/components/icons/Arrow"
 import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
+import { Spinner } from "@/components/Spinner"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
@@ -35,6 +37,7 @@ export const QuadrantsPresenterViewClient = ({
 	})
 	const [prevBtnDisabled, setPrevBtnDisabled] = React.useState(true)
 	const [nextBtnDisabled, setNextBtnDisabled] = React.useState(true)
+	const [animating, setAnimating] = React.useState(false)
 	const [showToday, setShowToday] = React.useState(true)
 	const [showTomorrow, setShowTomorrow] = React.useState(true)
 	const [showLines, setShowLines] = React.useState(true)
@@ -65,8 +68,25 @@ export const QuadrantsPresenterViewClient = ({
 		[emblaApi],
 	)
 
+	const animatePoints = () => {
+		setAnimating(true)
+
+		setTimeout(() => {
+			setAnimating(false)
+		}, 4000)
+	}
+
 	return exercise.quadrants ? (
 		<div className="relative h-full">
+			<Button
+				className="absolute -right-1 -top-5 z-10 cursor-pointer"
+				onClick={animatePoints}
+				icon={animating && <Spinner className="w-[1.125rem]" />}
+				disabled={animating}
+			>
+				{animating ? "Animating" : "Animate"}
+			</Button>
+
 			<div className="h-full overflow-hidden" ref={emblaRef}>
 				<div className="flex h-full">
 					{exercise.quadrants.map((quadrant) => (
@@ -80,6 +100,7 @@ export const QuadrantsPresenterViewClient = ({
 								color={color}
 								showToday={showToday}
 								showTomorrow={showTomorrow}
+								animating={animating}
 							/>
 						</div>
 					))}

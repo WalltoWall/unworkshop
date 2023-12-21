@@ -11,6 +11,7 @@ interface Props {
 	showLabels: boolean
 	showLines: boolean
 	color: string
+	animating: boolean
 }
 
 export const QuadrantAnswer = ({
@@ -20,6 +21,7 @@ export const QuadrantAnswer = ({
 	showLabels,
 	showLines,
 	color,
+	animating,
 }: Props) => {
 	const todayRef = useRef<HTMLDivElement>(null)
 	const tomorrowRef = useRef<HTMLDivElement>(null)
@@ -70,18 +72,27 @@ export const QuadrantAnswer = ({
 			<div
 				ref={todayRef}
 				className={cx(
-					"absolute z-10 -ml-4 -mt-4",
-					showToday && answer.today.placed ? "block" : "hidden",
+					"transition-position absolute z-10 -ml-4 -mt-4",
+					(showToday && answer.today.placed) || animating
+						? "opacity-100"
+						: "opacity-0",
+					animating ? "duration-[3s]" : "duration-0",
 				)}
 				style={{
-					top: `${answer.today.top}%`,
-					left: `${answer.today.left}%`,
+					top: animating ? `${answer.tomorrow.top}%` : `${answer.today.top}%`,
+					left: animating
+						? `${answer.tomorrow.left}%`
+						: `${answer.today.left}%`,
 				}}
 			>
 				<div
-					className="h-8 w-8 rounded-full border-4"
+					className={cx(
+						"h-8 w-8 rounded-full border-4 transition-colors",
+						animating ? "duration-[3s]" : "duration-0",
+					)}
 					style={{
 						borderColor: color,
+						backgroundColor: animating ? color : "transparent",
 					}}
 				/>
 			</div>
@@ -90,7 +101,9 @@ export const QuadrantAnswer = ({
 				ref={tomorrowRef}
 				className={cx(
 					"absolute z-10 -ml-4 -mt-4",
-					showTomorrow && answer.tomorrow.placed ? "block" : "hidden",
+					!animating && showTomorrow && answer.tomorrow.placed
+						? "block"
+						: "hidden",
 				)}
 				style={{
 					top: `${answer.tomorrow.top}%`,
@@ -108,7 +121,8 @@ export const QuadrantAnswer = ({
 			<div
 				className={cx(
 					"absolute h-1 origin-left",
-					showLines &&
+					!animating &&
+						showLines &&
 						showToday &&
 						answer.today.placed &&
 						showTomorrow &&

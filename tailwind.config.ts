@@ -150,6 +150,10 @@ export default {
 				fadeIn: "fadeIn 300ms linear",
 				fadeOut: "fadeOut 300ms linear",
 			},
+
+			transitionProperty: {
+				position: "top, bottom, left, right",
+			},
 		},
 	},
 	plugins: [
