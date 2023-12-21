@@ -3,6 +3,7 @@ import { cx } from "class-variance-authority"
 import type { ST } from "@/sanity/config"
 import { altFor, urlFor, type SanityImage } from "@/sanity/helpers"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
+import { QuadrantAnswer } from "./QuadrantAnswer"
 
 interface PresentQuadrantProps {
 	quadrant: NonNullable<ST["exercise"]["quadrants"]>[number]
@@ -46,7 +47,7 @@ export const PresentQuadrant = ({
 				</>
 			)}
 
-			<div className="grid h-full w-full grid-cols-2">
+			<div className="relative grid h-full w-full grid-cols-2">
 				<div
 					className={cx(
 						"flex items-center justify-center border-b-4 border-r-4",
@@ -82,6 +83,17 @@ export const PresentQuadrant = ({
 						<QuadrantImage image={quadrant.bottomRightImage} />
 					)}
 				</div>
+
+				{answers.map((answer, index) => (
+					<QuadrantAnswer
+						key={index}
+						answer={answer}
+						showToday={showToday}
+						showTomorrow={showTomorrow}
+						showLabels={showLabels}
+						color={color}
+					/>
+				))}
 			</div>
 		</div>
 	)
