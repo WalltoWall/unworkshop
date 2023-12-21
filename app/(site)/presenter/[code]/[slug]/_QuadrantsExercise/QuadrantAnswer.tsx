@@ -9,6 +9,7 @@ interface Props {
 	showToday: boolean
 	showTomorrow: boolean
 	showLabels: boolean
+	showLines: boolean
 	color: string
 }
 
@@ -17,6 +18,7 @@ export const QuadrantAnswer = ({
 	showToday,
 	showTomorrow,
 	showLabels,
+	showLines,
 	color,
 }: Props) => {
 	const todayRef = useRef<HTMLDivElement>(null)
@@ -106,7 +108,8 @@ export const QuadrantAnswer = ({
 			<div
 				className={cx(
 					"absolute h-1 origin-left",
-					showToday &&
+					showLines &&
+						showToday &&
 						answer.today.placed &&
 						showTomorrow &&
 						answer.tomorrow.placed

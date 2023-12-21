@@ -48,32 +48,17 @@ export const PresentQuadrant = ({
 			)}
 
 			<div className="relative grid h-full w-full grid-cols-2">
-				<div
-					className={cx(
-						"flex items-center justify-center border-b-4 border-r-4",
-						showLines ? "border-black" : "border-transparent",
-					)}
-				>
+				<div className="flex items-center justify-center border-b-4 border-r-4 border-black">
 					{showPhotos && quadrant.topLeftImage?.asset && (
 						<QuadrantImage image={quadrant.topLeftImage} />
 					)}
 				</div>
-				<div
-					className={cx(
-						"flex items-center justify-center border-b-4",
-						showLines ? "border-black" : "border-transparent",
-					)}
-				>
+				<div className="flex items-center justify-center border-b-4 border-black">
 					{showPhotos && quadrant.topRightImage?.asset && (
 						<QuadrantImage image={quadrant.topRightImage} />
 					)}
 				</div>
-				<div
-					className={cx(
-						"flex items-center justify-center border-r-4",
-						showLines ? "border-black" : "border-transparent",
-					)}
-				>
+				<div className="flex items-center justify-center border-r-4 border-black">
 					{showPhotos && quadrant.bottomLeftImage?.asset && (
 						<QuadrantImage image={quadrant.bottomLeftImage} />
 					)}
@@ -91,6 +76,7 @@ export const PresentQuadrant = ({
 						showToday={showToday}
 						showTomorrow={showTomorrow}
 						showLabels={showLabels}
+						showLines={showLines}
 						color={color}
 					/>
 				))}
