@@ -6,10 +6,12 @@ import type { QuadrantsParticipant } from "./types"
 
 export interface QuadrantsExerciseProps {
 	exercise: ST["exercise"]
+	kickoffCode: string
 }
 
 export const QuadrantsExercise = async ({
 	exercise,
+	kickoffCode,
 }: QuadrantsExerciseProps) => {
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
@@ -27,6 +29,7 @@ export const QuadrantsExercise = async ({
 					todayInstructions={exercise.today_instructions}
 					tomorrowInstructions={exercise.tomorrow_instructions}
 					finalInstructions={exercise.finalize_instructions}
+					kickoffCode={kickoffCode}
 				/>
 			)}
 		</div>

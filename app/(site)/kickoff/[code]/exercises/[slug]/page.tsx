@@ -23,7 +23,10 @@ const ExercisePage = async (props: Props) => {
 				<BrainstormExercise exercise={exercise} />
 			)}
 			{exercise.type === "quadrants" && (
-				<QuadrantsExercise exercise={exercise} />
+				<QuadrantsExercise
+					exercise={exercise}
+					kickoffCode={props.params.code}
+				/>
 			)}
 		</div>
 	)

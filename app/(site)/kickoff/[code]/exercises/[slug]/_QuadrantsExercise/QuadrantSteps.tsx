@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { useRouter } from "next/navigation"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { Quadrant } from "./_Quadrant/Quadrant"
@@ -24,6 +25,7 @@ type QuadrantStepsProps = {
 	todayInstructions: ST["exercise"]["today_instructions"]
 	tomorrowInstructions: ST["exercise"]["tomorrow_instructions"]
 	finalInstructions: ST["exercise"]["finalize_instructions"]
+	kickoffCode: string
 }
 
 export const QuadrantSteps = ({
@@ -34,7 +36,9 @@ export const QuadrantSteps = ({
 	todayInstructions,
 	tomorrowInstructions,
 	finalInstructions,
+	kickoffCode,
 }: QuadrantStepsProps) => {
+	const router = useRouter()
 	const [active, setActive] = React.useState(0)
 
 	const handleDisabled = () => {
@@ -84,7 +88,7 @@ export const QuadrantSteps = ({
 				count={quadrants.length * 2}
 				active={active}
 				onActiveChange={setActive}
-				onFinish={() => alert("done")}
+				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
 			/>
 		</>
 	)
