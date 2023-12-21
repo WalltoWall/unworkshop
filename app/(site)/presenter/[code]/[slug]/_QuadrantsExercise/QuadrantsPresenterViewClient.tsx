@@ -2,9 +2,11 @@
 
 import useEmblaCarousel, { type EmblaCarouselType } from "embla-carousel-react"
 import React, { useEffect } from "react"
+import { CirclePicker } from "react-color"
 import { cx } from "class-variance-authority"
 import { Arrow } from "@/components/icons/Arrow"
 import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
+import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
 import { PresentQuadrant } from "./PresentQuadrant"
@@ -14,24 +16,14 @@ interface PresenterViewProps {
 	answers: Record<string, Answer[]>
 }
 
-const colorGroups = [
-	["#ff9488", "#ff7566", "#ff5745", "#e8503f", "#ba4033"],
-	["#ff9e77", "#ff8655", "#ff7a45", "#e86f3f", "#d16439"],
-	["#ffee8b", "#ffe96a", "#ffe54a", "#e8d144", "#d1bc3d"],
-	["#96fad1", "#57f7b6", "#19f49b", "#17de8d", "#13b271"],
-	["#a6afff", "#7987ff", "#5c6dff", "#4c5ad1", "#4350ba"],
-	["#d7a0fa", "#c371f8", "#b652f7", "#a64be1", "#853cb4"],
-	["#ffb7f1", "#fab99e", "#ff93ea", "#ff7be6", "#e870d2", "#e165bd"],
-	[
-		"#f7f7f7",
-		"#E5E5E5",
-		"#cdd6d4",
-		"#bfbfbf",
-		"#7f7f7f",
-		"#8ca09c",
-		"#5a6c69",
-		"#2c3533",
-	],
+const colors = [
+	"#ff5745",
+	"#ff7a45",
+	"#ffe54a",
+	"#19f49b",
+	"#5c6dff",
+	"#b652f7",
+	"#ff93ea",
 ]
 
 export const QuadrantsPresenterViewClient = ({
@@ -106,7 +98,43 @@ export const QuadrantsPresenterViewClient = ({
 				/>
 			</div>
 
+			<div className="fixed bottom-7 left-7 rounded-2xl bg-black px-5 py-4 text-white">
+				<div className="mb-2 flex items-center">
+					<span
+						className="block h-6 w-6 rounded-full border-4"
+						style={{
+							borderColor: color,
+						}}
+					/>
+					<Text className="ml-1 uppercase text-24 font-heading capsize">
+						Today
+					</Text>
+				</div>
+
+				<div className="flex items-center">
+					<span
+						className="block h-6 w-6 rounded-full"
+						style={{
+							backgroundColor: color,
+						}}
+					/>
+					<Text className="ml-1 uppercase text-24 font-heading capsize">
+						Tomorrow
+					</Text>
+				</div>
+			</div>
+
 			<SettingsMenu>
+				<SettingVisibility
+					label="Today"
+					isVisible={showToday}
+					toggleVisibility={() => setShowToday((prev) => !prev)}
+				/>
+				<SettingVisibility
+					label="Tomorrow"
+					isVisible={showTomorrow}
+					toggleVisibility={() => setShowTomorrow((prev) => !prev)}
+				/>
 				<SettingVisibility
 					label="Lines"
 					isVisible={showLines}
@@ -121,6 +149,17 @@ export const QuadrantsPresenterViewClient = ({
 					label="Labels"
 					isVisible={showLabels}
 					toggleVisibility={() => setShowLabels((prev) => !prev)}
+				/>
+				<Text size={12} className="block pt-2 text-white">
+					Dot Colors
+				</Text>
+				<CirclePicker
+					color={color}
+					colors={colors}
+					circleSize={20}
+					circleSpacing={8}
+					width="7.5rem"
+					onChange={(newColor) => setColor(newColor.hex)}
 				/>
 			</SettingsMenu>
 		</div>

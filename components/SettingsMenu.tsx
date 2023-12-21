@@ -1,7 +1,6 @@
 "use client"
 
 import * as Popover from "@radix-ui/react-popover"
-import type { Dispatch, SetStateAction } from "react"
 import { Eye } from "./icons/Eye"
 import { EyeSlash } from "./icons/EyeSlash"
 import { Gear } from "./icons/Gear"
