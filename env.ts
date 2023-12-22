@@ -14,12 +14,13 @@ export const env = createEnv({
 	 * Environment variables available on the client (and server).
 	 */
 	client: {
+		NEXT_PUBLIC_ROOT_URL: z.string().url().default("http://localhost:3000"),
 		NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
 		NEXT_PUBLIC_SANITY_DATASET: z.string().default("production"),
 		NEXT_PUBLIC_SANITY_API_VERSION: z.string().default("2023-02-10"),
 	},
 
-    /**
+	/**
 	 * "Special" environment variables that are shared amongst server and
 	 * client. These are usually handled specially by the compiler or are
 	 * replaced statically at build-time, such as NODE_ENV.
@@ -39,6 +40,7 @@ export const env = createEnv({
 	runtimeEnv: {
 		SANITY_TOKEN: process.env.SANITY_TOKEN,
 
+		NEXT_PUBLIC_ROOT_URL: process.env.NEXT_PUBLIC_ROOT_URL,
 		NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
 		NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
 		NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,

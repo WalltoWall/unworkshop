@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation"
 import { zfd } from "zod-form-data"
 import { Button } from "@/components/Button"
-import { DarkLayout } from "@/components/DarkLayout"
 import { Text } from "@/components/Text"
+import { PresenterHeader } from "./PresenterHeader"
 
 const FormSchema = zfd.formData({ code: zfd.text() })
 
@@ -10,24 +10,22 @@ async function navigateToWorkshop(data: FormData) {
 	"use server"
 
 	const form = FormSchema.parse(data)
-	redirect(`/kickoff/${form.code.toLowerCase()}`)
+	redirect(`/presenter/${form.code}`)
 }
 
-const Home = () => {
+const PresenterPage = () => {
 	return (
-		<DarkLayout>
-			<div className="px-7">
-				<Text style="heading" size={40} className="max-w-[206px] text-right">
-					Brand WWorkshop
-				</Text>
-			</div>
-
+		<>
+			<PresenterHeader />
 			<div className="space-y-4 px-7 py-8 text-center">
 				<Text style="heading" size={24}>
 					Enter your group code
 				</Text>
 
-				<form className="flex flex-col space-y-1.5" action={navigateToWorkshop}>
+				<form
+					className="mx-auto flex max-w-lg flex-col space-y-1.5"
+					action={navigateToWorkshop}
+				>
 					<input
 						type="text"
 						name="code"
@@ -36,13 +34,11 @@ const Home = () => {
 						required
 					/>
 
-					<Button size="sm" color="gray" outline>
-						Continue
-					</Button>
+					<Button color="black">Continue</Button>
 				</form>
 			</div>
-		</DarkLayout>
+		</>
 	)
 }
 
-export default Home
+export default PresenterPage

@@ -1,6 +1,8 @@
 "use client"
 
+import { useFormStatus } from "react-dom"
 import { Button } from "@/components/Button"
+import { Spinner } from "@/components/Spinner"
 import { Text } from "@/components/Text"
 
 const slides = [
@@ -19,6 +21,8 @@ const slides = [
 ]
 
 export const Scroller = () => {
+	const form = useFormStatus()
+
 	return (
 		<>
 			<div className="grid grow snap-y snap-mandatory auto-rows-[100%] overflow-auto overscroll-contain scrollbar-hide">
@@ -31,8 +35,14 @@ export const Scroller = () => {
 				))}
 
 				<div className="flex snap-start flex-col justify-center">
-					<Button color="black" size="base" className="mx-auto">
-						I Agree
+					<Button
+						color="black"
+						size="base"
+						className="mx-auto"
+						icon={form.pending && <Spinner className="w-[1.125rem]" />}
+						disabled={form.pending}
+					>
+						<span>I Agree</span>
 					</Button>
 				</div>
 			</div>

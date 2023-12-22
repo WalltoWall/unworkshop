@@ -30,7 +30,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 
 			<body
 				className={cx(
-					"font-normal leading-copy font-sans",
+					"font-normal antialiased leading-copy font-sans",
 					TradeGothic.variable,
 					TradeGothicBldCnd.variable,
 				)}

@@ -4,5 +4,5 @@ import { NextStudio } from "next-sanity/studio"
 import config from "@/sanity/config"
 
 export const Studio = () => {
-	return <NextStudio config={config as any} />
+	return <NextStudio config={config} />
 }

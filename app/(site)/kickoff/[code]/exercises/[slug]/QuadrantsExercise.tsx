@@ -1,13 +1,13 @@
 "use client"
 
-import { DndProvider, useDrop, useDrag } from "react-dnd"
-import { HTML5Backend } from "react-dnd-html5-backend"
-import { Text } from "@/components/Text"
-import { RichText } from "@/components/RichText"
-import Image from "next/image"
-import { urlFor, altFor } from "@/sanity/field-helpers"
 import { useCallback, useRef, useState } from "react"
+import { DndProvider, useDrag, useDrop } from "react-dnd"
+import { HTML5Backend } from "react-dnd-html5-backend"
+import Image from "next/image"
+import { RichText } from "@/components/RichText"
 import { Steps } from "@/components/Steps"
+import { Text } from "@/components/Text"
+import { altFor, urlFor } from "@/sanity/helpers"
 import styles from "./QuadrantExercise.module.css"
 
 interface Point {
@@ -321,7 +321,7 @@ const Quadrant = ({
 	)
 }
 
-export const QuadrantsExercise = ({ quadrants }: Props) => {
+export const QuadrantsExercise = ({ quadrants }: Props): JSX.Element => {
 	const [results, setResults] = useState(
 		quadrants.map(() => ({
 			today: { top: 0, left: 0, placed: false },
@@ -329,7 +329,7 @@ export const QuadrantsExercise = ({ quadrants }: Props) => {
 		})),
 	)
 	const [active, setActive] = useState(0)
-	if (!quadrants) return null
+	if (!quadrants) return <></>
 
 	const handleDisabled = () => {
 		const tomorrow = (active / 2) % 1 > 0 ? true : false

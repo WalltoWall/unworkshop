@@ -2,7 +2,6 @@ import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { LightLayout } from "@/components/LightLayout"
 import { Text } from "@/components/Text"
-import { getParticipantOrThrow } from "@/lib/getParticipantOrThrow"
 import { client } from "@/sanity/client"
 import { Scroller } from "./Scroller"
 
@@ -12,9 +11,8 @@ type Props = {
 }
 
 const KickoffPage = async (props: Props) => {
-	const participant = await getParticipantOrThrow()
-
-	if (participant.onboarded) redirect(`/kickoff/${props.params.code}/exercises`)
+	const participant = await client.findParticipantOrThrow()
+	// if (participant.onboarded) redirect(`/kickoff/${props.params.code}/exercises`)
 
 	async function onboard() {
 		"use server"

@@ -1,8 +1,12 @@
+import "server-only"
+import React from "react"
 import { createClient, groq } from "next-sanity"
+import { cookies } from "next/headers"
+import type { Reference } from "sanity"
+import { z } from "zod"
+import type { ST } from "@/sanity/config"
+import { PARTICIPANT_COOKIE } from "@/constants"
 import { env } from "@/env"
-import type { Exercise } from "./schemas/documents/Exercise"
-import type { Kickoff } from "./schemas/documents/Kickoff"
-import type { Participant } from "./schemas/documents/Participant"
 
 export const sanity = createClient({
 	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -13,9 +17,9 @@ export const sanity = createClient({
 })
 
 export const client = {
-	findKickoff: async (code: string) => {
-		type KickoffWithExercises = Omit<Kickoff, "exercises"> & {
-			exercises: Exercise[]
+	findKickoff: React.cache(async (code: string) => {
+		type KickoffWithExercises = Omit<ST["kickoff"], "exercises"> & {
+			exercises: Array<ST["exercise"]>
 		}
 
 		const data = await sanity.fetch<KickoffWithExercises | null>(
@@ -24,20 +28,45 @@ export const client = {
             exercises[]->
         }`,
 			{ code: code.toLowerCase() },
+			{ cache: "no-store" },
+		)
+
+		return data
+	}),
+
+	async findParticipant(id: string) {
+		const data = await sanity.fetch<ST["participant"] | null>(
+			groq`*[_type == "participant" && _id == $id][0]`,
+			{ id },
 		)
 
 		return data
 	},
 
-	findKickoffOrThrow: async (code: string) => {
+	async findParticipantOrThrow() {
+		const participantId = z
+			.string()
+			.parse(cookies().get(PARTICIPANT_COOKIE)?.value)
+
+		const participant = await client.findParticipant(participantId)
+		if (!participant) throw new Error("No onboarded participant found.")
+
+		return participant
+	},
+
+	async findKickoffOrThrow(code: string) {
 		const kickoff = await client.findKickoff(code)
 		if (!kickoff) throw new Error("Kickoff not found, when expected.")
 
 		return kickoff
 	},
 
-	registerParticipant: async (args: { name: string; kickoffId: string }) => {
-		const data: Pick<Participant, "name" | "kickoff" | "_type"> = {
+	async registerParticipant(args: { name: string; kickoffId: string }) {
+		type Data = Pick<ST["participant"], "name" | "_type"> & {
+			kickoff: Reference
+		}
+
+		const data: Data = {
 			_type: "participant",
 			name: args.name,
 			kickoff: {
@@ -52,27 +81,18 @@ export const client = {
 		return res
 	},
 
-	onboardParticipant: async (id: string) => {
-		const data: Pick<Participant, "onboarded"> = {
+	async onboardParticipant(id: string) {
+		const data: Pick<ST["participant"], "onboarded"> = {
 			onboarded: true,
 		}
 
-		const res: Participant = await sanity.patch(id).set(data).commit()
+		const res: ST["participant"] = await sanity.patch(id).set(data).commit()
 
 		return res
 	},
 
-	findParticipant: async (id: string) => {
-		const data = await sanity.fetch<Participant | null>(
-			groq`*[_type == "participant" && _id == $id][0]`,
-			{ id },
-		)
-
-		return data
-	},
-
-	findExerciseBySlug: async (slug: string) => {
-		const data = await sanity.fetch<Exercise | null>(
+	async findExerciseBySlug(slug: string) {
+		const data = await sanity.fetch<ST["exercise"] | null>(
 			groq`*[_type == "exercise" && slug.current == $slug][0]`,
 			{ slug },
 		)
