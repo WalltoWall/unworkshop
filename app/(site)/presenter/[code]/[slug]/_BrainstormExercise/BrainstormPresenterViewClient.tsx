@@ -7,6 +7,7 @@ import {
 	PointerSensor,
 	useSensor,
 	useSensors,
+	type Active,
 } from "@dnd-kit/core"
 import {
 	arrayMove,
@@ -40,6 +41,12 @@ export const BrainstormPresenterViewClient = ({
 	])
 
 	const [showSorter, setShowSorter] = React.useState(true)
+	const [active, setActive] = React.useState<Active | null>(null)
+	const [newColumnCards, setColumnCards] = React.useState(columnCards)
+	const activeItem = React.useMemo(
+		() => newColumnCards.find((card) => card.id === active?.id),
+		[active, newColumnCards],
+	)
 
 	const [optimisticColumn, addOptimisticColumn] = React.useOptimistic<
 		Array<{ columnId: string }>,
@@ -67,7 +74,35 @@ export const BrainstormPresenterViewClient = ({
 	)
 
 	return (
-		<DndContext sensors={sensors}>
+		<DndContext
+			sensors={sensors}
+			onDragStart={({ active }) => {
+				setActive(active)
+			}}
+			onDragEnd={({ active, over }) => {
+				if (over && active.id !== over?.id) {
+					const activeIndex = newColumnCards.findIndex(
+						({ id }) => id === active.id,
+					)
+					const overIndex = newColumnCards.findIndex(({ id }) => id === over.id)
+
+					setColumnCards(arrayMove(newColumnCards, activeIndex, overIndex))
+				}
+
+				setActive(null)
+			}}
+			onDragCancel={() => {
+				setActive(null)
+			}}
+			onDragOver={({ active, over }) => {
+				if (!over) return
+
+				const initialContainer = active.data.current?.sortable?.containerId
+				const targetContainer = active.data.current?.sortable.containerId
+
+				if (!initialContainer) return
+			}}
+		>
 			<div className="relative">
 				<SortableContext items={cards}>
 					<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
@@ -103,35 +138,35 @@ export const BrainstormPresenterViewClient = ({
 							))}
 						</div>
 					</div>
-				</SortableContext>
-				<div className="flex gap-4 pt-5">
-					{optimisticColumn.map((column, idx) => (
-						<SortableContext key={column.columnId} items={columnCards}>
+					<div className="flex gap-4 pt-5">
+						{optimisticColumn.map((column) => (
 							<CardColumn
-								cards={columnCards}
+								key={column.columnId}
+								cards={newColumnCards}
 								id={column.columnId}
 								removeColumn={removeColumn}
+								activeItem={activeItem}
 							/>
-						</SortableContext>
-					))}
+						))}
 
-					<button
-						className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
-						onClick={() => {
-							const id = uid()
-							setColumns([...columns, { columnId: id }])
-							addOptimisticColumn({
-								type: "add",
-								payload: { columnId: id },
-							})
-						}}
-					>
-						<GrayPlusCircleIcon className="w-6" />
-						<Text style={"heading"} size={18} className="text-gray-38">
-							Add Another Board
-						</Text>
-					</button>
-				</div>
+						<button
+							className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
+							onClick={() => {
+								const id = uid()
+								setColumns([...columns, { columnId: id }])
+								addOptimisticColumn({
+									type: "add",
+									payload: { columnId: id },
+								})
+							}}
+						>
+							<GrayPlusCircleIcon className="w-6" />
+							<Text style={"heading"} size={18} className="text-gray-38">
+								Add Another Board
+							</Text>
+						</button>
+					</div>
+				</SortableContext>
 			</div>
 		</DndContext>
 	)
