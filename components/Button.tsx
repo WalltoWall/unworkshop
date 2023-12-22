@@ -113,7 +113,7 @@ export const Button = React.forwardRef<
 					ref={ref as React.ForwardedRef<HTMLAnchorElement>}
 					{...props}
 				>
-					<span className="capsize">{children}</span>
+					{children}
 					{Icon}
 				</Link>
 			)
@@ -125,7 +125,7 @@ export const Button = React.forwardRef<
 				className={className}
 				{...(props as PlainButtonProps)}
 			>
-				<span className="capsize">{children}</span>
+				{children}
 				{Icon}
 			</button>
 		)
