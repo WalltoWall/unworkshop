@@ -1,5 +1,9 @@
-"use client"
-
+// REVIEW: `use client` is only needed for "entry points" to the client. If a
+// component is only ever rendered in a client-component, you don't need the
+// directive.
+//
+// A good way to know that you don't need the `use client` directive is if your
+// component accepts a function as a prop.
 import * as Popover from "@radix-ui/react-popover"
 import { Eye } from "./icons/Eye"
 import { EyeSlash } from "./icons/EyeSlash"

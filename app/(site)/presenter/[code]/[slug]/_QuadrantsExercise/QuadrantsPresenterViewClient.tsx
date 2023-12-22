@@ -1,5 +1,7 @@
 "use client"
 
+// REVIEW: I have to show you Framer Motion one day 😁, I think you'd really
+// like it.
 import useEmblaCarousel, { type EmblaCarouselType } from "embla-carousel-react"
 import React, { useEffect } from "react"
 import { CirclePicker } from "react-color"
@@ -166,6 +168,7 @@ export const QuadrantsPresenterViewClient = ({
 					isVisible={showPhotos}
 					toggleVisibility={() => setShowPhotos((prev) => !prev)}
 				/>
+				{/* REVIEW: Hiding labels causes the view to shift */}
 				<SettingVisibility
 					label="Labels"
 					isVisible={showLabels}
