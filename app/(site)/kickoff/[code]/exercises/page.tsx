@@ -1,9 +1,9 @@
 import { Text } from "@/components/Text"
-import { findKickoffOrThrow } from "@/sanity/client"
+import { client } from "@/sanity/client"
 import { ExerciseCard } from "./ExerciseCard"
 
 const ExercisesPage = async (props: { params: { code: string } }) => {
-	const kickoff = await findKickoffOrThrow(props.params.code)
+	const kickoff = await client.findKickoffOrThrow(props.params.code)
 
 	return (
 		<div>

@@ -1,0 +1,23 @@
+{
+	"semi": false,
+	"printWidth": 80,
+	"useTabs": true,
+	"trailingComma": "all",
+	"proseWrap": "always",
+	"plugins": [
+		"@ianvs/prettier-plugin-sort-imports",
+		"prettier-plugin-tailwindcss"
+	],
+	"importOrder": [
+		"<BUILTIN_MODULES>",
+		"react",
+		"next",
+		"<THIRD_PARTY_MODULES>",
+		"^@/components/(.*)$",
+		"^@/lib/(.*)$",
+		"^@/sanity/(.*)$",
+		"^@/(.*)$",
+		"^[./]"
+	],
+	"importOrderTypeScriptVersion": "5.0.0"
+}

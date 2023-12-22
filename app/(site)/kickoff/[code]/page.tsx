@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
-import { onboardParticipant } from "@/sanity/client"
 import { redirect } from "next/navigation"
 import { LightLayout } from "@/components/LightLayout"
 import { Text } from "@/components/Text"
-import { Scroller } from "./Scroller"
 import { getParticipantOrThrow } from "@/lib/getParticipantOrThrow"
+import { client } from "@/sanity/client"
+import { Scroller } from "./Scroller"
 
 type Props = {
 	params: { code: string }
@@ -19,7 +19,7 @@ const KickoffPage = async (props: Props) => {
 	async function onboard() {
 		"use server"
 
-		await onboardParticipant(participant._id)
+		await client.onboardParticipant(participant._id)
 		redirect(`/kickoff/${props.params.code}/exercises`)
 	}
 
