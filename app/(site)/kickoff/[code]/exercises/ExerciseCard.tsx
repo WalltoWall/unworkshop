@@ -63,7 +63,7 @@ export const ExerciseCard = (props: Props) => {
 					{props.name}
 				</Text>
 
-				<div className="mt-1 flex items-center gap-1">
+				<div className="mt-2 flex items-center gap-1">
 					<Text style="copy" size={16}>
 						Start Exercise
 					</Text>
