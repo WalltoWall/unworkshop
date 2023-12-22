@@ -12,6 +12,7 @@ interface Props {
 	className?: string
 }
 
+// FIXME: Clicking on smaller dots in the steps section doesn't do anything.
 export const Steps = ({
 	disabled,
 	count,

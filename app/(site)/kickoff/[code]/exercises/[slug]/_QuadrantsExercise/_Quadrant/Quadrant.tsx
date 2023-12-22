@@ -26,6 +26,9 @@ type QuadrantProps = {
 	finalInstructions?: ST["exercise"]["finalize_instructions"]
 }
 
+// REVIEW: I wonder if it's okay that participants are able to modify the
+// "tomorrow" circle when they are on the "today" step and vice-versa. Probably
+// something we want to run-by the larger team during review.
 export const Quadrant = ({
 	item,
 	exerciseId,
@@ -39,8 +42,10 @@ export const Quadrant = ({
 	finalInstructions,
 }: QuadrantProps) => {
 	const formRef = React.useRef<HTMLFormElement>(null)
-	const [opacity, setOpacity] = React.useState("opacity-0")
 
+	// REVIEW: Could `today` and `tomorrow` just be objects instead of 3 state
+	// properties? For the <input /> tags, we could still just access `top.left`
+	// etc.
 	const [todayPlaced, setTodayPlaced] = React.useState(
 		Boolean(answer?.today?.placed),
 	)
@@ -55,41 +60,46 @@ export const Quadrant = ({
 	const [tomorrowLeft, setTomorrowLeft] = React.useState(
 		answer?.tomorrow?.left ?? 0,
 	)
-	const [arrowWidth, setArrowWidth] = React.useState(0)
-	const [arrowAngle, setArrowAngle] = React.useState(0)
+
+	// const [arrowWidth, setArrowWidth] = React.useState(0)
+	// const [arrowAngle, setArrowAngle] = React.useState(0)
 
 	const clickTarget = useRef<HTMLDivElement>(null)
 
+	// REVIEW: We can just derive the arrow properties directly, no need for
+	// useEffect.
+	const arrowY = tomorrowLeft - todayLeft
+	const arrowX = tomorrowTop - todayTop
+	const time = getTime(active, index)
+	const arrowOpacity =
+		(time === "tomorrow" || !time) && tomorrowPlaced
+			? "opacity-100"
+			: "opacity-0"
+
+	const arrowAngle = (Math.atan2(arrowX, arrowY) * 180) / Math.PI
+	const arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
+
+	// REVIEW: I think it may be simpler to explicitly submit the form in our
+	// event handlers directly. I understand that this was probably the result
+	// of the fact that state updates in React aren't "synchronous" in the sense
+	// that the DOM doesn't immediately update after you call a setState.
+	//
+	// I think the ideal solution here would be to use the `useOptimistic` hook
+	// to update the result of a form mutation immediately, and fallback to the
+	// server result as needed and avoid state altogether:
+	//
+	// https://react.dev/reference/react/useOptimistic
+	//
+	// Alternatively, you can use the `flushSync` method to run any form
+	// submissions synchronously or just run the action without the <form />
+	// entirely.
+	//
+	// https://react.dev/reference/react-dom/flushSync
 	React.useEffect(() => {
-		const arrowY = tomorrowLeft - todayLeft
-		const arrowX = tomorrowTop - todayTop
-
-		const arrowAngle = (Math.atan2(arrowX, arrowY) * 180) / Math.PI
-		const arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
-
-		setArrowAngle(arrowAngle)
-		setArrowWidth(arrowWidth)
-
-		const time = getTime(active, index)
-		if ((time === "tomorrow" || !time) && tomorrowPlaced) {
-			setOpacity("opacity-100")
-		} else {
-			setOpacity("opacity-0")
-		}
-
 		if (todayPlaced || tomorrowPlaced) {
 			formRef.current?.requestSubmit()
 		}
-	}, [
-		todayTop,
-		todayLeft,
-		tomorrowTop,
-		tomorrowLeft,
-		todayPlaced,
-		tomorrowPlaced,
-		active,
-		index,
-	])
+	}, [todayPlaced, tomorrowPlaced])
 
 	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (clickTarget?.current) {
@@ -131,6 +141,9 @@ export const Quadrant = ({
 						clickTarget.current.clientWidth) *
 					100
 
+				// REVIEW: I wonder if instead of out-right skipping an update
+				// if someone drags off the qudrant we instead just updated so
+				// that the "pin" is at the maximum/minimum respectively.
 				if (top >= 0 && top <= 100 && left >= 0 && left <= 100) {
 					if (type === "today") {
 						setTodayPlaced(true)
@@ -217,7 +230,9 @@ export const Quadrant = ({
 
 						<DndContext
 							onDragEnd={handleDragEnd}
-							onDragMove={() => setOpacity("opacity-0")}
+							// REVIEW: This breaks since we moved the opacity
+							// out of state, but I do think that the arrow would ideally update as the tomorrow handle drags in real-time.
+							// onDragMove={() => setOpacity("opacity-0")}
 						>
 							<QuadrantDroppable index={index} onClick={handleClick}>
 								<QuadrantDraggable
@@ -233,8 +248,8 @@ export const Quadrant = ({
 									left={todayLeft}
 									width={arrowWidth}
 									angle={arrowAngle}
-									opacity={opacity}
-									time={getTime(active, index)}
+									opacity={arrowOpacity}
+									time={time}
 								/>
 
 								<QuadrantDraggable
