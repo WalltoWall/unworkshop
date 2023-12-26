@@ -2,20 +2,8 @@
 
 import React from "react"
 import { SwatchesPicker } from "react-color"
-import {
-	DndContext,
-	KeyboardSensor,
-	PointerSensor,
-	useDroppable,
-	useSensor,
-	useSensors,
-	type Active,
-} from "@dnd-kit/core"
-import {
-	arrayMove,
-	SortableContext,
-	sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable"
+import { useDroppable } from "@dnd-kit/core"
+import { SortableContext } from "@dnd-kit/sortable"
 import clsx from "clsx"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { Text } from "@/components/Text"
@@ -44,7 +32,6 @@ export const CardColumn = ({
 	const [color, setColor] = React.useState<string>("#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
 	const [title, setTitle] = React.useState<string>("Service")
-	const [columnCards, setColumnCards] = React.useState(cards)
 	const { setNodeRef } = useDroppable({ id: title })
 
 	const colorGroups = [
@@ -91,21 +78,17 @@ export const CardColumn = ({
 					/>
 				</div>
 				<div className="flex items-center gap-3">
-					<PresentColumnModal
-						cards={columnCards}
-						color={color}
-						columnTitle={title}
-					/>
+					<PresentColumnModal cards={cards} color={color} columnTitle={title} />
 					<button onClick={() => removeColumn(id)}>
 						<BlackXIcon className="w-7" />
 					</button>
 				</div>
 			</div>
 
-			<SortableContext items={columnCards}>
+			<SortableContext items={cards}>
 				<ul className="mt-5 flex h-full w-full flex-col gap-2" ref={setNodeRef}>
-					{columnCards.length > 0 ? (
-						columnCards.map((card) => (
+					{cards.length > 0 ? (
+						cards.map((card) => (
 							<SortableItem
 								key={card.id}
 								id={card.id}
