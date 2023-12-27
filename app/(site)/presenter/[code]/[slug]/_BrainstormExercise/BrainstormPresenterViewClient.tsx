@@ -22,38 +22,31 @@ import { Text } from "@/components/Text"
 import { CardColumn } from "./CardColumn"
 import { Draggable, SortableItem } from "./SortableItem"
 
+type Card = { response: string; id: string }
+
+type Columns = Record<string, Array<Card>>
+
 interface PresenterViewProps {
-	columnCards: Array<{ response: string; id: string }>
-	cards: Array<{ response: string; id: string }>
+	cards: Array<Card>
 }
 
 export const BrainstormPresenterViewClient = ({
-	columnCards,
 	cards,
 }: PresenterViewProps) => {
-	const [columns, setColumns] = React.useState<
-		Array<{ columnId: string; cards: Array<{ id: string; response: string }> }>
-	>([
-		{
-			columnId: "Sortable-1",
-			cards: [
-				{ id: "1", response: "Testing" },
-				{ id: "2", response: "Testing moving" },
-				{ id: "3", response: "Testing Again" },
-			],
-		},
-	])
+	const [columns, setColumns] = React.useState<Columns>({
+		[uid()]: [
+			{ id: uid(), response: "Testing" },
+			{ id: uid(), response: "Testing moving" },
+			{ id: uid(), response: "Testing Again" },
+		],
+	})
 
 	const [showSorter, setShowSorter] = React.useState(true)
-	const [active, setActive] = React.useState<Active | null>(null)
-	const [newColumnCards, setColumnCards] = React.useState(columnCards)
-	const activeItem = React.useMemo(
-		() => newColumnCards.find((card) => card.id === active?.id),
-		[active, newColumnCards],
-	)
 
 	const removeColumn = (id: string) => {
-		setColumns(columns.filter((column) => column.columnId !== id))
+		const newColumns = { ...columns }
+		delete newColumns[id]
+		setColumns(newColumns)
 	}
 
 	const sensors = useSensors(
@@ -66,115 +59,53 @@ export const BrainstormPresenterViewClient = ({
 	return (
 		<DndContext
 			sensors={sensors}
-			onDragStart={({ active }) => {
-				setActive(active)
-			}}
 			onDragEnd={({ active, over }) => {
-				if (over && active.id !== over?.id && active.data.current) {
-					if (
-						active.data.current?.sortable.containerId !==
-						over.data.current?.sortable.containerId
-					)
-						return
+				if (!over) return
+				if (active.id === over.id) return
+				if (!active.data.current) return
+				if (
+					active.data.current?.sortable.containerId !==
+					over.data.current?.sortable.containerId
+				)
+					return
 
-					const containerId = active.data.current.sortable.containerId
+				const columnId = active.data.current.sortable.containerId
+				const cards = columns[columnId]
 
-					const temp = columns.slice()
-					const containerIdx = temp.findIndex(
-						(column) => column.columnId === containerId,
-					)
-					const oldIdx = temp[containerIdx].cards.findIndex(
-						(card) => card.id === active.id.toString(),
-					)
-					const newIdx = temp[containerIdx].cards.findIndex(
-						(card) => card.id === over.id,
-					)
+				const oldIdx = cards.findIndex((card) => card.id === active.id)
+				const newIdx = cards.findIndex((card) => card.id === over.id)
 
-					temp[containerIdx].cards = arrayMove(
-						temp[containerIdx].cards,
-						oldIdx,
-						newIdx,
-					)
-
-					setColumns(temp)
-				}
-
-				setActive(null)
-			}}
-			onDragCancel={() => {
-				setActive(null)
+				setColumns({
+					...columns,
+					[columnId]: arrayMove(cards, oldIdx, newIdx),
+				})
 			}}
 			onDragOver={({ active, over }) => {
 				if (!over || !active.data.current) return
 
-				const initialContainer = active.data.current?.sortable.containerId
-				const targetContainer = over.data.current?.sortable.containerId
-				const columnsState = [...columns]
+				const fromColumnId = active.data.current?.sortable.containerId
+				const toColumnId = over.data.current?.sortable.containerId
 
-				if (!initialContainer) return
+				if (!fromColumnId || !toColumnId) return
 
-				const initialIdx = columnsState.findIndex(
-					(column) => column.columnId === initialContainer,
-				)
+				if (fromColumnId === toColumnId) return
 
-				const targetIdx = columnsState.findIndex(
-					(column) => column.columnId === targetContainer,
-				)
+				const fromCards = columns[fromColumnId]
+				const toCards = columns[toColumnId]
 
-				console.log(initialContainer)
+				const activeCard = fromCards.find((card) => card.id === active.id)
 
-				if (!targetContainer) {
-					const message = columnsState[initialIdx].cards.find(
-						(card) => card.id === active.id,
-					)
+				if (!activeCard) return
 
-					if (!message) return
-
-					if (
-						columnsState[targetIdx].cards.includes({
-							id: active.id.toString(),
-							response: message.response,
-						})
-					)
-						return columnsState
-
-					columnsState[initialIdx].cards = columnsState[
-						initialIdx
-					].cards.filter((card) => card.id !== active.id.toString())
-
-					columnsState[targetIdx].cards.push({
-						id: active.id.toString(),
-						response: active.data.current?.response,
-					})
-
-					return setColumns(columnsState)
-				}
-
-				if (initialContainer === targetContainer) {
-					const oldIdx = columnsState[initialIdx].cards.findIndex(
-						(card) => card.id === active.id.toString(),
-					)
-					const newIdx = columnsState[initialIdx].cards.findIndex(
-						(card) => card.id === over.id,
-					)
-
-					columnsState[initialIdx].cards = arrayMove(
-						columnsState[initialIdx].cards,
-						oldIdx,
-						newIdx,
-					)
-				} else {
-					columnsState[initialIdx].cards = columnsState[
-						initialIdx
-					].cards.filter((card) => card.id !== active.id.toString())
-
-					const newIdx = columnsState[targetIdx].cards.findIndex(
-						(card) => card.id === over.id,
-					)
-					// columnsState[targetIdx].cards.splice(newIdx, 0, )
-				}
-
-				return setColumns(columnsState)
+				setColumns({
+					...columns,
+					[fromColumnId]: fromCards.filter((card) => card.id !== active.id),
+					[toColumnId]: toCards.toSpliced(
+						over.data.current?.sortable.index,
+						0,
+						activeCard,
+					),
+				})
 			}}
 		>
 			<div className="relative">
@@ -193,50 +124,50 @@ export const BrainstormPresenterViewClient = ({
 							)}
 						/>
 					</button>
-					<div
-						className={clsx(
-							"flex w-full gap-2",
-							showSorter ? "block" : "hidden",
-						)}
-					>
-						{cards.map((card) => (
-							<SortableItem
-								id={card.id}
-								color={""}
-								className="box-border aspect-square w-[135px] list-none rounded-lg bg-white px-3 py-2"
-								key={card.id}
-							>
-								<Draggable response={card.response} />
-							</SortableItem>
-						))}
-					</div>
+
+					<SortableContext items={cards}>
+						<div
+							className={clsx(
+								"flex w-full gap-2",
+								showSorter ? "block" : "hidden",
+							)}
+						>
+							{cards.map((card) => (
+								<SortableItem
+									id={card.id}
+									color={""}
+									className="box-border aspect-square w-[135px] list-none rounded-lg bg-white px-3 py-2"
+									key={card.id}
+								>
+									<Draggable response={card.response} />
+								</SortableItem>
+							))}
+						</div>
+					</SortableContext>
 				</div>
+
 				<div className="flex gap-4 pt-5">
-					{columns.map((column) => (
+					{Object.entries(columns).map(([columnId, cards]) => (
 						<CardColumn
-							key={column.columnId}
-							cards={column.cards}
-							id={column.columnId}
+							key={columnId}
+							cards={cards}
+							id={columnId}
 							removeColumn={removeColumn}
-							activeItem={activeItem}
 						/>
 					))}
 
 					<button
 						className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
 						onClick={() => {
-							const id = `Sortable-${columns.length + 1}`
+							const id = uid()
 
-							setColumns([
+							setColumns({
 								...columns,
-								{
-									columnId: id,
-									cards: [
-										{ id: "1", response: "Testing" },
-										{ id: "2", response: "Testing 2" },
-									],
-								},
-							])
+								[id]: [
+									{ id: uid(), response: "Testing" },
+									{ id: uid(), response: "Testing 2" },
+								],
+							})
 						}}
 					>
 						<GrayPlusCircleIcon className="w-6" />

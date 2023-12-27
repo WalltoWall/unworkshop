@@ -9,26 +9,14 @@ import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { Text } from "@/components/Text"
 import { PresentColumnModal } from "./PresentColumnModal"
 import { Draggable, SortableItem } from "./SortableItem"
-import { SortableOverlay } from "./SortableOverlay"
 
 interface CardColumnProps {
 	cards: Array<{ response: string; id: string }>
 	id: string
 	removeColumn: (id: string) => void
-	activeItem:
-		| {
-				response: string
-				id: string
-		  }
-		| undefined
 }
 
-export const CardColumn = ({
-	cards,
-	id,
-	removeColumn,
-	activeItem,
-}: CardColumnProps) => {
+export const CardColumn = ({ cards, id, removeColumn }: CardColumnProps) => {
 	const [color, setColor] = React.useState<string>("#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
 	const [title, setTitle] = React.useState<string>("Service")
@@ -112,20 +100,6 @@ export const CardColumn = ({
 					)}
 				</ul>
 			</SortableContext>
-
-			<SortableOverlay>
-				{activeItem ? (
-					<SortableItem
-						color={color}
-						id={activeItem.id}
-						className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4"
-					>
-						<Text style={"copy"} size={18}>
-							{activeItem.response}
-						</Text>
-					</SortableItem>
-				) : null}
-			</SortableOverlay>
 		</div>
 	)
 }
