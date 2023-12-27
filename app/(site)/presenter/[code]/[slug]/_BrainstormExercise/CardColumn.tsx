@@ -32,7 +32,7 @@ export const CardColumn = ({
 	const [color, setColor] = React.useState<string>("#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
 	const [title, setTitle] = React.useState<string>("Service")
-	const { setNodeRef } = useDroppable({ id: title })
+	const { setNodeRef } = useDroppable({ id: id })
 
 	const colorGroups = [
 		["#ff9488", "#ff7566", "#ff5745", "#e8503f", "#ba4033"],
@@ -85,7 +85,7 @@ export const CardColumn = ({
 				</div>
 			</div>
 
-			<SortableContext items={cards}>
+			<SortableContext items={cards} id={id}>
 				<ul className="mt-5 flex h-full w-full flex-col gap-2" ref={setNodeRef}>
 					{cards.length > 0 ? (
 						cards.map((card) => (
@@ -117,7 +117,7 @@ export const CardColumn = ({
 				{activeItem ? (
 					<SortableItem
 						color={color}
-						id={id}
+						id={activeItem.id}
 						className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4"
 					>
 						<Text style={"copy"} size={18}>

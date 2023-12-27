@@ -22,11 +22,6 @@ import { Text } from "@/components/Text"
 import { CardColumn } from "./CardColumn"
 import { Draggable, SortableItem } from "./SortableItem"
 
-export type ColumnDispatch = {
-	type: "add" | "delete"
-	payload: { columnId: string; cards: Array<{ id: string; response: string }> }
-}
-
 interface PresenterViewProps {
 	columnCards: Array<{ response: string; id: string }>
 	cards: Array<{ response: string; id: string }>
@@ -57,25 +52,8 @@ export const BrainstormPresenterViewClient = ({
 		[active, newColumnCards],
 	)
 
-	const [optimisticColumn, addOptimisticColumn] = React.useOptimistic<
-		Array<{ columnId: string; cards: Array<{ id: string; response: string }> }>,
-		ColumnDispatch
-	>(columns, (state, action) => {
-		if (action.type === "delete") {
-			return state.filter(
-				(column) => column.columnId !== action.payload.columnId,
-			)
-		} else {
-			return [...state, action.payload]
-		}
-	})
-
 	const removeColumn = (id: string) => {
 		setColumns(columns.filter((column) => column.columnId !== id))
-		addOptimisticColumn({
-			type: "delete",
-			payload: { columnId: id, cards: [{ id: "", response: "" }] },
-		})
 	}
 
 	const sensors = useSensors(
@@ -125,6 +103,78 @@ export const BrainstormPresenterViewClient = ({
 			}}
 			onDragCancel={() => {
 				setActive(null)
+			}}
+			onDragOver={({ active, over }) => {
+				if (!over || !active.data.current) return
+
+				const initialContainer = active.data.current?.sortable.containerId
+				const targetContainer = over.data.current?.sortable.containerId
+				const columnsState = [...columns]
+
+				if (!initialContainer) return
+
+				const initialIdx = columnsState.findIndex(
+					(column) => column.columnId === initialContainer,
+				)
+
+				const targetIdx = columnsState.findIndex(
+					(column) => column.columnId === targetContainer,
+				)
+
+				console.log(initialContainer)
+
+				if (!targetContainer) {
+					const message = columnsState[initialIdx].cards.find(
+						(card) => card.id === active.id,
+					)
+
+					if (!message) return
+
+					if (
+						columnsState[targetIdx].cards.includes({
+							id: active.id.toString(),
+							response: message.response,
+						})
+					)
+						return columnsState
+
+					columnsState[initialIdx].cards = columnsState[
+						initialIdx
+					].cards.filter((card) => card.id !== active.id.toString())
+
+					columnsState[targetIdx].cards.push({
+						id: active.id.toString(),
+						response: active.data.current?.response,
+					})
+
+					return setColumns(columnsState)
+				}
+
+				if (initialContainer === targetContainer) {
+					const oldIdx = columnsState[initialIdx].cards.findIndex(
+						(card) => card.id === active.id.toString(),
+					)
+					const newIdx = columnsState[initialIdx].cards.findIndex(
+						(card) => card.id === over.id,
+					)
+
+					columnsState[initialIdx].cards = arrayMove(
+						columnsState[initialIdx].cards,
+						oldIdx,
+						newIdx,
+					)
+				} else {
+					columnsState[initialIdx].cards = columnsState[
+						initialIdx
+					].cards.filter((card) => card.id !== active.id.toString())
+
+					const newIdx = columnsState[targetIdx].cards.findIndex(
+						(card) => card.id === over.id,
+					)
+					// columnsState[targetIdx].cards.splice(newIdx, 0, )
+				}
+
+				return setColumns(columnsState)
 			}}
 		>
 			<div className="relative">
@@ -176,14 +226,17 @@ export const BrainstormPresenterViewClient = ({
 						className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
 						onClick={() => {
 							const id = `Sortable-${columns.length + 1}`
+
 							setColumns([
 								...columns,
-								{ columnId: id, cards: [{ id: "", response: "" }] },
+								{
+									columnId: id,
+									cards: [
+										{ id: "1", response: "Testing" },
+										{ id: "2", response: "Testing 2" },
+									],
+								},
 							])
-							addOptimisticColumn({
-								type: "add",
-								payload: { columnId: id, cards: [{ id: "", response: "" }] },
-							})
 						}}
 					>
 						<GrayPlusCircleIcon className="w-6" />
