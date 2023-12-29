@@ -33,7 +33,9 @@ interface PresenterViewProps {
 export const BrainstormPresenterViewClient = ({
 	cards,
 }: PresenterViewProps) => {
+	const [sortingId] = React.useState(uid())
 	const [columns, setColumns] = React.useState<Columns>({
+		[sortingId]: cards,
 		[uid()]: [
 			{ id: uid(), response: "Testing" },
 			{ id: uid(), response: "Testing moving" },
@@ -125,7 +127,7 @@ export const BrainstormPresenterViewClient = ({
 						/>
 					</button>
 
-					<SortableContext items={cards}>
+					<SortableContext items={cards} id={sortingId}>
 						<div
 							className={clsx(
 								"flex w-full gap-2",
@@ -147,14 +149,18 @@ export const BrainstormPresenterViewClient = ({
 				</div>
 
 				<div className="flex gap-4 pt-5">
-					{Object.entries(columns).map(([columnId, cards]) => (
-						<CardColumn
-							key={columnId}
-							cards={cards}
-							id={columnId}
-							removeColumn={removeColumn}
-						/>
-					))}
+					{Object.entries(columns).map(([columnId, cards]) => {
+						if (columnId === sortingId) return
+
+						return (
+							<CardColumn
+								key={columnId}
+								cards={cards}
+								id={columnId}
+								removeColumn={removeColumn}
+							/>
+						)
+					})}
 
 					<button
 						className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
