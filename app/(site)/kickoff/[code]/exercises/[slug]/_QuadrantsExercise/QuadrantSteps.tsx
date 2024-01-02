@@ -101,7 +101,6 @@ export const QuadrantSteps = ({
 								answer={optimisticAnswers?.at(index)}
 								index={index}
 								state={state}
-								step={step}
 								answerDispatch={answerDispatch}
 							/>
 						)}

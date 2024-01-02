@@ -16,7 +16,6 @@ type QuadrantProps = {
 	isGroup: boolean
 	index: number
 	state: State
-	step: number
 	answer?: Answer
 	answerDispatch: (action: AnswerDispatch) => void
 }
@@ -30,7 +29,6 @@ export const Quadrant = ({
 	isGroup,
 	index,
 	state,
-	step,
 	answer,
 	answerDispatch,
 }: QuadrantProps) => {
