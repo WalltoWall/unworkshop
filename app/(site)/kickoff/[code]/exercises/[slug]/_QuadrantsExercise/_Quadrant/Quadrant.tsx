@@ -42,7 +42,8 @@ export const Quadrant = ({
 	answerDispatch,
 	onQuadrantClick,
 }: QuadrantProps) => {
-	const formRef = React.useRef<HTMLFormElement>(null)
+	// const formRef = React.useRef<HTMLFormElement>(null)
+	const [isPending, startTransition] = React.useTransition()
 
 	const today = answer?.today
 	const tomorrow = answer?.tomorrow
@@ -52,11 +53,11 @@ export const Quadrant = ({
 
 	const clickTarget = React.useRef<HTMLDivElement>(null)
 
-	React.useEffect(() => {
-		if (!answer) {
-			formRef.current?.requestSubmit()
-		}
-	}, [answer])
+	// React.useEffect(() => {
+	// 	if (!answer) {
+	// 		formRef.current?.requestSubmit()
+	// 	}
+	// }, [answer])
 
 	// REVIEW: We can just derive the arrow properties directly, no need for
 	// useEffect.
@@ -103,20 +104,30 @@ export const Quadrant = ({
 				((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
 				100
 
-			if (state === "today_pending" || state === "today_placed") {
-				setToday({
-					top,
-					left,
-					placed: true,
-				})
-			} else if (state === "tomorrow_pending" || state === "tomorrow_placed") {
-				setTomorrow({
-					top,
-					left,
-					placed: true,
-				})
-			}
+			startTransition(() => {
+				if (state === "today_pending" || state === "today_placed") {
+					answerDispatch({
+						name: item.name,
+						newAnswer: {
+							today: { top, left },
+							...tomorrow,
+						},
+					})
+				} else if (
+					state === "tomorrow_pending" ||
+					state === "tomorrow_placed"
+				) {
+					answerDispatch({
+						name: item.name,
+						newAnswer: {
+							...today,
+							tomorrow: { top, left },
+						},
+					})
+				}
+			})
 
+			handleSubmit()
 			onQuadrantClick()
 		}
 	}
@@ -160,6 +171,10 @@ export const Quadrant = ({
 		}
 	}
 
+	const handleSubmit = async () => {
+		await submitQuadrantAction.bind(null, answer)
+	}
+
 	return (
 		<>
 			<div className="relative my-6 p-7 md:p-12">
@@ -171,23 +186,12 @@ export const Quadrant = ({
 				>
 					<QuadrantImages item={item} />
 
-					<form
-						action={async (formData: FormData) => {
-							if (!answer) {
-								answerDispatch({
-									payload: {
-										name: item.name,
-										today,
-										tomorrow,
-									},
-								})
-							}
-							await submitQuadrantAction(formData)
-						}}
+					{/* <form
+						action={handleSubmit}
 						ref={formRef}
 						className="absolute left-0 top-0 h-full w-full"
-					>
-						<input
+					> */}
+					{/* <input
 							type="hidden"
 							name="exerciseId"
 							value={exerciseId}
@@ -246,24 +250,25 @@ export const Quadrant = ({
 							name="tomorrowPlaced"
 							className="hidden"
 							readOnly
-						/>
+						/> */}
 
-						<DndContext
-							onDragEnd={handleDragEnd}
-							// REVIEW: This breaks since we moved the opacity
-							// out of state, but I do think that the arrow would ideally update as the tomorrow handle drags in real-time.
-							// onDragMove={() => setOpacity("opacity-0")}
-						>
-							<QuadrantDroppable index={index} onClick={handleClick}>
+					<DndContext
+						onDragEnd={handleDragEnd}
+						// REVIEW: This breaks since we moved the opacity
+						// out of state, but I do think that the arrow would ideally update as the tomorrow handle drags in real-time.
+						// onDragMove={() => setOpacity("opacity-0")}
+					>
+						<QuadrantDroppable index={index} onClick={handleClick}>
+							{today && (
 								<QuadrantDraggable
 									index={index}
 									top={today.top}
 									left={today.left}
 									type="today"
-									placed={today.placed}
 								/>
+							)}
 
-								{/* <QuadrantArrow
+							{/* <QuadrantArrow
 									top={today.top}
 									left={today.left}
 									width={arrowWidth}
@@ -272,16 +277,17 @@ export const Quadrant = ({
 									time={time}
 								/> */}
 
+							{tomorrow && (
 								<QuadrantDraggable
 									index={index}
 									top={tomorrow.top}
 									left={tomorrow.left}
 									type="tomorrow"
-									placed={tomorrow.placed}
 								/>
-							</QuadrantDroppable>
-						</DndContext>
-					</form>
+							)}
+						</QuadrantDroppable>
+					</DndContext>
+					{/* </form> */}
 				</div>
 			</div>
 		</>

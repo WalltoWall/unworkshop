@@ -6,7 +6,7 @@ import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
-import type { Answer } from "./types"
+import type { Answer, Answers } from "./types"
 
 export type AnswerDispatch = {
 	newAnswer: Answer
@@ -21,7 +21,7 @@ export type State =
 	| "complete"
 
 type QuadrantStepsProps = {
-	answers: Answer[]
+	answers: Answers
 	exerciseId: string
 	quadrants: NonNullable<ST["exercise"]["quadrants"]>
 	group: boolean
@@ -46,7 +46,7 @@ export const QuadrantSteps = ({
 	const step = parseInt(searchParams?.get("step") ?? "1")
 
 	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
-		Array<Answer>,
+		Answers,
 		AnswerDispatch
 	>(answers, (state, action) => {
 		return {
@@ -55,11 +55,13 @@ export const QuadrantSteps = ({
 		}
 	})
 
+	console.log("answers", optimisticAnswers)
+
 	const [state, setState] = useState<State>("today_pending")
 	const totalSteps = quadrants.length * 2
 	const isDisabled = state === "today_pending" || state === "tomorrow_pending"
 
-	// TODO: Comment why passing step explicitly is required here.
+	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {
 		// We are on the last quadrant, so we need to mark this is as complete.
 		if (step - 1 === totalSteps) {
@@ -113,7 +115,7 @@ export const QuadrantSteps = ({
 								item={quadrant}
 								exerciseId={exerciseId}
 								isGroup={group}
-								answer={optimisticAnswers.find((a) => a.name === quadrant.name)}
+								answer={optimisticAnswers[quadrant.name]}
 								state={state}
 								index={index}
 								answerDispatch={answerDispatch}
@@ -127,9 +129,7 @@ export const QuadrantSteps = ({
 							item={currentQuadrant}
 							exerciseId={exerciseId}
 							isGroup={group}
-							answer={optimisticAnswers.find(
-								(a) => a.name === currentQuadrant.name,
-							)}
+							answer={optimisticAnswers[currentQuadrant.name]}
 							index={currentQuadrantIdx}
 							state={state}
 							answerDispatch={answerDispatch}
