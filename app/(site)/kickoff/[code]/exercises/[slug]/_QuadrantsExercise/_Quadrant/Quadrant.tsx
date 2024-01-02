@@ -18,11 +18,20 @@ type QuadrantProps = {
 	state: State
 	answer?: Answer
 	answerDispatch: (action: AnswerDispatch) => void
+	onQuadrantClick: () => void
 }
 
 // REVIEW: I wonder if it's okay that participants are able to modify the
 // "tomorrow" circle when they are on the "today" step and vice-versa. Probably
 // something we want to run-by the larger team during review.
+//
+// REVIEW: 1/2 – Instead of using a <form> element, maybe we can just call the
+// server action directly and provide it a normal JS object/JSON to prevent us
+// from needing to create a bunch of input elements. That lets us rely on the
+// answer to derive `today` and `tomorrow` instead of managing it in React
+// state.
+//
+// See: https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#passing-additional-arguments
 export const Quadrant = ({
 	item,
 	exerciseId,
@@ -31,20 +40,12 @@ export const Quadrant = ({
 	state,
 	answer,
 	answerDispatch,
+	onQuadrantClick,
 }: QuadrantProps) => {
 	const formRef = React.useRef<HTMLFormElement>(null)
 
-	const [today, setToday] = React.useState({
-		top: answer?.today?.top ?? 0,
-		left: answer?.today?.left ?? 0,
-		placed: Boolean(answer?.today?.placed),
-	})
-
-	const [tomorrow, setTomorrow] = React.useState({
-		top: answer?.today?.top ?? 0,
-		left: answer?.today?.left ?? 0,
-		placed: Boolean(answer?.today?.placed),
-	})
+	const today = answer?.today
+	const tomorrow = answer?.tomorrow
 
 	// const [arrowWidth, setArrowWidth] = React.useState(0)
 	// const [arrowAngle, setArrowAngle] = React.useState(0)
@@ -115,6 +116,8 @@ export const Quadrant = ({
 					placed: true,
 				})
 			}
+
+			onQuadrantClick()
 		}
 	}
 

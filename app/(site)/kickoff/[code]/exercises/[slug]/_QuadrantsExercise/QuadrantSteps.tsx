@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
@@ -9,7 +9,8 @@ import { QuadrantInstructions } from "./QuadrantInstructions"
 import type { Answer } from "./types"
 
 export type AnswerDispatch = {
-	payload: Answer
+	newAnswer: Answer
+	name: string
 }
 
 export type State =
@@ -42,40 +43,56 @@ export const QuadrantSteps = ({
 }: QuadrantStepsProps) => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
-	let step = parseInt(searchParams?.get("step") ?? "1")
+	const step = parseInt(searchParams?.get("step") ?? "1")
 
 	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
 		Array<Answer>,
 		AnswerDispatch
 	>(answers, (state, action) => {
-		return [...state, action.payload]
+		return {
+			...state,
+			[action.name]: action.newAnswer,
+		}
 	})
 
 	const [state, setState] = useState<State>("today_pending")
+	const totalSteps = quadrants.length * 2
+	const isDisabled = state === "today_pending" || state === "tomorrow_pending"
 
-	useEffect(() => {
-		const answerIndex = Math.ceil(step / 2) - 1
-
-		if (step - 1 === quadrants.length * 2) {
-			setState("complete")
-		} else if (step & 1) {
-			setState(
-				optimisticAnswers?.at(answerIndex)?.today?.placed
-					? "today_placed"
-					: "today_pending",
-			)
-		} else {
-			setState(
-				optimisticAnswers?.at(answerIndex)?.tomorrow?.placed
-					? "tomorrow_placed"
-					: "tomorrow_pending",
-			)
+	// TODO: Comment why passing step explicitly is required here.
+	const determineNextState = (step: number) => {
+		// We are on the last quadrant, so we need to mark this is as complete.
+		if (step - 1 === totalSteps) {
+			return setState("complete")
 		}
-	}, [step, optimisticAnswers, quadrants])
 
-	const handleDisabled = () => {
-		return state === "today_pending" || state === "tomorrow_pending"
+		// Otherwise, we can know the next state based on the current.
+		if (state === "today_pending") {
+			setState("today_placed")
+		} else if (state === "today_placed") {
+			setState("tomorrow_pending")
+		} else if (state === "tomorrow_pending") {
+			setState("tomorrow_placed")
+		} else if (state === "tomorrow_placed") {
+			setState("today_pending")
+		}
 	}
+
+	const handleClick = () => {
+		switch (state) {
+			case "today_pending":
+				return determineNextState(step)
+
+			case "tomorrow_pending":
+				return determineNextState(step)
+
+			default:
+				return
+		}
+	}
+
+	const currentQuadrantIdx = Math.ceil(step / 2) - 1
+	const currentQuadrant = quadrants.at(currentQuadrantIdx)!
 
 	return (
 		<>
@@ -87,34 +104,49 @@ export const QuadrantSteps = ({
 					finalInstructions={finalInstructions}
 				/>
 
-				{quadrants.map((quadrant, index) => (
-					<div key={quadrant._key}>
-						{index !== 0 && state === "complete" && (
+				{state === "complete" ? (
+					quadrants.map((quadrant, index) => (
+						<div key={quadrant._key}>
 							<div className="-ml-7 h-[0.125rem] w-[calc(100%+3.5rem)] bg-gray-90" />
-						)}
 
-						{(Math.ceil(step / 2) - 1 === index || state === "complete") && (
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
 								isGroup={group}
 								answer={optimisticAnswers.find((a) => a.name === quadrant.name)}
-								index={index}
 								state={state}
+								index={index}
 								answerDispatch={answerDispatch}
+								onQuadrantClick={handleClick}
 							/>
-						)}
+						</div>
+					))
+				) : (
+					<div key={currentQuadrant?._key}>
+						<Quadrant
+							item={currentQuadrant}
+							exerciseId={exerciseId}
+							isGroup={group}
+							answer={optimisticAnswers.find(
+								(a) => a.name === currentQuadrant.name,
+							)}
+							index={currentQuadrantIdx}
+							state={state}
+							answerDispatch={answerDispatch}
+							onQuadrantClick={handleClick}
+						/>
 					</div>
-				))}
+				)}
 			</div>
 
 			{state}
 
 			<Steps
-				disabled={handleDisabled()}
-				steps={quadrants.length * 2}
+				disabled={isDisabled}
+				steps={totalSteps}
 				activeStep={step}
 				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
+				onNextStep={determineNextState}
 			/>
 		</>
 	)

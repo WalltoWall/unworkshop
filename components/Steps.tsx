@@ -10,6 +10,7 @@ interface Props {
 	activeStep: number
 	onFinish: any
 	className?: string
+	onNextStep?: (nextStep: number) => void
 }
 
 export const Steps = ({
@@ -18,6 +19,7 @@ export const Steps = ({
 	activeStep = 1,
 	onFinish,
 	className,
+	onNextStep,
 }: Props) => {
 	const router = useRouter()
 	const pathname = usePathname()
@@ -30,6 +32,8 @@ export const Steps = ({
 		})
 
 		router.push(pathname + "?" + params.toString(), { scroll: false })
+
+		onNextStep?.(step)
 	}
 
 	const handleNext = () => {
