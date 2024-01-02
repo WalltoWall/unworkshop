@@ -1,5 +1,3 @@
-"use client"
-
 import type { MouseEventHandler } from "react"
 import { useDroppable } from "@dnd-kit/core"
 

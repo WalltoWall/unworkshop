@@ -1,5 +1,3 @@
-"use client"
-
 import { useRef } from "react"
 import { useDraggable } from "@dnd-kit/core"
 import { cx } from "class-variance-authority"
@@ -31,7 +29,7 @@ export const QuadrantDraggable = ({
 	const style = transform
 		? {
 				transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-		  }
+			}
 		: undefined
 
 	return (
