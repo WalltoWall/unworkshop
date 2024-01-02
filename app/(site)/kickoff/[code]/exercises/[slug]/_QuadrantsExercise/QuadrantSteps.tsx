@@ -98,7 +98,7 @@ export const QuadrantSteps = ({
 								item={quadrant}
 								exerciseId={exerciseId}
 								isGroup={group}
-								answer={optimisticAnswers?.at(index)}
+								answer={optimisticAnswers.find((a) => a.name === quadrant.name)}
 								index={index}
 								state={state}
 								answerDispatch={answerDispatch}

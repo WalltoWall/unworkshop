@@ -95,7 +95,6 @@ export const Quadrant = ({
 	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
 		if (clickTarget?.current) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
-
 			const top =
 				((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
 				100
@@ -119,39 +118,44 @@ export const Quadrant = ({
 		}
 	}
 
-	// const handleDragEnd = (event: DragEndEvent) => {
-	// 	if (clickTarget?.current) {
-	// 		const { type, ref } = event.active.data.current!
-	// 		const parentRect = clickTarget.current.getBoundingClientRect()
+	const handleDragEnd = (event: DragEndEvent) => {
+		if (clickTarget?.current) {
+			const { type, ref } = event.active.data.current!
+			const parentRect = clickTarget.current.getBoundingClientRect()
 
-	// 		if (ref) {
-	// 			var pointRect = ref.getBoundingClientRect()
-	// 			const top =
-	// 				((pointRect.top + 16 - parentRect.top) /
-	// 					clickTarget.current.clientHeight) *
-	// 				100
-	// 			const left =
-	// 				((pointRect.left + 16 - parentRect.left) /
-	// 					clickTarget.current.clientWidth) *
-	// 				100
+			if (ref) {
+				var pointRect = ref.getBoundingClientRect()
+				let top =
+					((pointRect.top + 16 - parentRect.top) /
+						clickTarget.current.clientHeight) *
+					100
+				let left =
+					((pointRect.left + 16 - parentRect.left) /
+						clickTarget.current.clientWidth) *
+					100
 
-	// 			// REVIEW: I wonder if instead of out-right skipping an update
-	// 			// if someone drags off the qudrant we instead just updated so
-	// 			// that the "pin" is at the maximum/minimum respectively.
-	// 			if (top >= 0 && top <= 100 && left >= 0 && left <= 100) {
-	// 				if (type === "today") {
-	// 					setTodayPlaced(true)
-	// 					setTodayTop(top)
-	// 					setTodayLeft(left)
-	// 				} else if (type === "tomorrow") {
-	// 					setTomorrowPlaced(true)
-	// 					setTomorrowTop(top)
-	// 					setTomorrowLeft(left)
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
+				top = top > 100 ? 100 : top < 0 ? 0 : top
+				left = left > 100 ? 100 : left < 0 ? 0 : left
+
+				if (state === "today_pending" || state === "today_placed") {
+					setToday({
+						top,
+						left,
+						placed: true,
+					})
+				} else if (
+					state === "tomorrow_pending" ||
+					state === "tomorrow_placed"
+				) {
+					setTomorrow({
+						top,
+						left,
+						placed: true,
+					})
+				}
+			}
+		}
+	}
 
 	return (
 		<>
@@ -242,10 +246,10 @@ export const Quadrant = ({
 						/>
 
 						<DndContext
-						// onDragEnd={handleDragEnd}
-						// REVIEW: This breaks since we moved the opacity
-						// out of state, but I do think that the arrow would ideally update as the tomorrow handle drags in real-time.
-						// onDragMove={() => setOpacity("opacity-0")}
+							onDragEnd={handleDragEnd}
+							// REVIEW: This breaks since we moved the opacity
+							// out of state, but I do think that the arrow would ideally update as the tomorrow handle drags in real-time.
+							// onDragMove={() => setOpacity("opacity-0")}
 						>
 							<QuadrantDroppable index={index} onClick={handleClick}>
 								<QuadrantDraggable
