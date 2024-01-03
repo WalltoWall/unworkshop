@@ -60,6 +60,19 @@ export const Quadrant = ({
 
 	// REVIEW: We can just derive the arrow properties directly, no need for
 	// useEffect.
+
+	let arrowY = 0
+	let arrowX = 0
+	let arrowAngle = 0
+	let arrowWidth = 0
+
+	if (answer?.tomorrow && answer?.today) {
+		arrowY = answer.tomorrow.left - answer.today.left
+		arrowX = answer.tomorrow.top - answer.today.top
+		arrowAngle = (Math.atan2(arrowX, arrowY) * 180) / Math.PI
+		arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
+	}
+
 	// const arrowY = tomorrowLeft - todayLeft
 	// const arrowX = tomorrowTop - todayTop
 	// const time = getTime(active, index)
@@ -179,14 +192,14 @@ export const Quadrant = ({
 								/>
 							)}
 
-							{/* <QuadrantArrow
-									top={today.top}
-									left={today.left}
-									width={arrowWidth}
-									angle={arrowAngle}
-									opacity={arrowOpacity}
-									time={time}
-								/> */}
+							<QuadrantArrow
+								top={answer?.today?.top}
+								left={answer?.today?.left}
+								tomorrowPlaced={Boolean(answer?.tomorrow)}
+								state={state}
+								width={arrowWidth}
+								angle={arrowAngle}
+							/>
 
 							{tomorrow && (
 								<QuadrantDraggable
