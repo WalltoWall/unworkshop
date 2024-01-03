@@ -1,5 +1,9 @@
 import React from "react"
-import { DndContext, type DragEndEvent } from "@dnd-kit/core"
+import {
+	DndContext,
+	type DragEndEvent,
+	type DragMoveEvent,
+} from "@dnd-kit/core"
 import type { ST } from "@/sanity/config"
 import { submitQuadrantAction } from "../actions"
 import { type AnswerDispatch, type State } from "../QuadrantSteps"
@@ -9,6 +13,8 @@ import { QuadrantAxes } from "./QuadrantAxes"
 import { QuadrantDraggable } from "./QuadrantDraggable"
 import { QuadrantDroppable } from "./QuadrantDroppable"
 import { QuadrantImages } from "./QuadrantImages"
+
+type Day = "today" | "tomorrow"
 
 type QuadrantProps = {
 	item: NonNullable<ST["exercise"]["quadrants"]>[number]
@@ -43,46 +49,31 @@ export const Quadrant = ({
 	onQuadrantClick,
 }: QuadrantProps) => {
 	const [, startTransition] = React.useTransition()
+	const [arrowData, setArrowData] = React.useState({
+		top: 0,
+		left: 0,
+		angle: 0,
+		width: 0,
+	})
 
 	const today = answer?.today
 	const tomorrow = answer?.tomorrow
 
-	// const [arrowWidth, setArrowWidth] = React.useState(0)
-	// const [arrowAngle, setArrowAngle] = React.useState(0)
-
 	const clickTarget = React.useRef<HTMLDivElement>(null)
 
-	// React.useEffect(() => {
-	// 	if (!answer) {
-	// 		formRef.current?.requestSubmit()
-	// 	}
-	// }, [answer])
+	React.useEffect(() => {
+		if (tomorrow && today) {
+			const arrowY = tomorrow.left - today.left
+			const arrowX = tomorrow.top - today.top
 
-	// REVIEW: We can just derive the arrow properties directly, no need for
-	// useEffect.
-
-	let arrowY = 0
-	let arrowX = 0
-	let arrowAngle = 0
-	let arrowWidth = 0
-
-	if (answer?.tomorrow && answer?.today) {
-		arrowY = answer.tomorrow.left - answer.today.left
-		arrowX = answer.tomorrow.top - answer.today.top
-		arrowAngle = (Math.atan2(arrowX, arrowY) * 180) / Math.PI
-		arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
-	}
-
-	// const arrowY = tomorrowLeft - todayLeft
-	// const arrowX = tomorrowTop - todayTop
-	// const time = getTime(active, index)
-	// const arrowOpacity =
-	// 	(time === "tomorrow" || !time) && tomorrowPlaced
-	// 		? "opacity-100"
-	// 		: "opacity-0"
-
-	// const arrowAngle = (Math.atan2(arrowX, arrowY) * 180) / Math.PI
-	// const arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
+			setArrowData({
+				top: today.top,
+				left: today.left,
+				angle: (Math.atan2(arrowX, arrowY) * 180) / Math.PI,
+				width: Math.sqrt(arrowX * arrowX + arrowY * arrowY),
+			})
+		}
+	}, [today, tomorrow])
 
 	const handleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
 		if (clickTarget?.current) {
@@ -99,70 +90,110 @@ export const Quadrant = ({
 				newAnswer: {},
 			}
 
-			if (state === "today_pending" || state === "today_placed") {
-				updatedAnswer.newAnswer = {
-					today: { top, left },
-					...tomorrow,
-				}
-			} else if (state === "tomorrow_pending" || state === "tomorrow_placed") {
-				updatedAnswer.newAnswer = {
-					...today,
-					tomorrow: { top, left },
-				}
+			let type = "today" as Day
+
+			if (state === "tomorrow_pending" || state === "tomorrow_placed") {
+				type = "tomorrow"
 			}
 
-			startTransition(() => {
-				answerDispatch(updatedAnswer)
-			})
-
-			onQuadrantClick()
-
-			const handleSubmit = submitQuadrantAction.bind(null, {
-				answer: updatedAnswer,
-				exerciseId,
-				isGroup,
-			})
-			await handleSubmit()
+			await savePointLocations(updatedAnswer, top, left, type)
 		}
 	}
 
-	const handleDragEnd = (event: DragEndEvent) => {
+	const handleDragEnd = async (event: DragEndEvent) => {
 		if (clickTarget?.current) {
-			const { type, ref } = event.active.data.current!
-			const parentRect = clickTarget.current.getBoundingClientRect()
+			const { ref, type } = event.active.data.current!
 
 			if (ref) {
-				var pointRect = ref.getBoundingClientRect()
-				let top =
-					((pointRect.top + 16 - parentRect.top) /
-						clickTarget.current.clientHeight) *
-					100
-				let left =
-					((pointRect.left + 16 - parentRect.left) /
-						clickTarget.current.clientWidth) *
-					100
+				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
 
-				top = top > 100 ? 100 : top < 0 ? 0 : top
-				left = left > 100 ? 100 : left < 0 ? 0 : left
+				let updatedAnswer = {
+					name: item.name,
+					newAnswer: {},
+				}
 
-				if (state === "today_pending" || state === "today_placed") {
-					setToday({
-						top,
-						left,
-						placed: true,
+				await savePointLocations(updatedAnswer, top, left, type)
+			}
+		}
+	}
+
+	const handleDragMove = (event: DragMoveEvent) => {
+		if (clickTarget?.current) {
+			const { ref, type } = event.active.data.current!
+
+			if (ref && today && tomorrow) {
+				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
+
+				if (type === "today") {
+					const arrowY = tomorrow.left - left
+					const arrowX = tomorrow.top - top
+
+					setArrowData({
+						top: top,
+						left: left,
+						angle: (Math.atan2(arrowX, arrowY) * 180) / Math.PI,
+						width: Math.sqrt(arrowX * arrowX + arrowY * arrowY),
 					})
-				} else if (
-					state === "tomorrow_pending" ||
-					state === "tomorrow_placed"
-				) {
-					setTomorrow({
-						top,
-						left,
-						placed: true,
+				} else if (type === "tomorrow") {
+					const arrowY = left - today.left!
+					const arrowX = top - today.top!
+
+					setArrowData({
+						top: today.top,
+						left: today.left,
+						angle: (Math.atan2(arrowX, arrowY) * 180) / Math.PI,
+						width: Math.sqrt(arrowX * arrowX + arrowY * arrowY),
 					})
 				}
 			}
 		}
+	}
+
+	const getLocationsDuringDrag = (ref: any, target: HTMLDivElement) => {
+		const parentRect = target.getBoundingClientRect()
+		const pointRect = ref.getBoundingClientRect()
+
+		let top =
+			((pointRect.top + 16 - parentRect.top) / target.clientHeight) * 100
+		let left =
+			((pointRect.left + 16 - parentRect.left) / target.clientWidth) * 100
+
+		top = top > 100 ? 100 : top < 0 ? 0 : top
+		left = left > 100 ? 100 : left < 0 ? 0 : left
+
+		return [top, left]
+	}
+
+	const savePointLocations = async (
+		updatedAnswer: { name: string; newAnswer: Answer },
+		top: number,
+		left: number,
+		type: Day,
+	) => {
+		if (type === "today") {
+			updatedAnswer.newAnswer = {
+				today: { top, left },
+				...tomorrow,
+			}
+		} else if (type === "tomorrow") {
+			updatedAnswer.newAnswer = {
+				...today,
+				tomorrow: { top, left },
+			}
+		}
+
+		startTransition(() => {
+			answerDispatch(updatedAnswer)
+		})
+
+		onQuadrantClick()
+
+		const handleSubmit = submitQuadrantAction.bind(null, {
+			answer: updatedAnswer,
+			exerciseId,
+			isGroup,
+		})
+		await handleSubmit()
 	}
 
 	return (
@@ -176,12 +207,7 @@ export const Quadrant = ({
 				>
 					<QuadrantImages item={item} />
 
-					<DndContext
-						onDragEnd={handleDragEnd}
-						// REVIEW: This breaks since we moved the opacity
-						// out of state, but I do think that the arrow would ideally update as the tomorrow handle drags in real-time.
-						// onDragMove={() => setOpacity("opacity-0")}
-					>
+					<DndContext onDragEnd={handleDragEnd} onDragMove={handleDragMove}>
 						<QuadrantDroppable index={index} onClick={handleClick}>
 							{today && (
 								<QuadrantDraggable
@@ -193,12 +219,12 @@ export const Quadrant = ({
 							)}
 
 							<QuadrantArrow
-								top={answer?.today?.top}
-								left={answer?.today?.left}
-								tomorrowPlaced={Boolean(answer?.tomorrow)}
+								top={arrowData.top}
+								left={arrowData.left}
+								tomorrowPlaced={Boolean(tomorrow)}
 								state={state}
-								width={arrowWidth}
-								angle={arrowAngle}
+								width={arrowData.width}
+								angle={arrowData.angle}
 							/>
 
 							{tomorrow && (
