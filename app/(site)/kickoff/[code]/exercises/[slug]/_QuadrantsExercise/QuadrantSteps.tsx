@@ -49,13 +49,21 @@ export const QuadrantSteps = ({
 		Answers,
 		AnswerDispatch
 	>(answers, (state, action) => {
+		const newPositions = { ...answers[action.name] } || ({} as Answer)
+
+		if (action.newAnswer.today) {
+			newPositions.today = action.newAnswer.today
+		}
+
+		if (action.newAnswer.tomorrow) {
+			newPositions.tomorrow = action.newAnswer.tomorrow
+		}
+
 		return {
 			...state,
-			[action.name]: action.newAnswer,
+			[action.name]: newPositions,
 		}
 	})
-
-	console.log("answers", optimisticAnswers)
 
 	const [state, setState] = useState<State>("today_pending")
 	const totalSteps = quadrants.length * 2
@@ -109,7 +117,9 @@ export const QuadrantSteps = ({
 				{state === "complete" ? (
 					quadrants.map((quadrant, index) => (
 						<div key={quadrant._key}>
-							<div className="-ml-7 h-[0.125rem] w-[calc(100%+3.5rem)] bg-gray-90" />
+							{index !== 0 && (
+								<div className="-ml-7 h-[0.125rem] w-[calc(100%+3.5rem)] bg-gray-90" />
+							)}
 
 							<Quadrant
 								item={quadrant}

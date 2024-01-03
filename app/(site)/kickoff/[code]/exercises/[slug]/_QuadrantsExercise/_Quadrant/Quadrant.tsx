@@ -42,8 +42,7 @@ export const Quadrant = ({
 	answerDispatch,
 	onQuadrantClick,
 }: QuadrantProps) => {
-	// const formRef = React.useRef<HTMLFormElement>(null)
-	const [isPending, startTransition] = React.useTransition()
+	const [, startTransition] = React.useTransition()
 
 	const today = answer?.today
 	const tomorrow = answer?.tomorrow
@@ -72,29 +71,7 @@ export const Quadrant = ({
 	// const arrowAngle = (Math.atan2(arrowX, arrowY) * 180) / Math.PI
 	// const arrowWidth = Math.sqrt(arrowX * arrowX + arrowY * arrowY)
 
-	// REVIEW: I think it may be simpler to explicitly submit the form in our
-	// event handlers directly. I understand that this was probably the result
-	// of the fact that state updates in React aren't "synchronous" in the sense
-	// that the DOM doesn't immediately update after you call a setState.
-	//
-	// I think the ideal solution here would be to use the `useOptimistic` hook
-	// to update the result of a form mutation immediately, and fallback to the
-	// server result as needed and avoid state altogether:
-	//
-	// https://react.dev/reference/react/useOptimistic
-	//
-	// Alternatively, you can use the `flushSync` method to run any form
-	// submissions synchronously or just run the action without the <form />
-	// entirely.
-	//
-	// https://react.dev/reference/react-dom/flushSync
-	// React.useEffect(() => {
-	// 	if (todayPlaced || tomorrowPlaced) {
-	// 		formRef.current?.requestSubmit()
-	// 	}
-	// }, [todayPlaced, tomorrowPlaced])
-
-	const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+	const handleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
 		if (clickTarget?.current) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
 			const top =
@@ -104,31 +81,35 @@ export const Quadrant = ({
 				((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
 				100
 
-			startTransition(() => {
-				if (state === "today_pending" || state === "today_placed") {
-					answerDispatch({
-						name: item.name,
-						newAnswer: {
-							today: { top, left },
-							...tomorrow,
-						},
-					})
-				} else if (
-					state === "tomorrow_pending" ||
-					state === "tomorrow_placed"
-				) {
-					answerDispatch({
-						name: item.name,
-						newAnswer: {
-							...today,
-							tomorrow: { top, left },
-						},
-					})
+			let updatedAnswer = {
+				name: item.name,
+				newAnswer: {},
+			}
+
+			if (state === "today_pending" || state === "today_placed") {
+				updatedAnswer.newAnswer = {
+					today: { top, left },
+					...tomorrow,
 				}
+			} else if (state === "tomorrow_pending" || state === "tomorrow_placed") {
+				updatedAnswer.newAnswer = {
+					...today,
+					tomorrow: { top, left },
+				}
+			}
+
+			startTransition(() => {
+				answerDispatch(updatedAnswer)
 			})
 
-			handleSubmit()
 			onQuadrantClick()
+
+			const handleSubmit = submitQuadrantAction.bind(null, {
+				answer: updatedAnswer,
+				exerciseId,
+				isGroup,
+			})
+			await handleSubmit()
 		}
 	}
 
@@ -171,10 +152,6 @@ export const Quadrant = ({
 		}
 	}
 
-	const handleSubmit = async () => {
-		await submitQuadrantAction.bind(null, answer)
-	}
-
 	return (
 		<>
 			<div className="relative my-6 p-7 md:p-12">
@@ -185,72 +162,6 @@ export const Quadrant = ({
 					className="relative before:block before:pt-[100%]"
 				>
 					<QuadrantImages item={item} />
-
-					{/* <form
-						action={handleSubmit}
-						ref={formRef}
-						className="absolute left-0 top-0 h-full w-full"
-					> */}
-					{/* <input
-							type="hidden"
-							name="exerciseId"
-							value={exerciseId}
-							readOnly
-						/>
-						<input
-							type="hidden"
-							name="quadrantName"
-							value={item.name}
-							readOnly
-						/>
-						<input
-							type="checkbox"
-							defaultChecked={isGroup}
-							name="isGroup"
-							className="hidden"
-						/>
-						<input
-							type="number"
-							className="hidden"
-							name="todayTop"
-							value={today.top}
-							readOnly
-						/>
-						<input
-							type="number"
-							className="hidden"
-							name="todayLeft"
-							value={today.left}
-							readOnly
-						/>
-						<input
-							type="checkbox"
-							checked={today.placed}
-							name="todayPlaced"
-							className="hidden"
-							readOnly
-						/>
-						<input
-							type="number"
-							className="hidden"
-							name="tomorrowTop"
-							value={tomorrow.top}
-							readOnly
-						/>
-						<input
-							type="number"
-							className="hidden"
-							name="tomorrowLeft"
-							value={tomorrow.left}
-							readOnly
-						/>
-						<input
-							type="checkbox"
-							checked={tomorrow.placed}
-							name="tomorrowPlaced"
-							className="hidden"
-							readOnly
-						/> */}
 
 					<DndContext
 						onDragEnd={handleDragEnd}
@@ -287,7 +198,6 @@ export const Quadrant = ({
 							)}
 						</QuadrantDroppable>
 					</DndContext>
-					{/* </form> */}
 				</div>
 			</div>
 		</>
