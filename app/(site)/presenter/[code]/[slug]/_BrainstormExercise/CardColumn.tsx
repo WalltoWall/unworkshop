@@ -13,13 +13,21 @@ import { Draggable, SortableItem } from "./SortableItem"
 interface CardColumnProps {
 	cards: Array<{ response: string; id: string }>
 	id: string
+	colorHex: string
+	columnTitle: string
 	removeColumn: (id: string) => void
 }
 
-export const CardColumn = ({ cards, id, removeColumn }: CardColumnProps) => {
-	const [color, setColor] = React.useState<string>("#96fad1")
+export const CardColumn = ({
+	cards,
+	colorHex,
+	columnTitle,
+	id,
+	removeColumn,
+}: CardColumnProps) => {
+	const [color, setColor] = React.useState<string>(colorHex || "#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
-	const [title, setTitle] = React.useState<string>("Service")
+	const [title, setTitle] = React.useState<string>(columnTitle ?? "New Column")
 	const { setNodeRef } = useDroppable({ id: id })
 
 	const colorGroups = [
@@ -58,6 +66,7 @@ export const CardColumn = ({ cards, id, removeColumn }: CardColumnProps) => {
 						className="h-5 w-5 rounded-full border border-black"
 						style={{ backgroundColor: color }}
 						onClick={() => setShowPicker(!showPicker)}
+						type="button"
 					></button>
 					<input
 						onChange={(e) => setTitle(e.target.value)}
@@ -67,7 +76,7 @@ export const CardColumn = ({ cards, id, removeColumn }: CardColumnProps) => {
 				</div>
 				<div className="flex items-center gap-3">
 					<PresentColumnModal cards={cards} color={color} columnTitle={title} />
-					<button onClick={() => removeColumn(id)}>
+					<button onClick={() => removeColumn(id)} type="button">
 						<BlackXIcon className="w-7" />
 					</button>
 				</div>
