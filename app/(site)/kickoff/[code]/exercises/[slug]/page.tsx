@@ -13,8 +13,6 @@ const ExercisePage = async (props: Props) => {
 	const exercise = await client.findExerciseBySlug(props.params.slug)
 	if (!exercise) notFound()
 
-	console.log({ exercise })
-
 	return (
 		<div className="h-full">
 			<InstructionsModal
