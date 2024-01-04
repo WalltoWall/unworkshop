@@ -91,10 +91,6 @@ const config = defineConfig({
 						...S.documentTypeListItems().filter(
 							(item) => !hideFromNav.includes(String(item.getId())),
 						),
-						S.listItem()
-							.title("Settings")
-							.child(S.document().schemaType("settings").documentId("settings"))
-							.icon(() => <CogIcon width={24} height={24} />),
 					])
 			},
 		}),

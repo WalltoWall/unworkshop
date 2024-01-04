@@ -10,6 +10,13 @@ export const Exercise = defineType({
 
 	preview: {
 		select: { title: "name", subtitle: "type" },
+		prepare(select) {
+			return {
+				title: select.title,
+				subtitle: select.subtitle,
+				media: () => <Dumbbell width={24} height={24} />,
+			}
+		},
 	},
 
 	fields: [
