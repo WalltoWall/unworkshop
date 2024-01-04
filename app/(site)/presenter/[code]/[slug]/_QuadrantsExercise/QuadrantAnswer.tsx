@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useRef } from "react"
 import { cx } from "class-variance-authority"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
@@ -27,6 +25,9 @@ export const QuadrantAnswer = ({
 	const tomorrowRef = useRef<HTMLDivElement>(null)
 
 	const [styles, setStyles] = React.useState({})
+
+	const today = answer?.today
+	const tomorrow = answer?.tomorrow
 
 	React.useEffect(() => {
 		window.addEventListener("resize", getArrowStyles)
@@ -69,80 +70,77 @@ export const QuadrantAnswer = ({
 
 	return (
 		<>
-			<div
-				ref={todayRef}
-				className={cx(
-					"transition-position absolute z-10 -ml-4 -mt-4",
-					(showToday && answer.today.placed) || animating
-						? "opacity-100"
-						: "opacity-0",
-					animating ? "duration-[3s]" : "duration-0",
-				)}
-				style={{
-					top: animating ? `${answer.tomorrow.top}%` : `${answer.today.top}%`,
-					left: animating
-						? `${answer.tomorrow.left}%`
-						: `${answer.today.left}%`,
-				}}
-			>
+			{today && (
 				<div
+					ref={todayRef}
 					className={cx(
-						"h-8 w-8 rounded-full border-4 transition-colors",
+						"absolute z-10 -ml-4 -mt-4 transition-position",
+						showToday || animating ? "opacity-100" : "opacity-0",
 						animating ? "duration-[3s]" : "duration-0",
 					)}
 					style={{
-						borderColor: color,
-						backgroundColor: animating ? color : "transparent",
+						top: animating ? `${tomorrow?.top || today.top}%` : `${today.top}%`,
+						left: animating
+							? `${tomorrow?.left || today.left}%`
+							: `${today.left}%`,
 					}}
-				/>
-			</div>
+				>
+					<div
+						className={cx(
+							"h-8 w-8 rounded-full border-4 transition-colors",
+							animating ? "duration-[3s]" : "duration-0",
+						)}
+						style={{
+							borderColor: color,
+							backgroundColor: animating && tomorrow ? color : "transparent",
+						}}
+					/>
+				</div>
+			)}
 
-			<div
-				ref={tomorrowRef}
-				className={cx(
-					"absolute z-10 -ml-4 -mt-4",
-					!animating && showTomorrow && answer.tomorrow.placed
-						? "block"
-						: "hidden",
-				)}
-				style={{
-					top: `${answer.tomorrow.top}%`,
-					left: `${answer.tomorrow.left}%`,
-				}}
-			>
+			{tomorrow && (
 				<div
-					className="h-8 w-8 rounded-full"
+					ref={tomorrowRef}
+					className={cx(
+						"absolute z-10 -ml-4 -mt-4",
+						!animating && showTomorrow ? "block" : "hidden",
+					)}
 					style={{
-						backgroundColor: color,
+						top: `${tomorrow.top}%`,
+						left: `${tomorrow.left}%`,
 					}}
-				/>
-			</div>
+				>
+					<div
+						className="h-8 w-8 rounded-full"
+						style={{
+							backgroundColor: color,
+						}}
+					/>
+				</div>
+			)}
 
-			<div
-				className={cx(
-					"absolute h-1 origin-left",
-					!animating &&
-						showLines &&
-						showToday &&
-						answer.today.placed &&
-						showTomorrow &&
-						answer.tomorrow.placed
-						? "opacity-100"
-						: "opacity-0",
-				)}
-				style={{
-					top: `${answer.today.top}%`,
-					left: `${answer.today.left}%`,
-					...styles,
-				}}
-			>
+			{today && tomorrow && (
 				<div
-					className="absolute left-[0.875rem] top-0 h-full w-[calc(100%-1.75rem)]"
+					className={cx(
+						"absolute h-1 origin-left",
+						!animating && showLines && showToday && showTomorrow
+							? "opacity-100"
+							: "opacity-0",
+					)}
 					style={{
-						backgroundColor: color,
+						top: `${today.top}%`,
+						left: `${today.left}%`,
+						...styles,
 					}}
-				/>
-			</div>
+				>
+					<div
+						className="absolute left-[0.875rem] top-0 h-full w-[calc(100%-1.75rem)]"
+						style={{
+							backgroundColor: color,
+						}}
+					/>
+				</div>
+			)}
 		</>
 	)
 }

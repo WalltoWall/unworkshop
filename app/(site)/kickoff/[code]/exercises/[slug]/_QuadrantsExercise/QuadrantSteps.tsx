@@ -154,8 +154,6 @@ export const QuadrantSteps = ({
 				) : null}
 			</div>
 
-			{state}
-
 			<Steps
 				disabled={isDisabled}
 				steps={totalSteps}

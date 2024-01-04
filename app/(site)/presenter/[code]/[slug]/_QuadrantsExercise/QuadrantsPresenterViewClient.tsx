@@ -5,6 +5,7 @@
 import useEmblaCarousel, { type EmblaCarouselType } from "embla-carousel-react"
 import React, { useEffect } from "react"
 import { CirclePicker } from "react-color"
+import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { cx } from "class-variance-authority"
 import { Button } from "@/components/Button"
 import { Arrow } from "@/components/icons/Arrow"
@@ -34,6 +35,11 @@ export const QuadrantsPresenterViewClient = ({
 	exercise,
 	answers,
 }: PresenterViewProps) => {
+	const router = useRouter()
+	const pathname = usePathname()
+	const searchParams = useSearchParams()
+	const step = parseInt(searchParams?.get("step") ?? "1")
+
 	const [emblaRef, emblaApi] = useEmblaCarousel({
 		watchDrag: false,
 	})
@@ -61,14 +67,27 @@ export const QuadrantsPresenterViewClient = ({
 		emblaApi.on("select", onSelect)
 	}, [emblaApi, onSelect])
 
-	const scrollPrev = React.useCallback(
-		() => emblaApi && emblaApi.scrollPrev(),
-		[emblaApi],
-	)
-	const scrollNext = React.useCallback(
-		() => emblaApi && emblaApi.scrollNext(),
-		[emblaApi],
-	)
+	useEffect(() => {
+		if (!emblaApi) return
+
+		emblaApi.scrollTo(step - 1)
+	}, [step, emblaApi])
+
+	const scrollPrev = () => {
+		const params = new URLSearchParams({
+			step: (step - 1).toString(),
+		})
+
+		router.push(pathname + "?" + params.toString(), { scroll: false })
+	}
+
+	const scrollNext = () => {
+		const params = new URLSearchParams({
+			step: (step + 1).toString(),
+		})
+
+		router.push(pathname + "?" + params.toString(), { scroll: false })
+	}
 
 	const animatePoints = () => {
 		setAnimating(true)
@@ -83,7 +102,7 @@ export const QuadrantsPresenterViewClient = ({
 			<Button
 				className="absolute -right-1 -top-5 z-10 cursor-pointer"
 				onClick={animatePoints}
-				icon={animating && <Spinner className="w-[1.125rem]" />}
+				icon={animating && <Spinner className="-mt-1 w-[1.125rem]" />}
 				disabled={animating}
 			>
 				{animating ? "Animating" : "Animate"}
