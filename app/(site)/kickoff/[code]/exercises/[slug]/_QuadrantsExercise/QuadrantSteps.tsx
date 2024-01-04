@@ -44,6 +44,7 @@ export const QuadrantSteps = ({
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
+	const totalSteps = quadrants.length * 2
 
 	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
 		Answers,
@@ -65,44 +66,48 @@ export const QuadrantSteps = ({
 		}
 	})
 
-	const [state, setState] = useState<State>("today_pending")
-	const totalSteps = quadrants.length * 2
-	const isDisabled = state === "today_pending" || state === "tomorrow_pending"
-
 	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {
 		// We are on the last quadrant, so we need to mark this is as complete.
 		if (step - 1 === totalSteps) {
-			return setState("complete")
+			return "complete"
 		}
 
-		// Otherwise, we can know the next state based on the current.
-		if (state === "today_pending") {
-			setState("today_placed")
-		} else if (state === "today_placed") {
-			setState("tomorrow_pending")
-		} else if (state === "tomorrow_pending") {
-			setState("tomorrow_placed")
-		} else if (state === "tomorrow_placed") {
-			setState("today_pending")
+		const selectingForToday = step & 1
+		const currentQuadrantIdx = Math.ceil(step / 2) - 1
+		const currentQuadrant = quadrants.at(currentQuadrantIdx)!
+
+		if (selectingForToday) {
+			return answers[currentQuadrant.name]?.today
+				? "today_placed"
+				: "today_pending"
+		} else {
+			return answers[currentQuadrant.name]?.tomorrow
+				? "tomorrow_placed"
+				: "tomorrow_pending"
 		}
+	}
+
+	const [state, setState] = useState<State>(determineNextState(step))
+	const isDisabled = state === "today_pending" || state === "tomorrow_pending"
+	const currentQuadrantIdx = Math.ceil(step / 2) - 1
+	const currentQuadrant = quadrants.at(currentQuadrantIdx)
+
+	const onStepChange = (step: number) => {
+		setState(determineNextState(step))
 	}
 
 	const handleClick = () => {
 		switch (state) {
 			case "today_pending":
-				return determineNextState(step)
+				setState("today_placed")
+				break
 
 			case "tomorrow_pending":
-				return determineNextState(step)
-
-			default:
-				return
+				setState("tomorrow_placed")
+				break
 		}
 	}
-
-	const currentQuadrantIdx = Math.ceil(step / 2) - 1
-	const currentQuadrant = quadrants.at(currentQuadrantIdx)!
 
 	return (
 		<>
@@ -133,7 +138,7 @@ export const QuadrantSteps = ({
 							/>
 						</div>
 					))
-				) : (
+				) : currentQuadrant ? (
 					<div key={currentQuadrant?._key}>
 						<Quadrant
 							item={currentQuadrant}
@@ -146,7 +151,7 @@ export const QuadrantSteps = ({
 							onQuadrantClick={handleClick}
 						/>
 					</div>
-				)}
+				) : null}
 			</div>
 
 			{state}
@@ -156,7 +161,7 @@ export const QuadrantSteps = ({
 				steps={totalSteps}
 				activeStep={step}
 				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
-				onNextStep={determineNextState}
+				onNextStep={onStepChange}
 			/>
 		</>
 	)
