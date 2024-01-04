@@ -7,6 +7,7 @@ import {
 	PointerSensor,
 	useSensor,
 	useSensors,
+	type Active,
 } from "@dnd-kit/core"
 import {
 	arrayMove,
@@ -21,42 +22,33 @@ import { Text } from "@/components/Text"
 import { CardColumn } from "./CardColumn"
 import { Draggable, SortableItem } from "./SortableItem"
 
-export type ColumnDispatch = {
-	type: "add" | "delete"
-	payload: { columnId: string }
-}
+type Card = { response: string; id: string }
+
+type Columns = Record<string, Array<Card>>
 
 interface PresenterViewProps {
-	columnCards: Array<{ response: string; id: string }>
-	cards: Array<{ response: string; id: string }>
+	cards: Array<Card>
 }
 
 export const BrainstormPresenterViewClient = ({
-	columnCards,
 	cards,
 }: PresenterViewProps) => {
-	const [columns, setColumns] = React.useState<Array<{ columnId: string }>>([
-		{ columnId: "" },
-	])
+	const [sortingId] = React.useState(uid())
+	const [columns, setColumns] = React.useState<Columns>({
+		[sortingId]: cards,
+		[uid()]: [
+			{ id: uid(), response: "Testing" },
+			{ id: uid(), response: "Testing moving" },
+			{ id: uid(), response: "Testing Again" },
+		],
+	})
 
 	const [showSorter, setShowSorter] = React.useState(true)
 
-	const [optimisticColumn, addOptimisticColumn] = React.useOptimistic<
-		Array<{ columnId: string }>,
-		ColumnDispatch
-	>(columns, (state, action) => {
-		if (action.type === "delete") {
-			return state.filter(
-				(column) => column.columnId !== action.payload.columnId,
-			)
-		} else {
-			return [...state, action.payload]
-		}
-	})
-
 	const removeColumn = (id: string) => {
-		setColumns(columns.filter((column) => column.columnId !== id))
-		addOptimisticColumn({ type: "delete", payload: { columnId: id } })
+		const newColumns = { ...columns }
+		delete newColumns[id]
+		setColumns(newColumns)
 	}
 
 	const sensors = useSensors(
@@ -67,24 +59,75 @@ export const BrainstormPresenterViewClient = ({
 	)
 
 	return (
-		<DndContext sensors={sensors}>
+		<DndContext
+			sensors={sensors}
+			onDragEnd={({ active, over }) => {
+				if (!over) return
+				if (active.id === over.id) return
+				if (!active.data.current) return
+				if (
+					active.data.current?.sortable.containerId !==
+					over.data.current?.sortable.containerId
+				)
+					return
+
+				const columnId = active.data.current.sortable.containerId
+				const cards = columns[columnId]
+
+				const oldIdx = cards.findIndex((card) => card.id === active.id)
+				const newIdx = cards.findIndex((card) => card.id === over.id)
+
+				setColumns({
+					...columns,
+					[columnId]: arrayMove(cards, oldIdx, newIdx),
+				})
+			}}
+			onDragOver={({ active, over }) => {
+				if (!over || !active.data.current) return
+
+				const fromColumnId = active.data.current?.sortable.containerId
+				const toColumnId = over.data.current?.sortable.containerId
+
+				if (!fromColumnId || !toColumnId) return
+
+				if (fromColumnId === toColumnId) return
+
+				const fromCards = columns[fromColumnId]
+				const toCards = columns[toColumnId]
+
+				const activeCard = fromCards.find((card) => card.id === active.id)
+
+				if (!activeCard) return
+
+				setColumns({
+					...columns,
+					[fromColumnId]: fromCards.filter((card) => card.id !== active.id),
+					[toColumnId]: toCards.toSpliced(
+						over.data.current?.sortable.index,
+						0,
+						activeCard,
+					),
+				})
+			}}
+		>
 			<div className="relative">
-				<SortableContext items={cards}>
-					<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
-						<button
-							className="flex w-fit items-center gap-3 rounded-lg border-2 border-gray-50 px-2.5 py-2"
-							onClick={() => setShowSorter(!showSorter)}
-						>
-							<Text style={"heading"} size={16} className="text-gray-50">
-								Hide Sorter
-							</Text>
-							<Chevron
-								className={clsx(
-									"w-1.5 text-gray-50 transition duration-150 ease-in",
-									showSorter ? "rotate-[270deg]" : "rotate-90",
-								)}
-							/>
-						</button>
+				<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
+					<button
+						className="flex w-fit items-center gap-3 rounded-lg border-2 border-gray-50 px-2.5 py-2"
+						onClick={() => setShowSorter(!showSorter)}
+					>
+						<Text style={"heading"} size={16} className="text-gray-50">
+							Hide Sorter
+						</Text>
+						<Chevron
+							className={clsx(
+								"w-1.5 text-gray-50 transition duration-150 ease-in",
+								showSorter ? "rotate-[270deg]" : "rotate-90",
+							)}
+						/>
+					</button>
+
+					<SortableContext items={cards} id={sortingId}>
 						<div
 							className={clsx(
 								"flex w-full gap-2",
@@ -102,27 +145,34 @@ export const BrainstormPresenterViewClient = ({
 								</SortableItem>
 							))}
 						</div>
-					</div>
-				</SortableContext>
+					</SortableContext>
+				</div>
+
 				<div className="flex gap-4 pt-5">
-					{optimisticColumn.map((column, idx) => (
-						<SortableContext key={column.columnId} items={columnCards}>
+					{Object.entries(columns).map(([columnId, cards]) => {
+						if (columnId === sortingId) return
+
+						return (
 							<CardColumn
-								cards={columnCards}
-								id={column.columnId}
+								key={columnId}
+								cards={cards}
+								id={columnId}
 								removeColumn={removeColumn}
 							/>
-						</SortableContext>
-					))}
+						)
+					})}
 
 					<button
 						className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
 						onClick={() => {
 							const id = uid()
-							setColumns([...columns, { columnId: id }])
-							addOptimisticColumn({
-								type: "add",
-								payload: { columnId: id },
+
+							setColumns({
+								...columns,
+								[id]: [
+									{ id: uid(), response: "Testing" },
+									{ id: uid(), response: "Testing 2" },
+								],
 							})
 						}}
 					>

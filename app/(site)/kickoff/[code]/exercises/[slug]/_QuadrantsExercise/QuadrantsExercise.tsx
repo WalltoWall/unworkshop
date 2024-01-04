@@ -15,7 +15,7 @@ export const QuadrantsExercise = async ({
 }: QuadrantsExerciseProps) => {
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
-	const answers = participant.answers?.[exercise._id]?.answers ?? []
+	const answers = participant.answers?.[exercise._id]?.answers ?? {}
 	const groups = exercise.groups ?? []
 
 	return (

@@ -1,30 +1,27 @@
 "use client"
 
-import React from "react"
-import { useRouter } from "next/navigation"
+import React, { useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { Quadrant } from "./_Quadrant/Quadrant"
-import type { Answer } from "./types"
+import { QuadrantInstructions } from "./QuadrantInstructions"
+import type { Answer, Answers } from "./types"
 
-// REVIEW: Instead of exporting this and re-calculating it, I think it would be
-// better if <QuadrantSteps /> derived it once and passed the result to the
-// other components that need it.
-export const getTime = (active: number, index: number) => {
-	if (active === index * 2) {
-		return "today"
-	} else if (active === index * 2 + 1) {
-		return "tomorrow"
-	}
-
-	// REVIEW: Instead of returning false here, I think it would be better to
-	// encode the "idle" state as another literal. That way "getTime()" would
-	// always return some result like "idle" | "tomorrow" | "today".
-	return false
+export type AnswerDispatch = {
+	newAnswer: Answer
+	name: string
 }
 
+export type State =
+	| "today_pending"
+	| "today_placed"
+	| "tomorrow_pending"
+	| "tomorrow_placed"
+	| "complete"
+
 type QuadrantStepsProps = {
-	answers: Answer[]
+	answers: Answers
 	exerciseId: string
 	quadrants: NonNullable<ST["exercise"]["quadrants"]>
 	group: boolean
@@ -45,78 +42,126 @@ export const QuadrantSteps = ({
 	kickoffCode,
 }: QuadrantStepsProps) => {
 	const router = useRouter()
+	const searchParams = useSearchParams()
+	const step = parseInt(searchParams?.get("step") ?? "1")
+	const totalSteps = quadrants.length * 2
 
-	// REVIEW: I think it may be better to keep track of the current step with a
-	// search parameter instead of React state, mostly to allow folks to
-	// preserve where they are in-case they close the tab or refresh
-	// on-accident.
-	const [active, setActive] = React.useState(0)
+	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
+		Answers,
+		AnswerDispatch
+	>(answers, (state, action) => {
+		const newPositions = ({ ...answers[action.name] } || {}) as Answer
 
-	// REVIEW: Overall, the way that we're tracking the state of this exercise
-	// is a little hard to follow. Instead of trying to derive what state we're
-	// in based on what `active` is and the `answers` array, I think explicitly
-	// tracking the state with a string literal would really clear-up
-	// what's going on and when certain elements need to be disabled.
-	//
-	// For example, if we model the state of the exercise with just string literals:
-	//
-	// type State = "today_pending" | "today_placed" | "tomorrow_pending" | "tomorrow_placed" | "complete"
-	//
-	// From that, we can know that `disabled` is true whenever `state` is
-	// "today_pending" or "tomorrow_pending".
-	const handleDisabled = () => {
-		const tomorrow = (active / 2) % 1 > 0 ? true : false
+		if (action.newAnswer.today) {
+			newPositions.today = action.newAnswer.today
+		}
 
-		if (answers.length > 0 && answers.length * 2 === active) {
-			return false
-		} else if (tomorrow) {
-			return !answers[(active - 1) / 2]?.tomorrow?.placed
+		if (action.newAnswer.tomorrow) {
+			newPositions.tomorrow = action.newAnswer.tomorrow
+		}
+
+		return {
+			...state,
+			[action.name]: newPositions,
+		}
+	})
+
+	// step is passed explicitely here since this fires before url params have been updated
+	const determineNextState = (step: number) => {
+		// We are on the last quadrant, so we need to mark this is as complete.
+		if (step - 1 === totalSteps) {
+			return "complete"
+		}
+
+		const selectingForToday = step & 1
+		const currentQuadrantIdx = Math.ceil(step / 2) - 1
+		const currentQuadrant = quadrants.at(currentQuadrantIdx)!
+
+		if (selectingForToday) {
+			return answers[currentQuadrant.name]?.today
+				? "today_placed"
+				: "today_pending"
 		} else {
-			return !answers[active / 2]?.today?.placed
+			return answers[currentQuadrant.name]?.tomorrow
+				? "tomorrow_placed"
+				: "tomorrow_pending"
+		}
+	}
+
+	const [state, setState] = useState<State>(determineNextState(step))
+	const isDisabled = state === "today_pending" || state === "tomorrow_pending"
+	const currentQuadrantIdx = Math.ceil(step / 2) - 1
+	const currentQuadrant = quadrants.at(currentQuadrantIdx)
+
+	const onStepChange = (step: number) => {
+		setState(determineNextState(step))
+	}
+
+	const handleClick = () => {
+		switch (state) {
+			case "today_pending":
+				setState("today_placed")
+				break
+
+			case "tomorrow_pending":
+				setState("tomorrow_placed")
+				break
 		}
 	}
 
 	return (
 		<>
 			<div className="mb-10">
-				{quadrants.map((quadrant, index) => (
-					<div key={quadrant._key}>
-						{answers.length > 0 &&
-							active === quadrants.length * 2 &&
-							index !== 0 && (
+				<QuadrantInstructions
+					state={state}
+					todayInstructions={todayInstructions}
+					tomorrowInstructions={tomorrowInstructions}
+					finalInstructions={finalInstructions}
+				/>
+
+				{state === "complete" ? (
+					quadrants.map((quadrant, index) => (
+						<div key={quadrant._key}>
+							{index !== 0 && (
 								<div className="-ml-7 h-[0.125rem] w-[calc(100%+3.5rem)] bg-gray-90" />
 							)}
 
-						{(getTime(active, index) ||
-							(answers.length > 0 && active === quadrants.length * 2)) && (
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
 								isGroup={group}
+								answer={optimisticAnswers[quadrant.name]}
+								state={state}
 								index={index}
-								active={active}
-								answers={answers}
-								answer={answers.find((a) => a.name === quadrant.name)}
-								todayInstructions={todayInstructions}
-								tomorrowInstructions={tomorrowInstructions}
-								finalInstructions={finalInstructions}
+								answerDispatch={answerDispatch}
+								onQuadrantClick={handleClick}
 							/>
-						)}
+						</div>
+					))
+				) : currentQuadrant ? (
+					<div key={currentQuadrant?._key}>
+						<Quadrant
+							item={currentQuadrant}
+							exerciseId={exerciseId}
+							isGroup={group}
+							answer={optimisticAnswers[currentQuadrant.name]}
+							index={currentQuadrantIdx}
+							state={state}
+							answerDispatch={answerDispatch}
+							onQuadrantClick={handleClick}
+						/>
 					</div>
-				))}
+				) : null}
 			</div>
 
-			{/* REVIEW: The steps component seems to be pretty involved and needs to
-            know a lot about an exercise in order to function. Could <Steps />
-            maybe just be a dumber component that just updated a search
-            parameter and the exercise itself could keep track of what the
-            search parameter is? */}
+			{state}
+
 			<Steps
-				disabled={handleDisabled()}
-				count={quadrants.length * 2}
-				active={active}
-				onActiveChange={setActive}
+				disabled={isDisabled}
+				steps={totalSteps}
+				activeStep={step}
 				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
+				onNextStep={onStepChange}
 			/>
 		</>
 	)

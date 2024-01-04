@@ -1,69 +1,71 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { zfd } from "zod-form-data"
+import zod from "zod"
 import { client, sanity } from "@/sanity/client"
-import { type QuadrantsParticipant } from "./types"
+import { type Answer, type QuadrantsParticipant } from "./types"
 
-const submitQuadrantSchema = zfd.formData({
-	exerciseId: zfd.text(),
-	isGroup: zfd.checkbox(),
-	quadrantName: zfd.text(),
-	todayTop: zfd.numeric(),
-	todayLeft: zfd.numeric(),
-	todayPlaced: zfd.checkbox(),
-	tomorrowTop: zfd.numeric(),
-	tomorrowLeft: zfd.numeric(),
-	tomorrowPlaced: zfd.checkbox(),
+const submitQuadrantSchema = zod.object({
+	answer: zod.object({
+		name: zod.string(),
+		newAnswer: zod.object({
+			today: zod
+				.object({
+					top: zod.number(),
+					left: zod.number(),
+				})
+				.optional(),
+			tomorrow: zod
+				.object({
+					top: zod.number(),
+					left: zod.number(),
+				})
+				.optional(),
+		}),
+	}),
+	exerciseId: zod.string(),
+	isGroup: zod.boolean(),
 })
 
-export async function submitQuadrantAction(formData: FormData) {
-	const data = submitQuadrantSchema.parse(formData)
+export async function submitQuadrantAction(newAnswer: {
+	answer: { name: string; newAnswer: Answer }
+	exerciseId: string
+	isGroup: boolean
+}) {
+	const data = submitQuadrantSchema.parse(newAnswer)
 
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
 
-	const oldAnswers = participant.answers?.[data.exerciseId]?.answers ?? []
+	const oldAnswers = participant.answers?.[data.exerciseId]?.answers ?? {}
 	const meta = data.isGroup
 		? {
 				type: "group" as const,
 				leader: participant._id,
-		  }
+			}
 		: { type: "individual" as const }
+
+	const newPositions = { ...oldAnswers[data.answer.name] }
+
+	if (data.answer.newAnswer?.today) {
+		newPositions.today = data.answer.newAnswer?.today
+	}
+
+	if (data.answer.newAnswer?.tomorrow) {
+		newPositions.tomorrow = data.answer.newAnswer?.tomorrow
+	}
 
 	const answers: QuadrantsParticipant["answers"] = {
 		...participant.answers,
 		[data.exerciseId]: {
 			...participant.answers?.[data.exerciseId],
 			meta,
-			answers: [],
-		},
-	}
-
-	const existingAnswer = oldAnswers.findIndex(
-		(a) => a.name === data.quadrantName,
-	)
-
-	if (existingAnswer > -1) {
-		oldAnswers?.splice(existingAnswer, 1)
-	}
-
-	answers[data.exerciseId].answers = [
-		...oldAnswers,
-		{
-			name: data.quadrantName,
-			today: {
-				top: data.todayTop,
-				left: data.todayLeft,
-				placed: data.todayPlaced,
-			},
-			tomorrow: {
-				top: data.tomorrowTop,
-				left: data.tomorrowLeft,
-				placed: data.tomorrowPlaced,
+			answers: {
+				...oldAnswers,
+				[data.answer.name]: newPositions,
 			},
 		},
-	]
+	}
 
 	await sanity
 		.patch(participant._id)
