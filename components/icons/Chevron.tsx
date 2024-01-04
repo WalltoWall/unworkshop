@@ -4,7 +4,7 @@ export const Chevron = (props: React.ComponentPropsWithoutRef<"svg">) => {
 			<path
 				d="M9 17L1 9L9 1"
 				stroke="currentColor"
-				strokeWidth={2}
+				strokeWidth={3}
 				strokeLinecap="round"
 				strokeLinejoin="round"
 			/>
