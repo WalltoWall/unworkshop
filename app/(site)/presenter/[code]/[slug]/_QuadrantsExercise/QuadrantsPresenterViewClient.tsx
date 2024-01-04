@@ -187,7 +187,6 @@ export const QuadrantsPresenterViewClient = ({
 					isVisible={showPhotos}
 					toggleVisibility={() => setShowPhotos((prev) => !prev)}
 				/>
-				{/* REVIEW: Hiding labels causes the view to shift */}
 				<SettingVisibility
 					label="Labels"
 					isVisible={showLabels}

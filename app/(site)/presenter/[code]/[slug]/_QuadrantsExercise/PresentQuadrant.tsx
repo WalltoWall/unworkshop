@@ -29,9 +29,7 @@ export const PresentQuadrant = ({
 	animating,
 }: PresentQuadrantProps) => {
 	return (
-		<div
-			className={cx("relative h-full", showLabels ? "px-52 py-12" : "px-16")}
-		>
+		<div className="relative h-full px-52 py-12">
 			{showLabels && (
 				<>
 					<h3 className="absolute left-1/2 top-0 -translate-x-1/2 uppercase text-24 font-heading">
