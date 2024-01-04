@@ -195,6 +195,62 @@ export const Exercise = defineType({
 
 		// Quadrant fields.
 		defineField({
+			name: "today_instructions",
+			title: "Today Instructions",
+			description: "Instructions on how to do this exercise",
+			type: "array",
+
+			of: [
+				defineArrayMember({
+					type: "block",
+					styles: [],
+					lists: [],
+					marks: {
+						decorators: [{ title: "Bold", value: "strong" }],
+						annotations: [],
+					},
+				}),
+			],
+			hidden: ({ document }) => document?.type !== "quadrants",
+		}),
+		defineField({
+			name: "tomorrow_instructions",
+			title: "Tomorrow Instructions",
+			description: "Instructions on how to do this exercise",
+			type: "array",
+			of: [
+				defineArrayMember({
+					type: "block",
+					styles: [],
+					lists: [],
+					marks: {
+						decorators: [{ title: "Bold", value: "strong" }],
+						annotations: [],
+					},
+				}),
+			],
+			hidden: ({ document }) => document?.type !== "quadrants",
+		}),
+		defineField({
+			name: "finalize_instructions",
+			title: "Finalize Instructions",
+			description: "Instructions on how to finalize your answers.",
+			type: "array",
+
+			of: [
+				defineArrayMember({
+					type: "block",
+					styles: [],
+					lists: [],
+					marks: {
+						decorators: [{ title: "Bold", value: "strong" }],
+						annotations: [],
+					},
+				}),
+			],
+			hidden: ({ document }) => document?.type !== "quadrants",
+		}),
+		defineField({
 			name: "quadrants",
 			title: "Quadrants",
 			description: "The group of quadrant selectors for this exercise.",
@@ -207,61 +263,15 @@ export const Exercise = defineType({
 					type: "object",
 					icon: () => <LayoutGrid width={24} height={24} />,
 					preview: {
-						select: { title: "today_instructions" },
+						select: { title: "name" },
 					},
 					fields: [
 						defineField({
-							name: "today_instructions",
-							title: "Today Instructions",
-							description: "Instructions on how to do this exercise",
-							type: "array",
-
-							of: [
-								defineArrayMember({
-									type: "block",
-									styles: [],
-									lists: [],
-									marks: {
-										decorators: [{ title: "Bold", value: "strong" }],
-										annotations: [],
-									},
-								}),
-							],
-						}),
-						defineField({
-							name: "tomorrow_instructions",
-							title: "Tomorrow Instructions",
-							description: "Instructions on how to do this exercise",
-							type: "array",
-							of: [
-								defineArrayMember({
-									type: "block",
-									styles: [],
-									lists: [],
-									marks: {
-										decorators: [{ title: "Bold", value: "strong" }],
-										annotations: [],
-									},
-								}),
-							],
-						}),
-						defineField({
-							name: "finalize_instructions",
-							title: "Finalize Instructions",
-							description: "Instructions on how to finalize your answers.",
-							type: "array",
-
-							of: [
-								defineArrayMember({
-									type: "block",
-									styles: [],
-									lists: [],
-									marks: {
-										decorators: [{ title: "Bold", value: "strong" }],
-										annotations: [],
-									},
-								}),
-							],
+							name: "name",
+							title: "Name",
+							description: "The name of this quadrant exercise",
+							type: "string",
+							validation: (Rule) => Rule.required(),
 						}),
 						defineField({
 							name: "topValue",

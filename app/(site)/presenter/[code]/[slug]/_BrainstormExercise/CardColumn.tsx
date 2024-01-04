@@ -2,25 +2,13 @@
 
 import React from "react"
 import { SwatchesPicker } from "react-color"
-import {
-	DndContext,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-	type Active,
-} from "@dnd-kit/core"
-import {
-	arrayMove,
-	SortableContext,
-	sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable"
+import { useDroppable } from "@dnd-kit/core"
+import { SortableContext } from "@dnd-kit/sortable"
 import clsx from "clsx"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { Text } from "@/components/Text"
 import { PresentColumnModal } from "./PresentColumnModal"
 import { Draggable, SortableItem } from "./SortableItem"
-import { SortableOverlay } from "./SortableOverlay"
 
 interface CardColumnProps {
 	cards: Array<{ response: string; id: string }>
@@ -32,19 +20,7 @@ export const CardColumn = ({ cards, id, removeColumn }: CardColumnProps) => {
 	const [color, setColor] = React.useState<string>("#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
 	const [title, setTitle] = React.useState<string>("Service")
-	const [active, setActive] = React.useState<Active | null>(null)
-	const [columnCards, setColumnCards] = React.useState(cards)
-
-	const activeItem = React.useMemo(
-		() => columnCards.find((card) => card.id === active?.id),
-		[active, columnCards],
-	)
-	const sensors = useSensors(
-		useSensor(PointerSensor),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		}),
-	)
+	const { setNodeRef } = useDroppable({ id: id })
 
 	const colorGroups = [
 		["#ff9488", "#ff7566", "#ff5745", "#e8503f", "#ba4033"],
@@ -67,103 +43,63 @@ export const CardColumn = ({ cards, id, removeColumn }: CardColumnProps) => {
 	]
 
 	return (
-		<DndContext
-			sensors={sensors}
-			onDragStart={({ active }) => {
-				setActive(active)
-			}}
-			onDragEnd={({ active, over }) => {
-				if (over && active.id !== over?.id) {
-					const activeIndex = columnCards.findIndex(
-						({ id }) => id === active.id,
-					)
-					const overIndex = columnCards.findIndex(({ id }) => id === over.id)
-
-					setColumnCards(arrayMove(columnCards, activeIndex, overIndex))
-				}
-
-				setActive(null)
-			}}
-			onDragCancel={() => {
-				setActive(null)
-			}}
-		>
-			<div className="w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
-				<div className="flex items-center justify-between">
-					<div className="relative flex items-center gap-2">
-						<SwatchesPicker
-							colors={colorGroups}
-							onChange={(newColor) => {
-								setColor(newColor.hex)
-								setShowPicker(false)
-							}}
-							className={clsx("absolute", showPicker ? "block" : "hidden")}
-						/>
-						<button
-							className="h-5 w-5 rounded-full border border-black"
-							style={{ backgroundColor: color }}
-							onClick={() => setShowPicker(!showPicker)}
-						></button>
-						<input
-							onChange={(e) => setTitle(e.target.value)}
-							value={title}
-							className="mt-2 bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
-						/>
-					</div>
-					<div className="flex items-center gap-3">
-						<PresentColumnModal
-							cards={columnCards}
-							color={color}
-							columnTitle={title}
-						/>
-						<button onClick={() => removeColumn(id)}>
-							<BlackXIcon className="w-7" />
-						</button>
-					</div>
+		<div className="w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
+			<div className="flex items-center justify-between">
+				<div className="relative flex items-center gap-2">
+					<SwatchesPicker
+						colors={colorGroups}
+						onChange={(newColor) => {
+							setColor(newColor.hex)
+							setShowPicker(false)
+						}}
+						className={clsx("absolute", showPicker ? "block" : "hidden")}
+					/>
+					<button
+						className="h-5 w-5 rounded-full border border-black"
+						style={{ backgroundColor: color }}
+						onClick={() => setShowPicker(!showPicker)}
+					></button>
+					<input
+						onChange={(e) => setTitle(e.target.value)}
+						value={title}
+						className="mt-2 bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
+					/>
 				</div>
+				<div className="flex items-center gap-3">
+					<PresentColumnModal cards={cards} color={color} columnTitle={title} />
+					<button onClick={() => removeColumn(id)}>
+						<BlackXIcon className="w-7" />
+					</button>
+				</div>
+			</div>
 
-				<SortableContext items={columnCards}>
-					<ul className="mt-5 flex h-full w-full flex-col gap-2">
-						{columnCards.length > 0 ? (
-							columnCards.map((card) => (
-								<SortableItem
-									key={card.id}
-									id={card.id}
-									color={color}
-									className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4"
-								>
-									<Draggable response={card.response} />
-								</SortableItem>
-							))
-						) : (
-							<div
-								className="rounded-lg px-3.5 py-4"
-								style={{
-									backgroundColor: color,
-								}}
+			<SortableContext items={cards} id={id}>
+				<ul className="mt-5 flex h-full w-full flex-col gap-2" ref={setNodeRef}>
+					{cards.length > 0 ? (
+						cards.map((card) => (
+							<SortableItem
+								key={card.id}
+								id={card.id}
+								color={color}
+								className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4"
 							>
-								<Text style={"copy"} size={18}>
-									Drag A New Card Here!
-								</Text>
-							</div>
-						)}
-					</ul>
-				</SortableContext>
-
-				<SortableOverlay>
-					{activeItem ? (
-						<SortableItem
-							color={color}
-							id={id}
-							className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4"
+								<Draggable response={card.response} />
+							</SortableItem>
+						))
+					) : (
+						<div
+							className="rounded-lg px-3.5 py-4"
+							style={{
+								backgroundColor: color,
+							}}
 						>
 							<Text style={"copy"} size={18}>
-								{activeItem.response}
+								Drag A New Card Here!
 							</Text>
-						</SortableItem>
-					) : null}
-				</SortableOverlay>
-			</div>
-		</DndContext>
+						</div>
+					)}
+				</ul>
+			</SortableContext>
+		</div>
 	)
 }

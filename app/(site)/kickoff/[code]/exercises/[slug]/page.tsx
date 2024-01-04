@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation"
 import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
-import { InstructionsModal } from "./InstructionsModal"
-import { QuadrantsExercise } from "./QuadrantsExercise"
+import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
+import { InstructionsModal } from "./InstructionsModal"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -25,11 +25,12 @@ const ExercisePage = async (props: Props) => {
 			{exercise.type === "brainstorm" && (
 				<BrainstormExercise exercise={exercise} />
 			)}
-			{exercise.type === "sliders" && (
-				<SlidersExercise exercise={exercise} />
-			)}
+			{exercise.type === "sliders" && <SlidersExercise exercise={exercise} />}
 			{exercise.type === "quadrants" && (
-				<QuadrantsExercise quadrants={exercise.quadrants} />
+				<QuadrantsExercise
+					exercise={exercise}
+					kickoffCode={props.params.code}
+				/>
 			)}
 		</div>
 	)
