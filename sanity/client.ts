@@ -113,6 +113,7 @@ export const client = {
 		const data = await sanity.fetch<ST["exercise"] | null>(
 			groq`*[_type == "exercise" && slug.current == $slug][0]`,
 			{ slug },
+			{ cache: "no-store" }, // TODO: Note on caching.
 		)
 
 		return data

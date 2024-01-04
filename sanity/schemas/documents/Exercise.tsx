@@ -136,6 +136,62 @@ export const Exercise = defineType({
 		}),
 
 		// Slider fields.
+		defineField({
+			name: "sliders",
+			title: "Sliders",
+			description: "The left and right values for this exercise.",
+			type: "array",
+			initialValue: [],
+			hidden: ({ document }) => document?.type !== "sliders",
+			of: [
+				defineArrayMember({
+					type: "object",
+					icon: () => <LayoutGrid width={24} height={24} />,
+					preview: {
+						select: { title: "today_instructions" },
+					},
+					fields: [
+						defineField({
+							name: "question_text",
+							title: "Question Text",
+							description: "This text shows at the top of the slider",
+							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: "left_value",
+							title: "Left Value",
+							description: "This text is on the left side of the slider",
+							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: "left_image",
+							title: "Left Image",
+							description: "This image is on the left side of the slider",
+							type: "image",
+							fields: [altText],
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: "right_value",
+							title: "Right Value",
+							description: "This text is on the right side of the slider",
+							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: "right_image",
+							title: "Right Image",
+							description: "This Image is on the right side of the slider",
+							type: "image",
+							fields: [altText],
+							validation: (Rule) => Rule.required(),
+						}),
+					],
+				}),
+			],
+		}),
 
 		// Quadrant fields.
 		defineField({
