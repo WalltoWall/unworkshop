@@ -1,23 +1,17 @@
-import type { FieldProps, FormAnswer, FormStep } from "./types"
+import type { FieldProps, FormFieldAnswer } from "./types"
 
 const NarrowListField = () => {
 	return <div></div>
 }
 
 type Props = FieldProps<{
-	sourceAnswer: FormAnswer
-	sourceStep: FormStep
-	min?: number
-	max?: number
+	source: FormFieldAnswer
 }>
 
-export const NarrowField = ({
-	sourceAnswer,
-	sourceStep,
-	min = 1,
-	max = Infinity,
-}: Props) => {
-	console.log(sourceAnswer)
+export const NarrowField = ({ source, field }: Props) => {
+	const { min = 1, max = Infinity } = field
+
+	console.log(source)
 
 	return <></>
 }

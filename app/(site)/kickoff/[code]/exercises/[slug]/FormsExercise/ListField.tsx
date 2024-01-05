@@ -5,23 +5,19 @@ import { Text } from "@/components/Text"
 import { submitFieldAnswer } from "./actions"
 import type { FieldProps } from "./types"
 
-type Props = FieldProps<{
-	placeholder?: string
-	rows?: number
-	showAddButton?: boolean
-}>
+type Props = FieldProps
 
 export const ListField = ({
-	rows: initialRows = 5,
-	showAddButton = false,
-	placeholder,
 	answer,
 	stepIdx,
 	fieldIdx,
 	exerciseId,
+	field,
 }: Props) => {
 	if (answer && answer.type !== "List")
 		throw new Error("Invalid answer data found.")
+
+	const { rows: initialRows = 5, showAddButton = false, placeholder } = field
 
 	const rForm = React.useRef<React.ElementRef<"form">>(null)
 	const [isPending, startTransition] = React.useTransition()

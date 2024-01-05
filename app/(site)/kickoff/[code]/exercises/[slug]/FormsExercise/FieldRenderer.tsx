@@ -30,43 +30,28 @@ export const FieldRenderer = ({
 		fieldIdx,
 		stepIdx,
 		answer,
+		field,
 	}
 
 	switch (field.type) {
 		case "List":
-			return (
-				<ListField
-					key={field._key}
-					placeholder={field.placeholder}
-					rows={field.rows}
-					showAddButton={field.showAddButton}
-					{...sharedProps}
-				/>
-			)
+			return <ListField key={field._key} {...sharedProps} />
 
 		case "Narrow":
 			if (!field.step)
+				throw new Error("Invalid Narrow field configuration. Step is required.")
+			if (!field.field)
 				throw new Error(
-					"Invalid Narrow field configuration. Step field is required.",
+					"Invalid Narrow field configuration. Field is required.",
 				)
 
-			const sourceStepData = exercise.form?.steps?.at(field.step)
-			const sourceStepAnswer = allAnswers?.at(field.step)
-			if (!sourceStepData)
-				throw new Error("No valid step data found for step: " + field.step)
-			if (!sourceStepAnswer)
-				throw new Error("No valid answer data found for step: " + field.step)
+			const sourceStepAnswer = allAnswers?.at(field.step - 1)
+			const source = sourceStepAnswer?.data.at(field.field - 1)
 
-			return (
-				<NarrowField
-					key={field._key}
-					max={field.max}
-					min={field.min}
-					sourceAnswer={sourceStepAnswer}
-					sourceStep={sourceStepData}
-					{...sharedProps}
-				/>
-			)
+			if (!source)
+				throw new Error("No valid source found. Check field or step config.")
+
+			return <NarrowField key={field._key} source={source} {...sharedProps} />
 
 		default:
 			throw new Error("Invalid field type.")

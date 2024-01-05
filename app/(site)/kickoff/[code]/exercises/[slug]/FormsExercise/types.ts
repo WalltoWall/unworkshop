@@ -36,6 +36,7 @@ export type SharedFieldProps = {
 	exerciseId: string
 	stepIdx: number
 	fieldIdx: number
+	field: FormField
 }
 
-export type FieldProps<T> = T & SharedFieldProps
+export type FieldProps<T = unknown> = T & SharedFieldProps

@@ -80,6 +80,14 @@ export const formFieldMember = defineArrayMember({
 			hidden: ({ parent }) => parent?.type !== "Narrow",
 		}),
 		defineField({
+			name: "field",
+			title: "Field",
+			description:
+				"Specify the field of the specified step to seed narrowing choices from.",
+			type: "number",
+			hidden: ({ parent }) => parent?.type !== "Narrow",
+		}),
+		defineField({
 			name: "min",
 			title: "Minimum",
 			description: "Specify the minimum number of choices to narrow to.",
