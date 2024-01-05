@@ -10,9 +10,17 @@ export type TextFieldAnswer = {
 	response: string
 }
 
+export type FormFieldAnswer = ListFieldAnswer | TextFieldAnswer
+
 export type FormAnswer = {
-	data: ListFieldAnswer | TextFieldAnswer
+	data: Array<FormFieldAnswer>
 }
+
+export type FormStep = NonNullable<
+	NonNullable<ST["exercise"]["form"]>["steps"]
+>[number]
+
+export type FormField = NonNullable<FormStep["fields"]>[number]
 
 // TODO: Create a shared type for the mapped exercise ids.
 export type FormParticipant = ST["participant"] & {
@@ -22,3 +30,12 @@ export type FormParticipant = ST["participant"] & {
 		}
 	}
 }
+
+export type SharedFieldProps = {
+	answer?: FormFieldAnswer
+	exerciseId: string
+	stepIdx: number
+	fieldIdx: number
+}
+
+export type FieldProps<T> = T & SharedFieldProps

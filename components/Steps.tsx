@@ -49,7 +49,7 @@ export const Steps = ({
 						<svg viewBox="0 0 7.412 11.996" className="ml-0.5 w-[9px]">
 							<path
 								fill="none"
-								fill-rule="evenodd"
+								fillRule="evenodd"
 								stroke="currentColor"
 								strokeLinecap="square"
 								strokeWidth="2"

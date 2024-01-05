@@ -1,42 +1,28 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { z } from "zod"
-import { zfd } from "zod-form-data"
 import { client, sanity } from "@/sanity/client"
-import { type FormParticipant } from "./types"
+import { type FormFieldAnswer, type FormParticipant } from "./types"
 
-const ListFieldAnswerSchema = zfd.formData({
-	answer: zfd
-		.repeatableOfType(zfd.text(z.string().optional()))
-		.transform((answers) => answers.filter(Boolean) as string[]),
-	exerciseId: zfd.text(),
-	stepIdx: zfd.numeric(),
-})
+type Data = {
+	answer: FormFieldAnswer
+	fieldIdx: number
+	exerciseId: string
+	stepIdx: number
+}
 
-export async function submitListFieldAnswer(formData: FormData) {
+export async function submitFieldAnswer(data: Data) {
 	const participant = await client.findParticipantOrThrow<FormParticipant>()
-	const data = ListFieldAnswerSchema.parse(formData)
 
-	const exerciseAnswers = participant.answers?.[data.exerciseId]
-
-	const answers: FormParticipant["answers"] = {
-		...participant.answers,
-		[data.exerciseId]: {
-			...exerciseAnswers,
-			steps:
-				exerciseAnswers?.steps.toSpliced(data.stepIdx, 0, {
-					data: {
-						type: "List",
-						responses: data.answer,
-					},
-				}) ?? [],
-		},
-	}
+	participant.answers ??= {}
+	participant.answers[data.exerciseId] ??= { steps: [] }
+	participant.answers[data.exerciseId].steps[data.stepIdx] ??= { data: [] }
+	participant.answers[data.exerciseId].steps[data.stepIdx].data[data.fieldIdx] =
+		data.answer
 
 	const result = await sanity
 		.patch(participant._id)
-		.set({ answers })
+		.set({ answers: participant.answers })
 		.commit()
 		.catch(() => null)
 

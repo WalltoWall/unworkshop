@@ -7,8 +7,7 @@ import { ArrowRight } from "@/components/icons/ArrowRight"
 import { Steps } from "@/components/Steps"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
-import { ListField } from "./ListField"
-import { NarrowField } from "./NarrowField"
+import { FieldRenderer } from "./FieldRenderer"
 import type { FormParticipant } from "./types"
 
 const StepParamSchema = z.coerce
@@ -49,52 +48,44 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	return (
 		<div className="mt-6">
-			<div className="flex items-start gap-2">
-				<div className="flex -translate-y-px items-center gap-0.5 text-gray-50">
-					<Text asChild style="heading" size={16}>
-						<p>{step}</p>
-					</Text>
+			{stepData.fields?.map((field, idx) => {
+				const fieldAnswer = stepAnswers?.data.at(idx)
 
-					<ArrowRight className="w-[13px]" />
-				</div>
+				return (
+					<React.Fragment key={field._key}>
+						<div className="mb-4 flex items-start gap-2">
+							<div className="flex -translate-y-px items-center gap-0.5 text-gray-50">
+								<Text asChild style="heading" size={16}>
+									<p>{idx + 1}</p>
+								</Text>
 
-				<div className="space-y-3">
-					<Text asChild size={16} style="copy">
-						<h2>{stepData.prompt}</h2>
-					</Text>
+								<ArrowRight className="w-[13px]" />
+							</div>
 
-					{stepData.additionalText && (
-						<Text size={12} className="text-gray-50">
-							{stepData.additionalText}
-						</Text>
-					)}
-				</div>
-			</div>
+							<div className="space-y-3">
+								<Text asChild size={16} style="copy">
+									<h2>{field.prompt}</h2>
+								</Text>
 
-			<div className="mt-4">
-				{stepData.fields?.map((field) => {
-					switch (field.type) {
-						case "List":
-							return (
-								<ListField
-									key={field._key}
-									placeholder={field.placeholder}
-									rows={field.rows}
-									showAddButton={field.showAddButton}
-									answers={stepAnswers}
-									exerciseId={exercise._id}
-									stepIdx={stepIdx}
-								/>
-							)
+								{field.additionalText && (
+									<Text size={12} className="text-gray-50">
+										{field.additionalText}
+									</Text>
+								)}
+							</div>
+						</div>
 
-						case "Narrow":
-							return <NarrowField key={field._key} />
-
-						default:
-							throw new Error("Invalid field type.")
-					}
-				})}
-			</div>
+						<FieldRenderer
+							exercise={exercise}
+							field={field}
+							stepIdx={stepIdx}
+							fieldIdx={idx}
+							allAnswers={answers?.steps}
+							answer={fieldAnswer}
+						/>
+					</React.Fragment>
+				)
+			})}
 
 			<Steps
 				count={exercise.form.steps.length}

@@ -349,39 +349,20 @@ export const Exercise = defineType({
 							title: "Step",
 							type: "object",
 							icon: () => <RemoveFormatting width={24} height={24} />,
+
 							preview: {
 								select: {
-									prompt: "prompt",
-									additionalText: "additionalText",
 									fields: "fields",
 								},
 								prepare(select) {
 									return {
-										title: select.prompt,
-										subtitle:
-											select.fields.length > 0
-												? pluralize`${select.fields.length} field[|s].`
-												: select.aditionalText,
+										title: "Step",
+										subtitle: pluralize`${select.fields.length} field[|s].`,
 									}
 								},
 							},
+
 							fields: [
-								defineField({
-									name: "prompt",
-									title: "Prompt",
-									description: "The prompt that is shown above the form field.",
-									type: "text",
-									rows: 6,
-									validation: (Rule) => Rule.required(),
-								}),
-								defineField({
-									name: "additionalText",
-									title: "Additional Text",
-									description:
-										"Supplementary text that is shown below the prompt in a smaller font size.",
-									type: "text",
-									rows: 3,
-								}),
 								defineField({
 									name: "fields",
 									title: "Fields",

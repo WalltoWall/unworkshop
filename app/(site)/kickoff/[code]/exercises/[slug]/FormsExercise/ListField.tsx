@@ -2,32 +2,31 @@ import React from "react"
 import { Button } from "@/components/Button"
 import { PlusIcon } from "@/components/icons/Plus"
 import { Text } from "@/components/Text"
-import { submitListFieldAnswer } from "./actions"
-import type { FormAnswer } from "./types"
+import { submitFieldAnswer } from "./actions"
+import type { FieldProps } from "./types"
 
-type Props = {
+type Props = FieldProps<{
 	placeholder?: string
 	rows?: number
 	showAddButton?: boolean
-	answers?: FormAnswer
-	stepIdx: number
-	exerciseId: string
-}
+}>
 
 export const ListField = ({
 	rows: initialRows = 5,
 	showAddButton = false,
 	placeholder,
-	answers,
+	answer,
 	stepIdx,
+	fieldIdx,
 	exerciseId,
 }: Props) => {
-	const answerData = answers?.data
-	if (answerData && answerData.type !== "List")
+	if (answer && answer.type !== "List")
 		throw new Error("Invalid answer data found.")
 
+	const rForm = React.useRef<React.ElementRef<"form">>(null)
+	const [isPending, startTransition] = React.useTransition()
 	const [rows, setRows] = React.useState(
-		answerData?.responses.length ?? initialRows,
+		answer?.responses.length ?? initialRows,
 	)
 	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
 
@@ -35,8 +34,29 @@ export const ListField = ({
 		setRows((prev) => prev + 1)
 	}
 
+	const submitForm = () => {
+		if (!rForm.current) return
+
+		const data = new FormData(rForm.current)
+		const answers = data.getAll("answer").filter(Boolean) as string[]
+
+		startTransition(() => {
+			submitFieldAnswer({
+				answer: { type: "List", responses: answers },
+				exerciseId,
+				fieldIdx,
+				stepIdx,
+			})
+		})
+	}
+
+	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+		e.preventDefault()
+		submitForm()
+	}
+
 	return (
-		<form action={submitListFieldAnswer}>
+		<form onSubmit={handleSubmit} ref={rForm}>
 			<ul className="flex flex-col gap-2">
 				{arr.map((num, idx) => {
 					return (
@@ -52,7 +72,7 @@ export const ListField = ({
 								placeholder={placeholder}
 								name="answer"
 								className="h-9 grow rounded-lg border border-gray-90 px-2.5 text-black text-14 placeholder:text-gray-75"
-								defaultValue={answerData?.responses.at(idx)}
+								defaultValue={answer?.responses.at(idx)}
 							/>
 						</li>
 					)
@@ -76,8 +96,6 @@ export const ListField = ({
 				</Button>
 			)}
 
-			<input type="hidden" name="exerciseId" value={exerciseId} />
-			<input type="hidden" name="stepIdx" value={stepIdx} />
 			<input type="submit" className="hidden" />
 		</form>
 	)

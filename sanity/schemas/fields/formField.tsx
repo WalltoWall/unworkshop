@@ -5,7 +5,10 @@ export const formFieldMember = defineArrayMember({
 	type: "object",
 	icon: () => <FormInput width={24} height={24} />,
 	preview: {
-		select: { title: "type" },
+		select: {
+			title: "prompt",
+			subtitle: "additionalText",
+		},
 	},
 	description: "The configuration for this form field.",
 	fields: [
@@ -19,6 +22,22 @@ export const formFieldMember = defineArrayMember({
 				list: ["List", "Narrow", "Text", "Big Text"],
 			},
 			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: "prompt",
+			title: "Prompt",
+			description: "The prompt that is shown above the form field.",
+			type: "text",
+			rows: 6,
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: "additionalText",
+			title: "Additional Text",
+			description:
+				"Supplementary text that is shown below the prompt in a smaller font size.",
+			type: "text",
+			rows: 3,
 		}),
 
 		// Shared fields.
