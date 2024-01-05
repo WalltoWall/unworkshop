@@ -1,9 +1,8 @@
 "use client"
 
 import React from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Checkmark } from "@/components/icons/Checkmark"
-import { Chevron } from "@/components/icons/Chevron"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Steps } from "@/components/Steps"
 import { CardScroller } from "./CardScroller"
 import type { Answer } from "./types"
 
@@ -23,6 +22,7 @@ interface BrainstormClientProps {
 	})[]
 	cards: Array<Answer>
 	exerciseId: string
+	kickoffCode: string
 }
 
 const BrainstormClient = ({
@@ -30,25 +30,17 @@ const BrainstormClient = ({
 	groups,
 	cards,
 	exerciseId,
+	kickoffCode,
 }: BrainstormClientProps) => {
 	const router = useRouter()
-	const pathname = usePathname()
 	const searchParams = useSearchParams()
-	let step = parseInt(searchParams?.get("step") ?? "1")
-	const isFinished = steps?.length! <= step
+	const step = parseInt(searchParams?.get("step") ?? "1")
+	const totalSteps = steps?.length! - 1
 
-	const nextStep = () => {
-		const params = new URLSearchParams({
-			step: step.toString(),
-		})
-
-		if (!pathname) return null
-
-		router.push(pathname + "?" + params.toString(), { scroll: false })
-	}
+	const [activeStep, setActiveStep] = React.useState(step)
 
 	return (
-		<div className="h-full">
+		<div className="flex h-full flex-col">
 			{steps && steps.at(step - 1) && (
 				<div>
 					<h4 className="max-w-[16rem] text-16 leading-[1.4] font-sans capsize">
@@ -61,30 +53,20 @@ const BrainstormClient = ({
 			)}
 
 			<CardScroller
-				cards={cards}
+				cards={cards.filter((card) => card.step === step) ?? []}
 				exerciseId={exerciseId}
 				group={groups.length > 0}
-				color={steps?.at(step - 1).color}
+				color={steps.at(step - 1).color}
+				step={step}
 			/>
 
-			{/* <button
-				className="mx-auto mt-auto flex flex-col items-center gap-4"
-				onClick={() => {
-					if (step >= steps?.length!) {
-						step = 1
-						return
-					}
-					step = step + 1
-					nextStep()
-				}}
-			>
-				<div className="flex h-8 w-8 flex-col items-center justify-center rounded-full bg-black px-2 text-white">
-					{isFinished ? <Checkmark /> : <Chevron className="ml-1 rotate-180" />}
-				</div>
-				<span className="font-extrabold uppercase text-14 leading-[1.5] font-sans capsize">
-					{isFinished ? "Finish" : "Next Step"}
-				</span>
-			</button> */}
+			<Steps
+				steps={totalSteps!}
+				activeStep={activeStep}
+				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
+				onNextStep={setActiveStep}
+				disabled={false}
+			/>
 		</div>
 	)
 }

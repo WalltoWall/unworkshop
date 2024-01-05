@@ -9,6 +9,7 @@ const addCardSchema = zfd.formData({
 	cardId: zfd.text(),
 	exerciseId: zfd.text(),
 	isGroup: zfd.checkbox(),
+	step: zfd.text(),
 })
 
 const removeCardSchema = zfd.formData({
@@ -37,12 +38,14 @@ export async function addCardAction(formData: FormData) {
 		  }
 		: { type: "individual" as const }
 
+	const step = parseInt(data.step)
+
 	const answers: BrainstormParticipant["answers"] = {
 		...participant.answers,
 		[data.exerciseId]: {
 			...participant.answers?.[data.exerciseId],
 			meta,
-			answers: [...oldAnswers, { id: data.cardId, response: "" }],
+			answers: [...oldAnswers, { id: data.cardId, response: "", step: step }],
 		},
 	}
 

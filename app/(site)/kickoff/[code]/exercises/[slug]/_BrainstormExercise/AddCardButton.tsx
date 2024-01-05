@@ -7,6 +7,7 @@ interface AddCardButton {
 	exerciseId: string
 	isGroup?: boolean
 	addOptimisticCard: (id: string) => void
+	step: number
 }
 
 // TODO: Error handling for optimistic ui
@@ -15,6 +16,7 @@ export const AddCardButton = ({
 	exerciseId,
 	isGroup,
 	addOptimisticCard,
+	step,
 }: AddCardButton) => {
 	return (
 		<form
@@ -26,6 +28,7 @@ export const AddCardButton = ({
 		>
 			<input type="hidden" value={cardId} name="cardId" />
 			<input type="hidden" value={exerciseId} name="exerciseId" />
+			<input type="hidden" value={step} name="step" />
 			<input
 				type="checkbox"
 				defaultChecked={isGroup}
