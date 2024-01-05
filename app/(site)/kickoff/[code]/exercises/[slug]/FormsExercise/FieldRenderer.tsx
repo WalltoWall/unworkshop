@@ -1,3 +1,4 @@
+import { z } from "zod"
 import type { ST } from "@/sanity/config"
 import { ListField } from "./ListField"
 import { NarrowField } from "./NarrowField"
@@ -16,6 +17,8 @@ type Props = {
 	fieldIdx: number
 	allAnswers?: FormAnswer[]
 }
+
+const PositiveNumber = z.number().positive()
 
 export const FieldRenderer = ({
 	field,
@@ -38,15 +41,11 @@ export const FieldRenderer = ({
 			return <ListField key={field._key} {...sharedProps} />
 
 		case "Narrow":
-			if (!field.step)
-				throw new Error("Invalid Narrow field configuration. Step is required.")
-			if (!field.field)
-				throw new Error(
-					"Invalid Narrow field configuration. Field is required.",
-				)
+			const stepSrc = PositiveNumber.parse(field.source?.step)
+			const fieldSrc = PositiveNumber.parse(field.source?.field)
 
-			const sourceStepAnswer = allAnswers?.at(field.step - 1)
-			const source = sourceStepAnswer?.data.at(field.field - 1)
+			const sourceStepAnswer = allAnswers?.at(stepSrc - 1)
+			const source = sourceStepAnswer?.data.at(fieldSrc - 1)
 
 			if (!source)
 				throw new Error("No valid source found. Check field or step config.")

@@ -17,10 +17,15 @@ export const ListField = ({
 	if (answer && answer.type !== "List")
 		throw new Error("Invalid answer data found.")
 
-	const { rows: initialRows = 5, showAddButton = false, placeholder } = field
+	const {
+		rows: initialRows = 5,
+		showAddButton = false,
+		placeholder,
+		addButtonText = "Add another",
+	} = field
 
 	const rForm = React.useRef<React.ElementRef<"form">>(null)
-	const [isPending, startTransition] = React.useTransition()
+	const [_isPending, startTransition] = React.useTransition()
 	const [rows, setRows] = React.useState(
 		answer?.responses.length ?? initialRows,
 	)
@@ -88,7 +93,7 @@ export const ListField = ({
 					type="button"
 				>
 					<PlusIcon className="w-[18px]" />
-					<span className="capsize">Add another</span>
+					<span className="capsize">{addButtonText}</span>
 				</Button>
 			)}
 

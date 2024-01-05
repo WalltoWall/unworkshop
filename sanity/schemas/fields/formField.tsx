@@ -42,6 +42,32 @@ export const formFieldMember = defineArrayMember({
 
 		// Shared fields.
 		defineField({
+			name: "source",
+			title: "Source",
+			description:
+				"Designate this field to prompt its inputs based on the answer of another step and field.",
+			type: "object",
+			options: { collapsed: true, collapsible: true },
+			hidden: ({ parent }) => !["List", "Narrow"].includes(parent?.type),
+			fields: [
+				defineField({
+					name: "step",
+					title: "Step",
+					description: "Specify the step to seed narrowing choices from.",
+					type: "number",
+					validation: (rule) => rule.required().positive(),
+				}),
+				defineField({
+					name: "field",
+					title: "Field",
+					description:
+						"Specify the field of the specified step to seed narrowing choices from.",
+					type: "number",
+					validation: (rule) => rule.required().positive(),
+				}),
+			],
+		}),
+		defineField({
 			name: "placeholder",
 			title: "Placeholder",
 			description:
@@ -70,29 +96,24 @@ export const formFieldMember = defineArrayMember({
 			options: { layout: "checkbox" },
 			hidden: ({ parent }) => parent?.type !== "List",
 		}),
+		defineField({
+			name: "addButtonText",
+			title: "Add button text",
+			description:
+				'The text shown inside the add button. Defaults to "Add another".',
+			type: "string",
+			initialValue: "Add another",
+			hidden: ({ parent }) => parent?.type !== "List" || !parent?.showAddButton,
+		}),
 
 		// Narrow fields.
-		defineField({
-			name: "step",
-			title: "Step",
-			description: "Specify the step to seed narrowing choices from.",
-			type: "number",
-			hidden: ({ parent }) => parent?.type !== "Narrow",
-		}),
-		defineField({
-			name: "field",
-			title: "Field",
-			description:
-				"Specify the field of the specified step to seed narrowing choices from.",
-			type: "number",
-			hidden: ({ parent }) => parent?.type !== "Narrow",
-		}),
 		defineField({
 			name: "min",
 			title: "Minimum",
 			description: "Specify the minimum number of choices to narrow to.",
 			type: "number",
 			hidden: ({ parent }) => parent?.type !== "Narrow",
+			validation: (rule) => rule.positive(),
 		}),
 		defineField({
 			name: "max",
@@ -100,6 +121,7 @@ export const formFieldMember = defineArrayMember({
 			description: "Specify the maximum number of choices to narrow to.",
 			type: "number",
 			hidden: ({ parent }) => parent?.type !== "Narrow",
+			validation: (rule) => rule.positive(),
 		}),
 	],
 })

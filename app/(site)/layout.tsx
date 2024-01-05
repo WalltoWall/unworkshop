@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Local from "next/font/local"
 import { cx } from "class-variance-authority"
+import { Toaster } from "sonner"
 import "./globals.css"
 
 const TradeGothic = Local({
@@ -36,6 +37,8 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 				)}
 			>
 				{children}
+
+				<Toaster />
 			</body>
 		</html>
 	)

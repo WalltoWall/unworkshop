@@ -10,7 +10,15 @@ export type TextFieldAnswer = {
 	response: string
 }
 
-export type FormFieldAnswer = ListFieldAnswer | TextFieldAnswer
+export type NarrowFieldAnswer = {
+	type: "Narrow"
+	responses: string[]
+}
+
+export type FormFieldAnswer =
+	| ListFieldAnswer
+	| TextFieldAnswer
+	| NarrowFieldAnswer
 
 export type FormAnswer = {
 	data: Array<FormFieldAnswer>

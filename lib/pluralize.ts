@@ -1,5 +1,5 @@
 type Expressions =
-	| [quantity: number]
+	| number
 	| [quantity: number, formatFunction: (qty: number) => string]
 
 /**
