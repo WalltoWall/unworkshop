@@ -29,9 +29,15 @@ export const GroupRoleSelector = () => {
 	}
 
 	return (
-		<div className="my-4 grid gap-4">
-			<RoleCard type="contributor" onRoleSelect={handleRoleSelect} />
-			<RoleCard type="captain" onRoleSelect={handleRoleSelect} />
+		<div className="my-4">
+			<Text size={16} className="mb-7">
+				What's your role?
+			</Text>
+
+			<div className="grid gap-4">
+				<RoleCard type="contributor" onRoleSelect={handleRoleSelect} />
+				<RoleCard type="captain" onRoleSelect={handleRoleSelect} />
+			</div>
 		</div>
 	)
 }
