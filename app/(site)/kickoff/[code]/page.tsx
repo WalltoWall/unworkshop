@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { redirect } from "next/navigation"
 import { LightLayout } from "@/components/LightLayout"
 import { Text } from "@/components/Text"
@@ -28,8 +29,15 @@ const KickoffPage = async (props: Props) => {
 					<h1>Welcome, {participant.name}</h1>
 				</Text>
 
-				<Text style="copy" size={12} className="mt-4 text-gray-50 underline">
-					Not you?
+				<Text
+					style="copy"
+					size={12}
+					className="mt-4 block text-gray-50 underline"
+					asChild
+				>
+					<Link href={`/kickoff/register?code=${props.params.code}`}>
+						Not you?
+					</Link>
 				</Text>
 			</div>
 

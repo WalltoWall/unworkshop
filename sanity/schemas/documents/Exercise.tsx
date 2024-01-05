@@ -1,5 +1,6 @@
 import { Dumbbell, LayoutGrid, ListOrdered } from "lucide-react"
 import { defineArrayMember, defineField, defineType } from "@sanity-typed/types"
+import { uid } from "uid"
 import { altText } from "../fields/altText"
 
 export const Exercise = defineType({
@@ -148,7 +149,7 @@ export const Exercise = defineType({
 					type: "object",
 					icon: () => <LayoutGrid width={24} height={24} />,
 					preview: {
-						select: { title: "today_instructions" },
+						select: { title: "question_text" },
 					},
 					fields: [
 						defineField({
@@ -156,6 +157,16 @@ export const Exercise = defineType({
 							title: "Question Text",
 							description: "This text shows at the top of the slider",
 							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: "slug",
+							title: "Slug",
+							description: "Determines the URL of the slider.",
+							type: "slug",
+							options: {
+								source: (_, opts) => (opts.parent as any)?.question_text,
+							},
 							validation: (Rule) => Rule.required(),
 						}),
 						defineField({
@@ -206,7 +217,7 @@ export const Exercise = defineType({
 					styles: [],
 					lists: [],
 					marks: {
-						decorators: [{ title: "Bold", value: "strong" }],
+						decorators: [{ title: "Bold", value: "strong" as const }],
 						annotations: [],
 					},
 				}),
@@ -224,7 +235,7 @@ export const Exercise = defineType({
 					styles: [],
 					lists: [],
 					marks: {
-						decorators: [{ title: "Bold", value: "strong" }],
+						decorators: [{ title: "Bold", value: "strong" as const }],
 						annotations: [],
 					},
 				}),
@@ -243,7 +254,7 @@ export const Exercise = defineType({
 					styles: [],
 					lists: [],
 					marks: {
-						decorators: [{ title: "Bold", value: "strong" }],
+						decorators: [{ title: "Bold", value: "strong" as const }],
 						annotations: [],
 					},
 				}),
@@ -271,6 +282,16 @@ export const Exercise = defineType({
 							title: "Name",
 							description: "The name of this quadrant exercise",
 							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: "slug",
+							title: "Slug",
+							description: "Determines the URL of the quadrant.",
+							type: "slug",
+							options: {
+								source: (_, opts) => (opts.parent as any)?.name,
+							},
 							validation: (Rule) => Rule.required(),
 						}),
 						defineField({
