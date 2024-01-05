@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 import { LightLayout } from "@/components/LightLayout"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
+import { BackToRegister } from "./BackToRegister"
 import { Scroller } from "./Scroller"
 
 type Props = {
@@ -28,9 +29,7 @@ const KickoffPage = async (props: Props) => {
 					<h1>Welcome, {participant.name}</h1>
 				</Text>
 
-				<Text style="copy" size={12} className="mt-4 text-gray-50 underline">
-					Not you?
-				</Text>
+				<BackToRegister code={props.params.code} text="Not you?" />
 			</div>
 
 			<form
