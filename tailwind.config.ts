@@ -96,6 +96,7 @@ export default {
 				70: "#ffe96a",
 				68: "#fecb2f",
 				64: "#ffe54a",
+				59: "#fecb2f",
 				58: "#e8d144",
 				52: "#d1bc3d",
 			},
@@ -149,6 +150,10 @@ export default {
 			animation: {
 				fadeIn: "fadeIn 300ms linear",
 				fadeOut: "fadeOut 300ms linear",
+			},
+
+			transitionProperty: {
+				position: "top, bottom, left, right",
 			},
 		},
 	},

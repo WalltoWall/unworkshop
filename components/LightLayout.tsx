@@ -17,7 +17,7 @@ export const LightLayout = (props: {
 
 	return (
 		<>
-			<div className="flex h-[100svh] flex-col bg-white px-7 pb-8 text-black">
+			<div className="h-svh flex flex-col bg-white px-7 pb-8 text-black">
 				<header
 					className="flex items-center justify-between gap-2 pb-6 pt-[18px] data-[theme=dark]:bg-black data-[theme=light]:bg-white"
 					data-theme="light"
@@ -41,10 +41,7 @@ export const LightLayout = (props: {
 
 				<main
 					id="main"
-					className={cx(
-						"flex grow flex-col overflow-hidden",
-						props.mainClassName,
-					)}
+					className={cx("flex grow flex-col", props.mainClassName)}
 				>
 					{props.children}
 				</main>
