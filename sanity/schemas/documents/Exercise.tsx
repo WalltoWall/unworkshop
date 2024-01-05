@@ -1,5 +1,12 @@
-import { Dumbbell, LayoutGrid, ListOrdered } from "lucide-react"
+import {
+	Dumbbell,
+	LayoutGrid,
+	ListOrdered,
+	RemoveFormatting,
+} from "lucide-react"
 import { defineArrayMember, defineField, defineType } from "@sanity-typed/types"
+import { pluralize } from "@/lib/pluralize"
+import { formFieldMember } from "@/sanity/schemas/fields/formField"
 import { altText } from "../fields/altText"
 
 export const Exercise = defineType({
@@ -321,5 +328,73 @@ export const Exercise = defineType({
 		}),
 
 		// Form fields.
+		defineField({
+			name: "form",
+			title: "Form",
+			description: "The configuration for this exercise.",
+			type: "object",
+			hidden: ({ document }) => document?.type !== "form",
+
+			fields: [
+				defineField({
+					name: "steps",
+					title: "Steps",
+					description:
+						"Each item in this section represents a step in this exercise.",
+					type: "array",
+					initialValue: [],
+					of: [
+						defineArrayMember({
+							name: "step",
+							title: "Step",
+							type: "object",
+							icon: () => <RemoveFormatting width={24} height={24} />,
+							preview: {
+								select: {
+									prompt: "prompt",
+									additionalText: "additionalText",
+									fields: "fields",
+								},
+								prepare(select) {
+									return {
+										title: select.prompt,
+										subtitle:
+											select.fields.length > 0
+												? pluralize`${select.fields.length} field[|s].`
+												: select.aditionalText,
+									}
+								},
+							},
+							fields: [
+								defineField({
+									name: "prompt",
+									title: "Prompt",
+									description: "The prompt that is shown above the form field.",
+									type: "text",
+									rows: 6,
+									validation: (Rule) => Rule.required(),
+								}),
+								defineField({
+									name: "additionalText",
+									title: "Additional Text",
+									description:
+										"Supplementary text that is shown below the prompt in a smaller font size.",
+									type: "text",
+									rows: 3,
+								}),
+								defineField({
+									name: "fields",
+									title: "Fields",
+									description: "Specify the form fields to use for this step.",
+									type: "array",
+									initialValue: [],
+									of: [formFieldMember],
+								}),
+							],
+						}),
+					],
+				}),
+			],
+		}),
 	],
 })

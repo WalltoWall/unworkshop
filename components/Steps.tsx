@@ -1,19 +1,18 @@
 import clsx from "clsx"
 import { Text } from "@/components/Text"
 import { Checkmark } from "./icons/Checkmark"
-import { Chevron } from "./icons/Chevron"
 
 interface Props {
-	disabled: boolean
+	disabled?: boolean
 	count: number
 	active: number
-	onActiveChange: any
-	onFinish: any
+	onActiveChange?: (step: number) => void
+	onFinish?: () => void
 	className?: string
 }
 
 export const Steps = ({
-	disabled,
+	disabled = false,
 	count,
 	active = 0,
 	onActiveChange,
@@ -24,9 +23,9 @@ export const Steps = ({
 
 	const handleNext = () => {
 		if (active === count) {
-			onFinish()
+			onFinish?.()
 		} else {
-			onActiveChange(active + 1)
+			onActiveChange?.(active + 1)
 		}
 	}
 
@@ -47,7 +46,16 @@ export const Steps = ({
 					{active === count ? (
 						<Checkmark />
 					) : (
-						<Chevron className="ml-1 rotate-180" />
+						<svg viewBox="0 0 7.412 11.996" className="ml-0.5 w-[9px]">
+							<path
+								fill="none"
+								fill-rule="evenodd"
+								stroke="currentColor"
+								strokeLinecap="square"
+								strokeWidth="2"
+								d="m1.414 1.414 4.584 4.584-4.584 4.584"
+							/>
+						</svg>
 					)}
 				</button>
 
@@ -58,7 +66,7 @@ export const Steps = ({
 				</div>
 			</div>
 
-			<Text style="heading" size={16}>
+			<Text asChild style="heading" size={16}>
 				<p className="mt-3 whitespace-pre text-center font-bold uppercase">
 					{active === count ? "Finish" : "Next Step"}
 				</p>
