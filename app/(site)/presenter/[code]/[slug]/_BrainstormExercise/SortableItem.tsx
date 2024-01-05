@@ -11,11 +11,10 @@ import type {
 } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { Text } from "@/components/Text"
 
 interface Props {
 	id: UniqueIdentifier
-	color: string
+	color?: string
 	className?: string
 }
 
@@ -71,19 +70,34 @@ export function SortableItem({
 	)
 }
 
-export function Draggable({ response }: { response: string }) {
+export function Draggable({
+	response,
+	readOnly = true,
+	onEnterKeyDown,
+	className,
+}: {
+	response: string
+	readOnly?: boolean
+	onEnterKeyDown?: (newResponse: string) => void
+	className?: string
+}) {
 	const { attributes, listeners, ref } = useContext(SortableItemContext)
 
 	return (
-		<Text
-			style={"copy"}
-			size={18}
+		<textarea
 			ref={ref}
+			suppressHydrationWarning
 			{...attributes}
 			{...listeners}
-			className="h-full w-full cursor-move"
-		>
-			{response}
-		</Text>
+			defaultValue={response}
+			className={className}
+			readOnly={readOnly}
+			onKeyDown={(e) => {
+				if (e.key === "Enter" && onEnterKeyDown) {
+					e.preventDefault()
+					onEnterKeyDown(e.currentTarget.value)
+				}
+			}}
+		/>
 	)
 }

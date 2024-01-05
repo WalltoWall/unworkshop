@@ -27,6 +27,7 @@
 		"react-dnd-html5-backend": "^16.0.1",
 		"react-dom": "18.2.0",
 		"react-portable-text": "^0.6.0",
+		"remeda": "^1.33.0",
 		"sanity": "^3.19.1",
 		"sanity-pills": "^2.0.0",
 		"sanity-plugin-media": "^2.2.4",

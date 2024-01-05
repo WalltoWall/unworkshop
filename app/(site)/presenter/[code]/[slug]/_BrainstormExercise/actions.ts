@@ -5,16 +5,20 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 import { zfd } from "zod-form-data"
 import { client, sanity } from "@/sanity/client"
-import type { BrainstormPresenterAnswers } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import type { BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 
 const columnsSchema = z.record(
 	z.string(),
-	z.array(
-		z.object({
-			id: z.string(),
-			response: z.string(),
-		}),
-	),
+	z.object({
+		color: z.string(),
+		title: z.string(),
+		cards: z.array(
+			z.object({
+				id: z.string(),
+				response: z.string(),
+			}),
+		),
+	}),
 )
 
 const submitBoardSchema = zfd.formData({
@@ -29,17 +33,15 @@ export async function submitBoardAction(formData: FormData) {
 
 	if (!exercise) return new NextResponse("No Exercise Found", { status: 404 })
 
-	const exerciseAnswers = exercise?.answers ?? []
-
-	let presenterColumns: BrainstormPresenterAnswers["answers"] = {}
-
-	if (exerciseAnswers.length > 0) {
-		Object.assign(presenterColumns, ...exerciseAnswers)
-	}
+	let presenterColumns: BrainstormExercise["answers"] = {}
 
 	for (const key in data.columns) {
 		Object.assign(presenterColumns, {
-			[key]: data.columns[key].map((card) => card.id),
+			[key]: {
+				color: data.columns[key].color,
+				title: data.columns[key].title,
+				cards: data.columns[key].cards.map((card) => card.id),
+			},
 		})
 	}
 

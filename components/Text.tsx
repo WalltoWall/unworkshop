@@ -21,6 +21,7 @@ export const text = cva("", {
 		style: {
 			heading: "font-heading uppercase font-bold leading-[0.9]",
 			copy: "font-sans leading-[1.25]",
+			contextMenu: "font-sans leading-[1.07]",
 		},
 		trim: {
 			true: "capsize",

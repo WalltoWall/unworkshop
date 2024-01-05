@@ -2,7 +2,7 @@ import React from "react"
 
 type Timer = ReturnType<typeof setTimeout>
 
-export function useDebounce(callback: () => void, delay = 250) {
+export function useDebounce(callback: (e?: any) => void, delay = 250) {
 	const timer = React.useRef<Timer>()
 
 	React.useEffect(() => {

@@ -2,6 +2,7 @@
 
 import React from "react"
 import {
+	closestCorners,
 	DndContext,
 	DragOverlay,
 	KeyboardSensor,
@@ -16,17 +17,17 @@ import {
 	sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable"
 import clsx from "clsx"
-import type { Slug } from "sanity"
+import { type Slug } from "sanity"
 import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
 import { submitBoardAction } from "./actions"
 import { CardColumn } from "./CardColumn"
+import { SORTING_COLUMN_ID } from "./constants"
 import { Draggable, SortableItem } from "./SortableItem"
 
-type Card = { response: string; id: string }
-const SORTING_COLUMN_ID = "sorting"
+export type Card = { response: string; id: string }
 
 export type Columns = Record<
 	string,
@@ -34,26 +35,15 @@ export type Columns = Record<
 >
 
 interface PresenterViewProps {
-	cards: Array<Card>
 	exerciseSlug: Slug
+	presenterColumns: Columns
 }
 
 export const BrainstormPresenterViewClient = ({
-	cards,
 	exerciseSlug,
+	presenterColumns,
 }: PresenterViewProps) => {
-	const [columns, setColumns] = React.useState<Columns>({
-		[SORTING_COLUMN_ID]: { color: "", title: "", cards: cards },
-		[uid()]: {
-			color: "",
-			title: "Service",
-			cards: [
-				{ id: uid(), response: "Testing" },
-				{ id: uid(), response: "Testing moving" },
-				{ id: uid(), response: "Testing Again" },
-			],
-		},
-	})
+	const [columns, setColumns] = React.useState<Columns>(presenterColumns)
 
 	const [showSorter, setShowSorter] = React.useState(true)
 	const [activeCard, setActiveCard] = React.useState<Active | null>(null)
@@ -83,6 +73,7 @@ export const BrainstormPresenterViewClient = ({
 	return (
 		<DndContext
 			sensors={sensors}
+			collisionDetection={closestCorners}
 			onDragStart={({ active }) => {
 				if (!active) return
 
@@ -164,7 +155,7 @@ export const BrainstormPresenterViewClient = ({
 					})
 				}
 
-				// formRef.current?.requestSubmit()
+				formRef.current?.requestSubmit()
 			}}
 		>
 			<form action={submitBoardAction} ref={formRef}>
@@ -189,7 +180,7 @@ export const BrainstormPresenterViewClient = ({
 						</button>
 
 						<SortableContext
-							items={columns[Object.keys(columns)[0]].cards}
+							items={columns[SORTING_COLUMN_ID].cards}
 							id={SORTING_COLUMN_ID}
 						>
 							<div
@@ -198,14 +189,17 @@ export const BrainstormPresenterViewClient = ({
 									showSorter ? "block" : "hidden",
 								)}
 							>
-								{columns[Object.keys(columns)[0]].cards.map((card) => (
+								{columns[SORTING_COLUMN_ID].cards.map((card) => (
 									<SortableItem
 										id={card.id}
 										color={""}
 										className="box-border aspect-square w-[135px] list-none rounded-lg bg-white px-3 py-2"
 										key={card.id}
 									>
-										<Draggable response={card.response} />
+										<Draggable
+											response={card.response}
+											className="h-full w-full cursor-move resize-none bg-transparent focus:outline-none"
+										/>
 									</SortableItem>
 								))}
 							</div>
@@ -225,6 +219,9 @@ export const BrainstormPresenterViewClient = ({
 										columnTitle={title}
 										id={columnId}
 										removeColumn={removeColumn}
+										columns={columns}
+										setColumns={setColumns}
+										formRef={formRef}
 									/>
 								)
 							},
@@ -238,24 +235,13 @@ export const BrainstormPresenterViewClient = ({
 								setColumns({
 									...columns,
 									[id]: {
-										color: "#fab99e",
-										title: "Poo",
-										cards: [
-											{
-												id: uid(),
-												response:
-													"Placeat eius molestias impedit rerum quis voluptatem.",
-											},
-											{
-												id: uid(),
-												response:
-													"Enim quas nesciunt laboriosam quod velit fuga maiores ducimus sed illum qui sed.",
-											},
-										],
+										color: "",
+										title: "New Column",
+										cards: [],
 									},
 								})
 
-								// formRef.current?.requestSubmit()
+								formRef.current?.requestSubmit()
 							}}
 							type="button"
 						>
@@ -270,15 +256,9 @@ export const BrainstormPresenterViewClient = ({
 
 			<DragOverlay>
 				{activeItem ? (
-					<SortableItem
-						id={activeItem.id}
-						color={
-							columns[activeCard?.data.current?.sortable.containerId].color
-						}
-						className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4"
-					>
-						<Draggable response={activeItem.response} />
-					</SortableItem>
+					<div className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4">
+						{activeItem.response}
+					</div>
 				) : null}
 			</DragOverlay>
 		</DndContext>

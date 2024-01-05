@@ -59,14 +59,15 @@ export const client = {
 	},
 
 	// prettier-ignore
-	async findAllParticipantsInExercise(exerciseId: string) {
+	async findAllParticipantsInExercise<T extends ST["participant"] = ST["participant"]>(exerciseId: string) {
 
-		const participants = await sanity.fetch<Array<ST["participant"]>>(
+		const participants = await sanity.fetch<Array<T>>(
 			groq`*[_type == "participant" && answers[$exerciseId] != null]{
 				...,
 				answers
 			}`,
 			{exerciseId},
+			{ cache: "no-cache" }
 		)
 
 		return participants
@@ -109,10 +110,15 @@ export const client = {
 		return res
 	},
 
-	async findExerciseBySlug(slug: string) {
-		const data = await sanity.fetch<ST["exercise"] | null>(
-			groq`*[_type == "exercise" && slug.current == $slug][0]`,
+	async findExerciseBySlug<T extends ST["exercise"] = ST["exercise"]>(
+		slug: string,
+	) {
+		const data = await sanity.fetch<T | null>(
+			groq`*[_type == "exercise" && slug.current == $slug][0]{
+				...,
+			}`,
 			{ slug },
+			{ cache: "no-cache" },
 		)
 
 		return data

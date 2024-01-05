@@ -17,8 +17,12 @@ export type BrainstormParticipant = ST["participant"] & {
 	}
 }
 
-export type BrainstormPresenterAnswers = ST["exercise"] & {
+export type BrainstormExercise = ST["exercise"] & {
 	answers?: {
-		[columnId: string]: Array<Answer>
+		[columnId: string]: {
+			color: string
+			title: string
+			cards: Array<string>
+		}
 	}
 }

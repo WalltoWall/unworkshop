@@ -49,7 +49,7 @@ export const PresentColumnModal = ({
 						{cards.map((card) => (
 							<div
 								key={card.id}
-								className="aspect-square w-[135px] rounded-lg px-3 py-3"
+								className="aspect-square w-[135px] break-words rounded-lg px-3 py-3"
 								style={{ backgroundColor: color }}
 							>
 								<Text style={"copy"} size={18}>
