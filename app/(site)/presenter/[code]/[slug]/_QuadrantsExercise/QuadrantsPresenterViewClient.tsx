@@ -114,7 +114,7 @@ export const QuadrantsPresenterViewClient = ({
 						<div key={quadrant.name} className="min-w-0 [flex:0_0_100%]">
 							<PresentQuadrant
 								quadrant={quadrant}
-								answers={answers[quadrant.name]}
+								answers={answers[quadrant.slug.current]}
 								showLines={showLines}
 								showPhotos={showPhotos}
 								showLabels={showLabels}
