@@ -17,7 +17,7 @@ const ExercisesLayout = async (props: {
 				<ParticipantModal
 					participantName={participant.name}
 					heading="Not You?"
-					message="Press the confirm button to register as a different user."
+					message="Press the confirm button to re-register under a new name."
 					code={props.params.code}
 				/>
 			}

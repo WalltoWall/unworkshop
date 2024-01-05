@@ -47,7 +47,7 @@ export const ParticipantModal = ({
 						<Text
 							style="copy"
 							size={14}
-							className="mt-5 max-w-[300px] text-gray-50"
+							className="mt-5 max-w-[260px] text-gray-50"
 						>
 							{message}
 						</Text>
