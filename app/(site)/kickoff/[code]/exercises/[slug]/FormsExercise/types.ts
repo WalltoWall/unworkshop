@@ -2,7 +2,10 @@ import type { ST } from "@/sanity/config"
 
 export type ListFieldAnswer = {
 	type: "List"
-	responses: string[]
+	groups: Array<{
+		label?: string
+		responses: string[]
+	}>
 }
 
 export type TextFieldAnswer = {

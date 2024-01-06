@@ -16,7 +16,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 	if (answer && answer.type !== "Narrow")
 		throw new Error("Invalid answer data found.")
 
-	const { max = Infinity, min = 1 } = props.field
+	const { max = Infinity } = props.field
 	const rForm = React.useRef<React.ElementRef<"form">>(null)
 	const [, startTransition] = React.useTransition()
 
@@ -55,7 +55,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 	return (
 		<form ref={rForm}>
 			<ul className="flex flex-col gap-2">
-				{props.source.responses.map((response, idx) => {
+				{props.source.groups.at(0)?.responses.map((response, idx) => {
 					return (
 						<li key={response}>
 							<label className="group flex cursor-pointer select-none items-center gap-2 rounded-lg border border-gray-50 bg-gray-90 py-1.5 pl-[5px] pr-3 has-[:checked]:border-black">

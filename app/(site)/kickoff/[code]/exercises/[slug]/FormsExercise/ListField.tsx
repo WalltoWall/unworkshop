@@ -1,4 +1,5 @@
 import React from "react"
+import debounce from "just-debounce-it"
 import { match } from "ts-pattern"
 import { Button } from "@/components/Button"
 import { PlusIcon } from "@/components/icons/Plus"
@@ -13,7 +14,7 @@ import type {
 } from "./types"
 import { PositiveNumber } from "./validators"
 
-const INPUT_NAME = "answer"
+const DEFAULT_INPUT_NAME = "answer"
 
 const AddButton = (props: {
 	onClick?: React.MouseEventHandler<HTMLButtonElement>
@@ -37,34 +38,46 @@ const AddButton = (props: {
 	)
 }
 
-const Input = (props: {
+type InputProps = {
 	number: number
 	placeholder?: string
 	defaultValue?: string
-}) => {
+	onChange?: React.ChangeEventHandler<HTMLInputElement>
+	name?: string
+}
+
+const Input = ({
+	number,
+	placeholder,
+	defaultValue,
+	onChange,
+	name = DEFAULT_INPUT_NAME,
+}: InputProps) => {
 	return (
 		<li className="flex gap-2">
 			<div className="flex h-9 w-9 items-center justify-center rounded-[7px] bg-gray-90">
 				<Text style="heading" size={16}>
-					{props.number}
+					{number}
 				</Text>
 			</div>
 
 			<input
 				type="text"
-				placeholder={props.placeholder}
-				name={INPUT_NAME}
+				placeholder={placeholder}
+				name={name}
 				className="h-9 grow rounded-lg border border-gray-90 px-2.5 text-black text-14 placeholder:text-gray-75"
-				defaultValue={props.defaultValue}
+				defaultValue={defaultValue}
+				onChange={onChange}
 			/>
 		</li>
 	)
 }
 
 type SourceListSectionProps = {
-	heading: string
+	label: string
 	field: FormField
-	answer?: ListFieldAnswer
+	answer?: ListFieldAnswer["groups"][number]
+	onInputChange?: React.ChangeEventHandler<HTMLInputElement>
 }
 
 const SourceListSection = (props: SourceListSectionProps) => {
@@ -75,19 +88,16 @@ const SourceListSection = (props: SourceListSectionProps) => {
 		addButtonText = "Add another",
 	} = props.field
 
-	const [rows, setRows] = React.useState(
-		props.answer?.responses.length ?? initialRows,
-	)
+	const answerCount = props.answer?.responses.length ?? 0
+	const [rows, setRows] = React.useState(Math.max(answerCount, initialRows))
 	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
 
-	const appendNewRow = () => {
-		setRows((prev) => prev + 1)
-	}
+	const appendNewRow = () => setRows((prev) => prev + 1)
 
 	return (
 		<div>
 			<Text style="heading" size={24} className="uppercase">
-				{props.heading}
+				{props.label}
 			</Text>
 
 			<ul className="mt-4 flex flex-col gap-2">
@@ -98,6 +108,8 @@ const SourceListSection = (props: SourceListSectionProps) => {
 							number={number}
 							placeholder={placeholder}
 							defaultValue={props.answer?.responses.at(idx)}
+							name={props.label}
+							onChange={props.onInputChange}
 						/>
 					)
 				})}
@@ -119,6 +131,9 @@ const SourceListField = ({ answer, ...props }: Props) => {
 	if (answer && answer.type !== "List")
 		throw new Error("Invalid answer data found.")
 
+	const rForm = React.useRef<React.ElementRef<"form">>(null)
+	const [, startTransition] = React.useTransition()
+
 	const stepSrc = PositiveNumber.parse(props.field.source?.step)
 	const fieldSrc = PositiveNumber.parse(props.field.source?.field)
 
@@ -128,82 +143,26 @@ const SourceListField = ({ answer, ...props }: Props) => {
 	if (!sourceAnswer || !sourceField)
 		throw new Error("No valid source found. Check field or step config.")
 
-	const headings = match(sourceAnswer)
+	const labels = match(sourceAnswer)
 		.with({ type: "Narrow" }, (sa) => sa.responses)
-		.with({ type: "List" }, (sa) => sa.responses)
 		.otherwise(() => {
 			throw new Error("Invalid source answer.")
 		})
-
-	return (
-		<div className="space-y-6">
-			{headings.map((heading) => (
-				<SourceListSection
-					key={heading}
-					heading={heading}
-					field={props.field}
-					answer={answer}
-				/>
-			))}
-		</div>
-	)
-}
-
-const PlainListField = ({ answer, ...props }: Props) => {
-	if (answer && answer.type !== "List")
-		throw new Error("Invalid answer data found.")
-
-	const {
-		rows: initialRows = 5,
-		showAddButton = false,
-		placeholder,
-		addButtonText = "Add another",
-	} = props.field
-
-	const [rows, setRows] = React.useState(
-		answer?.responses.length ?? initialRows,
-	)
-	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
-
-	const appendNewRow = () => {
-		setRows((prev) => prev + 1)
-	}
-
-	return (
-		<>
-			<ul className="flex flex-col gap-2">
-				{arr.map((number, idx) => {
-					return (
-						<Input
-							key={number}
-							number={number}
-							placeholder={placeholder}
-							defaultValue={answer?.responses.at(idx)}
-						/>
-					)
-				})}
-			</ul>
-
-			{showAddButton && (
-				<AddButton onClick={appendNewRow}>{addButtonText}</AddButton>
-			)}
-		</>
-	)
-}
-
-export const ListField = (props: Props) => {
-	const rForm = React.useRef<React.ElementRef<"form">>(null)
-	const [, startTransition] = React.useTransition()
 
 	const submitForm = () => {
 		if (!rForm.current) return
 
 		const data = new FormData(rForm.current)
-		const answers = data.getAll(INPUT_NAME).filter(Boolean) as string[]
 
 		startTransition(() => {
 			submitFieldAnswer({
-				answer: { type: "List", responses: answers },
+				answer: {
+					type: "List",
+					groups: labels.map((label) => ({
+						label,
+						responses: data.getAll(label).filter(Boolean) as string[],
+					})),
+				},
 				exerciseId: props.exerciseId,
 				fieldIdx: props.fieldIdx,
 				stepIdx: props.stepIdx,
@@ -216,15 +175,100 @@ export const ListField = (props: Props) => {
 		submitForm()
 	}
 
+	const onInputChange = debounce(submitForm, 300)
+
+	return (
+		<form ref={rForm} className="space-y-6" onSubmit={handleSubmit}>
+			{labels.map((label) => (
+				<SourceListSection
+					key={label}
+					label={label}
+					field={props.field}
+					answer={answer?.groups.find((a) => a.label === label)}
+					onInputChange={onInputChange}
+				/>
+			))}
+		</form>
+	)
+}
+
+const PlainListField = ({ answer, ...props }: Props) => {
+	if (answer && answer.type !== "List")
+		throw new Error("Invalid answer data found.")
+
+	const rForm = React.useRef<React.ElementRef<"form">>(null)
+	const [, startTransition] = React.useTransition()
+
+	const {
+		rows: initialRows = 5,
+		showAddButton = false,
+		placeholder,
+		addButtonText = "Add another",
+	} = props.field
+
+	const resolvedAnswer = answer?.groups.at(0)
+	const answerCount = resolvedAnswer?.responses.length ?? 0
+	const [rows, setRows] = React.useState(Math.max(answerCount, initialRows))
+	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
+
+	const submitForm = () => {
+		if (!rForm.current) return
+
+		const data = new FormData(rForm.current)
+		const answers = data.getAll(DEFAULT_INPUT_NAME).filter(Boolean) as string[]
+
+		startTransition(() => {
+			submitFieldAnswer({
+				answer: { type: "List", groups: [{ responses: answers }] },
+				exerciseId: props.exerciseId,
+				fieldIdx: props.fieldIdx,
+				stepIdx: props.stepIdx,
+			})
+		})
+	}
+
+	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+		e.preventDefault()
+		submitForm()
+	}
+
+	const onChange = debounce(submitForm, 300)
+
+	const appendNewRow = () => setRows((prev) => prev + 1)
+
 	return (
 		<form onSubmit={handleSubmit} ref={rForm}>
+			<ul className="flex flex-col gap-2">
+				{arr.map((number, idx) => {
+					return (
+						<Input
+							key={number}
+							number={number}
+							placeholder={placeholder}
+							defaultValue={resolvedAnswer?.responses.at(idx)}
+							onChange={onChange}
+						/>
+					)
+				})}
+			</ul>
+
+			{showAddButton && (
+				<AddButton onClick={appendNewRow}>{addButtonText}</AddButton>
+			)}
+
+			<input type="submit" className="hidden" />
+		</form>
+	)
+}
+
+export const ListField = (props: Props) => {
+	return (
+		<>
 			{props.field.source?.field && props.field.source.step ? (
 				<SourceListField {...props} />
 			) : (
 				<PlainListField {...props} />
 			)}
-
-			<input type="submit" className="hidden" />
-		</form>
+		</>
 	)
 }
