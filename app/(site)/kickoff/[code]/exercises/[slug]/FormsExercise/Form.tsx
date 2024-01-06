@@ -38,9 +38,8 @@ export const Form = ({ exercise, participant }: Props) => {
 	const answers = participant.answers?.[exercise._id]
 	const stepAnswers = answers?.steps.at(stepIdx)
 
-	const goToNextStep = (newStep: number) => {
-		// TODO: This step is always one behind?
-		const resolvedStep = newStep + 1
+	const goToNextStep = (step: number) => {
+		const resolvedStep = step + 1
 		const sParams = new URLSearchParams({ step: resolvedStep.toString() })
 
 		router.push(pathname + "?" + sParams.toString())
@@ -53,7 +52,7 @@ export const Form = ({ exercise, participant }: Props) => {
 
 				return (
 					<React.Fragment key={field._key}>
-						<div className="mb-4 flex items-start gap-2">
+						<div className="mb-5 flex items-start gap-2">
 							<div className="flex -translate-y-px items-center gap-0.5 text-gray-50">
 								<Text asChild style="heading" size={16}>
 									<p>{idx + 1}</p>

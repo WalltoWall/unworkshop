@@ -1,4 +1,3 @@
-import { z } from "zod"
 import type { ST } from "@/sanity/config"
 import { ListField } from "./ListField"
 import { NarrowField } from "./NarrowField"
@@ -8,6 +7,7 @@ import type {
 	FormFieldAnswer,
 	SharedFieldProps,
 } from "./types"
+import { PositiveNumber } from "./validators"
 
 type Props = {
 	field: FormField
@@ -17,8 +17,6 @@ type Props = {
 	fieldIdx: number
 	allAnswers?: FormAnswer[]
 }
-
-const PositiveNumber = z.number().positive()
 
 export const FieldRenderer = ({
 	field,
@@ -38,7 +36,14 @@ export const FieldRenderer = ({
 
 	switch (field.type) {
 		case "List":
-			return <ListField key={field._key} {...sharedProps} />
+			return (
+				<ListField
+					key={field._key}
+					allAnswers={allAnswers}
+					allSteps={exercise.form?.steps}
+					{...sharedProps}
+				/>
+			)
 
 		case "Narrow":
 			const stepSrc = PositiveNumber.parse(field.source?.step)

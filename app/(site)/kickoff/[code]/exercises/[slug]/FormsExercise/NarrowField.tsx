@@ -18,7 +18,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 
 	const { max = Infinity, min = 1 } = props.field
 	const rForm = React.useRef<React.ElementRef<"form">>(null)
-	const [_isPending, startTransition] = React.useTransition()
+	const [, startTransition] = React.useTransition()
 
 	const submitForm = () => {
 		if (!rForm.current) return
@@ -44,7 +44,9 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 
 		if (answers.length > max) {
 			e.preventDefault()
-			toast.error(pluralize`You can only select up to of ${max} answer[|s].`)
+			toast.error(pluralize`You can only select up to ${max} answer[|s].`)
+
+			return
 		}
 
 		submitForm()
