@@ -38,12 +38,10 @@ const BrainstormClient = ({
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const totalSteps = steps?.length! - 1
 
-	const [activeStep, setActiveStep] = React.useState(step)
-
 	if (!steps) return
 
 	return (
-		<div className="flex h-full flex-col">
+		<div className="flex h-full flex-col overflow-hidden">
 			{steps && steps.at(step - 1) && (
 				<div>
 					<h4 className="max-w-[16rem] text-16 leading-[1.4] font-sans capsize">
@@ -56,6 +54,9 @@ const BrainstormClient = ({
 			)}
 
 			<CardScroller
+				// Need key prop so that useOptimistic rerenders the cards correctly based off step see:https://github.com/facebook/react/issues/27617
+				// see: https://github.com/vercel/next.js/issues/57662
+				key={step}
 				cards={cards.filter((card) => card.step === step) ?? []}
 				exerciseId={exerciseId}
 				group={groups.length > 0}
@@ -65,9 +66,8 @@ const BrainstormClient = ({
 
 			<Steps
 				steps={totalSteps!}
-				activeStep={activeStep}
+				activeStep={step}
 				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
-				onNextStep={setActiveStep}
 				disabled={false}
 			/>
 		</div>

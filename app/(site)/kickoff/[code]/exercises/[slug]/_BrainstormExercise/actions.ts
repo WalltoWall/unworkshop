@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { z } from "zod"
 import { zfd } from "zod-form-data"
 import { client, sanity } from "@/sanity/client"
 import { type BrainstormParticipant } from "./types"
@@ -20,7 +21,7 @@ const removeCardSchema = zfd.formData({
 const submitCardSchema = zfd.formData({
 	exerciseId: zfd.text(),
 	cardId: zfd.text(),
-	response: zfd.text(),
+	response: zfd.text(z.string().default("")),
 })
 
 // TODO: Error Handling

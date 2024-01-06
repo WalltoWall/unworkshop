@@ -38,7 +38,7 @@ export const CardForm = ({
 				<input type="hidden" value={exerciseId} name="exerciseId" />
 				<input type="hidden" value={cardId} name="cardId" />
 				<textarea
-					className="card-input h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-black placeholder:text-18 placeholder:leading-[1.25] focus:outline-none"
+					className="card-input h-full w-full resize-none bg-transparent pt-3.5 placeholder:text-gray-19 placeholder:text-18 placeholder:leading-[1.25] focus:outline-none"
 					placeholder="Type something here to add your perception"
 					defaultValue={response}
 					onChange={(e) => {
