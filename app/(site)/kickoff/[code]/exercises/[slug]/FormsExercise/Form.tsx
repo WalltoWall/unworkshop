@@ -2,6 +2,7 @@
 
 import React from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import clsx from "clsx"
 import { z } from "zod"
 import { ArrowRight } from "@/components/icons/ArrowRight"
 import { Steps } from "@/components/Steps"
@@ -46,12 +47,18 @@ export const Form = ({ exercise, participant }: Props) => {
 	}
 
 	return (
-		<div className="mt-6">
+		<div className="mt-3">
 			{stepData.fields?.map((field, idx) => {
 				const fieldAnswer = stepAnswers?.data.at(idx)
 
 				return (
-					<React.Fragment key={field._key}>
+					<div
+						className={clsx(
+							"-mx-7 border-gray-90 px-7 py-6",
+							idx !== stepData.fields!.length - 1 && "border-b-2",
+						)}
+						key={field._key}
+					>
 						<div className="mb-5 flex items-start gap-2">
 							<div className="flex -translate-y-px items-center gap-0.5 text-gray-50">
 								<Text asChild style="heading" size={16}>
@@ -82,7 +89,7 @@ export const Form = ({ exercise, participant }: Props) => {
 							allAnswers={answers?.steps}
 							answer={fieldAnswer}
 						/>
-					</React.Fragment>
+					</div>
 				)
 			})}
 

@@ -1,6 +1,7 @@
 import type { ST } from "@/sanity/config"
 import { ListField } from "./ListField"
 import { NarrowField } from "./NarrowField"
+import { TextField } from "./TextField"
 import type {
 	FormAnswer,
 	FormField,
@@ -56,6 +57,10 @@ export const FieldRenderer = ({
 				throw new Error("No valid source found. Check field or step config.")
 
 			return <NarrowField key={field._key} source={source} {...sharedProps} />
+
+		case "Text":
+		case "Big Text":
+			return <TextField key={field._key} {...sharedProps} />
 
 		default:
 			throw new Error("Invalid field type.")
