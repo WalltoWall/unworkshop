@@ -3,7 +3,7 @@
 import React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
-import { CardScroller } from "./CardScroller"
+import { CardScroller, type Color } from "./CardScroller"
 import type { Answer } from "./types"
 
 interface BrainstormClientProps {
@@ -11,6 +11,7 @@ interface BrainstormClientProps {
 		| ({
 				prompt?: string | undefined
 				helpText?: string | undefined
+				color?: Color | undefined
 		  } & {
 				_key: string
 		  })[]
@@ -39,6 +40,8 @@ const BrainstormClient = ({
 
 	const [activeStep, setActiveStep] = React.useState(step)
 
+	if (!steps) return
+
 	return (
 		<div className="flex h-full flex-col">
 			{steps && steps.at(step - 1) && (
@@ -56,7 +59,7 @@ const BrainstormClient = ({
 				cards={cards.filter((card) => card.step === step) ?? []}
 				exerciseId={exerciseId}
 				group={groups.length > 0}
-				color={steps.at(step - 1).color}
+				color={steps.at(step - 1)?.color}
 				step={step}
 			/>
 

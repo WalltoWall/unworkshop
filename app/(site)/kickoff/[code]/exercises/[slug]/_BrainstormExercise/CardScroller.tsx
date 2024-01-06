@@ -12,7 +12,7 @@ export type CardDispatch = {
 	payload: Answer
 }
 
-type Color = "green" | "red" | "yellow"
+export type Color = "green" | "red" | "yellow"
 
 type ColorVarient = {
 	bgColor: string
