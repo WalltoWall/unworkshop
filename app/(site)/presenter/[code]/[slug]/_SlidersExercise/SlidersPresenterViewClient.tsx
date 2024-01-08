@@ -6,6 +6,7 @@ import { uid } from "uid"
 import { Text } from "@/components/Text"
 
 
+
 interface PresenterViewProps {
 	sliders: Array<{ question_text: string; value: number }>
 }
@@ -13,16 +14,44 @@ interface PresenterViewProps {
 export const SlidersPresenterViewClient = ({
 	sliders,
 }: PresenterViewProps) => {
+	const [color, setColor] = React.useState("#fecb2f")
+
 	return (
 		<div className="relative">
-			<div className="absolute top-2 left-0 bg-black rounded-lg p-4">
-				{sliders.map((answer, i) => (
-					<span className="block text-yellow-68 text-24 font-heading">
-						<span className="bg-yellow-68 h-4 w-4 mr-2 inline-block"></span>
-						{answer.question_text}
-					</span>
-				))}
+			<div className="absolute top-7 left-7 rounded-2xl bg-black px-5 py-4 text-white">
+				<div className="mb-2 flex items-center">
+					<span
+						className="block h-6 w-6"
+						style={{
+							backgroundColor: color,
+						}}
+					/>
+					<Text className="ml-1 uppercase text-24 font-heading capsize">
+						<span style={{
+							color: color,
+						}}>
+							Today
+						</span>
+					</Text>
+				</div>
+
+				<div className="flex items-center">
+					<span
+						className="block h-6 w-6 border-4"
+						style={{
+							borderColor: color,
+						}}
+					/>
+					<Text className="ml-1 uppercase text-24 font-heading capsize">
+						<span style={{
+							color: color,
+						}}>
+							Tomorrow
+						</span>
+					</Text>
+				</div>
 			</div>
+
 			<div className="w-full flex justify-evenly h-[66.6vh] border-b-[0.666rem] border-black rounded-t-2xl items-end">
 				{sliders.map((answer, i) => (
 					<div key={i}
