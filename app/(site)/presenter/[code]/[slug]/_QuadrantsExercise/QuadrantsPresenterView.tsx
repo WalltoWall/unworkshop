@@ -17,10 +17,10 @@ export const QuadrantsPresenterView = async ({
 	)
 
 	const groupedAnswers = participantAnswers.reduce((group, answer) => {
-		const names = Object.keys(answer)
-		names.forEach((name) => {
-			group[name] = group[name] ?? []
-			group[name].push(answer[name])
+		const slugs = Object.keys(answer)
+		slugs.forEach((slug) => {
+			group[slug] = group[slug] ?? []
+			group[slug].push(answer[slug])
 		})
 
 		return group

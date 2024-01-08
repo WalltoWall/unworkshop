@@ -1,5 +1,4 @@
 import Image from "next/image"
-import { cx } from "class-variance-authority"
 import type { ST } from "@/sanity/config"
 import { altFor, urlFor, type SanityImage } from "@/sanity/helpers"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"

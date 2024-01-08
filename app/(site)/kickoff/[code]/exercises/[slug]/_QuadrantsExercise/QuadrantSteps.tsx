@@ -10,7 +10,7 @@ import type { Answer, Answers } from "./types"
 
 export type AnswerDispatch = {
 	newAnswer: Answer
-	name: string
+	slug: string
 }
 
 export type State =
@@ -50,7 +50,7 @@ export const QuadrantSteps = ({
 		Answers,
 		AnswerDispatch
 	>(answers, (state, action) => {
-		const newPositions = ({ ...answers[action.name] } || {}) as Answer
+		const newPositions = ({ ...answers[action.slug] } || {}) as Answer
 
 		if (action.newAnswer.today) {
 			newPositions.today = action.newAnswer.today
@@ -62,7 +62,7 @@ export const QuadrantSteps = ({
 
 		return {
 			...state,
-			[action.name]: newPositions,
+			[action.slug]: newPositions,
 		}
 	})
 
@@ -78,11 +78,11 @@ export const QuadrantSteps = ({
 		const currentQuadrant = quadrants.at(currentQuadrantIdx)!
 
 		if (selectingForToday) {
-			return answers[currentQuadrant.name]?.today
+			return answers[currentQuadrant.slug.current]?.today
 				? "today_placed"
 				: "today_pending"
 		} else {
-			return answers[currentQuadrant.name]?.tomorrow
+			return answers[currentQuadrant.slug.current]?.tomorrow
 				? "tomorrow_placed"
 				: "tomorrow_pending"
 		}
@@ -130,7 +130,7 @@ export const QuadrantSteps = ({
 								item={quadrant}
 								exerciseId={exerciseId}
 								isGroup={group}
-								answer={optimisticAnswers[quadrant.name]}
+								answer={optimisticAnswers[quadrant.slug.current]}
 								state={state}
 								index={index}
 								answerDispatch={answerDispatch}
@@ -144,7 +144,7 @@ export const QuadrantSteps = ({
 							item={currentQuadrant}
 							exerciseId={exerciseId}
 							isGroup={group}
-							answer={optimisticAnswers[currentQuadrant.name]}
+							answer={optimisticAnswers[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}
 							answerDispatch={answerDispatch}

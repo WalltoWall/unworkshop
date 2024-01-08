@@ -7,7 +7,7 @@ import { type Answer, type QuadrantsParticipant } from "./types"
 
 const submitQuadrantSchema = zod.object({
 	answer: zod.object({
-		name: zod.string(),
+		slug: zod.string(),
 		newAnswer: zod.object({
 			today: zod
 				.object({
@@ -28,7 +28,7 @@ const submitQuadrantSchema = zod.object({
 })
 
 export async function submitQuadrantAction(newAnswer: {
-	answer: { name: string; newAnswer: Answer }
+	answer: { slug: string; newAnswer: Answer }
 	exerciseId: string
 	isGroup: boolean
 }) {
@@ -45,7 +45,7 @@ export async function submitQuadrantAction(newAnswer: {
 			}
 		: { type: "individual" as const }
 
-	const newPositions = { ...oldAnswers[data.answer.name] }
+	const newPositions = { ...oldAnswers[data.answer.slug] }
 
 	if (data.answer.newAnswer?.today) {
 		newPositions.today = data.answer.newAnswer?.today
@@ -62,7 +62,7 @@ export async function submitQuadrantAction(newAnswer: {
 			meta,
 			answers: {
 				...oldAnswers,
-				[data.answer.name]: newPositions,
+				[data.answer.slug]: newPositions,
 			},
 		},
 	}
