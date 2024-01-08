@@ -118,7 +118,7 @@ export const client = {
 				...,
 			}`,
 			{ slug },
-			{ cache: "no-cache" },
+			{ cache: "no-store" }, // TODO: Note on caching.
 		)
 
 		return data

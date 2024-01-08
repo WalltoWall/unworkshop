@@ -16,7 +16,10 @@ const PresenterKickOffPage = async (props: Props) => {
 
 	return (
 		<>
-			<PresenterHeader />
+			<PresenterHeader
+				kickoffCode={props.params.code}
+				exercises={kickoff.exercises}
+			/>
 			<div className="space-y-4 px-7 py-8">
 				<Text style="heading" size={40}>
 					Exercises

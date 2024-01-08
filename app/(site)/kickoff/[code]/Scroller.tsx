@@ -42,7 +42,7 @@ export const Scroller = () => {
 						icon={form.pending && <Spinner className="w-[1.125rem]" />}
 						disabled={form.pending}
 					>
-						<span>I Agree</span>
+						I Agree
 					</Button>
 				</div>
 			</div>
