@@ -44,6 +44,7 @@ type InputProps = {
 	defaultValue?: string
 	onChange?: React.ChangeEventHandler<HTMLInputElement>
 	name?: string
+	readOnly?: boolean
 }
 
 const Input = ({
@@ -52,6 +53,7 @@ const Input = ({
 	defaultValue,
 	onChange,
 	name = DEFAULT_INPUT_NAME,
+	readOnly = false,
 }: InputProps) => {
 	return (
 		<li className="flex gap-2">
@@ -68,6 +70,7 @@ const Input = ({
 				className="h-9 grow rounded-lg border border-gray-90 px-2.5 text-black text-14 placeholder:text-gray-75"
 				defaultValue={defaultValue}
 				onChange={onChange}
+				readOnly={readOnly}
 			/>
 		</li>
 	)
@@ -78,6 +81,7 @@ type SourceListSectionProps = {
 	field: FormField
 	answer?: ListFieldAnswer["groups"][number]
 	onInputChange?: React.ChangeEventHandler<HTMLInputElement>
+	readOnly?: boolean
 }
 
 const SourceListSection = (props: SourceListSectionProps) => {
@@ -110,6 +114,7 @@ const SourceListSection = (props: SourceListSectionProps) => {
 							defaultValue={props.answer?.responses.at(idx)}
 							name={props.label}
 							onChange={props.onInputChange}
+							readOnly={props.readOnly}
 						/>
 					)
 				})}
@@ -150,7 +155,7 @@ const SourceListField = ({ answer, ...props }: Props) => {
 		})
 
 	const submitForm = () => {
-		if (!rForm.current) return
+		if (!rForm.current || props.readOnly) return
 
 		const data = new FormData(rForm.current)
 
@@ -186,6 +191,7 @@ const SourceListField = ({ answer, ...props }: Props) => {
 					field={props.field}
 					answer={answer?.groups.find((a) => a.label === label)}
 					onInputChange={onInputChange}
+					readOnly={props.readOnly}
 				/>
 			))}
 		</form>
@@ -212,7 +218,7 @@ const PlainListField = ({ answer, ...props }: Props) => {
 	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
 
 	const submitForm = () => {
-		if (!rForm.current) return
+		if (!rForm.current || props.readOnly) return
 
 		const data = new FormData(rForm.current)
 		const answers = data.getAll(DEFAULT_INPUT_NAME).filter(Boolean) as string[]
@@ -247,12 +253,13 @@ const PlainListField = ({ answer, ...props }: Props) => {
 							placeholder={placeholder}
 							defaultValue={resolvedAnswer?.responses.at(idx)}
 							onChange={onChange}
+							readOnly={props.readOnly}
 						/>
 					)
 				})}
 			</ul>
 
-			{showAddButton && (
+			{showAddButton && !props.readOnly && (
 				<AddButton onClick={appendNewRow}>{addButtonText}</AddButton>
 			)}
 

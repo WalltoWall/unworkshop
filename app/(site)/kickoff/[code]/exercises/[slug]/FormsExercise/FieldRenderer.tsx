@@ -17,6 +17,7 @@ type Props = {
 	stepIdx: number
 	fieldIdx: number
 	allAnswers?: FormAnswer[]
+	readOnly?: boolean
 }
 
 export const FieldRenderer = ({
@@ -26,6 +27,7 @@ export const FieldRenderer = ({
 	stepIdx,
 	fieldIdx,
 	allAnswers,
+	readOnly = false,
 }: Props) => {
 	const sharedProps: SharedFieldProps = {
 		exerciseId: exercise._id,
@@ -33,6 +35,7 @@ export const FieldRenderer = ({
 		stepIdx,
 		answer,
 		field,
+		readOnly,
 	}
 
 	switch (field.type) {

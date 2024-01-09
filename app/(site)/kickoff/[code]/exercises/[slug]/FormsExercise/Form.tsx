@@ -1,14 +1,14 @@
 "use client"
 
 import React from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import clsx from "clsx"
 import { z } from "zod"
-import { ArrowRight } from "@/components/icons/ArrowRight"
 import { Steps } from "@/components/Steps"
-import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
 import { FieldRenderer } from "./FieldRenderer"
+import { Prompt } from "./Prompt"
+import { Review } from "./Review"
 import type { FormParticipant } from "./types"
 
 const StepParamSchema = z.coerce
@@ -25,7 +25,7 @@ type Props = {
 export const Form = ({ exercise, participant }: Props) => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
-	const pathname = usePathname()
+	const params = useParams()
 
 	const step = StepParamSchema.parse(searchParams.get("step"))
 	const stepIdx = step - 1
@@ -34,69 +34,56 @@ export const Form = ({ exercise, participant }: Props) => {
 		throw new Error("No form exercise data found.")
 
 	const stepData = exercise.form.steps.at(stepIdx)
-	if (!stepData) throw new Error("Invalid exercise data.")
 
 	const answers = participant.answers?.[exercise._id]
 	const stepAnswers = answers?.steps.at(stepIdx)
 
-	const goToNextStep = (step: number) => {
-		const resolvedStep = step + 1
-		const sParams = new URLSearchParams({ step: resolvedStep.toString() })
+	const onReviewScreen = !stepData && stepIdx === exercise.form.steps.length
 
-		router.push(pathname + "?" + sParams.toString())
-	}
+	const goBackToExerciseList = () =>
+		router.push(`/kickoff/${params.code}/exercises`)
 
 	return (
 		<div className="mt-3">
-			{stepData.fields?.map((field, idx) => {
-				const fieldAnswer = stepAnswers?.data.at(idx)
+			{onReviewScreen && (
+				<Review answers={answers?.steps} exercise={exercise} />
+			)}
+			{!onReviewScreen &&
+				stepData?.fields?.map((field, fieldIdx) => {
+					const fieldAnswer = stepAnswers?.data.at(fieldIdx)
 
-				return (
-					<div
-						className={clsx(
-							"-mx-7 border-gray-90 px-7 py-6",
-							idx !== stepData.fields!.length - 1 && "border-b-2",
-						)}
-						key={field._key}
-					>
-						<div className="mb-5 flex items-start gap-2">
-							<div className="flex -translate-y-px items-center gap-0.5 text-gray-50">
-								<Text asChild style="heading" size={16}>
-									<p>{idx + 1}</p>
-								</Text>
+					return (
+						<div
+							className={clsx(
+								"-mx-7 border-gray-90 px-7 py-6",
+								fieldIdx !== stepData.fields!.length - 1 && "border-b-2",
+							)}
+							key={field._key}
+						>
+							<Prompt
+								className="mb-5"
+								num={fieldIdx + 1}
+								additionalText={field.additionalText}
+							>
+								{field.prompt}
+							</Prompt>
 
-								<ArrowRight className="w-[13px]" />
-							</div>
-
-							<div className="space-y-3">
-								<Text asChild size={16} style="copy">
-									<h2>{field.prompt}</h2>
-								</Text>
-
-								{field.additionalText && (
-									<Text size={12} className="text-gray-50">
-										{field.additionalText}
-									</Text>
-								)}
-							</div>
+							<FieldRenderer
+								exercise={exercise}
+								field={field}
+								stepIdx={stepIdx}
+								fieldIdx={fieldIdx}
+								allAnswers={answers?.steps}
+								answer={fieldAnswer}
+							/>
 						</div>
-
-						<FieldRenderer
-							exercise={exercise}
-							field={field}
-							stepIdx={stepIdx}
-							fieldIdx={idx}
-							allAnswers={answers?.steps}
-							answer={fieldAnswer}
-						/>
-					</div>
-				)
-			})}
+					)
+				})}
 
 			<Steps
-				count={exercise.form.steps.length}
-				active={stepIdx}
-				onActiveChange={goToNextStep}
+				steps={exercise.form.steps.length}
+				activeStep={step}
+				onFinish={goBackToExerciseList}
 			/>
 		</div>
 	)

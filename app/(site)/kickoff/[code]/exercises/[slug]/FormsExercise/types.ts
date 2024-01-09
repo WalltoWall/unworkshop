@@ -48,6 +48,7 @@ export type SharedFieldProps = {
 	stepIdx: number
 	fieldIdx: number
 	field: FormField
+	readOnly: boolean
 }
 
 export type FieldProps<T = unknown> = T & SharedFieldProps

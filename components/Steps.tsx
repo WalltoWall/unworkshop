@@ -4,16 +4,16 @@ import { Text } from "@/components/Text"
 import { Checkmark } from "./icons/Checkmark"
 
 interface Props {
-	disabled: boolean
+	disabled?: boolean
 	steps: number
 	activeStep: number
-	onFinish: any
+	onFinish?: () => void
 	className?: string
 	onNextStep?: (nextStep: number) => void
 }
 
 export const Steps = ({
-	disabled,
+	disabled = false,
 	steps,
 	activeStep = 1,
 	onFinish,
@@ -26,10 +26,7 @@ export const Steps = ({
 	if (!steps) return null
 
 	const goToStep = (step: number) => {
-		const params = new URLSearchParams({
-			step: step.toString(),
-		})
-
+		const params = new URLSearchParams({ step: step.toString() })
 		router.push(pathname + "?" + params.toString(), { scroll: false })
 
 		onNextStep?.(step)
@@ -37,7 +34,7 @@ export const Steps = ({
 
 	const handleNext = () => {
 		if (activeStep - 1 === steps) {
-			onFinish()
+			onFinish?.()
 		} else {
 			goToStep(activeStep + 1)
 		}
@@ -47,13 +44,15 @@ export const Steps = ({
 		<div className={clsx("my-6", className)}>
 			<div className="relative mx-auto h-8 w-8">
 				<div className="absolute right-full top-1/2 mr-2 flex -translate-y-1/2">
-					{[...Array(steps - (steps - activeStep + 1))].map((_, i) => (
-						<button
-							key={i}
-							className="mx-1 h-3 w-3 rounded-full bg-black"
-							onClick={() => goToStep(i + 1)}
-						/>
-					))}
+					{Array.from({ length: steps - (steps - activeStep + 1) }).map(
+						(_, i) => (
+							<button
+								key={i}
+								className="mx-1 h-3 w-3 rounded-full bg-black"
+								onClick={() => goToStep(i + 1)}
+							/>
+						),
+					)}
 				</div>
 
 				<button
@@ -78,8 +77,8 @@ export const Steps = ({
 				</button>
 
 				<div className="absolute left-full top-1/2 ml-2 flex -translate-y-1/2">
-					{[...Array(steps - activeStep + 1)].map((_, i) => (
-						<div key={i} className="mx-1 h-3 w-3 rounded-full bg-gray-75"></div>
+					{Array.from({ length: steps - activeStep + 1 }).map((_, i) => (
+						<div key={i} className="mx-1 h-3 w-3 rounded-full bg-gray-75" />
 					))}
 				</div>
 			</div>

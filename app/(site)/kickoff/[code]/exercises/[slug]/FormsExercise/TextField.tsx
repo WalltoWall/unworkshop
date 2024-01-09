@@ -16,7 +16,7 @@ export const TextField = ({ answer, ...props }: Props) => {
 	const [, startTransition] = React.useTransition()
 
 	const submitForm = () => {
-		if (!rForm.current) return
+		if (!rForm.current || props.readOnly) return
 
 		const data = new FormData(rForm.current)
 		const answer = data.get(DEFAULT_INPUT_NAME) as string | null
@@ -37,6 +37,7 @@ export const TextField = ({ answer, ...props }: Props) => {
 		placeholder: props.field.placeholder,
 		onChange: debounce(submitForm, 300),
 		defaultValue: answer?.response,
+		readOnly: props.readOnly,
 	}
 
 	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {

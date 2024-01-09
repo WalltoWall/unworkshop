@@ -13,7 +13,7 @@ const FontSans = Local({
 })
 
 const FontHeading = Local({
-	src: "../../assets/fonts/compressed.woff2",
+	src: "../../assets/fonts/condensed.woff2",
 	display: "swap",
 	variable: "--heading",
 	weight: "700",

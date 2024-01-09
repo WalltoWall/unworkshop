@@ -21,7 +21,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 	const [, startTransition] = React.useTransition()
 
 	const submitForm = () => {
-		if (!rForm.current) return
+		if (!rForm.current || props.readOnly) return
 
 		const data = new FormData(rForm.current)
 		const answers = data.getAll(INPUT_NAME) as string[]
@@ -37,7 +37,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 	}
 
 	const handleChange: React.MouseEventHandler<HTMLInputElement> = (e) => {
-		if (!rForm.current) return e.preventDefault()
+		if (!rForm.current || props.readOnly) return e.preventDefault()
 
 		const data = new FormData(rForm.current)
 		const answers = data.getAll(INPUT_NAME)
@@ -58,7 +58,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 				{props.source.groups.at(0)?.responses.map((response, idx) => {
 					return (
 						<li key={response}>
-							<label className="group flex cursor-pointer select-none items-center gap-2 rounded-lg border border-gray-50 bg-gray-90 py-1.5 pl-[5px] pr-3 has-[:checked]:border-black">
+							<label className="group flex cursor-pointer select-none items-center gap-2 rounded-lg border border-gray-50 bg-gray-90 py-1.5 pl-[5px] pr-3 has-[:checked]:border-black has-[:checked]:outline has-[:checked]:outline-1 has-[:checked]:outline-offset-0 has-[:checked]:outline-black">
 								<div className="flex h-6 w-6 items-center justify-center rounded-[5px] border border-gray-50 bg-white group-has-[:checked]:border-black group-has-[:checked]:bg-black">
 									<Text
 										style="heading"
@@ -77,9 +77,10 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 									type="checkbox"
 									name="answer"
 									value={response}
-									className="appearance-none"
+									className="appearance-none outline-none"
 									onClick={handleChange}
 									defaultChecked={answer?.responses.includes(response)}
+									readOnly={props.readOnly}
 								/>
 
 								<CheckIcon className="ml-auto w-4 opacity-0 group-has-[:checked]:opacity-100" />
