@@ -16,15 +16,22 @@ export async function submitGroupAction(formData: FormData) {
 
 	const participant = await client.findParticipantOrThrow<GroupParticipant>()
 
-	const newGroups: GroupParticipant["groups"] = {
-		...participant.groups,
+	const answers = participant.answers?.[data.exerciseId]?.answers ?? []
+
+	const newGroups: GroupParticipant["answers"] = {
+		...participant.answers,
 		[data.exerciseId]: {
-			group: data.group,
-			role: data.role,
+			...participant.answers?.[data.exerciseId],
+			meta: {
+				type: "group",
+				group: data.group,
+				role: data.role,
+			},
+			answers,
 		},
 	}
 
-	await sanity.patch(participant._id).set({ groups: newGroups }).commit()
+	await sanity.patch(participant._id).set({ answers: newGroups }).commit()
 
 	revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
 }

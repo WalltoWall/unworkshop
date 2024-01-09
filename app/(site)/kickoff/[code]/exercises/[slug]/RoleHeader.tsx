@@ -9,15 +9,14 @@ interface RoleHeaderProps {
 
 export const RoleHeader = async ({ exerciseId }: RoleHeaderProps) => {
 	const participant = await client.findParticipantOrThrow<GroupParticipant>()
-	const groups = participant.groups ?? {}
-	const groupData = groups[exerciseId]
+	const meta = participant.answers?.[exerciseId]?.meta
 
-	return groupData ? (
+	return meta && meta.type === "group" ? (
 		<div className="-mx-7 -mt-3.5 mb-6 flex items-center justify-center bg-gray-50 p-4 text-white">
 			<PencilCircle className="mr-1 w-5" />
 			<Text size={16}>
 				You're{" "}
-				{groupData.role === "captain" ? (
+				{meta.role === "captain" ? (
 					<>
 						the <strong>Captain</strong>
 					</>
@@ -26,7 +25,7 @@ export const RoleHeader = async ({ exerciseId }: RoleHeaderProps) => {
 						a <strong>Contributor</strong>
 					</>
 				)}{" "}
-				of <strong>{groupData.group}</strong>
+				of <strong>{meta.group}</strong>
 			</Text>
 		</div>
 	) : null

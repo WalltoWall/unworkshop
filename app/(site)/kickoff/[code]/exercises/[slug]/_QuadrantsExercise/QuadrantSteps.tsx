@@ -4,9 +4,12 @@ import React, { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
+import { useCaptainAnswers } from "@/sanity/groups"
+// import { useCaptainAnswers } from "@/sanity/groups"
+import type { GroupAnswer, IndividualAnswer } from "../groups/types"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
-import type { Answer, Answers, Group } from "./types"
+import type { Answer, Answers } from "./types"
 
 export type AnswerDispatch = {
 	newAnswer: Answer
@@ -24,27 +27,31 @@ type QuadrantStepsProps = {
 	answers: Answers
 	exerciseId: string
 	quadrants: NonNullable<ST["exercise"]["quadrants"]>
-	group: Group
+	meta?: IndividualAnswer | GroupAnswer
 	todayInstructions: ST["exercise"]["today_instructions"]
 	tomorrowInstructions: ST["exercise"]["tomorrow_instructions"]
 	finalInstructions: ST["exercise"]["finalize_instructions"]
 	kickoffCode: string
+	readOnly: boolean
 }
 
 export const QuadrantSteps = ({
 	answers,
 	exerciseId,
 	quadrants,
-	group,
+	meta,
 	todayInstructions,
 	tomorrowInstructions,
 	finalInstructions,
 	kickoffCode,
+	readOnly,
 }: QuadrantStepsProps) => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const totalSteps = quadrants.length * 2
+
+	const groupCaptainAnswers = useCaptainAnswers(exerciseId, meta?.group) ?? {}
 
 	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
 		Answers,
@@ -129,12 +136,14 @@ export const QuadrantSteps = ({
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
-								isGroup={Boolean(group)}
+								group={meta}
+								captainAnswer={groupCaptainAnswers[quadrant.slug.current]}
 								answer={optimisticAnswers[quadrant.slug.current]}
 								state={state}
 								index={index}
 								answerDispatch={answerDispatch}
 								onQuadrantClick={handleClick}
+								readOnly={readOnly}
 							/>
 						</div>
 					))
@@ -143,12 +152,14 @@ export const QuadrantSteps = ({
 						<Quadrant
 							item={currentQuadrant}
 							exerciseId={exerciseId}
-							isGroup={Boolean(group)}
+							group={meta}
+							captainAnswer={groupCaptainAnswers[currentQuadrant.slug.current]}
 							answer={optimisticAnswers[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}
 							answerDispatch={answerDispatch}
 							onQuadrantClick={handleClick}
+							readOnly={readOnly}
 						/>
 					</div>
 				) : null}

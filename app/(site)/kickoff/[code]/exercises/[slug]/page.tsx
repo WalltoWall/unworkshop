@@ -3,6 +3,7 @@ import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
+import type { GroupParticipant } from "./groups/types"
 import { InstructionsModal } from "./InstructionsModal"
 import { RoleHeader } from "./RoleHeader"
 

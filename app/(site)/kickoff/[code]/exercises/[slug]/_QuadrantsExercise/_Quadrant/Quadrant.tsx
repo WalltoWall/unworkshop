@@ -5,6 +5,7 @@ import {
 	type DragMoveEvent,
 } from "@dnd-kit/core"
 import type { ST } from "@/sanity/config"
+import type { GroupAnswer, IndividualAnswer } from "../../groups/types"
 import { submitQuadrantAction } from "../actions"
 import { type AnswerDispatch, type State } from "../QuadrantSteps"
 import type { Answer } from "../types"
@@ -19,12 +20,14 @@ type Day = "today" | "tomorrow"
 type QuadrantProps = {
 	item: NonNullable<ST["exercise"]["quadrants"]>[number]
 	exerciseId: string
-	isGroup: boolean
+	group?: IndividualAnswer | GroupAnswer
 	index: number
 	state: State
+	captainAnswer?: Answer
 	answer?: Answer
 	answerDispatch: (action: AnswerDispatch) => void
 	onQuadrantClick: () => void
+	readOnly: boolean
 }
 
 // REVIEW: I wonder if it's okay that participants are able to modify the
@@ -33,12 +36,14 @@ type QuadrantProps = {
 export const Quadrant = ({
 	item,
 	exerciseId,
-	isGroup,
+	group,
 	index,
 	state,
+	captainAnswer,
 	answer,
 	answerDispatch,
 	onQuadrantClick,
+	readOnly,
 }: QuadrantProps) => {
 	const [, startTransition] = React.useTransition()
 	const [arrowData, setArrowData] = React.useState({
@@ -48,8 +53,8 @@ export const Quadrant = ({
 		width: 0,
 	})
 
-	const today = answer?.today
-	const tomorrow = answer?.tomorrow
+	const today = readOnly ? captainAnswer?.today : answer?.today
+	const tomorrow = readOnly ? captainAnswer?.tomorrow : answer?.tomorrow
 
 	const clickTarget = React.useRef<HTMLDivElement>(null)
 
@@ -68,7 +73,7 @@ export const Quadrant = ({
 	}, [today, tomorrow])
 
 	const handleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
 			const top =
 				((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
@@ -93,7 +98,7 @@ export const Quadrant = ({
 	}
 
 	const handleDragEnd = async (event: DragEndEvent) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const { ref, type } = event.active.data.current!
 
 			if (ref) {
@@ -110,7 +115,7 @@ export const Quadrant = ({
 	}
 
 	const handleDragMove = (event: DragMoveEvent) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const { ref, type } = event.active.data.current!
 
 			if (ref && today && tomorrow) {
@@ -183,7 +188,7 @@ export const Quadrant = ({
 		const handleSubmit = submitQuadrantAction.bind(null, {
 			answer: updatedAnswer,
 			exerciseId,
-			isGroup,
+			group,
 		})
 		await handleSubmit()
 	}

@@ -1,10 +1,17 @@
 import type { ST } from "@/sanity/config"
 
+export type IndividualAnswer = {
+	type: "individual"
+	group: undefined
+	role: undefined
+}
+export type GroupAnswer = { type: "group"; group: string; role: string }
+
 export type GroupParticipant = ST["participant"] & {
-	groups?: {
+	answers?: {
 		[exerciseId: string]: {
-			group: string
-			role: string
+			meta: IndividualAnswer | GroupAnswer
+			answers: any
 		}
 	}
 }

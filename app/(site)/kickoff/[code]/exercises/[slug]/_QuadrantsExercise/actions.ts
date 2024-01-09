@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import zod from "zod"
 import { client, sanity } from "@/sanity/client"
+import type { GroupAnswer, IndividualAnswer } from "../groups/types"
 import { type Answer, type QuadrantsParticipant } from "./types"
 
 const submitQuadrantSchema = zod.object({
@@ -24,13 +25,17 @@ const submitQuadrantSchema = zod.object({
 		}),
 	}),
 	exerciseId: zod.string(),
-	isGroup: zod.boolean(),
+	group: zod.object({
+		type: zod.string(),
+		group: zod.string().optional(),
+		role: zod.string().optional(),
+	}),
 })
 
 export async function submitQuadrantAction(newAnswer: {
 	answer: { slug: string; newAnswer: Answer }
 	exerciseId: string
-	isGroup: boolean
+	group?: IndividualAnswer | GroupAnswer
 }) {
 	const data = submitQuadrantSchema.parse(newAnswer)
 
@@ -38,12 +43,7 @@ export async function submitQuadrantAction(newAnswer: {
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
 
 	const oldAnswers = participant.answers?.[data.exerciseId]?.answers ?? {}
-	const meta = data.isGroup
-		? {
-				type: "group" as const,
-				leader: participant._id,
-			}
-		: { type: "individual" as const }
+	const meta = data.group ?? { type: "individual" as const }
 
 	const newPositions = { ...oldAnswers[data.answer.slug] }
 
@@ -59,7 +59,7 @@ export async function submitQuadrantAction(newAnswer: {
 		...participant.answers,
 		[data.exerciseId]: {
 			...participant.answers?.[data.exerciseId],
-			meta,
+			meta: meta as IndividualAnswer | GroupAnswer,
 			answers: {
 				...oldAnswers,
 				[data.answer.slug]: newPositions,

@@ -1,6 +1,6 @@
 import React from "react"
 import { redirect } from "next/navigation"
-import { client } from "@/sanity/client"
+import { client, sanity } from "@/sanity/client"
 import type { ST } from "@/sanity/config"
 import { QuadrantSteps } from "./QuadrantSteps"
 import type { QuadrantsParticipant } from "./types"
@@ -16,12 +16,12 @@ export const QuadrantsExercise = async ({
 }: QuadrantsExerciseProps) => {
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
+	const meta = participant.answers?.[exercise._id]?.meta
 	const answers = participant.answers?.[exercise._id]?.answers ?? {}
 
-	const participantGroup = participant.groups?.[exercise._id]
 	const groups = exercise.groups ?? []
 
-	if (!participantGroup && groups.length > 0) {
+	if (groups.length > 0 && !meta) {
 		redirect(
 			`/kickoff/${kickoffCode}/exercises/${exercise.slug.current}/groups`,
 		)
@@ -34,11 +34,12 @@ export const QuadrantsExercise = async ({
 					answers={answers}
 					quadrants={exercise.quadrants}
 					exerciseId={exercise._id}
-					group={participantGroup}
+					meta={meta}
 					todayInstructions={exercise.today_instructions}
 					tomorrowInstructions={exercise.tomorrow_instructions}
 					finalInstructions={exercise.finalize_instructions}
 					kickoffCode={kickoffCode}
+					readOnly={meta?.role === "contributor"}
 				/>
 			)}
 		</div>
