@@ -4,7 +4,7 @@ export type Block<T = unknown> = {
 	children?: React.ReactNode | Array<string>
 } & T
 
-type RichTextContent = Array<Block>
+export type RichTextContent = Array<Block>
 
 export interface RichTextProps {
 	content?: RichTextContent
