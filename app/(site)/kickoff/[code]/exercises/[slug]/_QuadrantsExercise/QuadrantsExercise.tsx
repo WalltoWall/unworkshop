@@ -21,7 +21,7 @@ export const QuadrantsExercise = async ({
 	const participantGroup = participant.groups?.[exercise._id]
 	const groups = exercise.groups ?? []
 
-	if (!participantGroup) {
+	if (!participantGroup && groups.length > 0) {
 		redirect(
 			`/kickoff/${kickoffCode}/exercises/${exercise.slug.current}/groups`,
 		)
