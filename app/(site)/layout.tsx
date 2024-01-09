@@ -4,18 +4,18 @@ import { cx } from "class-variance-authority"
 import { Toaster } from "sonner"
 import "./globals.css"
 
-const TradeGothic = Local({
-	src: "../../assets/fonts/trade-gothic-regular.woff2",
+const FontSans = Local({
+	src: "../../assets/fonts/regular.woff2",
 	display: "swap",
-	variable: "--font-trade-gothic",
+	variable: "--sans",
 	weight: "400",
 	style: "normal",
 })
 
-const TradeGothicBldCnd = Local({
-	src: "../../assets/fonts/trade-gothic-bold-condensed.woff2",
+const FontHeading = Local({
+	src: "../../assets/fonts/compressed.woff2",
 	display: "swap",
-	variable: "--font-trade-gothic-bold-condensed",
+	variable: "--heading",
 	weight: "700",
 	style: "normal",
 })
@@ -32,8 +32,8 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 			<body
 				className={cx(
 					"font-normal antialiased leading-copy font-sans",
-					TradeGothic.variable,
-					TradeGothicBldCnd.variable,
+					FontSans.variable,
+					FontHeading.variable,
 				)}
 			>
 				{children}
