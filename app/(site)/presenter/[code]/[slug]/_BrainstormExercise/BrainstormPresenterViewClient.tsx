@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import { flushSync } from "react-dom"
 import {
 	closestCorners,
 	DndContext,
@@ -58,9 +59,15 @@ export const BrainstormPresenterViewClient = ({
 	const formRef = React.useRef<HTMLFormElement>(null)
 
 	const removeColumn = (id: string) => {
-		const newColumns = { ...columns }
-		delete newColumns[id]
-		setColumns(newColumns)
+		flushSync(() => {
+			setColumns(
+				Object.fromEntries(
+					Object.entries(columns).filter(([key]) => key !== id),
+				),
+			)
+		})
+
+		formRef.current?.requestSubmit()
 	}
 
 	const sensors = useSensors(
@@ -95,15 +102,17 @@ export const BrainstormPresenterViewClient = ({
 				const oldIdx = cards.findIndex((card) => card.id === active.id)
 				const newIdx = cards.findIndex((card) => card.id === over.id)
 
-				setColumns({
-					...columns,
-					[columnId]: {
-						...columns[columnId],
-						cards: arrayMove(cards, oldIdx, newIdx),
-					},
+				flushSync(() => {
+					setColumns({
+						...columns,
+						[columnId]: {
+							...columns[columnId],
+							cards: arrayMove(cards, oldIdx, newIdx),
+						},
+					})
 				})
 
-				// formRef.current?.requestSubmit()
+				formRef.current?.requestSubmit()
 				setActiveCard(null)
 			}}
 			onDragOver={({ active, over }) => {
@@ -126,32 +135,36 @@ export const BrainstormPresenterViewClient = ({
 				if (toCards.length === 0) {
 					toCards.push(activeCard)
 
-					setColumns({
-						...columns,
-						[fromColumnId]: {
-							...columns[fromColumnId],
-							cards: fromCards.filter((card) => card.id !== active.id),
-						},
-						[toColumnId]: {
-							...columns[toColumnId],
-							cards: toCards,
-						},
+					flushSync(() => {
+						setColumns({
+							...columns,
+							[fromColumnId]: {
+								...columns[fromColumnId],
+								cards: fromCards.filter((card) => card.id !== active.id),
+							},
+							[toColumnId]: {
+								...columns[toColumnId],
+								cards: toCards,
+							},
+						})
 					})
 				} else {
-					setColumns({
-						...columns,
-						[fromColumnId]: {
-							...columns[fromColumnId],
-							cards: fromCards.filter((card) => card.id !== active.id),
-						},
-						[toColumnId]: {
-							...columns[toColumnId],
-							cards: toCards.toSpliced(
-								over.data.current?.sortable.index,
-								0,
-								activeCard,
-							),
-						},
+					flushSync(() => {
+						setColumns({
+							...columns,
+							[fromColumnId]: {
+								...columns[fromColumnId],
+								cards: fromCards.filter((card) => card.id !== active.id),
+							},
+							[toColumnId]: {
+								...columns[toColumnId],
+								cards: toCards.toSpliced(
+									over.data.current?.sortable.index,
+									0,
+									activeCard,
+								),
+							},
+						})
 					})
 				}
 
@@ -222,6 +235,7 @@ export const BrainstormPresenterViewClient = ({
 										columns={columns}
 										setColumns={setColumns}
 										formRef={formRef}
+										exerciseSlug={exerciseSlug.current}
 									/>
 								)
 							},

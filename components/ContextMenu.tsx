@@ -1,7 +1,8 @@
 "use client"
 
 import * as Context from "@radix-ui/react-context-menu"
-import React from "react"
+import React, { startTransition } from "react"
+import { deleteParticipantAnswer } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/actions"
 import type {
 	Card,
 	Columns,
@@ -35,6 +36,7 @@ interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
 	columns: Columns
 	card: Card
 	color: string
+	exerciseSlug: string
 }
 
 export const ContextMenu = ({
@@ -42,6 +44,7 @@ export const ContextMenu = ({
 	columns,
 	card,
 	color,
+	exerciseSlug,
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
 
@@ -107,9 +110,11 @@ export const ContextMenu = ({
 			},
 		})
 
-		// formRef.current?.requestSubmit()
+		startTransition(() => {
+			deleteParticipantAnswer({ cardId: card.id, exerciseSlug: exerciseSlug })
+		})
 
-		// call delete function to find participant that matches that card and delete it from the participants answer list
+		// formRef.current?.requestSubmit()
 	}
 
 	const finalizeEdit = (newResponse: string) => {

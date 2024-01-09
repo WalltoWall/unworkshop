@@ -22,6 +22,7 @@ interface CardColumnProps {
 	setColumns: (value: React.SetStateAction<Columns>) => void
 	columns: Columns
 	formRef: React.RefObject<HTMLFormElement>
+	exerciseSlug: string
 }
 
 export const CardColumn = ({
@@ -33,28 +34,14 @@ export const CardColumn = ({
 	setColumns,
 	columns,
 	formRef,
+	exerciseSlug,
 }: CardColumnProps) => {
 	const [color, setColor] = React.useState<string>(colorHex || "#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
-	const [title, setTitle] = React.useState<string>(columnTitle ?? "New Column")
 	const { setNodeRef } = useDroppable({ id: id })
 
-	const debounceTitle: (e: React.ChangeEvent<HTMLInputElement>) => void =
-		useDebounce((e) => {
-			flushSync(() => {
-				console.log(e)
-				return
-
-				setColumns({
-					...columns,
-					[id]: {
-						...columns[id],
-						title: e.target.value,
-					},
-				})
-			})
-			formRef.current?.requestSubmit()
-		}, 250)
+	const debounceTitle = useDebounce(() => formRef.current?.requestSubmit(), 250)
+	const debounceSetCols = useDebounce(() => {}, 250)
 
 	const colorGroups = [
 		["#ff9488", "#ff7566", "#ff5745", "#e8503f", "#ba4033"],
@@ -107,13 +94,29 @@ export const CardColumn = ({
 						type="button"
 					></button>
 					<input
-						onChange={(e) => debounceTitle(e)}
-						value={title}
+						onChange={(e) => {
+							debounceSetCols()
+
+							setColumns({
+								...columns,
+								[id]: {
+									...columns[id],
+									title: e.currentTarget.value,
+								},
+							})
+
+							debounceTitle()
+						}}
+						defaultValue={columnTitle}
 						className="mt-2 bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
 					/>
 				</div>
 				<div className="flex items-center gap-3">
-					<PresentColumnModal cards={cards} color={color} columnTitle={title} />
+					<PresentColumnModal
+						cards={cards}
+						color={color}
+						columnTitle={columnTitle}
+					/>
 					<button onClick={() => removeColumn(id)} type="button">
 						<BlackXIcon className="w-7" />
 					</button>
@@ -133,6 +136,7 @@ export const CardColumn = ({
 								columns={columns}
 								card={card}
 								color={color}
+								exerciseSlug={exerciseSlug}
 							/>
 						))
 					) : (
