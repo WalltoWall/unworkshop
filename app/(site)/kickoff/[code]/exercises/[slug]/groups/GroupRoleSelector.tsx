@@ -1,10 +1,12 @@
 "use client"
 
+import React, { type Dispatch } from "react"
 import Image from "next/image"
 import { cx } from "class-variance-authority"
 import { Text } from "@/components/Text"
 import captainIllustration from "@/assets/images/captain-illustration.jpg"
 import contibutorIllustration from "@/assets/images/contributor-illustration.jpg"
+import type { Role } from "./GroupForm"
 
 const variants = {
 	contributor: {
@@ -23,48 +25,55 @@ const variants = {
 	},
 }
 
-export const GroupRoleSelector = () => {
-	const handleRoleSelect = (role: string) => {
-		console.log(role)
-	}
+interface GroupRoleSelectorProps {
+	onGroupChange: () => void
+}
 
+export const GroupRoleSelector = ({
+	onGroupChange,
+}: GroupRoleSelectorProps) => {
 	return (
 		<div className="my-4">
 			<Text size={16} className="mb-7">
 				What's your role?
 			</Text>
 
-			<div className="grid gap-4">
-				<RoleCard type="contributor" onRoleSelect={handleRoleSelect} />
-				<RoleCard type="captain" onRoleSelect={handleRoleSelect} />
-			</div>
+			<fieldset className="grid gap-4" onChange={onGroupChange}>
+				<RoleCard type="contributor" />
+				<RoleCard type="captain" />
+			</fieldset>
 		</div>
 	)
 }
 
 interface RoleCardProps {
-	type: "contributor" | "captain"
-	onRoleSelect: (role: string) => void
+	type: Role
 }
 
-const RoleCard = ({ type, onRoleSelect }: RoleCardProps) => {
+const RoleCard = ({ type }: RoleCardProps) => {
 	const variant = variants[type as keyof typeof variants]
 
 	return (
-		<button
-			type="button"
+		<label
 			className={cx(
 				"relative flex aspect-[308/200] flex-col overflow-hidden rounded-lg p-3 text-left",
 				variant.className,
 			)}
-			onClick={() => onRoleSelect(type)}
 		>
+			<input
+				type="radio"
+				name="role"
+				value={type}
+				className="absolute -left-[9999px] h-[1px] w-[1px]"
+			/>
+
 			<Image
 				src={variant.imageSrc}
 				alt=""
 				placeholder="blur"
 				className="absolute right-0 top-0"
 			/>
+
 			<Text
 				asChild
 				size={32}
@@ -79,6 +88,6 @@ const RoleCard = ({ type, onRoleSelect }: RoleCardProps) => {
 			>
 				{variant.instructions}
 			</Text>
-		</button>
+		</label>
 	)
 }

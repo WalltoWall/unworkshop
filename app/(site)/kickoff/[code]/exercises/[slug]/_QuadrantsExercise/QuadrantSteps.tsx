@@ -6,7 +6,7 @@ import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
-import type { Answer, Answers } from "./types"
+import type { Answer, Answers, Group } from "./types"
 
 export type AnswerDispatch = {
 	newAnswer: Answer
@@ -24,7 +24,7 @@ type QuadrantStepsProps = {
 	answers: Answers
 	exerciseId: string
 	quadrants: NonNullable<ST["exercise"]["quadrants"]>
-	group: boolean
+	group: Group
 	todayInstructions: ST["exercise"]["today_instructions"]
 	tomorrowInstructions: ST["exercise"]["tomorrow_instructions"]
 	finalInstructions: ST["exercise"]["finalize_instructions"]
@@ -129,7 +129,7 @@ export const QuadrantSteps = ({
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
-								isGroup={group}
+								isGroup={Boolean(group)}
 								answer={optimisticAnswers[quadrant.slug.current]}
 								state={state}
 								index={index}
@@ -143,7 +143,7 @@ export const QuadrantSteps = ({
 						<Quadrant
 							item={currentQuadrant}
 							exerciseId={exerciseId}
-							isGroup={group}
+							isGroup={Boolean(group)}
 							answer={optimisticAnswers[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}

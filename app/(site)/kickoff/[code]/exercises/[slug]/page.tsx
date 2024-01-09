@@ -4,6 +4,7 @@ import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
 import { InstructionsModal } from "./InstructionsModal"
+import { RoleHeader } from "./RoleHeader"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -15,6 +16,8 @@ const ExercisePage = async (props: Props) => {
 
 	return (
 		<div className="h-full">
+			<RoleHeader exerciseId={exercise._id} />
+
 			<InstructionsModal
 				exerciseName={exercise.name}
 				instructions={exercise.instructions}

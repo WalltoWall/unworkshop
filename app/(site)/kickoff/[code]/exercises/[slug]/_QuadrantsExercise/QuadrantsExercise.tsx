@@ -1,4 +1,5 @@
 import React from "react"
+import { redirect } from "next/navigation"
 import { client } from "@/sanity/client"
 import type { ST } from "@/sanity/config"
 import { QuadrantSteps } from "./QuadrantSteps"
@@ -16,7 +17,15 @@ export const QuadrantsExercise = async ({
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
 	const answers = participant.answers?.[exercise._id]?.answers ?? {}
+
+	const participantGroup = participant.groups?.[exercise._id]
 	const groups = exercise.groups ?? []
+
+	if (!participantGroup) {
+		redirect(
+			`/kickoff/${kickoffCode}/exercises/${exercise.slug.current}/groups`,
+		)
+	}
 
 	return (
 		<div className="mt-8 h-full">
@@ -25,7 +34,7 @@ export const QuadrantsExercise = async ({
 					answers={answers}
 					quadrants={exercise.quadrants}
 					exerciseId={exercise._id}
-					group={groups.length > 0}
+					group={participantGroup}
 					todayInstructions={exercise.today_instructions}
 					tomorrowInstructions={exercise.tomorrow_instructions}
 					finalInstructions={exercise.finalize_instructions}
