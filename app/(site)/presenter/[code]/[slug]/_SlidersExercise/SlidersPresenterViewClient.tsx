@@ -17,7 +17,6 @@ export const SlidersPresenterViewClient = ({
 	answers,
 }: PresenterViewProps) => {
 	const [color, setColor] = React.useState("#fecb2f")
-	
 	return exercise.sliders ? (
 		<div>
 			<div className="inline-block rounded-2xl bg-black px-5 py-4 mb-8 text-white">
@@ -85,11 +84,11 @@ export const SlidersPresenterViewClient = ({
 								)}
 							</div>
 
-							<div className="absolute top-0 left-0 h-full w-full flex justify-evenly items-end">
+							<div className="absolute top-0 left-0 h-full w-full flex justify-evenly items-end gap-4 lg:gap-8">
 								{answers[slider.slug.current].map((answer, i) => (
-									<div key={i} className="h-full flex justify-evenly items-end gap-4">
-										{answer?.today && (
-											<div className="relative bg-yellow-68 block min-w-[4rem]"
+									<div key={i} className="h-full w-full flex justify-center items-end gap-3">
+										{answer?.today &&(
+											<div className={"relative bg-yellow-68 block w-full max-w-[4rem]"}
 											style={{
 												height: `${answer.today * 10}%`,
 											}}
@@ -97,7 +96,7 @@ export const SlidersPresenterViewClient = ({
 											</div>
 										)}
 										{answer?.tomorrow && (
-											<div className="relative block min-w-[4rem] border-2 border-yellow-68 border-b-0"
+											<div className={"relative block border-2 border-yellow-68 border-b-0 w-full max-w-[4rem]"}
 											style={{
 												height: `${answer.tomorrow * 10}%`,
 												backgroundImage: `repeating-linear-gradient(-45deg,${color},${color} 2px,rgba(0,0,0,0) 2px,rgba(0,0,0,0) 18px)`,
