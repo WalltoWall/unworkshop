@@ -173,7 +173,7 @@ export const TaglineField = ({ source, answer, ...props }: Props) => {
 				{...sharedInputProps}
 			/>
 
-			{answerTwo === null && (
+			{answerTwo === null && !props.readOnly && (
 				<AddButton className="mt-2.5" onClick={() => setAnswerTwo("")}>
 					Add another response
 				</AddButton>

@@ -239,7 +239,9 @@ const PlainListField = ({ answer, ...props }: Props) => {
 			</ul>
 
 			{showAddButton && !props.readOnly && (
-				<AddButton onClick={appendNewRow}>{addButtonText}</AddButton>
+				<AddButton onClick={appendNewRow} className="mt-2.5">
+					{addButtonText}
+				</AddButton>
 			)}
 
 			<input type="submit" className="hidden" />
