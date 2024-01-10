@@ -3,7 +3,6 @@
 import React from "react"
 import clsx from "clsx"
 import { uid } from "uid"
-import { addCardAction } from "./actions"
 import { AddCardButton } from "./AddCardButton"
 import { CardForm } from "./CardForm"
 import type { Answer } from "./types"
@@ -13,7 +12,7 @@ export type CardDispatch = {
 	payload: Answer
 }
 
-type Color = "green" | "red" | "yellow"
+export type Color = "green" | "red" | "yellow"
 
 type ColorVarient = {
 	bgColor: string
@@ -24,6 +23,7 @@ interface CardScrollerProps {
 	exerciseId: string
 	group: boolean
 	color?: Color
+	step: number
 }
 
 export const CardScroller = ({
@@ -31,6 +31,7 @@ export const CardScroller = ({
 	exerciseId,
 	group,
 	color = "green",
+	step = 1,
 }: CardScrollerProps) => {
 	const [optimisticCards, cardsDispatch] = React.useOptimistic<
 		Array<Answer>,
@@ -66,7 +67,7 @@ export const CardScroller = ({
 	return (
 		<div
 			className={clsx(
-				"relative mx-auto my-8 grid max-h-full grow grid-cols-2 content-start gap-2.5 overflow-y-scroll py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:grid-cols-[163px_163px]",
+				"relative mx-auto my-8 mb-auto grid max-h-[calc(100vh*0.62)] grow grid-cols-2 content-start gap-2.5 overflow-y-scroll py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:grid-cols-[163px_163px]",
 			)}
 		>
 			<AddCardButton
@@ -74,6 +75,7 @@ export const CardScroller = ({
 				isGroup={group}
 				addOptimisticCard={addOptimisticCard}
 				cardId={uid()}
+				step={step}
 			/>
 			{optimisticCards.toReversed().map((card) => (
 				<CardForm

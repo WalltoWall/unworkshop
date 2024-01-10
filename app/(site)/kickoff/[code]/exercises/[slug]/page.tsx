@@ -22,7 +22,10 @@ const ExercisePage = async (props: Props) => {
 			/>
 
 			{exercise.type === "brainstorm" && (
-				<BrainstormExercise exercise={exercise} />
+				<BrainstormExercise
+					exercise={exercise}
+					kickoffCode={props.params.code}
+				/>
 			)}
 			{exercise.type === "sliders" && <SlidersExercise exercise={exercise} />}
 			{exercise.type === "quadrants" && (
