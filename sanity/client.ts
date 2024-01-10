@@ -81,18 +81,22 @@ export const client = {
 		return participant
 	}),
 
-	// prettier-ignore
-	async findAllParticipantsInExercise(exerciseId: string) {
-		const participants = await sanity.fetch<Array<ST["participant"]>>(
-			groq`*[_type == "participant" && answers[$exerciseId] != null]{
+	findAllParticipantsInExercise: React.cache(
+		async <T extends ST["participant"] = ST["participant"]>(
+			exerciseId: string,
+		) => {
+			const participants = await sanity.fetch<Array<T>>(
+				groq`*[_type == "participant" && answers[$exerciseId] != null]{
 				...,
 				answers
 			}`,
-			{exerciseId},
-		)
+				{ exerciseId },
+				{ cache: "no-store" },
+			)
 
-		return participants
-	},
+			return participants
+		},
+	),
 
 	async findKickoffOrThrow(code: string) {
 		const kickoff = await client.findKickoff(code)
