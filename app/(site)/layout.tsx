@@ -36,7 +36,9 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 					FontHeading.variable,
 				)}
 			>
-				{children}
+				<div vaul-drawer-wrapper="" className="min-h-[100vh] bg-white">
+					{children}
+				</div>
 
 				<Toaster />
 			</body>

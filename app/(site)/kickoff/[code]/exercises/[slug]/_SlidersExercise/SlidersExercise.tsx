@@ -11,6 +11,9 @@ type Props = {
 	exercise: ST["exercise"]
 }
 
+// TODO: Currently does not support nested sliders. E.g. 2 sliders per step.
+// TODO: Ensure answers are persisted on refresh / page load.
+// TODO: Tie the current step to search parameters.
 export const SlidersExercise = ({ exercise }: Props) => {
 	const router = useRouter()
 	const params = useParams()
@@ -35,11 +38,7 @@ export const SlidersExercise = ({ exercise }: Props) => {
 				/>
 			))}
 
-			<Steps
-				steps={sliders.length}
-				activeStep={step}
-				onFinish={goBackToExerciseList}
-			/>
+			<Steps steps={1} activeStep={step} onFinish={goBackToExerciseList} />
 		</div>
 	)
 }
