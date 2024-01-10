@@ -113,7 +113,7 @@ export const SlidersPresenterViewClient = ({
 					))}
 				</div>
 				{exercise.sliders.map((slider) => (
-					<div key={slider._key} className="w-full flex justify-between items-end mt-12">
+					<div key={slider._key} className="w-full flex justify-between items-end mt-10">
 						<Text className="ml-1 uppercase text-40 font-heading capsize">{slider.left_value}</Text>
 						<Text className="ml-1 uppercase text-40 font-heading capsize">{slider.right_value}</Text>
 					</div>
