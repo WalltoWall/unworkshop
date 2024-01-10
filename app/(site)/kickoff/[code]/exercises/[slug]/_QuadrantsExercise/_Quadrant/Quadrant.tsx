@@ -78,7 +78,7 @@ export const Quadrant = ({
 				100
 
 			let updatedAnswer = {
-				name: item.name,
+				slug: item.slug.current,
 				newAnswer: {},
 			}
 
@@ -100,7 +100,7 @@ export const Quadrant = ({
 				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
 
 				let updatedAnswer = {
-					name: item.name,
+					slug: item.slug.current,
 					newAnswer: {},
 				}
 
@@ -157,7 +157,7 @@ export const Quadrant = ({
 	}
 
 	const savePointLocations = async (
-		updatedAnswer: { name: string; newAnswer: Answer },
+		updatedAnswer: { slug: string; newAnswer: Answer },
 		top: number,
 		left: number,
 		type: Day,
