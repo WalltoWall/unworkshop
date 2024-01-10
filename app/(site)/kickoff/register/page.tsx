@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { unstable_noStore as noStore } from "next/cache"
 import { cookies } from "next/headers"
 import Image from "next/image"
 import { notFound, redirect } from "next/navigation"
@@ -31,6 +32,8 @@ const KickoffRegisterPage = async (props: Props) => {
 
 	async function register(data: FormData) {
 		"use server"
+
+		noStore()
 
 		const form = Form.parse(data)
 		const participant = await client.registerParticipant({

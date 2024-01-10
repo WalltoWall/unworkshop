@@ -6,10 +6,12 @@ import type { BrainstormParticipant } from "./types"
 
 export interface BrainstormExerciseProps {
 	exercise: ST["exercise"]
+	kickoffCode: string
 }
 
 export const BrainstormExercise = async ({
 	exercise,
+	kickoffCode,
 }: BrainstormExerciseProps) => {
 	const participant =
 		await client.findParticipantOrThrow<BrainstormParticipant>()
@@ -25,6 +27,7 @@ export const BrainstormExercise = async ({
 				cards={cards}
 				groups={groups}
 				exerciseId={exercise._id}
+				kickoffCode={kickoffCode}
 			/>
 		</div>
 	)

@@ -13,7 +13,7 @@ import type { Answer } from "./types"
 type Props = {
 	exerciseId: string
 	item: SliderItem
-	group: boolean
+	group?: boolean
     answer: Answer
 }
 

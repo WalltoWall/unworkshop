@@ -42,7 +42,7 @@ export const Scroller = () => {
 						disabled={form.pending}
 					>
 						I Agree
-						{form.pending && <Spinner className="w-[1.125rem]" />}
+						{form.pending && <Spinner className="mt-1 w-[1.125rem]" />}
 					</Button>
 				</div>
 			</div>
