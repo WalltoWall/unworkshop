@@ -2,7 +2,6 @@
 
 import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
-import clsx from "clsx"
 import { z } from "zod"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"

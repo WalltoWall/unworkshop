@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 const button = cva(
 	[
-		"inline-flex justify-center items-center text-center gap-2.5",
+		"inline-flex justify-center items-center text-center gap-2.5 pb-1",
 		"border border-solid leading-none disabled:cursor-not-allowed",
 	],
 	{

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { unstable_noStore as noStore } from "next/cache"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { LightLayout } from "@/components/LightLayout"
@@ -17,6 +18,8 @@ const KickoffPage = async (props: Props) => {
 
 	async function onboard() {
 		"use server"
+
+		noStore()
 
 		await client.onboardParticipant(participant._id)
 		redirect(`/kickoff/${props.params.code}/exercises`)
