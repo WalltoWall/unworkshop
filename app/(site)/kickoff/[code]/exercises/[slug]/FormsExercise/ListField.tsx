@@ -1,10 +1,9 @@
 import React from "react"
 import debounce from "just-debounce-it"
 import { match } from "ts-pattern"
-import { Button } from "@/components/Button"
-import { PlusIcon } from "@/components/icons/Plus"
 import { Text } from "@/components/Text"
 import { submitFieldAnswer } from "./actions"
+import { AddButton } from "./AddButton"
 import type {
 	FieldProps,
 	FormAnswer,
@@ -12,31 +11,9 @@ import type {
 	FormStep,
 	ListFieldAnswer,
 } from "./types"
-import { PositiveNumber } from "./validators"
+import { AnswersArray, PositiveNumber } from "./validators"
 
 const DEFAULT_INPUT_NAME = "answer"
-
-const AddButton = (props: {
-	onClick?: React.MouseEventHandler<HTMLButtonElement>
-	children: string
-}) => {
-	return (
-		<Button
-			color="black"
-			uppercase={false}
-			size="xs"
-			outline
-			rounded="sm"
-			fontFamily="sans"
-			className="mt-2.5"
-			onClick={props.onClick}
-			type="button"
-		>
-			<PlusIcon className="w-[18px]" />
-			<span className="capsize">{props.children}</span>
-		</Button>
-	)
-}
 
 type InputProps = {
 	number: number
@@ -121,7 +98,9 @@ const SourceListSection = (props: SourceListSectionProps) => {
 			</ul>
 
 			{showAddButton && (
-				<AddButton onClick={appendNewRow}>{addButtonText}</AddButton>
+				<AddButton className="mt-2.5" onClick={appendNewRow}>
+					{addButtonText}
+				</AddButton>
 			)}
 		</div>
 	)
@@ -165,7 +144,7 @@ const SourceListField = ({ answer, ...props }: Props) => {
 					type: "List",
 					groups: labels.map((label) => ({
 						label,
-						responses: data.getAll(label).filter(Boolean) as string[],
+						responses: AnswersArray.parse(data.getAll(label)),
 					})),
 				},
 				exerciseId: props.exerciseId,
@@ -221,7 +200,7 @@ const PlainListField = ({ answer, ...props }: Props) => {
 		if (!rForm.current || props.readOnly) return
 
 		const data = new FormData(rForm.current)
-		const answers = data.getAll(DEFAULT_INPUT_NAME).filter(Boolean) as string[]
+		const answers = AnswersArray.parse(data.getAll(DEFAULT_INPUT_NAME))
 
 		startTransition(() => {
 			submitFieldAnswer({

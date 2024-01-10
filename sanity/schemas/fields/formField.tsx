@@ -19,14 +19,15 @@ export const formFieldMember = defineArrayMember({
 			type: "string",
 			initialValue: "List",
 			options: {
-				list: ["List", "Narrow", "Text", "Big Text"],
+				list: ["List", "Narrow", "Text", "Big Text", "Tagline"],
 			},
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: "prompt",
 			title: "Prompt",
-			description: "The prompt that is shown above the form field.",
+			description:
+				"The prompt that is shown above the form field. Supports basic markdown syntax.",
 			type: "text",
 			rows: 6,
 			validation: (Rule) => Rule.required(),
@@ -48,7 +49,8 @@ export const formFieldMember = defineArrayMember({
 				"Designate this field to prompt its inputs based on the answer of another step and field.",
 			type: "object",
 			options: { collapsed: true, collapsible: true },
-			hidden: ({ parent }) => !["List", "Narrow"].includes(parent?.type),
+			hidden: ({ parent }) =>
+				!["List", "Narrow", "Tagline"].includes(parent?.type),
 			fields: [
 				defineField({
 					name: "step",

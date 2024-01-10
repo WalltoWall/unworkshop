@@ -18,10 +18,16 @@ export type NarrowFieldAnswer = {
 	responses: string[]
 }
 
+export type TaglineFieldAnswer = {
+	type: "Tagline"
+	responses: string[]
+}
+
 export type FormFieldAnswer =
 	| ListFieldAnswer
 	| TextFieldAnswer
 	| NarrowFieldAnswer
+	| TaglineFieldAnswer
 
 export type FormAnswer = {
 	data: Array<FormFieldAnswer>

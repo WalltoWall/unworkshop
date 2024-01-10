@@ -2,6 +2,7 @@ import React from "react"
 import debounce from "just-debounce-it"
 import { match } from "ts-pattern"
 import { submitFieldAnswer } from "./actions"
+import { Textarea } from "./Textarea"
 import type { FieldProps } from "./types"
 
 type Props = FieldProps
@@ -55,12 +56,7 @@ export const TextField = ({ answer, ...props }: Props) => {
 						{...sharedProps}
 					/>
 				))
-				.with("Big Text", () => (
-					<textarea
-						className="min-h-32 w-full resize-y rounded-lg border border-gray-90 px-4 py-2.5 text-14 leading-copyMega"
-						{...sharedProps}
-					/>
-				))
+				.with("Big Text", () => <Textarea {...sharedProps} />)
 				.otherwise(() => {
 					throw new Error("Unreachable!")
 				})}

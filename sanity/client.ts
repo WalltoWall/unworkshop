@@ -46,6 +46,28 @@ export const client = {
 		},
 	),
 
+	findParticipantViaCookie: React.cache(async <
+		T extends ST["participant"] = ST["participant"],
+	>() => {
+		const id = cookies().get(PARTICIPANT_COOKIE)?.value
+		if (!id) return null
+
+		type WithKickoffCode = Omit<T, "kickoff"> & {
+			kickoff: { code: string }
+		}
+
+		const data = await sanity.fetch<WithKickoffCode | null>(
+			groq`*[_type == "participant" && _id == $id][0] { 
+                ..., 
+                kickoff->{ "code": code.current } 
+            }`,
+			{ id },
+			{ cache: "no-store" },
+		)
+
+		return data
+	}),
+
 	findParticipantOrThrow: React.cache(async <
 		T extends ST["participant"] = ST["participant"],
 	>() => {

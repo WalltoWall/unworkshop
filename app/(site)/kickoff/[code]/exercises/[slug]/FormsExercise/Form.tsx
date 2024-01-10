@@ -6,6 +6,7 @@ import clsx from "clsx"
 import { z } from "zod"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
+import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
 import { Review } from "./Review"
@@ -48,37 +49,37 @@ export const Form = ({ exercise, participant }: Props) => {
 			{onReviewScreen && (
 				<Review answers={answers?.steps} exercise={exercise} />
 			)}
-			{!onReviewScreen &&
-				stepData?.fields?.map((field, fieldIdx) => {
-					const fieldAnswer = stepAnswers?.data.at(fieldIdx)
 
-					return (
-						<div
-							className={clsx(
-								"-mx-7 border-gray-90 px-7 py-6",
-								fieldIdx !== stepData.fields!.length - 1 && "border-b-2",
-							)}
-							key={field._key}
-						>
-							<Prompt
-								className="mb-5"
-								num={fieldIdx + 1}
-								additionalText={field.additionalText}
-							>
-								{field.prompt}
-							</Prompt>
+			{!onReviewScreen && (
+				<div>
+					{stepData?.fields?.map((field, fieldIdx) => {
+						const fieldAnswer = stepAnswers?.data.at(fieldIdx)
 
-							<FieldRenderer
-								exercise={exercise}
-								field={field}
-								stepIdx={stepIdx}
-								fieldIdx={fieldIdx}
-								allAnswers={answers?.steps}
-								answer={fieldAnswer}
-							/>
-						</div>
-					)
-				})}
+						return (
+							<FieldContainer key={field._key}>
+								{field.type !== "Tagline" && (
+									<Prompt
+										className="mb-5"
+										num={fieldIdx + 1}
+										additionalText={field.additionalText}
+									>
+										{field.prompt}
+									</Prompt>
+								)}
+
+								<FieldRenderer
+									exercise={exercise}
+									field={field}
+									stepIdx={stepIdx}
+									fieldIdx={fieldIdx}
+									allAnswers={answers?.steps}
+									answer={fieldAnswer}
+								/>
+							</FieldContainer>
+						)
+					})}
+				</div>
+			)}
 
 			<Steps
 				steps={exercise.form.steps.length}

@@ -1,6 +1,8 @@
+import { unreachable } from "@/lib/unreachable"
 import type { ST } from "@/sanity/config"
 import { ListField } from "./ListField"
 import { NarrowField } from "./NarrowField"
+import { TaglineField } from "./TaglineField"
 import { TextField } from "./TextField"
 import type {
 	FormAnswer,
@@ -38,8 +40,21 @@ export const FieldRenderer = ({
 		readOnly,
 	}
 
+	function getFieldSource() {
+		const stepSrc = PositiveNumber.parse(field.source?.step)
+		const fieldSrc = PositiveNumber.parse(field.source?.field)
+
+		const sourceStepAnswer = allAnswers?.at(stepSrc - 1)
+		const source = sourceStepAnswer?.data.at(fieldSrc - 1)
+
+		if (!source)
+			throw new Error("No valid source found. Check field or step config.")
+
+		return source
+	}
+
 	switch (field.type) {
-		case "List":
+		case "List": {
 			return (
 				<ListField
 					key={field._key}
@@ -48,24 +63,31 @@ export const FieldRenderer = ({
 					{...sharedProps}
 				/>
 			)
+		}
 
 		case "Narrow":
-			const stepSrc = PositiveNumber.parse(field.source?.step)
-			const fieldSrc = PositiveNumber.parse(field.source?.field)
-
-			const sourceStepAnswer = allAnswers?.at(stepSrc - 1)
-			const source = sourceStepAnswer?.data.at(fieldSrc - 1)
-
-			if (!source)
-				throw new Error("No valid source found. Check field or step config.")
-
-			return <NarrowField key={field._key} source={source} {...sharedProps} />
+			return (
+				<NarrowField
+					key={field._key}
+					source={getFieldSource()}
+					{...sharedProps}
+				/>
+			)
 
 		case "Text":
 		case "Big Text":
 			return <TextField key={field._key} {...sharedProps} />
 
+		case "Tagline":
+			return (
+				<TaglineField
+					key={field._key}
+					source={getFieldSource()}
+					{...sharedProps}
+				/>
+			)
+
 		default:
-			throw new Error("Invalid field type.")
+			return unreachable(field.type)
 	}
 }

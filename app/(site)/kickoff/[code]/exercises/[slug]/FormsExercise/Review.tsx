@@ -1,6 +1,7 @@
 import clsx from "clsx"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
+import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
 import type { FormAnswer } from "./types"
@@ -33,10 +34,7 @@ export const Review = ({ answers = [], exercise }: Props) => {
 						const fieldAnswer = stepAnswer.data.at(fieldIdx)
 
 						return (
-							<div
-								className="-mx-7 border-b-2 border-gray-90 px-7 py-6 last:border-b-0"
-								key={field._key}
-							>
+							<FieldContainer key={field._key}>
 								<Prompt
 									className="mb-5"
 									num={stepIdx + fieldIdx + 1}
@@ -54,7 +52,7 @@ export const Review = ({ answers = [], exercise }: Props) => {
 									answer={fieldAnswer}
 									readOnly
 								/>
-							</div>
+							</FieldContainer>
 						)
 					}),
 			)}

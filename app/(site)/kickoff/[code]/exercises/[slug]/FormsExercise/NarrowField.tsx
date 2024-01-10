@@ -4,15 +4,20 @@ import { toast } from "sonner"
 import { Text } from "@/components/Text"
 import { pluralize } from "@/lib/pluralize"
 import { submitFieldAnswer } from "./actions"
-import type { FieldProps, FormFieldAnswer, ListFieldAnswer } from "./types"
+import type { FieldProps, FormFieldAnswer } from "./types"
+import { AnswersArray } from "./validators"
 
 const INPUT_NAME = "answer"
 
-type NarrowListFieldProps = Omit<Props, "source"> & {
-	source: ListFieldAnswer
-}
+type Props = FieldProps<{
+	source: FormFieldAnswer
+}>
 
-const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
+export const NarrowField = ({ source, answer, ...props }: Props) => {
+	if (source.type !== "List")
+		throw new Error(
+			"Narrow fields only support List field answers as a source.",
+		)
 	if (answer && answer.type !== "Narrow")
 		throw new Error("Invalid answer data found.")
 
@@ -24,7 +29,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 		if (!rForm.current || props.readOnly) return
 
 		const data = new FormData(rForm.current)
-		const answers = data.getAll(INPUT_NAME) as string[]
+		const answers = AnswersArray.parse(data.getAll(INPUT_NAME))
 
 		startTransition(() => {
 			submitFieldAnswer({
@@ -55,7 +60,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 	return (
 		<form ref={rForm}>
 			<ul className="flex flex-col gap-2">
-				{props.source.groups.at(0)?.responses.map((response, idx) => {
+				{source.groups.at(0)?.responses.map((response, idx) => {
 					return (
 						<li key={response}>
 							<label className="group flex cursor-pointer select-none items-center gap-2 rounded-lg border border-gray-50 bg-gray-90 py-1.5 pl-[5px] pr-3 has-[:checked]:border-black has-[:checked]:outline has-[:checked]:outline-1 has-[:checked]:outline-offset-0 has-[:checked]:outline-black">
@@ -75,7 +80,7 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 
 								<input
 									type="checkbox"
-									name="answer"
+									name={INPUT_NAME}
 									value={response}
 									className="appearance-none outline-none"
 									onClick={handleChange}
@@ -91,18 +96,4 @@ const NarrowListField = ({ answer, ...props }: NarrowListFieldProps) => {
 			</ul>
 		</form>
 	)
-}
-
-type Props = FieldProps<{
-	source: FormFieldAnswer
-}>
-
-export const NarrowField = ({ source, ...props }: Props) => {
-	switch (source.type) {
-		case "List":
-			return <NarrowListField source={source} {...props} />
-
-		default:
-			throw new Error("TODO")
-	}
 }
