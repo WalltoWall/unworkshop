@@ -41,7 +41,6 @@ export async function submitSliderAction(formData: FormData) {
 		},
 	}
 
-	console.log(answers)
 	await sanity
 		.patch(participant._id)
 		.set({ answers })

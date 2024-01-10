@@ -11,24 +11,27 @@ interface SlidersPresenterViewProps {
 export const SlidersPresenterView = async ({
 	exercise,
 }: SlidersPresenterViewProps) => {
-	const examples = [
-		{ id: "a", response: "Slow Service" },
-		{ id: "b", response: "Long wait times" },
-		{ id: "c", response: "No wine service" },
-		{ id: "d", response: "Not enough servers" },
-		{ id: "e", response: "Not enough staff" },
-	]
-
 	const participants = await client.findAllParticipantsInExercise(exercise._id)
 
 	const participantAnswers = participants.flatMap(
-		(participant) => participant.answers[exercise._id].answers,
+		(participant) => participant.answers[exercise._id].answers
 	)
+
+	const groupedAnswers = participantAnswers.reduce((group, answer) => {
+		const names = Object.keys(answer)
+		names.forEach((name) => {
+			group[name] = group[name] ?? []
+			group[name].push(answer[name])
+		})
+
+		return group
+	}, {})
 
 	return (
 		<div className="px-8 pt-12">
 			<SlidersPresenterViewClient
-				sliders={participantAnswers}
+				exercise={exercise}
+				answers={groupedAnswers}
 			/>
 		</div>
 	)

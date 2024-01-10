@@ -19,8 +19,8 @@ type Props = {
 
 export const Slider = ({ item, exerciseId, group, answer }: Props) => {
 	const [values, setValues] = useState({
-        today: answer?.today || 0,
-        tomorrow: answer?.tomorrow || 0
+        todayValue: answer?.today || 3,
+        tomorrowValue: answer?.tomorrow || 3
     })
 
     const formRef = React.useRef<HTMLFormElement>(null)
@@ -65,7 +65,7 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                                     src={urlFor(item.right_image).url()!}
                                     alt={altFor(item.right_image)}
                                     className={cx("object-cover object-center h-full w-full transition ease-in-out",
-                                        values.today >= 3.5 ? "opacity-100" : "opacity-0"
+                                        values.todayValue >= 3.5 ? "opacity-100" : "opacity-0"
                                     )}
                                     width={300}
                                     height={300}
@@ -78,12 +78,12 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                         name="todayValue"
                         min={1}
                         max={6}
-                        value={values.today}
+                        value={values.todayValue}
                         className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
                         onChange={(e) => {
                             setValues({
                                 ...values,
-                                today: parseInt(e.target.value)
+                                todayValue: parseInt(e.target.value)
                             })
                             submitForm()
                         }}
@@ -118,7 +118,7 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                                     src={urlFor(item.right_image).url()!}
                                     alt={altFor(item.right_image)}
                                     className={cx("object-cover object-center h-full w-full transition ease-in-out",
-                                        values.tomorrow >= 3.5 ? "opacity-100" : "opacity-0"
+                                        values.tomorrowValue >= 3.5 ? "opacity-100" : "opacity-0"
                                     )}
                                     width={300}
                                     height={300}
@@ -132,12 +132,12 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                         name="tomorrowValue"
                         min={1}
                         max={6}
-                        value={values.tomorrow}
+                        value={values.tomorrowValue}
                         className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
                         onChange={(e) => {
                             setValues({
                                 ...values,
-                                tomorrow: parseInt(e.target.value)
+                                tomorrowValue: parseInt(e.target.value)
                             })
                             submitForm()
                         }}
