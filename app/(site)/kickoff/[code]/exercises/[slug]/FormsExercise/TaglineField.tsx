@@ -125,9 +125,15 @@ export const TaglineField = ({ source, answer, ...props }: Props) => {
 		placeholder: props.field.placeholder,
 	}
 
+	// TODO: The children type of <Prompt> only accepts strings, not React
+	// nodes. This is usually fine, but since we have an expression here things
+	// kind of break. Just need to not be lazy and change the prompt field in
+	// the CMS to be a rich text field.
+	const prompt = `Your brand in ${sourceResponses.length.toString()} words.`
+
 	return (
 		<form ref={rForm} onSubmit={handleSubmit}>
-			<Prompt num={props.fieldIdx + 1}>Your brand in 10 words</Prompt>
+			<Prompt num={props.fieldIdx + 1}>{prompt}</Prompt>
 
 			<ul className="mt-5 flex flex-wrap gap-2">
 				{sourceResponses.map((resp) => {
