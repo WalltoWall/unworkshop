@@ -11,29 +11,29 @@ export default {
 	experimental: { optimizeUniversalDefaults: true },
 	theme: {
 		fontFamily: {
-			sans: ["var(--font-trade-gothic)", "system-ui"],
-			heading: ["var(--font-trade-gothic-bold-condensed)", "system-ui"],
+			sans: ["var(--sans)", "system-ui"],
+			heading: ["var(--heading)", "system-ui"],
 		},
 
 		capsize: {
 			metrics: {
 				sans: {
-					capHeight: 722,
-					ascent: 722,
-					descent: -278,
-					lineGap: 200,
+					capHeight: 718,
+					ascent: 1060,
+					descent: -201,
+					lineGap: 0,
 					unitsPerEm: 1000,
-					xHeight: 520,
-					xWidthAvg: 437,
+					xHeight: 518,
+					xWidthAvg: 425,
 				},
 				heading: {
-					capHeight: 722,
-					ascent: 722,
-					descent: -278,
-					lineGap: 200,
+					capHeight: 718,
+					ascent: 1060,
+					descent: -201,
+					lineGap: 0,
 					unitsPerEm: 1000,
 					xHeight: 520,
-					xWidthAvg: 365,
+					xWidthAvg: 293,
 				},
 			},
 		},

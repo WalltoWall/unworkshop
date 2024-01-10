@@ -11,6 +11,7 @@
 		"noUncheckedIndexedAccess": false,
 		"forceConsistentCasingInFileNames": true,
 		"verbatimModuleSyntax": true,
+		"noFallthroughCasesInSwitch": true,
 		"noEmit": true,
 		"incremental": true,
 		"moduleResolution": "node",
