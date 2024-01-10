@@ -19,7 +19,7 @@ export const text = cva("", {
 			12: "text-12",
 		},
 		style: {
-			heading: "font-heading uppercase font-bold leading-[0.9]",
+			heading: "font-heading uppercase font-bold leading-[0.9] tracking-tight",
 			copy: "font-sans leading-[1.25]",
 			contextMenu: "font-sans leading-[1.07]",
 		},

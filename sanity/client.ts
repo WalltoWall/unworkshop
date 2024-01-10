@@ -34,20 +34,43 @@ export const client = {
 		return data
 	}),
 
-	async findParticipant<T extends ST["participant"] = ST["participant"]>(
-		id: string,
-	) {
-		const data = await sanity.fetch<T | null>(
-			groq`*[_type == "participant" && _id == $id][0]`,
+	findParticipant: React.cache(
+		async <T extends ST["participant"] = ST["participant"]>(id: string) => {
+			const data = await sanity.fetch<T | null>(
+				groq`*[_type == "participant" && _id == $id][0]`,
+				{ id },
+				{ cache: "no-store" },
+			)
+
+			return data
+		},
+	),
+
+	findParticipantViaCookie: React.cache(async <
+		T extends ST["participant"] = ST["participant"],
+	>() => {
+		const id = cookies().get(PARTICIPANT_COOKIE)?.value
+		if (!id) return null
+
+		type WithKickoffCode = Omit<T, "kickoff"> & {
+			kickoff: { code: string }
+		}
+
+		const data = await sanity.fetch<WithKickoffCode | null>(
+			groq`*[_type == "participant" && _id == $id][0] { 
+                ..., 
+                kickoff->{ "code": code.current } 
+            }`,
 			{ id },
-			{ next: { tags: [`participant-${id}`] } },
+			{ cache: "no-store" },
 		)
 
 		return data
-	},
+	}),
 
-	// prettier-ignore
-	async findParticipantOrThrow<T extends ST["participant"] = ST["participant"]>() {
+	findParticipantOrThrow: React.cache(async <
+		T extends ST["participant"] = ST["participant"],
+	>() => {
 		const participantId = z
 			.string()
 			.parse(cookies().get(PARTICIPANT_COOKIE)?.value)
@@ -56,7 +79,7 @@ export const client = {
 		if (!participant) throw new Error("No onboarded participant found.")
 
 		return participant
-	},
+	}),
 
 	// prettier-ignore
 	async findAllParticipantsInExercise<T extends ST["participant"] = ST["participant"]>(exerciseId: string) {
@@ -70,8 +93,8 @@ export const client = {
 			{ cache: "no-cache" }
 		)
 
-		return participants
-	},
+			return participants
+		},
 
 	async findKickoffOrThrow(code: string) {
 		const kickoff = await client.findKickoff(code)

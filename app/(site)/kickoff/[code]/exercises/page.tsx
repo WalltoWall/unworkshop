@@ -1,9 +1,15 @@
+import { redirect } from "next/navigation"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import { ExerciseCard } from "./ExerciseCard"
 
 const ExercisesPage = async (props: { params: { code: string } }) => {
-	const kickoff = await client.findKickoffOrThrow(props.params.code)
+	const [participant, kickoff] = await Promise.all([
+		client.findParticipantOrThrow(),
+		client.findKickoffOrThrow(props.params.code),
+	])
+
+	if (!participant.onboarded) redirect(`/kickoff/${props.params.code}`)
 
 	return (
 		<div>

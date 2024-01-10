@@ -10,7 +10,6 @@ import {
 	PointerSensor,
 	useSensor,
 	useSensors,
-	type Active,
 } from "@dnd-kit/core"
 import {
 	arrayMove,

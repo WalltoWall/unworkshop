@@ -1,6 +1,12 @@
-import { Dumbbell, LayoutGrid, ListOrdered } from "lucide-react"
+import {
+	Dumbbell,
+	LayoutGrid,
+	ListOrdered,
+	RemoveFormatting,
+} from "lucide-react"
 import { defineArrayMember, defineField, defineType } from "@sanity-typed/types"
-import { uid } from "uid"
+import { pluralize } from "@/lib/pluralize"
+import { formFieldMember } from "@/sanity/schemas/fields/formField"
 import { altText } from "../fields/altText"
 
 export const Exercise = defineType({
@@ -352,5 +358,54 @@ export const Exercise = defineType({
 		}),
 
 		// Form fields.
+		defineField({
+			name: "form",
+			title: "Form",
+			description: "The configuration for this exercise.",
+			type: "object",
+			hidden: ({ document }) => document?.type !== "form",
+
+			fields: [
+				defineField({
+					name: "steps",
+					title: "Steps",
+					description:
+						"Each item in this section represents a step in this exercise.",
+					type: "array",
+					initialValue: [],
+					of: [
+						defineArrayMember({
+							name: "step",
+							title: "Step",
+							type: "object",
+							icon: () => <RemoveFormatting width={24} height={24} />,
+
+							preview: {
+								select: {
+									fields: "fields",
+								},
+								prepare(select) {
+									return {
+										title: "Step",
+										subtitle: pluralize`${select.fields.length} field[|s].`,
+									}
+								},
+							},
+
+							fields: [
+								defineField({
+									name: "fields",
+									title: "Fields",
+									description: "Specify the form fields to use for this step.",
+									type: "array",
+									initialValue: [],
+									of: [formFieldMember],
+								}),
+							],
+						}),
+					],
+				}),
+			],
+		}),
 	],
 })

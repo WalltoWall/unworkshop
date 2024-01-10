@@ -3,6 +3,7 @@ import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
+import { FormExercise } from "./FormsExercise"
 import { InstructionsModal } from "./InstructionsModal"
 
 type Props = {
@@ -13,8 +14,6 @@ const ExercisePage = async (props: Props) => {
 	const exercise = await client.findExerciseBySlug(props.params.slug)
 	if (!exercise) notFound()
 
-	console.log({ exercise })
-
 	return (
 		<div className="h-full">
 			<InstructionsModal
@@ -23,7 +22,10 @@ const ExercisePage = async (props: Props) => {
 			/>
 
 			{exercise.type === "brainstorm" && (
-				<BrainstormExercise exercise={exercise} />
+				<BrainstormExercise
+					exercise={exercise}
+					kickoffCode={props.params.code}
+				/>
 			)}
 			{exercise.type === "sliders" && <SlidersExercise exercise={exercise} />}
 			{exercise.type === "quadrants" && (
@@ -32,6 +34,7 @@ const ExercisePage = async (props: Props) => {
 					kickoffCode={props.params.code}
 				/>
 			)}
+			{exercise.type === "form" && <FormExercise exercise={exercise} />}
 		</div>
 	)
 }
