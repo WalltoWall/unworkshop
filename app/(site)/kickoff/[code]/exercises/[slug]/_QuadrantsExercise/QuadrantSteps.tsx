@@ -95,7 +95,9 @@ export const QuadrantSteps = ({
 	}
 
 	const [state, setState] = useState<State>(determineNextState(step))
-	const isDisabled = state === "today_pending" || state === "tomorrow_pending"
+	const isDisabled =
+		(state === "today_pending" || state === "tomorrow_pending") &&
+		meta?.role !== "contributor"
 	const currentQuadrantIdx = Math.ceil(step / 2) - 1
 	const currentQuadrant = quadrants.at(currentQuadrantIdx)
 
