@@ -1,6 +1,3 @@
-import { cx } from "class-variance-authority"
-import styles from "./QuadrantExercise.module.css"
-
 interface QuadrantArrowProps {
 	top?: number
 	left?: number
@@ -18,7 +15,7 @@ export const QuadrantArrow = ({
 }: QuadrantArrowProps) => {
 	return top && left && tomorrowPlaced ? (
 		<div
-			className={cx("absolute h-1 origin-left", styles.arrowBetween)}
+			className="absolute h-1 origin-left"
 			style={{
 				top: `${top}%`,
 				left: `${left}%`,
@@ -26,8 +23,8 @@ export const QuadrantArrow = ({
 				transform: `rotate(${angle}deg)`,
 			}}
 		>
-			<div className="bg-indigo-68" />
-			<div className="border-l-indigo-68" />
+			<div className="absolute -top-[0.0625rem] left-[0.875rem] h-1 w-[calc(100%-1.875rem)] bg-indigo-68" />
+			<div className="absolute -top-[0.6875rem] right-3 h-0 w-0 border-y-[0.75rem] border-l-[1.5rem] border-y-transparent border-l-indigo-68" />
 		</div>
 	) : null
 }
