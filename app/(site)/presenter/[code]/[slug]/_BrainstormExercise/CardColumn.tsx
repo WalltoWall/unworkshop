@@ -2,14 +2,13 @@
 
 import React from "react"
 import { SwatchesPicker } from "react-color"
-import { flushSync } from "react-dom"
 import { useDroppable } from "@dnd-kit/core"
 import { SortableContext } from "@dnd-kit/sortable"
 import clsx from "clsx"
 import { ContextMenu } from "@/components/ContextMenu"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { useDebounce } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/debounce"
-import type { Columns } from "./BrainstormPresenterViewClient"
+import type { Columns, SubmitFormProps } from "./BrainstormPresenterViewClient"
 import { PresentColumnModal } from "./PresentColumnModal"
 import { Draggable, SortableItem } from "./SortableItem"
 
@@ -18,30 +17,23 @@ interface CardColumnProps {
 	id: string
 	colorHex: string
 	columnTitle: string
-	removeColumn: (id: string) => void
-	setColumns: (value: React.SetStateAction<Columns>) => void
 	columns: Columns
-	formRef: React.RefObject<HTMLFormElement>
 	exerciseSlug: string
+	submitFunction: (data: SubmitFormProps) => void
 }
 
 export const CardColumn = ({
 	cards,
 	colorHex,
 	columnTitle,
-	id,
-	removeColumn,
-	setColumns,
 	columns,
-	formRef,
+	id,
 	exerciseSlug,
+	submitFunction,
 }: CardColumnProps) => {
 	const [color, setColor] = React.useState<string>(colorHex || "#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
 	const { setNodeRef } = useDroppable({ id: id })
-
-	const debounceTitle = useDebounce(() => formRef.current?.requestSubmit(), 250)
-	const debounceSetCols = useDebounce(() => {}, 250)
 
 	const colorGroups = [
 		["#ff9488", "#ff7566", "#ff5745", "#e8503f", "#ba4033"],
@@ -63,27 +55,27 @@ export const CardColumn = ({
 		],
 	]
 
+	const debounceTitle = useDebounce(
+		() => submitFunction({ action: "Update Title", columnId: id }),
+		300,
+	)
+
 	return (
 		<div className=" w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
 			<div className="flex items-center justify-between">
 				<div className="relative flex items-center gap-2">
+					<input type="hidden" value={color} name="color" />
+					<input type="hidden" value={id} name="columnId" />
 					<SwatchesPicker
 						colors={colorGroups}
 						onChange={(newColor) => {
-							flushSync(() => {
-								setColor(newColor.hex)
-								setShowPicker(false)
-
-								setColumns({
-									...columns,
-									[id]: {
-										...columns[id],
-										color: newColor.hex,
-									},
-								})
+							setColor(newColor.hex)
+							setShowPicker(false)
+							submitFunction({
+								action: "Update Color",
+								color: newColor.hex,
+								columnId: id,
 							})
-
-							formRef.current?.requestSubmit()
 						}}
 						className={clsx("absolute", showPicker ? "block" : "hidden")}
 					/>
@@ -94,20 +86,9 @@ export const CardColumn = ({
 						type="button"
 					></button>
 					<input
-						onChange={(e) => {
-							debounceSetCols()
-
-							setColumns({
-								...columns,
-								[id]: {
-									...columns[id],
-									title: e.currentTarget.value,
-								},
-							})
-
-							debounceTitle()
-						}}
+						onChange={debounceTitle}
 						defaultValue={columnTitle}
+						name="columnTitle"
 						className="mt-2 bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
 					/>
 				</div>
@@ -117,7 +98,12 @@ export const CardColumn = ({
 						color={color}
 						columnTitle={columnTitle}
 					/>
-					<button onClick={() => removeColumn(id)} type="button">
+					<button
+						onClick={() =>
+							submitFunction({ action: "Delete Column", columnId: id })
+						}
+						type="button"
+					>
 						<BlackXIcon className="w-7" />
 					</button>
 				</div>
@@ -132,7 +118,6 @@ export const CardColumn = ({
 						cards.map((card) => (
 							<ContextMenu
 								key={card.id}
-								setCols={setColumns}
 								columns={columns}
 								card={card}
 								color={color}

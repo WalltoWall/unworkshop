@@ -32,7 +32,6 @@ const ContextMenuItem = ({
 }
 
 interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
-	setCols: (value: React.SetStateAction<Columns>) => void
 	columns: Columns
 	card: Card
 	color: string
@@ -40,7 +39,6 @@ interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
 }
 
 export const ContextMenu = ({
-	setCols,
 	columns,
 	card,
 	color,
@@ -68,20 +66,6 @@ export const ContextMenu = ({
 		if (!activeCard) return
 
 		toColumnCards.unshift(activeCard)
-
-		setCols({
-			...columns,
-			["sorting"]: {
-				...columns["sorting"],
-				cards: toColumnCards,
-			},
-			[fromColumnId]: {
-				...columns[fromColumnId],
-				cards: fromColumnCards.filter((c) => c.id !== card.id),
-			},
-		})
-
-		// formRef.current?.requestSubmit()
 	}
 
 	const handleEditItem = () => {
@@ -102,19 +86,9 @@ export const ContextMenu = ({
 
 		if (!fromColumnId || !fromColumnCards) return
 
-		setCols({
-			...columns,
-			[fromColumnId]: {
-				...columns[fromColumnId],
-				cards: fromColumnCards.filter((c) => c.id === card.id),
-			},
-		})
-
 		startTransition(() => {
 			deleteParticipantAnswer({ cardId: card.id, exerciseSlug: exerciseSlug })
 		})
-
-		// formRef.current?.requestSubmit()
 	}
 
 	const finalizeEdit = (newResponse: string) => {
@@ -122,8 +96,6 @@ export const ContextMenu = ({
 		setReadOnly(true)
 
 		// edit participants answer
-
-		// formRef.current?.requestSubmit()
 	}
 
 	return (

@@ -90,7 +90,7 @@ export const client = {
 				answers
 			}`,
 			{exerciseId},
-			{ cache: "no-cache" }
+			{ cache: "no-store" }
 		)
 
 			return participants

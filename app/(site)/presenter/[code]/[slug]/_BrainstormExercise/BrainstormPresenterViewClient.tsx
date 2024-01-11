@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { flushSync } from "react-dom"
 import {
 	closestCorners,
 	DndContext,
@@ -10,6 +9,7 @@ import {
 	PointerSensor,
 	useSensor,
 	useSensors,
+	type Active,
 } from "@dnd-kit/core"
 import {
 	arrayMove,
@@ -22,10 +22,18 @@ import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
+import { useDebounce } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/debounce"
 import { submitBoardAction } from "./actions"
 import { CardColumn } from "./CardColumn"
 import { SORTING_COLUMN_ID } from "./constants"
 import { Draggable, SortableItem } from "./SortableItem"
+import {
+	Color,
+	ColumnId,
+	Columns,
+	ColumnTitle,
+	ExerciseSlug,
+} from "./validators"
 
 export type Card = { response: string; id: string }
 
@@ -39,35 +47,34 @@ interface PresenterViewProps {
 	presenterColumns: Columns
 }
 
+export interface SubmitFormProps {
+	action:
+		| "Update Title"
+		| "Update Color"
+		| "Default"
+		| "Delete Column"
+		| "Create Column"
+	color?: string
+	columnId?: string
+	newColumn?: Columns
+}
+
 export const BrainstormPresenterViewClient = ({
 	exerciseSlug,
 	presenterColumns,
 }: PresenterViewProps) => {
-	const [columns, setColumns] = React.useState<Columns>(presenterColumns)
-
 	const [showSorter, setShowSorter] = React.useState(true)
-	const [activeCard, setActiveCard] = React.useState<Active | null>(null)
-	const activeItem = React.useMemo(() => {
-		for (const key in columns) {
-			if (columns[key].cards.find((card) => card.id === activeCard?.id)) {
-				return columns[key].cards.find((card) => card.id === activeCard?.id)
-			}
-		}
-	}, [activeCard, columns])
+	// const [activeCard, setActiveCard] = React.useState<Active | null>(null)
+	// const activeItem = React.useMemo(() => {
+	// 	for (const key in columns) {
+	// 		if (columns[key].cards.find((card) => card.id === activeCard?.id)) {
+	// 			return columns[key].cards.find((card) => card.id === activeCard?.id)
+	// 		}
+	// 	}
+	// }, [activeCard, columns])
 
 	const formRef = React.useRef<HTMLFormElement>(null)
-
-	const removeColumn = (id: string) => {
-		flushSync(() => {
-			setColumns(
-				Object.fromEntries(
-					Object.entries(columns).filter(([key]) => key !== id),
-				),
-			)
-		})
-
-		formRef.current?.requestSubmit()
-	}
+	const [, startTransition] = React.useTransition()
 
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -76,103 +83,64 @@ export const BrainstormPresenterViewClient = ({
 		}),
 	)
 
-	return (
-		<DndContext
-			sensors={sensors}
-			collisionDetection={closestCorners}
-			onDragStart={({ active }) => {
-				if (!active) return
+	const submitForm = ({
+		action,
+		color,
+		columnId,
+		newColumn,
+	}: SubmitFormProps) => {
+		if (!formRef.current) return
 
-				setActiveCard(active)
-			}}
-			onDragEnd={({ active, over }) => {
-				if (!over) return
-				if (active.id === over.id) return
-				if (!active.data.current) return
-				if (
-					active.data.current?.sortable.containerId !==
-					over.data.current?.sortable.containerId
+		const data = new FormData(formRef.current)
+		let columns = Columns.parse(data.get("columns"))
+		const columnTitle = ColumnTitle.parse(data.get("columnTitle"))
+		const exerciseSlug = ExerciseSlug.parse(data.get("exerciseSlug"))
+
+		console.log(columns)
+
+		switch (action) {
+			case "Update Color":
+				if (!columnId || !color) return
+				columns[columnId].color = color
+				break
+			case "Update Title":
+				if (!columnId) return
+				columns[columnId].title = columnTitle
+				break
+			case "Delete Column":
+				if (!columnId) return
+				columns = Object.fromEntries(
+					Object.entries(presenterColumns).filter(([key]) => key !== columnId),
 				)
-					return
+				break
+			case "Create Column":
+				if (!newColumn) return
+				columns[columnId!] = newColumn[columnId!]
+				break
+			default:
+				break
+		}
 
-				const columnId = active.data.current.sortable.containerId
-				const cards = columns[columnId].cards
+		console.log(columns)
+		// startTransition(() => {
+		// 	submitBoardAction({ columns, exerciseSlug })
+		// })
+	}
 
-				const oldIdx = cards.findIndex((card) => card.id === active.id)
-				const newIdx = cards.findIndex((card) => card.id === over.id)
+	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+		e.preventDefault()
+		submitForm({ action: "Update Title" })
+	}
 
-				flushSync(() => {
-					setColumns({
-						...columns,
-						[columnId]: {
-							...columns[columnId],
-							cards: arrayMove(cards, oldIdx, newIdx),
-						},
-					})
-				})
-
-				formRef.current?.requestSubmit()
-				setActiveCard(null)
-			}}
-			onDragOver={({ active, over }) => {
-				if (!over || !active.data.current) return
-
-				const fromColumnId = active.data.current?.sortable.containerId
-				const toColumnId = over.data.current?.sortable.containerId
-
-				if (!fromColumnId || !toColumnId) return
-
-				if (fromColumnId === toColumnId) return
-
-				const fromCards = columns[fromColumnId].cards
-				const toCards = columns[toColumnId].cards
-
-				const activeCard = fromCards.find((card) => card.id === active.id)
-
-				if (!activeCard) return
-
-				if (toCards.length === 0) {
-					toCards.push(activeCard)
-
-					flushSync(() => {
-						setColumns({
-							...columns,
-							[fromColumnId]: {
-								...columns[fromColumnId],
-								cards: fromCards.filter((card) => card.id !== active.id),
-							},
-							[toColumnId]: {
-								...columns[toColumnId],
-								cards: toCards,
-							},
-						})
-					})
-				} else {
-					flushSync(() => {
-						setColumns({
-							...columns,
-							[fromColumnId]: {
-								...columns[fromColumnId],
-								cards: fromCards.filter((card) => card.id !== active.id),
-							},
-							[toColumnId]: {
-								...columns[toColumnId],
-								cards: toCards.toSpliced(
-									over.data.current?.sortable.index,
-									0,
-									activeCard,
-								),
-							},
-						})
-					})
-				}
-
-				formRef.current?.requestSubmit()
-			}}
-		>
-			<form action={submitBoardAction} ref={formRef}>
+	return (
+		<DndContext sensors={sensors}>
+			<form onSubmit={handleSubmit} ref={formRef}>
 				<input type="hidden" value={exerciseSlug.current} name="exerciseSlug" />
-				<input type="hidden" value={JSON.stringify(columns)} name="columns" />
+				<input
+					type="hidden"
+					value={JSON.stringify(presenterColumns)}
+					name="columns"
+				/>
 				<div className="relative">
 					<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
 						<button
@@ -191,35 +159,30 @@ export const BrainstormPresenterViewClient = ({
 							/>
 						</button>
 
-						<SortableContext
-							items={columns[SORTING_COLUMN_ID].cards}
-							id={SORTING_COLUMN_ID}
+						<div
+							className={clsx(
+								"flex w-full gap-2 overflow-x-scroll",
+								showSorter ? "block" : "hidden",
+							)}
 						>
-							<div
-								className={clsx(
-									"flex w-full gap-2",
-									showSorter ? "block" : "hidden",
-								)}
-							>
-								{columns[SORTING_COLUMN_ID].cards.map((card) => (
-									<SortableItem
-										id={card.id}
-										color={""}
-										className="box-border aspect-square w-[135px] list-none rounded-lg bg-white px-3 py-2"
-										key={card.id}
-									>
-										<Draggable
-											response={card.response}
-											className="h-full w-full cursor-move resize-none bg-transparent focus:outline-none"
-										/>
-									</SortableItem>
-								))}
-							</div>
-						</SortableContext>
+							{presenterColumns[SORTING_COLUMN_ID].cards.map((card) => (
+								<SortableItem
+									id={card.id}
+									color={""}
+									className="box-border aspect-square w-[135px] min-w-[135px] list-none rounded-lg bg-white px-3 py-2"
+									key={card.id}
+								>
+									<Draggable
+										response={card.response}
+										className="h-full w-full cursor-move resize-none bg-transparent focus:outline-none"
+									/>
+								</SortableItem>
+							))}
+						</div>
 					</div>
 
 					<div className="flex flex-wrap gap-4 pt-5">
-						{Object.entries(columns).map(
+						{Object.entries(presenterColumns).map(
 							([columnId, { cards, color, title }]) => {
 								if (columnId === SORTING_COLUMN_ID) return
 
@@ -230,11 +193,9 @@ export const BrainstormPresenterViewClient = ({
 										colorHex={color}
 										columnTitle={title}
 										id={columnId}
-										removeColumn={removeColumn}
-										columns={columns}
-										setColumns={setColumns}
-										formRef={formRef}
+										columns={presenterColumns}
 										exerciseSlug={exerciseSlug.current}
+										submitFunction={submitForm}
 									/>
 								)
 							},
@@ -245,16 +206,19 @@ export const BrainstormPresenterViewClient = ({
 							onClick={() => {
 								const id = uid()
 
-								setColumns({
-									...columns,
+								const newColumn = {
 									[id]: {
 										color: "",
-										title: "New Column",
+										title: "",
 										cards: [],
 									},
-								})
+								}
 
-								formRef.current?.requestSubmit()
+								submitForm({
+									action: "Create Column",
+									newColumn: newColumn,
+									columnId: id,
+								})
 							}}
 							type="button"
 						>
@@ -266,14 +230,6 @@ export const BrainstormPresenterViewClient = ({
 					</div>
 				</div>
 			</form>
-
-			<DragOverlay>
-				{activeItem ? (
-					<div className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4">
-						{activeItem.response}
-					</div>
-				) : null}
-			</DragOverlay>
 		</DndContext>
 	)
 }

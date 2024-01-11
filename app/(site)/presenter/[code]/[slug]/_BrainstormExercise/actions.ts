@@ -1,43 +1,25 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { NextResponse } from "next/server"
-import { z } from "zod"
-import { zfd } from "zod-form-data"
 import { client, sanity } from "@/sanity/client"
 import {
-	BrainstormParticipant,
 	type Answer,
 	type BrainstormExercise,
+	type BrainstormParticipant,
 } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import type { Columns } from "./BrainstormPresenterViewClient"
 
-const columnsSchema = z.record(
-	z.string(),
-	z.object({
-		color: z.string(),
-		title: z.string(),
-		cards: z.array(
-			z.object({
-				id: z.string(),
-				response: z.string(),
-			}),
-		),
-	}),
-)
-
-const submitBoardSchema = zfd.formData({
-	columns: zfd.json(columnsSchema),
-	exerciseSlug: zfd.text(),
-})
+interface SubmitBoardProps {
+	columns: Columns
+	exerciseSlug: string
+}
 
 interface deleteParticipantProps {
 	cardId: string
 	exerciseSlug: string
 }
 
-export async function submitBoardAction(formData: FormData) {
-	const data = submitBoardSchema.parse(formData)
-
+export async function submitBoardAction(data: SubmitBoardProps) {
 	const exercise = await client.findExerciseBySlug(data.exerciseSlug)
 
 	if (!exercise) return new Error("No Exercise Found")
@@ -84,8 +66,6 @@ export async function deleteParticipantAnswer(data: deleteParticipantProps) {
 			participant = newParticipant
 		}
 	})
-
-	console.log(participant)
 
 	// const answers = participant.answers[data.exerciseId]?.answers ?? []
 
