@@ -21,7 +21,7 @@ export const BrainstormExercise = async ({
 	const steps = exercise.steps
 
 	return (
-		<div className="mt-4 flex h-full flex-col">
+		<div className="mt-4 flex h-[80svh] flex-col">
 			<BrainstormClient
 				steps={steps}
 				cards={cards}

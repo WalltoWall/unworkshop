@@ -10,6 +10,9 @@ type Props = {
 	exercise: ST["exercise"]
 }
 
+// TODO: Currently does not support nested sliders. E.g. 2 sliders per step.
+// TODO: Ensure answers are persisted on refresh / page load.
+// TODO: Tie the current step to search parameters.
 export const SlidersExercise = ({ exercise }: Props) => {
 	const groups = exercise.groups ?? []
 	const sliders = exercise.sliders ?? []

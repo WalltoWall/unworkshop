@@ -1,6 +1,6 @@
 "use client"
 
-import * as Dialog from "@radix-ui/react-dialog"
+import { Drawer } from "vaul"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { QuestionMark } from "@/components/icons/QuestionMark"
 import { Text } from "@/components/Text"
@@ -14,44 +14,45 @@ export const InstructionsModal = ({
 	exerciseName,
 	instructions,
 }: InstructionsModalProps) => {
+	if (!instructions) return null
+
 	return (
-		<Dialog.Root>
+		<Drawer.Root shouldScaleBackground>
 			<div className="flex items-start gap-2">
 				<Text style="heading" size={40} asChild>
 					<h1>{exerciseName}</h1>
 				</Text>
-				<Dialog.Trigger>
+
+				<Drawer.Trigger>
 					<QuestionMark className="w-3" />
-				</Dialog.Trigger>
+					<span className="sr-only">Open instructions</span>
+				</Drawer.Trigger>
 			</div>
 
-			<Dialog.Portal>
-				<Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-black/30" />
-
-				<Dialog.Content className="data-[state=open]:animate-contentShow fixed inset-x-0 bottom-0 max-h-[300px] w-full rounded-t-[24px] bg-white px-6 pb-10 pt-5 focus:outline-none">
+			<Drawer.Portal>
+				<Drawer.Overlay className="fixed inset-0 bg-black/40" />
+				<Drawer.Content className="fixed inset-x-0 bottom-0 w-full rounded-t-[24px] bg-white px-6 pb-10 pt-5 focus:outline-none">
 					<div className="flex items-center justify-between">
-						<Dialog.Title>
+						<Drawer.Title>
 							<Text style="heading" size={24}>
 								Instructions
 							</Text>
-						</Dialog.Title>
+						</Drawer.Title>
 
-						<Dialog.Close>
+						<Drawer.Close>
 							<BlackXIcon className="w-8" />
-						</Dialog.Close>
+						</Drawer.Close>
 					</div>
 
 					<Text
 						style="copy"
 						size={14}
-						className="mt-5 max-w-[320px] text-gray-50"
+						className="mt-5 whitespace-pre-line text-gray-50"
 					>
-						{instructions
-							? instructions
-							: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis malesuada consectetur arcu ut pretium. Nam placerat augue libero, a varius lacus eleifend sed. Etiam bibendum justo vitae vehicula vulputate. Donec hendrerit, felis id ornare blandit, turpis purus hendrerit enim, malesuada mollis sem ex sed eros. "}
+						{instructions}
 					</Text>
-				</Dialog.Content>
-			</Dialog.Portal>
-		</Dialog.Root>
+				</Drawer.Content>
+			</Drawer.Portal>
+		</Drawer.Root>
 	)
 }

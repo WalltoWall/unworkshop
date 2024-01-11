@@ -14,6 +14,8 @@ interface CardFormProps {
 	deleteOptimisticCard: (id: string) => void
 }
 
+// TODO: Placeholder should be editable by the exercise
+
 export const CardForm = ({
 	exerciseId,
 	cardId,
