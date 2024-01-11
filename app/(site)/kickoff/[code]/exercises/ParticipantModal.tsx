@@ -1,6 +1,7 @@
 "use client"
 
 import * as Dialog from "@radix-ui/react-dialog"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/Button"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { Text } from "@/components/Text"
@@ -10,6 +11,7 @@ interface ParticipantModalProps {
 	heading: string
 	message: string
 	code: string
+	onConfirm: () => void
 }
 
 export const ParticipantModal = ({
@@ -17,7 +19,15 @@ export const ParticipantModal = ({
 	heading,
 	message,
 	code,
+	onConfirm,
 }: ParticipantModalProps) => {
+	const router = useRouter()
+
+	const handleConfirm = async () => {
+		await onConfirm()
+		router.push(`/kickoff/register?code=${code}`)
+	}
+
 	return (
 		<Dialog.Root>
 			<Text style="copy" size={16} className="ml-4 mr-auto">
@@ -52,7 +62,7 @@ export const ParticipantModal = ({
 							{message}
 						</Text>
 
-						<Button href={`/kickoff/register?code=${code}`} className="mt-8">
+						<Button onClick={handleConfirm} className="mt-8">
 							Confirm
 						</Button>
 					</div>

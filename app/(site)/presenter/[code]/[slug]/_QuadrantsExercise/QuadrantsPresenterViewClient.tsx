@@ -39,6 +39,7 @@ export const QuadrantsPresenterViewClient = ({
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
+	const [isPending, startTransition] = React.useTransition()
 
 	const [emblaRef, emblaApi] = useEmblaCarousel({
 		watchDrag: false,
@@ -78,7 +79,9 @@ export const QuadrantsPresenterViewClient = ({
 			step: (step - 1).toString(),
 		})
 
-		router.push(pathname + "?" + params.toString(), { scroll: false })
+		startTransition(() => {
+			router.push(pathname + "?" + params.toString(), { scroll: false })
+		})
 	}
 
 	const scrollNext = () => {
@@ -132,11 +135,13 @@ export const QuadrantsPresenterViewClient = ({
 					direction="prev"
 					disabled={prevBtnDisabled}
 					onClick={scrollPrev}
+					loading={isPending}
 				/>
 				<ArrowButton
 					direction="next"
 					disabled={nextBtnDisabled}
 					onClick={scrollNext}
+					loading={isPending}
 				/>
 			</div>
 
@@ -212,16 +217,18 @@ const ArrowButton = ({
 	direction,
 	onClick,
 	disabled,
+	loading,
 }: {
 	direction: "prev" | "next"
 	onClick: () => void
 	disabled: boolean
+	loading?: boolean
 }) => (
 	<button
 		type="button"
 		onClick={onClick}
 		className={cx(
-			"absolute top-1/2 h-8 w-8 -translate-y-1/2 rounded-full bg-black p-2 text-white transition-colors hover:bg-gray-38 disabled:bg-gray-50",
+			"absolute top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black p-2 text-white transition-colors hover:bg-gray-38 disabled:bg-gray-50",
 			direction === "prev" ? "left-0 rotate-180" : "right-0",
 		)}
 		disabled={disabled}
@@ -229,6 +236,6 @@ const ArrowButton = ({
 		<span className="sr-only">
 			{direction === "next" ? "Next Quadrant" : "Previous Quadrant"}
 		</span>
-		<Arrow />
+		{loading ? <Spinner /> : <Arrow />}
 	</button>
 )
