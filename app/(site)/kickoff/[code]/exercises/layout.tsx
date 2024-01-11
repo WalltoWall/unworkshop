@@ -1,7 +1,7 @@
-import Link from "next/link"
+import { cookies } from "next/headers"
 import { LightLayout } from "@/components/LightLayout"
-import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
+import { PARTICIPANT_COOKIE } from "@/constants"
 import { ParticipantModal } from "./ParticipantModal"
 
 const ExercisesLayout = async (props: {
@@ -9,6 +9,12 @@ const ExercisesLayout = async (props: {
 	params: { code: string }
 }) => {
 	const participant = await client.findParticipantOrThrow()
+
+	async function removeParticipantCookie() {
+		"use server"
+
+		cookies().delete(PARTICIPANT_COOKIE)
+	}
 
 	return (
 		<LightLayout
@@ -19,6 +25,7 @@ const ExercisesLayout = async (props: {
 					heading="Not You?"
 					message="Press the confirm button to re-register under a new name."
 					code={props.params.code}
+					onConfirm={removeParticipantCookie}
 				/>
 			}
 		>
