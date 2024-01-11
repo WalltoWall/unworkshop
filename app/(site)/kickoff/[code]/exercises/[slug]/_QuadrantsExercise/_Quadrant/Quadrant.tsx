@@ -214,7 +214,6 @@ export const Quadrant = ({
 								top={arrowData.top}
 								left={arrowData.left}
 								tomorrowPlaced={Boolean(tomorrow)}
-								state={state}
 								width={arrowData.width}
 								angle={arrowData.angle}
 							/>
