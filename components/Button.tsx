@@ -4,8 +4,8 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 const button = cva(
 	[
-		"inline-flex justify-center items-center text-center rounded-2xl px-5 gap-2.5",
-		"border border-solid font-heading leading-none disabled:cursor-not-allowed",
+		"inline-flex justify-center items-center text-center gap-2.5 pb-1",
+		"border border-solid leading-none disabled:cursor-not-allowed",
 	],
 	{
 		variants: {
@@ -14,8 +14,9 @@ const button = cva(
 				black: "border-black text-white bg-black",
 			},
 			size: {
-				sm: "h-8 text-16 pt-1",
-				base: "h-11 text-24 pt-1",
+				xs: "h-9 text-12 px-3",
+				sm: "h-8 text-16 px-5",
+				base: "h-11 text-24 px-5",
 			},
 			outline: {
 				true: "bg-transparent",
@@ -26,12 +27,22 @@ const button = cva(
 			uppercase: {
 				true: "uppercase",
 			},
+			rounded: {
+				base: "rounded-2xl",
+				sm: "rounded-lg",
+			},
+			fontFamily: {
+				heading: "font-heading",
+				sans: "font-sans",
+			},
 		},
 		defaultVariants: {
 			size: "base",
 			outline: false,
 			color: "black",
 			uppercase: true,
+			rounded: "base",
+			fontFamily: "heading",
 		},
 		compoundVariants: [
 			{
@@ -58,10 +69,7 @@ type PlainAnchorProps = Omit<React.ComponentPropsWithRef<"a">, "href"> &
 	Pick<LinkProps, "href">
 type ButtonVariants = VariantProps<typeof button>
 
-export type ButtonProps = (PlainButtonProps | PlainAnchorProps) &
-	ButtonVariants & {
-		icon?: React.ReactNode
-	}
+export type ButtonProps = (PlainButtonProps | PlainAnchorProps) & ButtonVariants
 
 /**
  * Smartly renders a <button> element or a `<Link />` component with
@@ -86,13 +94,14 @@ export const Button = React.forwardRef<
 	(
 		{
 			children,
-			icon: Icon,
 			className,
 			color,
 			size,
 			outline,
 			uppercase,
 			inactive,
+			rounded,
+			fontFamily,
 			...props
 		},
 		ref,
@@ -104,6 +113,8 @@ export const Button = React.forwardRef<
 			outline,
 			inactive,
 			uppercase,
+			rounded,
+			fontFamily,
 		})
 
 		if ("href" in props && props.href) {
@@ -114,7 +125,6 @@ export const Button = React.forwardRef<
 					{...props}
 				>
 					{children}
-					{Icon}
 				</Link>
 			)
 		}
@@ -126,7 +136,6 @@ export const Button = React.forwardRef<
 				{...(props as PlainButtonProps)}
 			>
 				{children}
-				{Icon}
 			</button>
 		)
 	},

@@ -1,10 +1,9 @@
 "use client"
 
 import React from "react"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Checkmark } from "@/components/icons/Checkmark"
-import { Chevron } from "@/components/icons/Chevron"
-import { CardScroller } from "./CardScroller"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Steps } from "@/components/Steps"
+import { CardScroller, type Color } from "./CardScroller"
 import type { Answer } from "./types"
 
 interface BrainstormClientProps {
@@ -12,6 +11,7 @@ interface BrainstormClientProps {
 		| ({
 				prompt?: string | undefined
 				helpText?: string | undefined
+				color?: Color | undefined
 		  } & {
 				_key: string
 		  })[]
@@ -23,6 +23,7 @@ interface BrainstormClientProps {
 	})[]
 	cards: Array<Answer>
 	exerciseId: string
+	kickoffCode: string
 }
 
 const BrainstormClient = ({
@@ -30,25 +31,17 @@ const BrainstormClient = ({
 	groups,
 	cards,
 	exerciseId,
+	kickoffCode,
 }: BrainstormClientProps) => {
 	const router = useRouter()
-	const pathname = usePathname()
 	const searchParams = useSearchParams()
-	let step = parseInt(searchParams?.get("step") ?? "1")
-	const isFinished = steps?.length! <= step
+	const step = parseInt(searchParams?.get("step") ?? "1")
+	const totalSteps = steps?.length! - 1
 
-	const nextStep = () => {
-		const params = new URLSearchParams({
-			step: step.toString(),
-		})
-
-		if (!pathname) return null
-
-		router.push(pathname + "?" + params.toString(), { scroll: false })
-	}
+	if (!steps) return
 
 	return (
-		<div className="h-full">
+		<div className="flex h-full flex-col overflow-hidden">
 			{steps && steps.at(step - 1) && (
 				<div>
 					<h4 className="max-w-[16rem] text-16 leading-[1.4] font-sans capsize">
@@ -61,30 +54,22 @@ const BrainstormClient = ({
 			)}
 
 			<CardScroller
-				cards={cards}
+				// Need key prop so that useOptimistic rerenders the cards correctly based off step see:https://github.com/facebook/react/issues/27617
+				// see: https://github.com/vercel/next.js/issues/57662
+				key={step}
+				cards={cards.filter((card) => card.step === step) ?? []}
 				exerciseId={exerciseId}
 				group={groups.length > 0}
-				color={steps?.at(step - 1).color}
+				color={steps.at(step - 1)?.color}
+				step={step}
 			/>
 
-			{/* <button
-				className="mx-auto mt-auto flex flex-col items-center gap-4"
-				onClick={() => {
-					if (step >= steps?.length!) {
-						step = 1
-						return
-					}
-					step = step + 1
-					nextStep()
-				}}
-			>
-				<div className="flex h-8 w-8 flex-col items-center justify-center rounded-full bg-black px-2 text-white">
-					{isFinished ? <Checkmark /> : <Chevron className="ml-1 rotate-180" />}
-				</div>
-				<span className="font-extrabold uppercase text-14 leading-[1.5] font-sans capsize">
-					{isFinished ? "Finish" : "Next Step"}
-				</span>
-			</button> */}
+			<Steps
+				steps={totalSteps!}
+				activeStep={step}
+				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
+				disabled={false}
+			/>
 		</div>
 	)
 }

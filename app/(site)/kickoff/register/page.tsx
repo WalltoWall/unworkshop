@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { unstable_noStore as noStore } from "next/cache"
 import { cookies } from "next/headers"
 import Image from "next/image"
 import { notFound, redirect } from "next/navigation"
@@ -20,11 +21,19 @@ const Form = zfd.formData({ name: zfd.text() })
 
 const KickoffRegisterPage = async (props: Props) => {
 	const code = z.string().parse(props.searchParams.code)
-	const kickoff = await client.findKickoff(code)
+	const [kickoff, participant] = await Promise.all([
+		client.findKickoff(code),
+		client.findParticipantViaCookie(),
+	])
+
 	if (!kickoff) notFound()
+	if (participant && participant.onboarded && participant.kickoff.code === code)
+		redirect(`/kickoff/${code}/exercises`)
 
 	async function register(data: FormData) {
 		"use server"
+
+		noStore()
 
 		const form = Form.parse(data)
 		const participant = await client.registerParticipant({

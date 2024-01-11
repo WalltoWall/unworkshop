@@ -3,7 +3,7 @@ import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
-import type { GroupParticipant } from "./groups/types"
+import { FormExercise } from "./FormsExercise"
 import { InstructionsModal } from "./InstructionsModal"
 import { RoleHeader } from "./RoleHeader"
 
@@ -25,7 +25,10 @@ const ExercisePage = async (props: Props) => {
 			/>
 
 			{exercise.type === "brainstorm" && (
-				<BrainstormExercise exercise={exercise} />
+				<BrainstormExercise
+					exercise={exercise}
+					kickoffCode={props.params.code}
+				/>
 			)}
 			{exercise.type === "sliders" && <SlidersExercise exercise={exercise} />}
 			{exercise.type === "quadrants" && (
@@ -34,6 +37,7 @@ const ExercisePage = async (props: Props) => {
 					kickoffCode={props.params.code}
 				/>
 			)}
+			{exercise.type === "form" && <FormExercise exercise={exercise} />}
 		</div>
 	)
 }

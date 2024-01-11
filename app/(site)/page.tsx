@@ -31,7 +31,7 @@ const Home = () => {
 					<input
 						type="text"
 						name="code"
-						className="h-[4.5rem] w-full rounded-2xl bg-gray-75 px-4 text-center align-middle uppercase text-black text-56 leading-heading font-heading placeholder:text-gray-38"
+						className="w-full rounded-2xl bg-gray-75 px-4 pb-2 text-center align-middle uppercase text-black text-56 leading-none font-heading placeholder:text-gray-38"
 						placeholder="WTW-1234"
 						required
 					/>

@@ -6,6 +6,7 @@ type GroupAnswer = { type: "group"; leader: string }
 export type Answer = {
 	id: string
 	response: string
+	step?: number
 }
 
 export type BrainstormParticipant = ST["participant"] & {
