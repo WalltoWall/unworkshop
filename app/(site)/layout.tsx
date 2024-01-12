@@ -3,7 +3,6 @@ import Local from "next/font/local"
 import { cx } from "class-variance-authority"
 import { Toaster } from "sonner"
 import "./globals.css"
-import Multiplayer from "@/components/Multiplayer"
 
 const FontSans = Local({
 	src: "../../assets/fonts/regular.woff2",
@@ -37,8 +36,6 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 					FontHeading.variable,
 				)}
 			>
-				<Multiplayer />
-
 				<div vaul-drawer-wrapper="" className="min-h-[100vh] bg-white">
 					{children}
 				</div>

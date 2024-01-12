@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import Multiplayer from "@/components/Multiplayer"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { useCaptainAnswers } from "@/sanity/groups"
@@ -47,8 +48,6 @@ export const QuadrantSteps = ({
 	readOnly,
 }: QuadrantStepsProps) => {
 	const awareness = useMultiplayer(`${kickoffCode}-${exerciseId}`)
-
-	console.log(awareness)
 
 	const router = useRouter()
 	const searchParams = useSearchParams()
@@ -178,6 +177,8 @@ export const QuadrantSteps = ({
 				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
 				onNextStep={onStepChange}
 			/>
+
+			<Multiplayer awareness={awareness} />
 		</>
 	)
 }
