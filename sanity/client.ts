@@ -57,9 +57,9 @@ export const client = {
 		}
 
 		const data = await sanity.fetch<WithKickoffCode | null>(
-			groq`*[_type == "participant" && _id == $id][0] { 
-                ..., 
-                kickoff->{ "code": code.current } 
+			groq`*[_type == "participant" && _id == $id][0] {
+                ...,
+                kickoff->{ "code": code.current }
             }`,
 			{ id },
 			{ cache: "no-store" },
@@ -110,6 +110,14 @@ export const client = {
 			kickoff: Reference
 		}
 
+		const existing = await sanity.fetch<ST["participant"] | null>(
+			groq`*[_type == "participant" && name == $name && kickoff._ref == $kickoffId][0]`,
+			{ name: args.name, kickoffId: args.kickoffId },
+			{ cache: "no-store" },
+		)
+
+		if (existing) return existing
+
 		const data: Data = {
 			_type: "participant",
 			name: args.name,
@@ -121,8 +129,6 @@ export const client = {
 		}
 
 		const res = await sanity.create(data)
-
-		return res
 	},
 
 	async onboardParticipant(id: string) {
