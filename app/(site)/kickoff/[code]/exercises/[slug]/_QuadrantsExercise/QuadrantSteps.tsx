@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { useCaptainAnswers } from "@/sanity/groups"
+import { useMultiplayer } from "@/hooks/use-multiplayer"
 import type { GroupAnswer, IndividualAnswer } from "../groups/types"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
@@ -45,6 +46,10 @@ export const QuadrantSteps = ({
 	kickoffCode,
 	readOnly,
 }: QuadrantStepsProps) => {
+	const awareness = useMultiplayer(`${kickoffCode}-${exerciseId}`)
+
+	console.log(awareness)
+
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")

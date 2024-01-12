@@ -14,6 +14,7 @@ type Props = {
 
 const KickoffPage = async (props: Props) => {
 	const participant = await client.findParticipantOrThrow()
+	console.log(participant)
 	if (participant.onboarded) redirect(`/kickoff/${props.params.code}/exercises`)
 
 	async function onboard() {
