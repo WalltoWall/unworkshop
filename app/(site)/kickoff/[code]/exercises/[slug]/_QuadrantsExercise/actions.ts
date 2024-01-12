@@ -25,17 +25,11 @@ const submitQuadrantSchema = zod.object({
 		}),
 	}),
 	exerciseId: zod.string(),
-	group: zod.object({
-		type: zod.string(),
-		group: zod.string().optional(),
-		role: zod.string().optional(),
-	}),
 })
 
 export async function submitQuadrantAction(newAnswer: {
 	answer: { slug: string; newAnswer: Answer }
 	exerciseId: string
-	group?: IndividualAnswer | GroupAnswer
 }) {
 	const data = submitQuadrantSchema.parse(newAnswer)
 
@@ -43,7 +37,9 @@ export async function submitQuadrantAction(newAnswer: {
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
 
 	const oldAnswers = participant.answers?.[data.exerciseId]?.answers ?? {}
-	const meta = data.group ?? { type: "individual" as const }
+	const meta = participant.answers?.[data.exerciseId]?.meta ?? {
+		type: "individual" as const,
+	}
 
 	const newPositions = { ...oldAnswers[data.answer.slug] }
 

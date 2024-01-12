@@ -20,7 +20,6 @@ type Day = "today" | "tomorrow"
 type QuadrantProps = {
 	item: NonNullable<ST["exercise"]["quadrants"]>[number]
 	exerciseId: string
-	group?: IndividualAnswer | GroupAnswer
 	index: number
 	state: State
 	captainAnswer?: Answer
@@ -36,7 +35,6 @@ type QuadrantProps = {
 export const Quadrant = ({
 	item,
 	exerciseId,
-	group,
 	index,
 	state,
 	captainAnswer,
@@ -188,7 +186,6 @@ export const Quadrant = ({
 		const handleSubmit = submitQuadrantAction.bind(null, {
 			answer: updatedAnswer,
 			exerciseId,
-			group,
 		})
 		await handleSubmit()
 	}
