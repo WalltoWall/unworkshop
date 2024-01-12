@@ -137,7 +137,6 @@ export const QuadrantSteps = ({
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
-								group={meta}
 								captainAnswer={groupCaptainAnswers[quadrant.slug.current]}
 								answer={optimisticAnswers[quadrant.slug.current]}
 								state={state}
@@ -153,7 +152,6 @@ export const QuadrantSteps = ({
 						<Quadrant
 							item={currentQuadrant}
 							exerciseId={exerciseId}
-							group={meta}
 							captainAnswer={groupCaptainAnswers[currentQuadrant.slug.current]}
 							answer={optimisticAnswers[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
