@@ -32,6 +32,7 @@ export const QuadrantsExercise = async ({
 					finalInstructions={exercise.finalize_instructions}
 					kickoffCode={kickoffCode}
 					readOnly={meta?.role === "contributor"}
+					participantName={participant.name}
 				/>
 			)}
 		</div>

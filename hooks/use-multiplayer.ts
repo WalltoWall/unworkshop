@@ -3,7 +3,7 @@ import { WebrtcProvider } from "y-webrtc"
 import * as Y from "yjs"
 import { USER_COLORS } from "@/constants"
 
-export function useMultiplayer(room: string) {
+export function useMultiplayer(room: string, name: string) {
 	let awareness = React.useRef<WebrtcProvider["awareness"] | null>(null)
 
 	useEffect(() => {
@@ -15,6 +15,7 @@ export function useMultiplayer(room: string) {
 		})
 
 		awareness.current = provider.awareness
+		awareness.current.setLocalStateField("name", name)
 
 		const color = USER_COLORS[Math.floor(Math.random() * USER_COLORS.length)]
 		awareness.current.setLocalStateField("color", color)

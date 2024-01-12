@@ -33,7 +33,14 @@ const Cursors = ({ awareness }: MultiplayerProps) => {
 		<div>
 			{Array.from(users.entries()).map(([key, value]) => {
 				if (key === awareness!.clientID) return null
-				return <Cursor key={key} color={value.color} point={value.point} />
+				return (
+					<Cursor
+						key={key}
+						color={value.color}
+						name={value.name}
+						point={value.point}
+					/>
+				)
 			})}
 		</div>
 	)
@@ -47,7 +54,7 @@ const Count = ({ awareness }: MultiplayerProps) => {
 
 const Multiplayer = (props: MultiplayerProps) => {
 	return props.awareness ? (
-		<div className="pointer-events-none fixed left-0 top-0 h-full w-full">
+		<div className="pointer-events-none fixed left-0 top-0 z-50 h-full w-full">
 			<Cursors {...props} />
 			<Count {...props} />
 		</div>

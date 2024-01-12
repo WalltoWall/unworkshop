@@ -34,6 +34,7 @@ type QuadrantStepsProps = {
 	finalInstructions: ST["exercise"]["finalize_instructions"]
 	kickoffCode: string
 	readOnly: boolean
+	participantName: string
 }
 
 export const QuadrantSteps = ({
@@ -46,8 +47,12 @@ export const QuadrantSteps = ({
 	finalInstructions,
 	kickoffCode,
 	readOnly,
+	participantName,
 }: QuadrantStepsProps) => {
-	const awareness = useMultiplayer(`${kickoffCode}-${exerciseId}`)
+	const awareness = useMultiplayer(
+		`${kickoffCode}-${exerciseId}`,
+		participantName,
+	)
 
 	const router = useRouter()
 	const searchParams = useSearchParams()

@@ -1,9 +1,18 @@
 import * as React from "react"
 import { usePerfectCursor } from "@/hooks/use-perfect-cursor"
+import { CursorIcon } from "./icons/CursorIcon"
 
 export const Cursor = React.memo(
-	({ point, color }: { point?: number[]; color?: string }) => {
-		const rCursor = React.useRef<SVGSVGElement>(null)
+	({
+		point,
+		color,
+		name,
+	}: {
+		point?: number[]
+		color?: string
+		name?: string
+	}) => {
+		const rCursor = React.useRef<HTMLDivElement>(null)
 
 		const animateCursor = React.useCallback((point: number[]) => {
 			const elm = rCursor.current
@@ -24,28 +33,23 @@ export const Cursor = React.memo(
 		if (!point || !color) return null
 
 		return (
-			<svg
+			<div
 				ref={rCursor}
-				className="absolute -left-[15px] -top-[15px] z-50 h-[35px] w-[35px]"
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 35 35"
-				fill="none"
-				fillRule="evenodd"
+				className="absolute -left-[4px] -top-[6px] z-50 h-[35px] w-[35px]"
+				style={{
+					color,
+				}}
 			>
-				<title>Cursor</title>
-				<g fill="rgba(0,0,0,.2)" transform="translate(1,1)">
-					<path d="m12 24.4219v-16.015l11.591 11.619h-6.781l-.411.124z" />
-					<path d="m21.0845 25.0962-3.605 1.535-4.682-11.089 3.686-1.553z" />
-				</g>
-				<g fill="white">
-					<path d="m12 24.4219v-16.015l11.591 11.619h-6.781l-.411.124z" />
-					<path d="m21.0845 25.0962-3.605 1.535-4.682-11.089 3.686-1.553z" />
-				</g>
-				<g fill={color}>
-					<path d="m19.751 24.4155-1.844.774-3.1-7.374 1.841-.775z" />
-					<path d="m13 10.814v11.188l2.969-2.866.428-.139h4.768z" />
-				</g>
-			</svg>
+				<CursorIcon />
+				<span
+					className="absolute left-[calc(100%-0.5rem)] top-6 whitespace-nowrap rounded p-1 text-white text-14 capsize"
+					style={{
+						backgroundColor: color,
+					}}
+				>
+					{name}
+				</span>
+			</div>
 		)
 	},
 )
