@@ -2,6 +2,7 @@
 
 import React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { uid } from "uid"
 import { Steps } from "@/components/Steps"
 import { CardScroller, type Color } from "./CardScroller"
 import type { Answer } from "./types"
@@ -40,6 +41,14 @@ const BrainstormClient = ({
 
 	if (!steps) return
 
+	const cardsAtStep = cards.some((card) => card.step === step)
+
+	// adding new card wont work if person has no cards becasuse
+	// were adding a card to the array without creating it on the server
+	// ex: add card button calls add card which adds the id to the array of cards
+	// therefore this id were creating here is not in the participants answer array and gets thrown out. need to somehow call add card and pass the new card to it if they have no cards.
+	console.log(cards)
+
 	return (
 		<div className="flex h-full flex-col overflow-hidden">
 			{steps && steps.at(step - 1) && (
@@ -57,7 +66,11 @@ const BrainstormClient = ({
 				// Need key prop so that useOptimistic rerenders the cards correctly based off step see:https://github.com/facebook/react/issues/27617
 				// see: https://github.com/vercel/next.js/issues/57662
 				key={step}
-				cards={cards.filter((card) => card.step === step) ?? []}
+				cards={
+					cards.length <= 0 || !cardsAtStep
+						? [{ response: "", step: step, id: uid() }]
+						: cards.filter((card) => card.step === step)
+				}
 				exerciseId={exerciseId}
 				group={groups.length > 0}
 				color={steps.at(step - 1)?.color}

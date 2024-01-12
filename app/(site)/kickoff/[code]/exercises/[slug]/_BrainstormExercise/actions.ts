@@ -36,7 +36,7 @@ export async function addCardAction(formData: FormData) {
 		? {
 				type: "group" as const,
 				leader: participant._id,
-		  }
+			}
 		: { type: "individual" as const }
 
 	const step = parseInt(data.step)

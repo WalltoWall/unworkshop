@@ -96,8 +96,6 @@ export const BrainstormPresenterViewClient = ({
 		const columnTitle = ColumnTitle.parse(data.get("columnTitle"))
 		const exerciseSlug = ExerciseSlug.parse(data.get("exerciseSlug"))
 
-		console.log(columns)
-
 		switch (action) {
 			case "Update Color":
 				if (!columnId || !color) return
@@ -121,7 +119,6 @@ export const BrainstormPresenterViewClient = ({
 				break
 		}
 
-		console.log(columns)
 		// startTransition(() => {
 		// 	submitBoardAction({ columns, exerciseSlug })
 		// })
