@@ -4,13 +4,13 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { zfd } from "zod-form-data"
 import { client, sanity } from "@/sanity/client"
-import { type BrainstormParticipant } from "./types"
+import { type AddCardData, type BrainstormParticipant } from "./types"
 
-const addCardSchema = zfd.formData({
-	cardId: zfd.text(),
-	exerciseId: zfd.text(),
-	isGroup: zfd.checkbox(),
-	step: zfd.text(),
+const addCardSchema = z.object({
+	id: z.string(),
+	exerciseId: z.string(),
+	isGroup: z.boolean(),
+	step: z.number(),
 })
 
 const removeCardSchema = zfd.formData({
@@ -26,27 +26,26 @@ const submitCardSchema = zfd.formData({
 
 // TODO: Error Handling
 
-export async function addCardAction(formData: FormData) {
-	const data = addCardSchema.parse(formData)
+export async function addCardAction(data: AddCardData) {
+	const { id, exerciseId, isGroup, step } = addCardSchema.parse(data)
+
 	const participant =
 		await client.findParticipantOrThrow<BrainstormParticipant>()
 
-	const oldAnswers = participant.answers?.[data.exerciseId]?.answers ?? []
-	const meta = data.isGroup
+	const oldAnswers = participant.answers?.[exerciseId]?.answers ?? []
+	const meta = isGroup
 		? {
 				type: "group" as const,
 				leader: participant._id,
 			}
 		: { type: "individual" as const }
 
-	const step = parseInt(data.step)
-
 	const answers: BrainstormParticipant["answers"] = {
 		...participant.answers,
-		[data.exerciseId]: {
-			...participant.answers?.[data.exerciseId],
+		[exerciseId]: {
+			...participant.answers?.[exerciseId],
 			meta,
-			answers: [...oldAnswers, { id: data.cardId, response: "", step: step }],
+			answers: [...oldAnswers, { id: id, response: "", step: step }],
 		},
 	}
 
