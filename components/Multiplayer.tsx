@@ -8,17 +8,22 @@ import { useActiveFocus } from "@/hooks/use-active-element"
 import { Cursor } from "./Cursor"
 
 interface MultiplayerProps {
+	role?: string
 	awareness: WebrtcProvider["awareness"]
 	cursors?: boolean
 }
 
-const Cursors = ({ awareness, cursors = true }: MultiplayerProps) => {
+const Cursors = ({ awareness, cursors = true, role }: MultiplayerProps) => {
 	const users = useUsers(awareness)
 
 	// When the user moves their pointer, update their presence
 	const handlePointMove = React.useCallback(
 		throttle((e: PointerEvent) => {
 			awareness.setLocalStateField("point", [e.clientX, e.clientY])
+
+			if (role === "contributor") {
+				awareness.setLocalStateField("hidden", true)
+			}
 		}, 80),
 		[],
 	)
@@ -34,7 +39,8 @@ const Cursors = ({ awareness, cursors = true }: MultiplayerProps) => {
 	return cursors ? (
 		<div>
 			{Array.from(users.entries()).map(([key, value]) => {
-				if (key === awareness.clientID) return null
+				if (key === awareness.clientID || value.hidden) return null
+
 				return (
 					<Cursor
 						key={key}
@@ -61,9 +67,8 @@ const FocusRings = ({ awareness }: MultiplayerProps) => {
 	return (
 		<>
 			{Array.from(users.entries()).map(([key, value]) => {
-				if (key === awareness.clientID) return null
-
-				if (!value.focused) return null
+				if (key === awareness.clientID || value.hidden || !value.focused)
+					return null
 
 				const element = document.getElementById(value.focused)
 
@@ -101,13 +106,6 @@ const FocusRings = ({ awareness }: MultiplayerProps) => {
 }
 
 const Multiplayer = (props: MultiplayerProps) => {
-	// const activeElement = useActiveFocus()
-
-	// React.useEffect(() => {
-	// 	console.log(activeElement)
-	// 	// props.awareness.setLocalStateField("focus", activeElement)
-	// }, [activeElement])
-
 	return props.awareness ? (
 		<div className="pointer-events-none fixed left-0 top-0 z-50 h-full w-full">
 			<Cursors {...props} />
