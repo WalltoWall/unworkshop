@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Multiplayer from "@/components/Multiplayer"
 import { Steps } from "@/components/Steps"
@@ -49,10 +49,10 @@ export const QuadrantSteps = ({
 	readOnly,
 	participantName,
 }: QuadrantStepsProps) => {
-	const awareness = useMultiplayer(
-		`${kickoffCode}-${exerciseId}`,
-		participantName,
-	)
+	const awareness = useMultiplayer({
+		room: `${kickoffCode}-${exerciseId}`,
+		name: participantName,
+	})
 
 	const router = useRouter()
 	const searchParams = useSearchParams()
@@ -103,7 +103,7 @@ export const QuadrantSteps = ({
 		}
 	}
 
-	const [state, setState] = useState<State>(determineNextState(step))
+	const [state, setState] = React.useState<State>(determineNextState(step))
 	const isDisabled =
 		(state === "today_pending" || state === "tomorrow_pending") &&
 		meta?.role !== "contributor"
@@ -181,7 +181,9 @@ export const QuadrantSteps = ({
 				onNextStep={onStepChange}
 			/>
 
-			<Multiplayer awareness={awareness} />
+			{meta?.type === "group" && awareness && (
+				<Multiplayer awareness={awareness} cursors={false} />
+			)}
 		</>
 	)
 }

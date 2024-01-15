@@ -5,7 +5,6 @@ import {
 	type DragMoveEvent,
 } from "@dnd-kit/core"
 import type { ST } from "@/sanity/config"
-import type { GroupAnswer, IndividualAnswer } from "../../groups/types"
 import { submitQuadrantAction } from "../actions"
 import { type AnswerDispatch, type State } from "../QuadrantSteps"
 import type { Answer } from "../types"
