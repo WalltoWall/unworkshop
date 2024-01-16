@@ -28,7 +28,7 @@ export const SlidersClient = ({ exerciseId, sliders, answers, groups }: Props) =
 	return (
 		<div className="mt-8">
 			{sliders?.map((slider, i) => (
-                <>
+                <div key={i}>
                     {(step === i + 1 || step === totalSteps + 1) && (
                         <Slider
                             key={slider._key}
@@ -38,7 +38,7 @@ export const SlidersClient = ({ exerciseId, sliders, answers, groups }: Props) =
                             group={groups && groups.length > 0}
                         />
                     )}
-                </>
+                </div>
 			))}
 
 			<Steps

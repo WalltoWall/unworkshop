@@ -9,6 +9,8 @@ import { submitSliderAction } from "./actions"
 import React from "react"
 import { useDebounce } from "../_BrainstormExercise/debounce"
 import type { Answer } from "./types"
+import { Text } from "@/components/Text"
+import { unset } from "sanity"
 
 type Props = {
 	exerciseId: string
@@ -44,34 +46,70 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                         name="isGroup"
                         className="hidden"
                     />
-                    <p>Where are we today?</p>
-                    <div className="relative my-3 h-32 overflow-hidden rounded-lg">
-                        <div className="absolute bottom-0 left-0 right-0 top-0 h-32">
-                            {isFilled.image(item.left_image) && (
+                    <Text>Where are we today?</Text>
+                    <div className="relative my-3 h-32 overflow-hidden rounded-lg flex justify-between">
+                        {isFilled.image(item.left_image) ?
+                            <div className="w-1/2 h-32 bg-black">
                                 <Image
                                     src={urlFor(item.left_image).url()!}
                                     alt={altFor(item.left_image)}
-                                    className="object-cover object-center opacity-100 h-full w-full"
+                                    className="object-cover object-center opacity-100 h-full w-full transition-opacity transition-[filter]"
                                     width={300}
                                     height={300}
+                                    style={{
+                                        opacity: 1.1 - (values.todayValue / 10),
+                                        filter: values.todayValue == 1 ? `grayscale(0)` : `grayScale(${(values.todayValue / 6) * 100 + "%"})`
+                                    }}
                                 />
-                            )}
-                            <p>{item.left_value}</p>
-                        </div>
+                            </div>
+                            : 
+                            <div className="h-full flex px-2 justify-center items-center bg-pink-85 transition-[width]"
+                            style={{
+                                width: 100 - ((values.todayValue / 7) * 100) + "%"
+                            }}
+                            >
+                                <p className="uppercase font-heading capsize transition-[font-size] transition-[transform]"
+                                style={{
+                                    transform: values.todayValue == 6 ? "rotate(-90deg)":"rotate(0deg)", 
+                                }}
+                                >
+                                    <svg className="w-full" viewBox="0 0 75 18">
+                                        <text x="0" y="15">{item.left_value}</text>
+                                    </svg>
+                                </p>
+                            </div>
+                        }
 
-                        <div className="absolute bottom-0 left-0 right-0 top-0 h-32">
-                            {isFilled.image(item.right_image) && (
+                        {isFilled.image(item.right_image) ?
+                            <div className="w-1/2 h-32 bg-black">
                                 <Image
                                     src={urlFor(item.right_image).url()!}
                                     alt={altFor(item.right_image)}
-                                    className={cx("object-cover object-center h-full w-full transition ease-in-out",
-                                        values.todayValue >= 3.5 ? "opacity-100" : "opacity-0"
-                                    )}
+                                    className="object-cover object-center opacity-100 h-full w-full transition-opacity transition-[filter]"
                                     width={300}
                                     height={300}
+                                    style={{
+                                        opacity: 0.4 + (values.todayValue / 10),
+                                        filter: values.todayValue == 1 ? `grayscale(1)` : `grayScale(${100 - ((values.todayValue / 6) * 100) + "%"})`
+                                    }}
                                 />
-                            )}
-                        </div>
+                            </div>
+                            : <div className="h-full flex px-2 justify-center items-center bg-green-78 transition-[width]"
+                             style={{
+                                 width: (values.todayValue / 7) * 100 + "%"
+                             }}
+                             >
+                                 <p className="uppercase font-heading capsize transition-[font-size] transition-[transform] w-full"
+                                 style={{
+                                    transform: values.todayValue == 1 ? "rotate(90deg)":"rotate(0deg)", 
+                                 }}
+                                 >
+                                    <svg className="w-full" viewBox="0 0 75 18">
+                                        <text x="0" y="15">{item.right_value}</text>
+                                    </svg>
+                                </p>
+                             </div>
+                        }
                     </div>
                     <input
                         type="range"
@@ -89,18 +127,22 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                         }}
                     />
                     <div className="flex justify-between pt-2 text-gray-50">
-                        <p>{item.left_value}</p>
-                        <p>{item.right_value}</p>
+                        <Text>{item.left_value}</Text>
+                        <Text>{item.right_value}</Text>
                     </div>
                 </div>
 
                   
                 {/* TOMORROW */}
                 <div className="rounded-lg bg-gray-97 p-4 mt-8">
-                    <p>Where are we tomorrow?</p>
-                    <div className="relative my-3 h-32 overflow-hidden rounded-lg">
-                        <div className="absolute bottom-0 left-0 right-0 top-0 h-32">
-                            {isFilled.image(item.left_image) && (
+                    <Text>Where are we tomorrow?</Text>
+                    <div className="relative my-3 h-32 overflow-hidden rounded-lg justify-between"
+                    style={{
+                        display: isFilled.image(item.left_image) || isFilled.image(item.right_image) ? "block": "flex",
+                    }}
+                    >
+                        {isFilled.image(item.left_image) ?
+                            <div className="absolute bottom-0 left-0 right-50 top-0 h-32">
                                 <Image
                                     src={urlFor(item.left_image).url()!}
                                     alt={altFor(item.left_image)}
@@ -108,12 +150,27 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                                     width={300}
                                     height={300}
                                 />
-                            )}
-                            <p>{item.left_value}</p>
-                        </div>
+                            </div>
+                            : 
+                            <div className="h-full flex px-2 justify-center items-center bg-pink-85 transition-[width]"
+                            style={{
+                                width: 100 - ((values.tomorrowValue / 7) * 100) + "%"
+                            }}
+                            >
+                                <p className="uppercase font-heading capsize transition-[font-size] transition-[transform]"
+                                style={{
+                                    transform: values.tomorrowValue == 6 ? "rotate(-90deg)":"rotate(0deg)", 
+                                }}
+                                >
+                                    <svg className="w-full" viewBox="0 0 75 18">
+                                        <text x="0" y="15">{item.left_value}</text>
+                                    </svg>
+                                </p>
+                            </div>
+                        }
 
-                        <div className="absolute bottom-0 left-0 right-0 top-0 h-32">
-                            {isFilled.image(item.right_image) && (
+                        {isFilled.image(item.right_image) ?
+                            <div className="absolute bottom-0 left-50 right-0 top-0 h-32">
                                 <Image
                                     src={urlFor(item.right_image).url()!}
                                     alt={altFor(item.right_image)}
@@ -123,8 +180,23 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                                     width={300}
                                     height={300}
                                 />
-                            )}
-                        </div>
+                            </div>
+                            : <div className="h-full flex px-2 justify-center items-center bg-green-78 transition-[width]"
+                             style={{
+                                 width: (values.tomorrowValue / 7) * 100 + "%"
+                             }}
+                             >
+                                 <p className="uppercase font-heading capsize transition-[font-size] transition-[transform] w-full"
+                                 style={{
+                                    transform: values.tomorrowValue == 1 ? "rotate(90deg)":"rotate(0deg)", 
+                                 }}
+                                 >
+                                    <svg className="w-full" viewBox="0 0 75 18">
+                                        <text x="0" y="15">{item.right_value}</text>
+                                    </svg>
+                                </p>
+                             </div>
+                        }
                     </div>
                     
                     <input
@@ -143,8 +215,8 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                         }}
                     />
                     <div className="flex justify-between pt-2 text-gray-50">
-                        <p>{item.left_value}</p>
-                        <p>{item.right_value}</p>
+                        <Text>{item.left_value}</Text>
+                        <Text>{item.right_value}</Text>
                     </div>
                 </div>
             </form>
