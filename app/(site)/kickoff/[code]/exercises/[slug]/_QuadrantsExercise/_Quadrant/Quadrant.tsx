@@ -6,6 +6,7 @@ import {
 } from "@dnd-kit/core"
 import type { ST } from "@/sanity/config"
 import { submitQuadrantAction } from "../actions"
+import { useDebounce } from "../debounce"
 import { type AnswerDispatch, type State } from "../QuadrantSteps"
 import type { Answer } from "../types"
 import { QuadrantArrow } from "./QuadrantArrow"
@@ -52,6 +53,11 @@ export const Quadrant = ({
 	const tomorrow = answer?.tomorrow
 
 	const clickTarget = React.useRef<HTMLDivElement>(null)
+
+	const handleSubmit = useDebounce(async (data) => {
+		const submitAnswers = submitQuadrantAction.bind(null, data)
+		await submitAnswers()
+	}, 1000)
 
 	React.useEffect(() => {
 		if (tomorrow && today) {
@@ -156,7 +162,7 @@ export const Quadrant = ({
 		return [top, left]
 	}
 
-	const savePointLocations = async (
+	const savePointLocations = (
 		updatedAnswer: { slug: string; newAnswer: Answer },
 		top: number,
 		left: number,
@@ -180,12 +186,11 @@ export const Quadrant = ({
 
 		onQuadrantClick()
 
-		const handleSubmit = submitQuadrantAction.bind(null, {
+		handleSubmit({
 			answer: updatedAnswer,
 			exerciseId,
 			isGroup,
 		})
-		await handleSubmit()
 	}
 
 	return (
