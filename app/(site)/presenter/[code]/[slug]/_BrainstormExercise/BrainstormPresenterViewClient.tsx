@@ -3,7 +3,6 @@
 import React from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import clsx from "clsx"
-import debounce from "just-debounce-it"
 import { type Slug } from "sanity"
 import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
@@ -18,20 +17,17 @@ import {
 	reorder,
 	type ColumnsDispatch,
 } from "./helpers"
-import {
-	Color,
-	ColumnId,
-	Columns,
-	ColumnTitle,
-	ExerciseSlug,
-} from "./validators"
 
 export type Card = { response: string; id: string }
 
-export type Columns = Record<
-	string,
-	{ color: string; title: string; cards: Array<Card> }
->
+export type Columns = Array<Column>
+
+export type Column = {
+	color: string
+	title: string
+	cards: Array<Card>
+	id: string
+}
 
 interface PresenterViewProps {
 	exerciseSlug: Slug
@@ -52,13 +48,13 @@ export const BrainstormPresenterViewClient = ({
 	const submitForm = async (action: ColumnsDispatch) => {
 		const newColumns = determineColumnState(optimisticColumns, action)
 
-		startTransition(() => {
-			setOptimisitColumns(newColumns)
-			submitBoardAction({
-				columns: newColumns,
-				exerciseSlug: exerciseSlug.current,
-			})
-		})
+		// startTransition(() => {
+		// 	setOptimisitColumns(newColumns)
+		// 	submitBoardAction({
+		// 		columns: newColumns,
+		// 		exerciseSlug: exerciseSlug.current,
+		// 	})
+		// })
 	}
 
 	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -76,40 +72,46 @@ export const BrainstormPresenterViewClient = ({
 				const fromIndex = source.droppableId
 				const toIndex = destination.droppableId
 
-				if (fromIndex === toIndex) {
-					const items = reorder({
-						list: optimisticColumns[fromIndex].cards,
-						startIndex: source.index,
-						endIndex: destination.index,
-					})
+				const fromCards = optimisticColumns.forEach(
+					(col) => col.id === fromIndex,
+				)
 
-					submitForm({
-						type: "Update Cards",
-						changeIndex: fromIndex,
-						cards: items,
-					})
-				} else {
-					const result = move({
-						sourceCards: optimisticColumns[fromIndex].cards,
-						destinationCards: optimisticColumns[toIndex].cards,
-						sourceIndex: source.index,
-						destinationIndex: destination.index,
-					})
+				console.log(fromCards)
 
-					const newColumns: Columns = {
-						...optimisticColumns,
-						[fromIndex]: {
-							...optimisticColumns[fromIndex],
-							cards: result.fromCards,
-						},
-						[toIndex]: {
-							...optimisticColumns[toIndex],
-							cards: result.toCards,
-						},
-					}
+				// if (fromIndex === toIndex) {
+				// 	const items = reorder({
+				// 		list: fromCards,
+				// 		startIndex: source.index,
+				// 		endIndex: destination.index,
+				// 	})
 
-					submitForm({ type: "Update Columns", newColumn: newColumns })
-				}
+				// 	submitForm({
+				// 		type: "Update Cards",
+				// 		changeIndex: fromIndex,
+				// 		cards: items,
+				// 	})
+				// } else {
+				// 	const result = move({
+				// 		sourceCards: optimisticColumns[fromIndex].cards,
+				// 		destinationCards: optimisticColumns[toIndex].cards,
+				// 		sourceIndex: source.index,
+				// 		destinationIndex: destination.index,
+				// 	})
+
+				// 	const newColumns: Columns = {
+				// 		...optimisticColumns,
+				// 		[fromIndex]: {
+				// 			...optimisticColumns[fromIndex],
+				// 			cards: result.fromCards,
+				// 		},
+				// 		[toIndex]: {
+				// 			...optimisticColumns[toIndex],
+				// 			cards: result.toCards,
+				// 		},
+				// 	}
+
+				// 	submitForm({ type: "Update Columns", newColumn: newColumns })
+				// }
 			}}
 		>
 			<form onSubmit={handleSubmit} ref={formRef}>
@@ -141,26 +143,20 @@ export const BrainstormPresenterViewClient = ({
 									ref={provided.innerRef}
 									{...provided.droppableProps}
 								>
-									{optimisticColumns[SORTING_COLUMN_ID].cards.map(
-										(card, idx) => (
-											<Draggable
-												index={idx}
-												draggableId={card.id}
-												key={card.id}
-											>
-												{(cardProvided, cardSnapshot) => (
-													<div
-														className="box-border aspect-square w-[135px] min-w-[135px] list-none rounded-lg bg-white px-3 py-2"
-														ref={cardProvided.innerRef}
-														{...cardProvided.draggableProps}
-														{...cardProvided.dragHandleProps}
-													>
-														<p>{card.response}</p>
-													</div>
-												)}
-											</Draggable>
-										),
-									)}
+									{optimisticColumns[0].cards.map((card, idx) => (
+										<Draggable index={idx} draggableId={card.id} key={card.id}>
+											{(cardProvided, cardSnapshot) => (
+												<div
+													className="box-border aspect-square w-[135px] min-w-[135px] list-none rounded-lg bg-white px-3 py-2"
+													ref={cardProvided.innerRef}
+													{...cardProvided.draggableProps}
+													{...cardProvided.dragHandleProps}
+												>
+													<p>{card.response}</p>
+												</div>
+											)}
+										</Draggable>
+									))}
 
 									{provided.placeholder}
 								</div>
@@ -169,24 +165,22 @@ export const BrainstormPresenterViewClient = ({
 					</div>
 
 					<div className="flex flex-wrap gap-4 pt-5">
-						{Object.entries(optimisticColumns).map(
-							([columnId, { cards, color, title }]) => {
-								if (columnId === SORTING_COLUMN_ID) return
+						{optimisticColumns.map((col) => {
+							if (col.id === SORTING_COLUMN_ID) return
 
-								return (
-									<CardColumn
-										key={columnId}
-										cards={cards}
-										colorHex={color}
-										columnTitle={title}
-										id={columnId}
-										columns={optimisticColumns}
-										exerciseSlug={exerciseSlug.current}
-										submitFunction={submitForm}
-									/>
-								)
-							},
-						)}
+							return (
+								<CardColumn
+									key={col.id}
+									cards={col.cards}
+									colorHex={col.color}
+									columnTitle={col.title}
+									id={col.id}
+									columns={optimisticColumns}
+									exerciseSlug={exerciseSlug.current}
+									submitFunction={submitForm}
+								/>
+							)
+						})}
 
 						<button
 							className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
@@ -194,11 +188,10 @@ export const BrainstormPresenterViewClient = ({
 								const id = uid()
 
 								const newColumn = {
-									[id]: {
-										color: "",
-										title: "New Column",
-										cards: [],
-									},
+									color: "",
+									title: "New Column",
+									cards: [],
+									id: id,
 								}
 
 								submitForm({

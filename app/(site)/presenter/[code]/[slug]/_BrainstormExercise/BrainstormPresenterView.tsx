@@ -36,39 +36,41 @@ export const BrainstormPresenterView = async ({
 
 	if (!perceptions) return
 
-	const answersWithResponses = R.mapValues(
-		perceptions.answers ?? {
-			[SORTING_COLUMN_ID]: {
-				title: "",
-				color: "",
-				cards: participantAnswers.map((card) => card.id),
-			},
-		},
-		(value) => {
-			return {
-				...value,
-				cards: value.cards.map((cardId) => {
-					if (!answerMap.has(cardId))
-						throw new Error(`No Id found for card: ${cardId}`)
+	console.log(answerMap)
 
-					const response = answerMap.get(cardId)!
+	// const answersWithResponses = R.mapValues(
+	// 	perceptions.answers ?? {
+	// 		[SORTING_COLUMN_ID]: {
+	// 			title: "",
+	// 			color: "",
+	// 			cards: participantAnswers.map((card) => card.id),
+	// 		},
+	// 	},
+	// 	(value) => {
+	// 		return {
+	// 			...value,
+	// 			cards: value.cards.map((cardId) => {
+	// 				if (!answerMap.has(cardId))
+	// 					throw new Error(`No Id found for card: ${cardId}`)
 
-					const answer: Answer = {
-						id: cardId,
-						response: response,
-					}
+	// 				const response = answerMap.get(cardId)!
 
-					return answer
-				}),
-			}
-		},
-	)
+	// 				const answer: Answer = {
+	// 					id: cardId,
+	// 					response: response,
+	// 				}
+
+	// 				return answer
+	// 			}),
+	// 		}
+	// 	},
+	// )
 
 	return (
 		<div className="px-8 pt-12">
 			<BrainstormPresenterViewClient
 				exerciseSlug={exercise.slug}
-				presenterColumns={answersWithResponses}
+				presenterColumns={[[{}]]}
 			/>
 		</div>
 	)

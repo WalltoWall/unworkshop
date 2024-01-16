@@ -1,4 +1,4 @@
-import type { Card, Columns } from "./BrainstormPresenterViewClient"
+import type { Card, Column, Columns } from "./BrainstormPresenterViewClient"
 
 export const reorder = <T>({
 	list,
@@ -47,7 +47,7 @@ export type ColumnsDispatch = {
 		| "Update Cards"
 	color?: string
 	columnId?: string
-	newColumn?: Columns
+	newColumn?: Column
 	cards?: Array<Card>
 	changeIndex?: string
 	columnTitle?: string
