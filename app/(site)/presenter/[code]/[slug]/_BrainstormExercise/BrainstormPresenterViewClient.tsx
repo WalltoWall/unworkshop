@@ -1,33 +1,23 @@
 "use client"
 
 import React from "react"
-import {
-	closestCorners,
-	DndContext,
-	DragOverlay,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-	type Active,
-} from "@dnd-kit/core"
-import {
-	arrayMove,
-	horizontalListSortingStrategy,
-	SortableContext,
-	sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable"
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import clsx from "clsx"
+import debounce from "just-debounce-it"
 import { type Slug } from "sanity"
 import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
-import { useDebounce } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/debounce"
 import { submitBoardAction } from "./actions"
 import { CardColumn } from "./CardColumn"
 import { SORTING_COLUMN_ID } from "./constants"
-import { Draggable, SortableItem } from "./SortableItem"
+import {
+	determineColumnState,
+	move,
+	reorder,
+	type ColumnsDispatch,
+} from "./helpers"
 import {
 	Color,
 	ColumnId,
@@ -48,191 +38,81 @@ interface PresenterViewProps {
 	presenterColumns: Columns
 }
 
-export interface SubmitFormProps {
-	action:
-		| "Update Title"
-		| "Update Color"
-		| "Default"
-		| "Delete Column"
-		| "Create Column"
-		| "Update Columns"
-	color?: string
-	columnId?: string
-	newColumn?: Columns
-}
-
 export const BrainstormPresenterViewClient = ({
 	exerciseSlug,
 	presenterColumns,
 }: PresenterViewProps) => {
 	const [showSorter, setShowSorter] = React.useState(true)
-	const [activeCard, setActiveCard] = React.useState<Active | null>(null)
-	const activeItem = React.useMemo(() => {
-		for (const key in presenterColumns) {
-			if (
-				presenterColumns[key].cards.find((card) => card.id === activeCard?.id)
-			) {
-				return presenterColumns[key].cards.find(
-					(card) => card.id === activeCard?.id,
-				)
-			}
-		}
-	}, [activeCard, presenterColumns])
-
 	const formRef = React.useRef<HTMLFormElement>(null)
 	const [, startTransition] = React.useTransition()
 
-	const sensors = useSensors(
-		useSensor(PointerSensor),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
-		}),
-	)
+	const [optimisticColumns, setOptimisitColumns] =
+		React.useOptimistic(presenterColumns)
 
-	const submitForm = ({
-		action,
-		color,
-		columnId,
-		newColumn,
-	}: SubmitFormProps) => {
-		if (!formRef.current) return
-
-		const data = new FormData(formRef.current)
-
-		let columns = Columns.parse(data.get("columns"))
-		const columnTitle = ColumnTitle.parse(
-			data.get("columnTitle") ?? "New Column",
-		)
-		const exerciseSlug = ExerciseSlug.parse(data.get("exerciseSlug"))
-
-		switch (action) {
-			case "Update Color":
-				if (!columnId || !color) return
-				columns[columnId].color = color
-				break
-			case "Update Title":
-				if (!columnId) return
-				columns[columnId].title = columnTitle
-				break
-			case "Delete Column":
-				if (!columnId) return
-				columns = Object.fromEntries(
-					Object.entries(presenterColumns).filter(([key]) => key !== columnId),
-				)
-				break
-			case "Create Column":
-				if (!newColumn) return
-				columns[columnId!] = newColumn[columnId!]
-				break
-			case "Update Columns":
-				if (!newColumn) return
-				columns = newColumn
-				break
-			default:
-				break
-		}
+	const submitForm = async (action: ColumnsDispatch) => {
+		const newColumns = determineColumnState(optimisticColumns, action)
 
 		startTransition(() => {
-			submitBoardAction({ columns, exerciseSlug })
+			setOptimisitColumns(newColumns)
+			submitBoardAction({
+				columns: newColumns,
+				exerciseSlug: exerciseSlug.current,
+			})
 		})
 	}
 
 	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
 		e.preventDefault()
-		submitForm({ action: "Default" })
+		submitForm({ type: "Default" })
 	}
 
 	return (
-		<DndContext
-			sensors={sensors}
-			onDragStart={({ active }) => {
-				if (!active) return
+		<DragDropContext
+			onDragEnd={(result) => {
+				const { source, destination } = result
 
-				setActiveCard(active)
-			}}
-			onDragEnd={({ active, over }) => {
-				if (!over || active.id === over.id) return
-				if (!active.data.current) return
-				if (
-					active.data.current?.sortable.containerId !==
-					over.data.current?.sortable.containerId
-				)
-					return
+				if (!destination) return
 
-				const columnId = active.data.current.sortable.containerId
-				const cards = presenterColumns[columnId].cards
+				const fromIndex = source.droppableId
+				const toIndex = destination.droppableId
 
-				const oldIdx = cards.findIndex((card) => card.id === active.id)
-				const newIdx = cards.findIndex((card) => card.id === over.id)
+				if (fromIndex === toIndex) {
+					const items = reorder({
+						list: optimisticColumns[fromIndex].cards,
+						startIndex: source.index,
+						endIndex: destination.index,
+					})
 
-				const newColumns = {
-					...presenterColumns,
-					[columnId]: {
-						...presenterColumns[columnId],
-						cards: arrayMove(cards, oldIdx, newIdx),
-					},
-				}
-
-				submitForm({ action: "Update Columns", newColumn: newColumns })
-			}}
-			onDragOver={({ active, over }) => {
-				if (!over || !active.data.current) return
-
-				const fromColumnId = active.data.current?.sortable.containerId
-				const toColumnId = over.data.current?.sortable.containerId
-
-				if (!fromColumnId || !toColumnId) return
-				if (fromColumnId === toColumnId) return
-
-				const fromCards = presenterColumns[fromColumnId].cards
-				const toCards = presenterColumns[toColumnId].cards
-
-				const activeCard = fromCards.find((card) => card.id === active.id)
-				let newColumns
-
-				if (!activeCard) return
-
-				if (toCards.length === 0) {
-					toCards.push(activeCard)
-					newColumns = {
-						...presenterColumns,
-						[fromColumnId]: {
-							...presenterColumns[fromColumnId],
-							cards: fromCards.filter((card) => card.id !== active.id),
-						},
-						[toColumnId]: {
-							...presenterColumns[toColumnId],
-							cards: toCards,
-						},
-					}
+					submitForm({
+						type: "Update Cards",
+						changeIndex: fromIndex,
+						cards: items,
+					})
 				} else {
-					newColumns = {
-						...presenterColumns,
-						[fromColumnId]: {
-							...presenterColumns[fromColumnId],
-							cards: fromCards.filter((card) => card.id !== active.id),
+					const result = move({
+						sourceCards: optimisticColumns[fromIndex].cards,
+						destinationCards: optimisticColumns[toIndex].cards,
+						sourceIndex: source.index,
+						destinationIndex: destination.index,
+					})
+
+					const newColumns: Columns = {
+						...optimisticColumns,
+						[fromIndex]: {
+							...optimisticColumns[fromIndex],
+							cards: result.fromCards,
 						},
-						[toColumnId]: {
-							...presenterColumns[toColumnId],
-							cards: toCards.toSpliced(
-								over.data.current?.sortable.index,
-								0,
-								activeCard,
-							),
+						[toIndex]: {
+							...optimisticColumns[toIndex],
+							cards: result.toCards,
 						},
 					}
-				}
 
-				submitForm({ action: "Update Columns", newColumn: newColumns })
+					submitForm({ type: "Update Columns", newColumn: newColumns })
+				}
 			}}
 		>
 			<form onSubmit={handleSubmit} ref={formRef}>
-				<input type="hidden" value={exerciseSlug.current} name="exerciseSlug" />
-				<input
-					type="hidden"
-					value={JSON.stringify(presenterColumns)}
-					name="columns"
-				/>
 				<div className="relative">
 					<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
 						<button
@@ -251,36 +131,45 @@ export const BrainstormPresenterViewClient = ({
 							/>
 						</button>
 
-						<SortableContext
-							items={presenterColumns[SORTING_COLUMN_ID].cards}
-							id={SORTING_COLUMN_ID}
-							strategy={horizontalListSortingStrategy}
-						>
-							<div
-								className={clsx(
-									"flex w-full gap-2 overflow-y-clip overflow-x-scroll scrollbar-hide",
-									showSorter ? "block" : "hidden",
-								)}
-							>
-								{presenterColumns[SORTING_COLUMN_ID].cards.map((card) => (
-									<SortableItem
-										id={card.id}
-										color={""}
-										className="box-border aspect-square w-[135px] min-w-[135px] list-none rounded-lg bg-white px-3 py-2"
-										key={card.id}
-									>
-										<Draggable
-											response={card.response}
-											className="h-full w-full cursor-move resize-none bg-transparent focus:outline-none"
-										/>
-									</SortableItem>
-								))}
-							</div>
-						</SortableContext>
+						<Droppable droppableId={SORTING_COLUMN_ID} direction="horizontal">
+							{(provided, snapshot) => (
+								<div
+									className={clsx(
+										"flex w-full gap-2 overflow-y-clip overflow-x-scroll scrollbar-hide",
+										showSorter ? "block" : "hidden",
+									)}
+									ref={provided.innerRef}
+									{...provided.droppableProps}
+								>
+									{optimisticColumns[SORTING_COLUMN_ID].cards.map(
+										(card, idx) => (
+											<Draggable
+												index={idx}
+												draggableId={card.id}
+												key={card.id}
+											>
+												{(cardProvided, cardSnapshot) => (
+													<div
+														className="box-border aspect-square w-[135px] min-w-[135px] list-none rounded-lg bg-white px-3 py-2"
+														ref={cardProvided.innerRef}
+														{...cardProvided.draggableProps}
+														{...cardProvided.dragHandleProps}
+													>
+														<p>{card.response}</p>
+													</div>
+												)}
+											</Draggable>
+										),
+									)}
+
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
 					</div>
 
 					<div className="flex flex-wrap gap-4 pt-5">
-						{Object.entries(presenterColumns).map(
+						{Object.entries(optimisticColumns).map(
 							([columnId, { cards, color, title }]) => {
 								if (columnId === SORTING_COLUMN_ID) return
 
@@ -291,7 +180,7 @@ export const BrainstormPresenterViewClient = ({
 										colorHex={color}
 										columnTitle={title}
 										id={columnId}
-										columns={presenterColumns}
+										columns={optimisticColumns}
 										exerciseSlug={exerciseSlug.current}
 										submitFunction={submitForm}
 									/>
@@ -313,7 +202,7 @@ export const BrainstormPresenterViewClient = ({
 								}
 
 								submitForm({
-									action: "Create Column",
+									type: "Create Column",
 									newColumn: newColumn,
 									columnId: id,
 								})
@@ -328,14 +217,6 @@ export const BrainstormPresenterViewClient = ({
 					</div>
 				</div>
 			</form>
-			{/* 
-			<DragOverlay>
-				{activeItem ? (
-					<div className="box-border flex cursor-move list-none items-center rounded-lg px-3.5 py-4">
-						{activeItem.response}
-					</div>
-				) : null}
-			</DragOverlay> */}
-		</DndContext>
+		</DragDropContext>
 	)
 }

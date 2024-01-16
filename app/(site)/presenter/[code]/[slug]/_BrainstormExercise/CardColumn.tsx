@@ -2,15 +2,14 @@
 
 import React from "react"
 import { SwatchesPicker } from "react-color"
-import { useDroppable } from "@dnd-kit/core"
-import { SortableContext } from "@dnd-kit/sortable"
+import { Draggable, Droppable } from "@hello-pangea/dnd"
 import clsx from "clsx"
 import { ContextMenu } from "@/components/ContextMenu"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { useDebounce } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/debounce"
-import type { Columns, SubmitFormProps } from "./BrainstormPresenterViewClient"
+import type { Columns } from "./BrainstormPresenterViewClient"
+import type { ColumnsDispatch } from "./helpers"
 import { PresentColumnModal } from "./PresentColumnModal"
-import { Draggable, SortableItem } from "./SortableItem"
 
 interface CardColumnProps {
 	cards: Array<{ response: string; id: string }>
@@ -19,7 +18,7 @@ interface CardColumnProps {
 	columnTitle: string
 	columns: Columns
 	exerciseSlug: string
-	submitFunction: (data: SubmitFormProps) => void
+	submitFunction: (data: ColumnsDispatch) => void
 }
 
 export const CardColumn = ({
@@ -33,7 +32,6 @@ export const CardColumn = ({
 }: CardColumnProps) => {
 	const [color, setColor] = React.useState<string>(colorHex || "#96fad1")
 	const [showPicker, setShowPicker] = React.useState(false)
-	const { setNodeRef } = useDroppable({ id: id })
 
 	const colorGroups = [
 		["#ff9488", "#ff7566", "#ff5745", "#e8503f", "#ba4033"],
@@ -56,7 +54,12 @@ export const CardColumn = ({
 	]
 
 	const debounceTitle = useDebounce(
-		() => submitFunction({ action: "Update Title", columnId: id }),
+		() =>
+			submitFunction({
+				type: "Update Title",
+				columnId: id,
+				columnTitle: columnTitle,
+			}),
 		300,
 	)
 
@@ -64,15 +67,13 @@ export const CardColumn = ({
 		<div className=" w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
 			<div className="flex items-center justify-between">
 				<div className="relative flex items-center gap-2">
-					<input type="hidden" value={color} name="color" />
-					<input type="hidden" value={id} name="columnId" />
 					<SwatchesPicker
 						colors={colorGroups}
 						onChange={(newColor) => {
 							setColor(newColor.hex)
 							setShowPicker(false)
 							submitFunction({
-								action: "Update Color",
+								type: "Update Color",
 								color: newColor.hex,
 								columnId: id,
 							})
@@ -100,7 +101,7 @@ export const CardColumn = ({
 					/>
 					<button
 						onClick={() =>
-							submitFunction({ action: "Delete Column", columnId: id })
+							submitFunction({ type: "Delete Column", columnId: id })
 						}
 						type="button"
 					>
@@ -109,36 +110,31 @@ export const CardColumn = ({
 				</div>
 			</div>
 
-			<SortableContext items={cards} id={id}>
-				<ul
-					className="mt-5 flex h-full min-h-[200px] w-full flex-col gap-2"
-					ref={setNodeRef}
-				>
-					{cards.length > 0 ? (
-						cards.map((card) => (
-							<ContextMenu
-								key={card.id}
-								columns={columns}
-								card={card}
-								color={color}
-								exerciseSlug={exerciseSlug}
-							/>
-						))
-					) : (
-						// Need to have invisible card here when column has no cards
-						// Because dnd-kit has an issue with dragging items into empty containers
-						<SortableItem
-							id=""
-							className="invisible box-border flex cursor-move list-none items-center rounded-lg px-3 py-2"
-						>
-							<Draggable
-								response={""}
-								className="h-[40px] w-full cursor-move resize-none bg-transparent scrollbar-hide focus:outline-none"
-							/>
-						</SortableItem>
-					)}
-				</ul>
-			</SortableContext>
+			<Droppable droppableId={id} direction="vertical">
+				{(provided, snapshot) => (
+					<ul
+						className="mt-5 flex h-full min-h-[200px] w-full flex-col gap-2"
+						ref={provided.innerRef}
+						{...provided.droppableProps}
+					>
+						{cards.length > 0 &&
+							cards.map((card, idx) => (
+								<Draggable index={idx} draggableId={card.id} key={card.id}>
+									{(cardProvided, cardSnapshot) => (
+										<ContextMenu
+											columns={columns}
+											card={card}
+											color={color}
+											exerciseSlug={exerciseSlug}
+											cardProvided={cardProvided}
+										/>
+									)}
+								</Draggable>
+							))}
+						{provided.placeholder}
+					</ul>
+				)}
+			</Droppable>
 		</div>
 	)
 }

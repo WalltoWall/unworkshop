@@ -1,16 +1,13 @@
 "use client"
 
 import * as Context from "@radix-ui/react-context-menu"
-import React, { startTransition } from "react"
+import React, { startTransition, type CSSProperties } from "react"
+import { type DraggableProvided } from "@hello-pangea/dnd"
 import { deleteParticipantAnswer } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/actions"
 import type {
 	Card,
 	Columns,
 } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/BrainstormPresenterViewClient"
-import {
-	Draggable,
-	SortableItem,
-} from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/SortableItem"
 import { Text } from "./Text"
 
 const ContextMenuItem = ({
@@ -36,6 +33,7 @@ interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
 	card: Card
 	color: string
 	exerciseSlug: string
+	cardProvided: DraggableProvided
 }
 
 export const ContextMenu = ({
@@ -43,6 +41,7 @@ export const ContextMenu = ({
 	card,
 	color,
 	exerciseSlug,
+	cardProvided,
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
 
@@ -86,9 +85,9 @@ export const ContextMenu = ({
 
 		if (!fromColumnId || !fromColumnCards) return
 
-		startTransition(() => {
-			deleteParticipantAnswer({ cardId: card.id, exerciseSlug: exerciseSlug })
-		})
+		// startTransition(() => {
+		// 	deleteParticipantAnswer({ cardId: card.id, exerciseSlug: exerciseSlug })
+		// })
 	}
 
 	const finalizeEdit = (newResponse: string) => {
@@ -98,21 +97,36 @@ export const ContextMenu = ({
 		// edit participants answer
 	}
 
+	const style: CSSProperties = {
+		backgroundColor: color,
+	}
+
 	return (
 		<Context.Root>
 			<Context.Trigger>
-				<SortableItem
+				<li
 					id={card.id}
-					color={color}
-					className="box-border flex cursor-move list-none items-center rounded-lg px-3 py-2.5"
+					className={
+						"box-border flex list-none items-center rounded-lg px-3 py-2.5"
+					}
+					ref={cardProvided.innerRef}
+					{...cardProvided.draggableProps}
+					{...cardProvided.dragHandleProps}
+					style={{ ...style, ...cardProvided.draggableProps.style }}
 				>
-					<Draggable
-						response={card.response}
+					<textarea
+						suppressHydrationWarning
+						defaultValue={card.response}
+						className="pointer-events-none h-[40px] w-full resize-none bg-transparent scrollbar-hide focus:outline-none"
 						readOnly={readOnly}
-						onEnterKeyDown={finalizeEdit}
-						className="h-[40px] w-full cursor-move resize-none bg-transparent scrollbar-hide focus:outline-none"
+						onKeyDown={(e) => {
+							if (e.key === "Enter") {
+								e.preventDefault()
+								finalizeEdit(e.currentTarget.value)
+							}
+						}}
 					/>
-				</SortableItem>
+				</li>
 			</Context.Trigger>
 
 			<Context.Portal>

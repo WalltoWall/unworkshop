@@ -22,7 +22,7 @@ interface deleteParticipantProps {
 export async function submitBoardAction(data: SubmitBoardProps) {
 	const exercise = await client.findExerciseBySlug(data.exerciseSlug)
 
-	if (!exercise) return new Error("No Exercise Found")
+	if (!exercise) throw new Error("No Exercise Found")
 
 	let presenterColumns: BrainstormExercise["answers"] = {}
 
