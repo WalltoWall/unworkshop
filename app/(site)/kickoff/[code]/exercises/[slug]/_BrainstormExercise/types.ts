@@ -19,13 +19,12 @@ export type BrainstormParticipant = ST["participant"] & {
 }
 
 export type BrainstormExercise = ST["exercise"] & {
-	answers?: {
-		[columnId: string]: {
-			color: string
-			title: string
-			cards: Array<string>
-		}
-	}
+	answers?: Array<{
+		columnId: string
+		color: string
+		title: string
+		cards: Array<string>
+	}>
 }
 
 export type Color = "green" | "red" | "yellow"

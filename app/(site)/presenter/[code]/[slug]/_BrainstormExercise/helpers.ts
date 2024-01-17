@@ -49,7 +49,6 @@ export type ColumnsDispatch = {
 	columnId?: string
 	newColumn?: Column
 	cards?: Array<Card>
-	changeIndex?: string
 	columnTitle?: string
 }
 
@@ -60,28 +59,32 @@ export const determineColumnState = (
 	switch (action.type) {
 		case "Update Color":
 			if (!action.columnId || !action.color) break
-			state[action.columnId].color = action.color
+			const col = state.find((column) => column.columnId === action.columnId)
+			if (!col) break
+			col.color = action.color
 			return state
 		case "Update Title":
 			if (!action.columnId || !action.columnTitle) break
-			state[action.columnId].title = action.columnTitle
+			const column = state.find((column) => column.columnId === action.columnId)
+			if (!column) break
+			column.title = action.columnTitle
 			return state
 		case "Delete Column":
 			if (!action.columnId) break
-			state = Object.fromEntries(
-				Object.entries(state).filter(([key]) => key !== action.columnId),
-			)
+			state = state.filter((column) => column.columnId !== action.columnId)
 			return state
 		case "Create Column":
 			if (!action.newColumn) break
-			state[action.columnId!] = action.newColumn[action.columnId!]
+			state.push(action.newColumn)
 			return state
 		case "Update Columns":
 			if (!action.newColumn) break
 			return action.newColumn
 		case "Update Cards":
-			if (!action.cards || !action.changeIndex) break
-			state[action.changeIndex].cards = action.cards
+			if (!action.cards || !action.columnId) break
+			const cols = state.find((column) => column.columnId === action.columnId)
+			if (!cols) break
+			cols.cards = action.cards
 			return state
 		default:
 			throw new Error("Invalid action received: " + action.type)

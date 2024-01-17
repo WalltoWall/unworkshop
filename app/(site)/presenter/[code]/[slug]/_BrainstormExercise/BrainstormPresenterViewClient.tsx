@@ -26,7 +26,7 @@ export type Column = {
 	color: string
 	title: string
 	cards: Array<Card>
-	id: string
+	columnId: string
 }
 
 interface PresenterViewProps {
@@ -73,7 +73,7 @@ export const BrainstormPresenterViewClient = ({
 				const toIndex = destination.droppableId
 
 				const fromCards = optimisticColumns.forEach(
-					(col) => col.id === fromIndex,
+					(col) => col.columnId === fromIndex,
 				)
 
 				console.log(fromCards)
@@ -87,7 +87,7 @@ export const BrainstormPresenterViewClient = ({
 
 				// 	submitForm({
 				// 		type: "Update Cards",
-				// 		changeIndex: fromIndex,
+				// 		columnId: fromIndex,
 				// 		cards: items,
 				// 	})
 				// } else {
@@ -166,15 +166,15 @@ export const BrainstormPresenterViewClient = ({
 
 					<div className="flex flex-wrap gap-4 pt-5">
 						{optimisticColumns.map((col) => {
-							if (col.id === SORTING_COLUMN_ID) return
+							if (col.columnId === SORTING_COLUMN_ID) return
 
 							return (
 								<CardColumn
-									key={col.id}
+									key={col.columnId}
 									cards={col.cards}
 									colorHex={col.color}
 									columnTitle={col.title}
-									id={col.id}
+									id={col.columnId}
 									columns={optimisticColumns}
 									exerciseSlug={exerciseSlug.current}
 									submitFunction={submitForm}
@@ -191,7 +191,7 @@ export const BrainstormPresenterViewClient = ({
 									color: "",
 									title: "New Column",
 									cards: [],
-									id: id,
+									columnId: id,
 								}
 
 								submitForm({
