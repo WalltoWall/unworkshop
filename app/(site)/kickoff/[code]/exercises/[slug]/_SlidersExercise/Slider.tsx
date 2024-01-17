@@ -136,19 +136,19 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                 {/* TOMORROW */}
                 <div className="rounded-lg bg-gray-97 p-4 mt-8">
                     <Text>Where are we tomorrow?</Text>
-                    <div className="relative my-3 h-32 overflow-hidden rounded-lg justify-between"
-                    style={{
-                        display: isFilled.image(item.left_image) || isFilled.image(item.right_image) ? "block": "flex",
-                    }}
-                    >
+                    <div className="relative my-3 h-32 overflow-hidden rounded-lg flex justify-between">
                         {isFilled.image(item.left_image) ?
-                            <div className="absolute bottom-0 left-0 right-50 top-0 h-32">
+                            <div className="w-1/2 h-32 bg-black">
                                 <Image
                                     src={urlFor(item.left_image).url()!}
                                     alt={altFor(item.left_image)}
-                                    className="object-cover object-center opacity-100 h-full w-full"
+                                    className="object-cover object-center opacity-100 h-full w-full transition-opacity transition-[filter]"
                                     width={300}
                                     height={300}
+                                    style={{
+                                        opacity: 1.1 - (values.tomorrowValue / 10),
+                                        filter: values.tomorrowValue == 1 ? `grayscale(0)` : `grayScale(${(values.tomorrowValue / 6) * 100 + "%"})`
+                                    }}
                                 />
                             </div>
                             : 
@@ -170,15 +170,17 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                         }
 
                         {isFilled.image(item.right_image) ?
-                            <div className="absolute bottom-0 left-50 right-0 top-0 h-32">
+                            <div className="w-1/2 h-32 bg-black">
                                 <Image
                                     src={urlFor(item.right_image).url()!}
                                     alt={altFor(item.right_image)}
-                                    className={cx("object-cover object-center h-full w-full transition ease-in-out",
-                                        values.tomorrowValue >= 3.5 ? "opacity-100" : "opacity-0"
-                                    )}
+                                    className="object-cover object-center opacity-100 h-full w-full transition-opacity transition-[filter]"
                                     width={300}
                                     height={300}
+                                    style={{
+                                        opacity: 0.4 + (values.tomorrowValue / 10),
+                                        filter: values.tomorrowValue == 1 ? `grayscale(1)` : `grayScale(${100 - ((values.todayValue / 6) * 100) + "%"})`
+                                    }}
                                 />
                             </div>
                             : <div className="h-full flex px-2 justify-center items-center bg-green-78 transition-[width]"
