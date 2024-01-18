@@ -3,14 +3,12 @@
 import { useState } from "react"
 import Image from "next/image"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
-import { cx } from "class-variance-authority"
 import { type SliderItem } from "./SlidersExercise"
 import { submitSliderAction } from "./actions"
 import React from "react"
 import { useDebounce } from "../_BrainstormExercise/debounce"
 import type { Answer } from "./types"
 import { Text } from "@/components/Text"
-import { unset } from "sanity"
 
 type Props = {
 	exerciseId: string
@@ -27,6 +25,30 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
 
     const formRef = React.useRef<HTMLFormElement>(null)
     const submitForm = useDebounce(() => formRef.current?.requestSubmit(), 250)
+
+    const fullRange = 6
+    
+    const widthCalc = (value:number, inverse:boolean) => {
+        /* Notes:
+         * 7 leaves ~14% width for the number to rotate. 
+         *
+         * inverse subtracts from 100. Columns that need larger widths
+         * from smaller range values will be accurate.
+         */
+
+        return inverse ? 100 - (value / 7) * 100 : (value / 7) * 100
+    }
+
+    const grayScaleCalc = (value:number, inverse:boolean) => {
+        
+        /* 
+         * This makes 1's into 0's so that the grayScale() filter can
+         * recieve a 0 instead of 0.16 aka 1/6.
+         */
+        const adjustedValue = value == 1 ? 0 : value
+        
+        return inverse ? 100 - (adjustedValue / fullRange) * 100 : (adjustedValue / fullRange) * 100
+    }
 
 	return (
         <div className="mt-8" key={item._key}>
@@ -58,19 +80,19 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                                     height={300}
                                     style={{
                                         opacity: 1.1 - (values.todayValue / 10),
-                                        filter: values.todayValue == 1 ? `grayscale(0)` : `grayScale(${(values.todayValue / 6) * 100 + "%"})`
+                                        filter: `grayScale(${grayScaleCalc(values.todayValue, false) + "%"})`
                                     }}
                                 />
                             </div>
                             : 
                             <div className="h-full flex px-2 justify-center items-center bg-pink-85 transition-[width]"
                             style={{
-                                width: 100 - ((values.todayValue / 7) * 100) + "%"
+                                width: widthCalc(values.todayValue, true) + "%"
                             }}
                             >
                                 <p className="uppercase font-heading capsize transition-[font-size] transition-[transform]"
                                 style={{
-                                    transform: values.todayValue == 6 ? "rotate(-90deg)":"rotate(0deg)", 
+                                    transform: values.todayValue == fullRange ? "rotate(-90deg)":"rotate(0deg)", 
                                 }}
                                 >
                                     <svg className="w-full" viewBox="0 0 75 18">
@@ -90,13 +112,13 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                                     height={300}
                                     style={{
                                         opacity: 0.4 + (values.todayValue / 10),
-                                        filter: values.todayValue == 1 ? `grayscale(1)` : `grayScale(${100 - ((values.todayValue / 6) * 100) + "%"})`
+                                        filter: `grayScale(${grayScaleCalc(values.todayValue, true) + "%"})`
                                     }}
                                 />
                             </div>
                             : <div className="h-full flex px-2 justify-center items-center bg-green-78 transition-[width]"
                              style={{
-                                 width: (values.todayValue / 7) * 100 + "%"
+                                 width: widthCalc(values.todayValue, false) + "%"
                              }}
                              >
                                  <p className="uppercase font-heading capsize transition-[font-size] transition-[transform] w-full"
@@ -115,7 +137,7 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                         type="range"
                         name="todayValue"
                         min={1}
-                        max={6}
+                        max={fullRange}
                         value={values.todayValue}
                         className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
                         onChange={(e) => {
@@ -147,19 +169,19 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                                     height={300}
                                     style={{
                                         opacity: 1.1 - (values.tomorrowValue / 10),
-                                        filter: values.tomorrowValue == 1 ? `grayscale(0)` : `grayScale(${(values.tomorrowValue / 6) * 100 + "%"})`
+                                        filter: `grayScale(${grayScaleCalc(values.tomorrowValue, false) + "%"})`
                                     }}
                                 />
                             </div>
                             : 
                             <div className="h-full flex px-2 justify-center items-center bg-pink-85 transition-[width]"
                             style={{
-                                width: 100 - ((values.tomorrowValue / 7) * 100) + "%"
+                                width: widthCalc(values.tomorrowValue, true) + "%"
                             }}
                             >
                                 <p className="uppercase font-heading capsize transition-[font-size] transition-[transform]"
                                 style={{
-                                    transform: values.tomorrowValue == 6 ? "rotate(-90deg)":"rotate(0deg)", 
+                                    transform: values.tomorrowValue == fullRange ? "rotate(-90deg)":"rotate(0deg)", 
                                 }}
                                 >
                                     <svg className="w-full" viewBox="0 0 75 18">
@@ -179,13 +201,13 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                                     height={300}
                                     style={{
                                         opacity: 0.4 + (values.tomorrowValue / 10),
-                                        filter: values.tomorrowValue == 1 ? `grayscale(1)` : `grayScale(${100 - ((values.todayValue / 6) * 100) + "%"})`
+                                        filter: `grayScale(${grayScaleCalc(values.tomorrowValue, true) + "%"})`
                                     }}
                                 />
                             </div>
                             : <div className="h-full flex px-2 justify-center items-center bg-green-78 transition-[width]"
                              style={{
-                                 width: (values.tomorrowValue / 7) * 100 + "%"
+                                 width: widthCalc(values.tomorrowValue, false) + "%"
                              }}
                              >
                                  <p className="uppercase font-heading capsize transition-[font-size] transition-[transform] w-full"
@@ -205,7 +227,7 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
                         type="range"
                         name="tomorrowValue"
                         min={1}
-                        max={6}
+                        max={fullRange}
                         value={values.tomorrowValue}
                         className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
                         onChange={(e) => {

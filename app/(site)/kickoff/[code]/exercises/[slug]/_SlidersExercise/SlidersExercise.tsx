@@ -13,14 +13,15 @@ type Props = {
 // TODO: Currently does not support nested sliders. E.g. 2 sliders per step.
 // TODO: Ensure answers are persisted on refresh / page load.
 // TODO: Tie the current step to search parameters.
-export const SlidersExercise = ({ exercise }: Props) => {
+export const SlidersExercise = async ({ exercise }: Props) => {
 	const groups = exercise.groups ?? []
 	const sliders = exercise.sliders ?? []
 
 	const participant =
-		client.findParticipantOrThrow<SlidersParticipant>()
+		await client.findParticipantOrThrow<SlidersParticipant>()
 	const answers = participant.answers?.[exercise._id]?.answers ?? {}
-
+	
+	console.log(answers)
 	return (
 		<div className="mt-8">
 			{sliders && (

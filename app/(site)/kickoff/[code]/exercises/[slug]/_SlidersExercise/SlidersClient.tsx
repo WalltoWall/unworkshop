@@ -24,7 +24,7 @@ export const SlidersClient = ({ exerciseId, sliders, answers, groups }: Props) =
 
 	const goBackToExerciseList = () =>
 		router.push(`/kickoff/${params.code}/exercises`)
-        
+
 	return (
 		<div className="mt-8">
 			{sliders?.map((slider, i) => (
