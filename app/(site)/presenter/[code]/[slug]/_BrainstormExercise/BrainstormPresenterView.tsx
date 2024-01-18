@@ -39,33 +39,35 @@ export const BrainstormPresenterView = async ({
 
 	if (!perceptions) return
 
-	const answersWithResponses = perceptions.answers?.map((column) => {
-		const newCol: Column = {
-			...column,
-			cards: column.cards.map((cardId) => {
-				if (!answerMap.has(cardId))
-					throw new Error(`No Id found for card: ${cardId}`)
+	const answersWithResponses = perceptions.answers
+		? perceptions.answers.map((column) => {
+				const newCol: Column = {
+					...column,
+					cards: column.cards.map((cardId) => {
+						if (!answerMap.has(cardId))
+							throw new Error(`No Id found for card: ${cardId}`)
 
-				const response = answerMap.get(cardId)!
+						const response = answerMap.get(cardId)!
 
-				const answer: Answer = {
-					id: cardId,
-					response: response,
+						const answer: Answer = {
+							id: cardId,
+							response: response,
+						}
+
+						return answer
+					}),
 				}
 
-				return answer
-			}),
-		}
-
-		return newCol
-	}) ?? [
-		{
-			columnId: SORTING_COLUMN_ID,
-			title: "",
-			color: "",
-			cards: participantAnswers,
-		},
-	]
+				return newCol
+			})
+		: [
+				{
+					columnId: SORTING_COLUMN_ID,
+					title: "",
+					color: "",
+					cards: participantAnswers,
+				},
+			]
 
 	return (
 		<div className="px-8 pt-12">

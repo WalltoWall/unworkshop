@@ -48,6 +48,7 @@ export type ColumnsDispatch = {
 	color?: string
 	columnId?: string
 	newColumn?: Column
+	replaceColumns?: Columns
 	cards?: Array<Card>
 	columnTitle?: string
 }
@@ -78,8 +79,8 @@ export const determineColumnState = (
 			state.push(action.newColumn)
 			return state
 		case "Update Columns":
-			if (!action.newColumn) break
-			return action.newColumn
+			if (!action.replaceColumns) break
+			return action.replaceColumns
 		case "Update Cards":
 			if (!action.cards || !action.columnId) break
 			const cols = state.find((column) => column.columnId === action.columnId)

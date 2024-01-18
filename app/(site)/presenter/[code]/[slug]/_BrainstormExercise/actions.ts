@@ -24,17 +24,16 @@ export async function submitBoardAction(data: SubmitBoardProps) {
 
 	if (!exercise) throw new Error("No Exercise Found")
 
-	let presenterColumns: BrainstormExercise["answers"] = {}
+	let presenterColumns: BrainstormExercise["answers"] = []
 
-	for (const key in data.columns) {
-		Object.assign(presenterColumns, {
-			[key]: {
-				color: data.columns[key].color,
-				title: data.columns[key].title,
-				cards: data.columns[key].cards.map((card) => card.id),
-			},
+	data.columns.forEach((col) => {
+		const newCards = col.cards.map((card) => card.id)
+
+		presenterColumns?.push({
+			...col,
+			cards: newCards,
 		})
-	}
+	})
 
 	await sanity.patch(exercise._id).set({ answers: presenterColumns }).commit()
 

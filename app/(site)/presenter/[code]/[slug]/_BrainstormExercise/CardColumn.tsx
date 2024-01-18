@@ -4,9 +4,9 @@ import React from "react"
 import { SwatchesPicker } from "react-color"
 import { Draggable, Droppable } from "@hello-pangea/dnd"
 import clsx from "clsx"
+import debounce from "just-debounce-it"
 import { ContextMenu } from "@/components/ContextMenu"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
-import { useDebounce } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/debounce"
 import type { Columns } from "./BrainstormPresenterViewClient"
 import type { ColumnsDispatch } from "./helpers"
 import { PresentColumnModal } from "./PresentColumnModal"
@@ -53,14 +53,14 @@ export const CardColumn = ({
 		],
 	]
 
-	const debounceTitle = useDebounce(
-		() =>
+	const debounceTitle = debounce(
+		(title: string) =>
 			submitFunction({
 				type: "Update Title",
 				columnId: id,
-				columnTitle: columnTitle,
+				columnTitle: title,
 			}),
-		300,
+		2000,
 	)
 
 	return (
@@ -87,7 +87,7 @@ export const CardColumn = ({
 						type="button"
 					></button>
 					<input
-						onChange={debounceTitle}
+						onChange={(e) => debounceTitle(e.currentTarget.value)}
 						defaultValue={columnTitle}
 						name="columnTitle"
 						className="mt-2 bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
@@ -127,6 +127,7 @@ export const CardColumn = ({
 											color={color}
 											exerciseSlug={exerciseSlug}
 											cardProvided={cardProvided}
+											submitForm={submitFunction}
 										/>
 									)}
 								</Draggable>

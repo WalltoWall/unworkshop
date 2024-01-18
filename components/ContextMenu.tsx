@@ -6,8 +6,10 @@ import { type DraggableProvided } from "@hello-pangea/dnd"
 import { deleteParticipantAnswer } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/actions"
 import type {
 	Card,
+	Column,
 	Columns,
 } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/BrainstormPresenterViewClient"
+import type { ColumnsDispatch } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/helpers"
 import { Text } from "./Text"
 
 const ContextMenuItem = ({
@@ -34,6 +36,7 @@ interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
 	color: string
 	exerciseSlug: string
 	cardProvided: DraggableProvided
+	submitForm: (data: ColumnsDispatch) => void
 }
 
 export const ContextMenu = ({
@@ -42,33 +45,36 @@ export const ContextMenu = ({
 	color,
 	exerciseSlug,
 	cardProvided,
+	submitForm,
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
 
 	const handleReturnItem = () => {
-		let fromColumnCards
-		let fromColumnId
+		const fromColumn = columns.find((col) =>
+			col.cards.find((c) => c.id === card.id),
+		)
 
-		for (const key in columns) {
-			if (columns[key].cards.some((c) => c.id === card.id)) {
-				fromColumnId = key
-				fromColumnCards = columns[key].cards
-				break
-			}
-		}
+		if (!fromColumn) return
 
-		if (!fromColumnId || !fromColumnCards) return
+		const fromIdx = columns.findIndex(
+			(col) => col.columnId === fromColumn.columnId,
+		)
 
-		const toColumnCards = columns["sorting"].cards
-		const activeCard = fromColumnCards.find((c) => c.id === card.id)
+		const activeCard = fromColumn.cards.find((c) => c.id === card.id)
+
+		const newFromCards = fromColumn.cards.filter((c) => c.id !== card.id)
 
 		if (!activeCard) return
 
-		toColumnCards.unshift(activeCard)
+		columns[fromIdx].cards = newFromCards
+		columns[0].cards = [activeCard, ...columns[0].cards]
+
+		submitForm({ type: "Update Columns", replaceColumns: columns })
 	}
 
 	const handleEditItem = () => {
 		setReadOnly(false)
+		console.log(readOnly)
 	}
 
 	const handleDeleteItem = () => {

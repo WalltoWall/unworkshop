@@ -48,13 +48,13 @@ export const BrainstormPresenterViewClient = ({
 	const submitForm = async (action: ColumnsDispatch) => {
 		const newColumns = determineColumnState(optimisticColumns, action)
 
-		// startTransition(() => {
-		// 	setOptimisitColumns(newColumns)
-		// 	submitBoardAction({
-		// 		columns: newColumns,
-		// 		exerciseSlug: exerciseSlug.current,
-		// 	})
-		// })
+		startTransition(() => {
+			setOptimisitColumns(newColumns)
+			submitBoardAction({
+				columns: newColumns,
+				exerciseSlug: exerciseSlug.current,
+			})
+		})
 	}
 
 	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
@@ -69,49 +69,53 @@ export const BrainstormPresenterViewClient = ({
 
 				if (!destination) return
 
-				const fromIndex = source.droppableId
-				const toIndex = destination.droppableId
+				const fromColumnId = source.droppableId
+				const toColumnId = destination.droppableId
 
-				const fromCards = optimisticColumns.forEach(
-					(col) => col.columnId === fromIndex,
-				)
+				const fromCards = optimisticColumns.find(
+					(col) => col.columnId === fromColumnId,
+				)?.cards
 
-				console.log(fromCards)
+				if (!fromCards) return
 
-				// if (fromIndex === toIndex) {
-				// 	const items = reorder({
-				// 		list: fromCards,
-				// 		startIndex: source.index,
-				// 		endIndex: destination.index,
-				// 	})
+				if (fromColumnId === toColumnId) {
+					const items = reorder({
+						list: fromCards,
+						startIndex: source.index,
+						endIndex: destination.index,
+					})
 
-				// 	submitForm({
-				// 		type: "Update Cards",
-				// 		columnId: fromIndex,
-				// 		cards: items,
-				// 	})
-				// } else {
-				// 	const result = move({
-				// 		sourceCards: optimisticColumns[fromIndex].cards,
-				// 		destinationCards: optimisticColumns[toIndex].cards,
-				// 		sourceIndex: source.index,
-				// 		destinationIndex: destination.index,
-				// 	})
+					submitForm({
+						type: "Update Cards",
+						columnId: fromColumnId,
+						cards: items,
+					})
+				} else {
+					const toCards =
+						optimisticColumns.find((col) => col.columnId === toColumnId)
+							?.cards ?? []
+					const fromIdx = optimisticColumns.findIndex(
+						(col) => col.columnId === fromColumnId,
+					)
+					const toIdx = optimisticColumns.findIndex(
+						(col) => col.columnId === toColumnId,
+					)
 
-				// 	const newColumns: Columns = {
-				// 		...optimisticColumns,
-				// 		[fromIndex]: {
-				// 			...optimisticColumns[fromIndex],
-				// 			cards: result.fromCards,
-				// 		},
-				// 		[toIndex]: {
-				// 			...optimisticColumns[toIndex],
-				// 			cards: result.toCards,
-				// 		},
-				// 	}
+					const result = move({
+						sourceCards: fromCards,
+						destinationCards: toCards,
+						sourceIndex: source.index,
+						destinationIndex: destination.index,
+					})
 
-				// 	submitForm({ type: "Update Columns", newColumn: newColumns })
-				// }
+					optimisticColumns[fromIdx].cards = result.fromCards
+					optimisticColumns[toIdx].cards = result.toCards
+
+					submitForm({
+						type: "Update Columns",
+						replaceColumns: optimisticColumns,
+					})
+				}
 			}}
 		>
 			<form onSubmit={handleSubmit} ref={formRef}>
