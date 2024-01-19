@@ -3,6 +3,7 @@
 import React from "react"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import clsx from "clsx"
+import { debounce } from "perfect-debounce"
 import { type Slug } from "sanity"
 import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
@@ -34,6 +35,8 @@ interface PresenterViewProps {
 	presenterColumns: Columns
 }
 
+const debounceSubmitBoard = debounce(submitBoardAction, 1500)
+
 export const BrainstormPresenterViewClient = ({
 	exerciseSlug,
 	presenterColumns,
@@ -48,9 +51,10 @@ export const BrainstormPresenterViewClient = ({
 	const submitForm = async (action: ColumnsDispatch) => {
 		const newColumns = determineColumnState(optimisticColumns, action)
 
-		startTransition(() => {
+		startTransition(async () => {
 			setOptimisitColumns(newColumns)
-			submitBoardAction({
+
+			await debounceSubmitBoard({
 				columns: newColumns,
 				exerciseSlug: exerciseSlug.current,
 			})
@@ -61,6 +65,9 @@ export const BrainstormPresenterViewClient = ({
 		e.preventDefault()
 		submitForm({ type: "Default" })
 	}
+
+	const draggingStyles =
+		"box-border flex list-none items-center !py-2.5 !aspect-auto !h-[60px] !min-w-[260px] opacity-50"
 
 	return (
 		<DragDropContext
@@ -108,12 +115,14 @@ export const BrainstormPresenterViewClient = ({
 						destinationIndex: destination.index,
 					})
 
-					optimisticColumns[fromIdx].cards = result.fromCards
-					optimisticColumns[toIdx].cards = result.toCards
+					const newColumns = structuredClone(optimisticColumns)
+
+					newColumns[fromIdx].cards = result.fromCards
+					newColumns[toIdx].cards = result.toCards
 
 					submitForm({
 						type: "Update Columns",
-						replaceColumns: optimisticColumns,
+						replaceColumns: newColumns,
 					})
 				}
 			}}
@@ -151,10 +160,13 @@ export const BrainstormPresenterViewClient = ({
 										<Draggable index={idx} draggableId={card.id} key={card.id}>
 											{(cardProvided, cardSnapshot) => (
 												<div
-													className="box-border aspect-square w-[135px] min-w-[135px] list-none rounded-lg bg-white px-3 py-2"
 													ref={cardProvided.innerRef}
 													{...cardProvided.draggableProps}
 													{...cardProvided.dragHandleProps}
+													className={clsx(
+														"box-border aspect-square w-[135px] min-w-[135px] list-none rounded-lg bg-white px-3 py-2",
+														cardSnapshot.isDragging && draggingStyles,
+													)}
 												>
 													<p>{card.response}</p>
 												</div>

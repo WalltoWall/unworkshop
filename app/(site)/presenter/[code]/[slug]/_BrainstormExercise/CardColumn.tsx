@@ -90,7 +90,7 @@ export const CardColumn = ({
 						onChange={(e) => debounceTitle(e.currentTarget.value)}
 						defaultValue={columnTitle}
 						name="columnTitle"
-						className="mt-2 bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
+						className="bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
 					/>
 				</div>
 				<div className="flex items-center gap-3">
@@ -128,6 +128,7 @@ export const CardColumn = ({
 											exerciseSlug={exerciseSlug}
 											cardProvided={cardProvided}
 											submitForm={submitFunction}
+											cardSnapshot={cardSnapshot}
 										/>
 									)}
 								</Draggable>

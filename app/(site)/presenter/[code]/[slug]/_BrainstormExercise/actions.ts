@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache"
 import { client, sanity } from "@/sanity/client"
 import {
-	type Answer,
 	type BrainstormExercise,
 	type BrainstormParticipant,
 } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
@@ -14,9 +13,15 @@ interface SubmitBoardProps {
 	exerciseSlug: string
 }
 
-interface deleteParticipantProps {
+interface DeleteParticipantProps {
 	cardId: string
 	exerciseSlug: string
+}
+
+interface EditParticipantAnswerProps {
+	cardId: string
+	exerciseSlug: string
+	newResponse: string
 }
 
 export async function submitBoardAction(data: SubmitBoardProps) {
@@ -40,7 +45,7 @@ export async function submitBoardAction(data: SubmitBoardProps) {
 	revalidatePath("/presenter/[code]/[slug]", "page")
 }
 
-export async function deleteParticipantAnswer(data: deleteParticipantProps) {
+export async function deleteParticipantAnswer(data: DeleteParticipantProps) {
 	const { cardId, exerciseSlug } = data
 
 	const exercise = await client.findExerciseBySlug(exerciseSlug)
@@ -52,13 +57,21 @@ export async function deleteParticipantAnswer(data: deleteParticipantProps) {
 			exercise?._id,
 		)
 
+	const exerciseId = exercise._id
+
+	if (!exerciseId) return
+
 	let participant: BrainstormParticipant
 
 	participants.forEach((newParticipant) => {
-		if (!participant.answers) return
+		if (
+			!newParticipant.answers ||
+			!newParticipant.answers?.[exercise._id].answers
+		)
+			return
 
 		if (
-			participant.answers?.[exercise._id].answers?.some(
+			newParticipant.answers[exerciseId].answers?.some(
 				(card) => card.id === cardId,
 			)
 		) {
@@ -66,25 +79,79 @@ export async function deleteParticipantAnswer(data: deleteParticipantProps) {
 		}
 	})
 
-	// const answers = participant.answers[data.exerciseId]?.answers ?? []
+	if (!participant) throw new Error("No Participant found")
 
-	// if (answers.length < 0) return
+	const newCards = participant.answers![exerciseId].answers!.filter(
+		(c) => c.id !== cardId,
+	)
 
-	// answers?.forEach((card) => {
-	// 	if (card.id === data.cardId) {
-	// 		card.response = data.response
-	// 	}
-	// })
+	const newAnswers: BrainstormParticipant["answers"] = {
+		...participant.answers,
+		[exerciseId]: {
+			...participant.answers![exerciseId],
+			answers: newCards,
+		},
+	}
 
-	// const newAnswers: BrainstormParticipant["answers"] = {
-	// 	...participant.answers,
-	// 	[data.exerciseId]: {
-	// 		...participant.answers[data.exerciseId],
-	// 		answers,
-	// 	},
-	// }
+	await sanity.patch(participant._id).set({ answers: newAnswers }).commit()
 
-	// await sanity.patch(participant._id).set({ answers: newAnswers }).commit()
+	revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
+}
 
-	// revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
+export async function editParticipantAnswer(data: EditParticipantAnswerProps) {
+	const { cardId, exerciseSlug, newResponse } = data
+
+	const exercise = await client.findExerciseBySlug(exerciseSlug)
+
+	if (!exercise) return new Error("No Exercise Found")
+
+	const participants =
+		await client.findAllParticipantsInExercise<BrainstormParticipant>(
+			exercise?._id,
+		)
+
+	const exerciseId = exercise._id
+
+	if (!exerciseId) return
+
+	let participant: BrainstormParticipant
+
+	participants.forEach((newParticipant) => {
+		if (
+			!newParticipant.answers ||
+			!newParticipant.answers?.[exercise._id].answers
+		)
+			return
+
+		if (
+			newParticipant.answers[exerciseId].answers?.some(
+				(card) => card.id === cardId,
+			)
+		) {
+			participant = newParticipant
+		}
+	})
+
+	if (!participant) throw new Error("No Participant found")
+
+	const newCards = structuredClone(participant.answers![exerciseId].answers!)
+
+	newCards.forEach((card) => {
+		if (card.id === cardId) {
+			card.response = newResponse
+			return
+		}
+	})
+
+	const newAnswers: BrainstormParticipant["answers"] = {
+		...participant.answers,
+		[exerciseId]: {
+			...participant.answers![exerciseId],
+			answers: newCards,
+		},
+	}
+
+	await sanity.patch(participant._id).set({ answers: newAnswers }).commit()
+
+	revalidatePath("/kickoff/[code]/exercises/[slug]", "page")
 }

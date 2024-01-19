@@ -2,11 +2,17 @@
 
 import * as Context from "@radix-ui/react-context-menu"
 import React, { startTransition, type CSSProperties } from "react"
-import { type DraggableProvided } from "@hello-pangea/dnd"
-import { deleteParticipantAnswer } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/actions"
+import { flushSync } from "react-dom"
+import {
+	type DraggableProvided,
+	type DraggableStateSnapshot,
+} from "@hello-pangea/dnd"
+import {
+	deleteParticipantAnswer,
+	editParticipantAnswer,
+} from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/actions"
 import type {
 	Card,
-	Column,
 	Columns,
 } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/BrainstormPresenterViewClient"
 import type { ColumnsDispatch } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/helpers"
@@ -37,6 +43,7 @@ interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
 	exerciseSlug: string
 	cardProvided: DraggableProvided
 	submitForm: (data: ColumnsDispatch) => void
+	cardSnapshot: DraggableStateSnapshot
 }
 
 export const ContextMenu = ({
@@ -46,8 +53,10 @@ export const ContextMenu = ({
 	exerciseSlug,
 	cardProvided,
 	submitForm,
+	cardSnapshot,
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
+	const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
 
 	const handleReturnItem = () => {
 		const fromColumn = columns.find((col) =>
@@ -66,49 +75,59 @@ export const ContextMenu = ({
 
 		if (!activeCard) return
 
-		columns[fromIdx].cards = newFromCards
-		columns[0].cards = [activeCard, ...columns[0].cards]
+		const newColumns = structuredClone(columns)
 
-		submitForm({ type: "Update Columns", replaceColumns: columns })
+		newColumns[fromIdx].cards = newFromCards
+		newColumns[0].cards = [activeCard, ...columns[0].cards]
+
+		submitForm({ type: "Update Columns", replaceColumns: newColumns })
 	}
 
 	const handleEditItem = () => {
-		setReadOnly(false)
-		console.log(readOnly)
+		flushSync(() => {
+			setReadOnly(false)
+		})
+		textAreaRef.current?.focus()
 	}
 
 	const handleDeleteItem = () => {
-		let fromColumnCards
-		let fromColumnId
+		const fromColumn = columns.find((col) =>
+			col.cards.find((c) => c.id === card.id),
+		)
 
-		for (const key in columns) {
-			if (columns[key].cards.some((c) => c.id === card.id)) {
-				fromColumnId = key
-				fromColumnCards = columns[key].cards
-				break
-			}
-		}
+		if (!fromColumn) return
 
-		if (!fromColumnId || !fromColumnCards) return
+		const fromIdx = columns.findIndex(
+			(col) => col.columnId === fromColumn.columnId,
+		)
 
-		// startTransition(() => {
-		// 	deleteParticipantAnswer({ cardId: card.id, exerciseSlug: exerciseSlug })
-		// })
+		const newFromCards = fromColumn.cards.filter((c) => c.id !== card.id)
+
+		const newColumns = structuredClone(columns)
+
+		newColumns[fromIdx].cards = newFromCards
+
+		submitForm({ type: "Update Columns", replaceColumns: newColumns })
+		startTransition(() => {
+			deleteParticipantAnswer({ cardId: card.id, exerciseSlug: exerciseSlug })
+		})
 	}
 
 	const finalizeEdit = (newResponse: string) => {
-		card.response = newResponse
 		setReadOnly(true)
 
-		// edit participants answer
+		startTransition(() => {
+			editParticipantAnswer({ cardId: card.id, exerciseSlug, newResponse })
+		})
 	}
 
 	const style: CSSProperties = {
 		backgroundColor: color,
+		opacity: cardSnapshot.isDragging ? "0.5" : "1",
 	}
 
 	return (
-		<Context.Root>
+		<Context.Root modal={false}>
 			<Context.Trigger>
 				<li
 					id={card.id}
@@ -118,18 +137,22 @@ export const ContextMenu = ({
 					ref={cardProvided.innerRef}
 					{...cardProvided.draggableProps}
 					{...cardProvided.dragHandleProps}
-					style={{ ...style, ...cardProvided.draggableProps.style }}
+					style={{ ...cardProvided.draggableProps.style, ...style }}
 				>
 					<textarea
 						suppressHydrationWarning
 						defaultValue={card.response}
 						className="pointer-events-none h-[40px] w-full resize-none bg-transparent scrollbar-hide focus:outline-none"
 						readOnly={readOnly}
+						ref={textAreaRef}
 						onKeyDown={(e) => {
 							if (e.key === "Enter") {
 								e.preventDefault()
 								finalizeEdit(e.currentTarget.value)
 							}
+						}}
+						onBlur={(e) => {
+							finalizeEdit(e.currentTarget.value)
 						}}
 					/>
 				</li>
