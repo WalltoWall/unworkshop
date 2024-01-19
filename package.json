@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbo",
+		"dev": "concurrently \"next dev --turbo\" \"HOST=localhost PORT=1234 npx y-websocket\"",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
@@ -43,7 +43,7 @@
 		"uid": "^2.0.2",
 		"vaul": "^0.8.0",
 		"y-presence": "^0.2.3",
-		"y-webrtc": "^10.3.0",
+		"y-websocket": "^1.5.3",
 		"yjs": "^13.6.10",
 		"zod": "^3.22.4",
 		"zod-form-data": "^2.0.2"
@@ -60,6 +60,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.18.1",
 		"@typescript-eslint/parser": "^6.18.1",
 		"autoprefixer": "^10.4.16",
+		"concurrently": "^8.2.2",
 		"eslint": "^8.56.0",
 		"eslint-config-next": "^14.0.4",
 		"postcss": "^8.4.33",

@@ -172,7 +172,7 @@ export const QuadrantSteps = ({
 			/>
 
 			{meta?.type === "group" && awareness && (
-				<Multiplayer awareness={awareness} cursors={false} role={meta?.role} />
+				<Multiplayer awareness={awareness} role={meta?.role} />
 			)}
 		</>
 	)

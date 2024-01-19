@@ -3,17 +3,17 @@
 import React from "react"
 import throttle from "just-throttle"
 import { useUsers } from "y-presence"
-import { WebrtcProvider } from "y-webrtc"
+import { WebsocketProvider } from "y-websocket"
 import { useActiveFocus } from "@/hooks/use-active-element"
 import { Cursor } from "./Cursor"
 
 interface MultiplayerProps {
 	role?: string
-	awareness: WebrtcProvider["awareness"]
+	awareness: WebsocketProvider["awareness"]
 	cursors?: boolean
 }
 
-const Cursors = ({ awareness, cursors = true, role }: MultiplayerProps) => {
+const Cursors = ({ awareness, cursors = false, role }: MultiplayerProps) => {
 	const users = useUsers(awareness)
 
 	// When the user moves their pointer, update their presence

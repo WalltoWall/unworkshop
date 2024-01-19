@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { WebrtcProvider } from "y-webrtc"
+import { WebsocketProvider } from "y-websocket"
 import * as Y from "yjs"
 import { USER_COLORS } from "@/constants"
 
@@ -9,15 +9,15 @@ export type MultiplayerOptions = {
 }
 
 export function useMultiplayer(opts: MultiplayerOptions) {
-	let awareness = React.useRef<WebrtcProvider["awareness"] | null>(null)
+	let awareness = React.useRef<WebsocketProvider["awareness"] | null>(null)
 
 	useEffect(() => {
 		const doc = new Y.Doc()
-		const provider = new WebrtcProvider(opts.room, doc, {
-			password: "this-the-thing-in-here",
-			maxConns: 10,
-			filterBcConns: false,
-		})
+		const provider = new WebsocketProvider(
+			"ws://localhost:1234",
+			opts.room,
+			doc,
+		)
 
 		awareness.current = provider.awareness
 
