@@ -16,8 +16,6 @@ export async function submitGroupAction(formData: FormData) {
 
 	const participant = await client.findParticipantOrThrow<GroupParticipant>()
 
-	const answers = participant.answers?.[data.exerciseId]?.answers ?? []
-
 	const newGroups: GroupParticipant["answers"] = {
 		...participant.answers,
 		[data.exerciseId]: {
@@ -27,7 +25,6 @@ export async function submitGroupAction(formData: FormData) {
 				group: data.group,
 				role: data.role,
 			},
-			answers,
 		},
 	}
 

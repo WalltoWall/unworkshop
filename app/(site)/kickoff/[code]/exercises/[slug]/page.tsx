@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation"
 import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
+import { FormExercise } from "./_FormsExercise"
 import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
-import { FormExercise } from "./FormsExercise"
 import { InstructionsModal } from "./InstructionsModal"
 import { RoleHeader } from "./RoleHeader"
 

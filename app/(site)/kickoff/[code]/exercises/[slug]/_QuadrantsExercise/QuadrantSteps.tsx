@@ -50,7 +50,8 @@ export const QuadrantSteps = ({
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const totalSteps = quadrants.length * 2
 
-	const groupCaptainAnswers = useCaptainAnswers(exerciseId, meta?.group) ?? {}
+	const groupCaptainAnswers =
+		useCaptainAnswers(exerciseId, "answers", meta?.group) ?? {}
 
 	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
 		Answers,

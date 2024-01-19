@@ -11,23 +11,27 @@ export const client = createClient({
 	useCdn: false,
 })
 
-export const useCaptainAnswers = (exerciseId: string, group?: string) => {
+export const useCaptainAnswers = (
+	exerciseId: string,
+	key: string,
+	group?: string,
+) => {
 	const [data, setData] = React.useState<any>(null)
 
-	const query = `*[_type == "participant" && answers[$exerciseId] != null && answers[$exerciseId].meta.role == "captain" && answers[$exerciseId].meta.group == $group][0].answers[$exerciseId].answers`
+	const query = `*[_type == "participant" && answers[$exerciseId] != null && answers[$exerciseId].meta.role == "captain" && answers[$exerciseId].meta.group == $group][0].answers[$exerciseId][$key]`
 
 	React.useEffect(() => {
 		let subscription = null as any
 
 		if (group) {
-			client.fetch(query, { exerciseId, group }).then((result) => {
+			client.fetch(query, { exerciseId, group, key }).then((result) => {
 				setData(result)
 			})
 
 			subscription = client
-				.listen(query, { exerciseId, group })
+				.listen(query, { exerciseId, group, key })
 				.subscribe((update) => {
-					setData(update.result?.answers?.[exerciseId]?.answers)
+					setData(update.result?.answers?.[exerciseId]?.[key])
 				})
 		}
 

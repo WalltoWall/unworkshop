@@ -11,7 +11,8 @@ export type GroupParticipant = ST["participant"] & {
 	answers?: {
 		[exerciseId: string]: {
 			meta: IndividualAnswer | GroupAnswer
-			answers: any
+			answers?: any
+			steps?: any
 		}
 	}
 }
