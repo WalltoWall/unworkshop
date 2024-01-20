@@ -67,7 +67,7 @@ export const BrainstormPresenterViewClient = ({
 	}
 
 	const draggingStyles =
-		"box-border flex list-none items-center !py-2.5 !aspect-auto !h-[60px] !min-w-[260px] opacity-50"
+		"box-border flex list-none items-center !py-2.5 !aspect-auto !h-[3.75rem] !min-w-[17.5rem] opacity-50"
 
 	return (
 		<DragDropContext
@@ -147,7 +147,7 @@ export const BrainstormPresenterViewClient = ({
 						</button>
 
 						<Droppable droppableId={SORTING_COLUMN_ID} direction="horizontal">
-							{(provided, snapshot) => (
+							{(provided) => (
 								<div
 									className={clsx(
 										"flex w-full gap-2 overflow-y-clip overflow-x-scroll scrollbar-hide",
@@ -164,7 +164,7 @@ export const BrainstormPresenterViewClient = ({
 													{...cardProvided.draggableProps}
 													{...cardProvided.dragHandleProps}
 													className={clsx(
-														"box-border aspect-square w-[135px] min-w-[135px] list-none rounded-lg bg-white px-3 py-2",
+														"box-border aspect-square w-[8.4375rem] min-w-[8.4375rem] list-none rounded-lg bg-white px-3 py-2",
 														cardSnapshot.isDragging && draggingStyles,
 													)}
 												>
@@ -181,12 +181,13 @@ export const BrainstormPresenterViewClient = ({
 					</div>
 
 					<div className="flex flex-wrap gap-4 pt-5">
-						{optimisticColumns.map((col) => {
+						{optimisticColumns.map((col, idx) => {
 							if (col.columnId === SORTING_COLUMN_ID) return
 
 							return (
 								<CardColumn
 									key={col.columnId}
+									index={idx}
 									cards={col.cards}
 									colorHex={col.color}
 									columnTitle={col.title}
@@ -199,7 +200,7 @@ export const BrainstormPresenterViewClient = ({
 						})}
 
 						<button
-							className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
+							className="flex h-fit w-[19.125rem] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
 							onClick={() => {
 								const id = uid()
 

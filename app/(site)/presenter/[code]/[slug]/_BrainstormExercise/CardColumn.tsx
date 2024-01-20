@@ -1,12 +1,12 @@
 "use client"
 
 import React from "react"
-import { SwatchesPicker } from "react-color"
+import { CirclePicker } from "react-color"
 import { Draggable, Droppable } from "@hello-pangea/dnd"
-import clsx from "clsx"
 import debounce from "just-debounce-it"
 import { ContextMenu } from "@/components/ContextMenu"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
+import { Popover } from "@/components/Popover"
 import type { Columns } from "./BrainstormPresenterViewClient"
 import type { ColumnsDispatch } from "./helpers"
 import { PresentColumnModal } from "./PresentColumnModal"
@@ -19,6 +19,7 @@ interface CardColumnProps {
 	columns: Columns
 	exerciseSlug: string
 	submitFunction: (data: ColumnsDispatch) => void
+	index: number
 }
 
 export const CardColumn = ({
@@ -29,28 +30,18 @@ export const CardColumn = ({
 	id,
 	exerciseSlug,
 	submitFunction,
+	index,
 }: CardColumnProps) => {
 	const [color, setColor] = React.useState<string>(colorHex || "#96fad1")
-	const [showPicker, setShowPicker] = React.useState(false)
 
 	const colorGroups = [
-		["#ff9488", "#ff7566", "#ff5745", "#e8503f", "#ba4033"],
-		["#ff9e77", "#ff8655", "#ff7a45", "#e86f3f", "#d16439"],
-		["#ffee8b", "#ffe96a", "#ffe54a", "#e8d144", "#d1bc3d"],
-		["#96fad1", "#57f7b6", "#19f49b", "#17de8d", "#13b271"],
-		["#a6afff", "#7987ff", "#5c6dff", "#4c5ad1", "#4350ba"],
-		["#d7a0fa", "#c371f8", "#b652f7", "#a64be1", "#853cb4"],
-		["#ffb7f1", "#fab99e", "#ff93ea", "#ff7be6", "#e870d2", "#e165bd"],
-		[
-			"#f7f7f7",
-			"#E5E5E5",
-			"#cdd6d4",
-			"#bfbfbf",
-			"#7f7f7f",
-			"#8ca09c",
-			"#5a6c69",
-			"#2c3533",
-		],
+		"#FE9487",
+		"#FE9E77",
+		"#FFEE8A",
+		"#96F7D0",
+		"#A5AFFF",
+		"#D59FF8",
+		"#FFB7EF",
 	]
 
 	const debounceTitle = debounce(
@@ -67,25 +58,35 @@ export const CardColumn = ({
 		<div className=" w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
 			<div className="flex items-center justify-between">
 				<div className="relative flex items-center gap-2">
-					<SwatchesPicker
-						colors={colorGroups}
-						onChange={(newColor) => {
-							setColor(newColor.hex)
-							setShowPicker(false)
-							submitFunction({
-								type: "Update Color",
-								color: newColor.hex,
-								columnId: id,
-							})
-						}}
-						className={clsx("absolute", showPicker ? "block" : "hidden")}
-					/>
-					<button
-						className="h-5 w-5 rounded-full border border-black"
-						style={{ backgroundColor: color }}
-						onClick={() => setShowPicker(!showPicker)}
-						type="button"
-					></button>
+					<Popover
+						trigger={
+							<button
+								className="h-5 w-5 rounded-full border border-black"
+								style={{ backgroundColor: color }}
+								type="button"
+							/>
+						}
+						className="grid rounded-lg bg-black py-3 pl-3 pr-2"
+						align="start"
+						alignOffset={10}
+						side="right"
+					>
+						<CirclePicker
+							color={color}
+							colors={colorGroups}
+							circleSize={20}
+							circleSpacing={16}
+							width="7rem"
+							onChange={(newColor) => {
+								setColor(newColor.hex)
+								submitFunction({
+									type: "Update Color",
+									color: newColor.hex,
+									columnId: id,
+								})
+							}}
+						/>
+					</Popover>
 					<input
 						onChange={(e) => debounceTitle(e.currentTarget.value)}
 						defaultValue={columnTitle}
@@ -94,11 +95,7 @@ export const CardColumn = ({
 					/>
 				</div>
 				<div className="flex items-center gap-3">
-					<PresentColumnModal
-						cards={cards}
-						color={color}
-						columnTitle={columnTitle}
-					/>
+					<PresentColumnModal columns={columns} index={index} />
 					<button
 						onClick={() =>
 							submitFunction({ type: "Delete Column", columnId: id })
@@ -111,7 +108,7 @@ export const CardColumn = ({
 			</div>
 
 			<Droppable droppableId={id} direction="vertical">
-				{(provided, snapshot) => (
+				{(provided) => (
 					<ul
 						className="mt-5 flex h-full min-h-[200px] w-full flex-col gap-2"
 						ref={provided.innerRef}

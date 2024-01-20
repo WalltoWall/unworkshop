@@ -72,6 +72,13 @@ export const determineColumnState = (
 			return state
 		case "Delete Column":
 			if (!action.columnId) break
+			const removedCol = state.find((col) => col.columnId === action.columnId)
+			if (!removedCol) break
+
+			const newCards = [...removedCol.cards, ...state[0].cards]
+
+			state[0].cards = newCards
+
 			state = state.filter((column) => column.columnId !== action.columnId)
 			return state
 		case "Create Column":
