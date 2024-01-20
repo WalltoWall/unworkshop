@@ -50,19 +50,9 @@ export const QuadrantSteps = ({
 		Answers,
 		AnswerDispatch
 	>(answers, (state, action) => {
-		const newPositions = ({ ...answers[action.slug] } || {}) as Answer
-
-		if (action.newAnswer.today) {
-			newPositions.today = action.newAnswer.today
-		}
-
-		if (action.newAnswer.tomorrow) {
-			newPositions.tomorrow = action.newAnswer.tomorrow
-		}
-
 		return {
 			...state,
-			[action.slug]: newPositions,
+			[action.slug]: action.newAnswer,
 		}
 	})
 

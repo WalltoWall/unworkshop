@@ -134,9 +134,15 @@ export const QuadrantAnswer = ({
 					}}
 				>
 					<div
-						className="absolute left-[0.875rem] top-0 h-full w-[calc(100%-1.75rem)]"
+						className="absolute -top-[0.125rem] left-[0.875rem] h-full w-[calc(100%-1.875rem)]"
 						style={{
 							backgroundColor: color,
+						}}
+					/>
+					<div
+						className="absolute -top-[0.75rem] right-3 h-0 w-0 border-y-[0.75rem] border-l-[1.5rem] !border-y-transparent"
+						style={{
+							borderColor: color,
 						}}
 					/>
 				</div>
