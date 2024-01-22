@@ -57,9 +57,9 @@ export const client = {
 		}
 
 		const data = await sanity.fetch<WithKickoffCode | null>(
-			groq`*[_type == "participant" && _id == $id][0] { 
-                ..., 
-                kickoff->{ "code": code.current } 
+			groq`*[_type == "participant" && _id == $id][0] {
+                ...,
+                kickoff->{ "code": code.current }
             }`,
 			{ id },
 			{ cache: "no-store" },
@@ -105,14 +105,27 @@ export const client = {
 		return kickoff
 	},
 
-	async registerParticipant(args: { name: string; kickoffId: string }) {
-		type Data = Pick<ST["participant"], "name" | "_type"> & {
+	async registerParticipant(args: {
+		name: string
+		kickoffId: string
+		recoveryCode: string
+	}) {
+		type Data = Pick<ST["participant"], "name" | "recovery_code" | "_type"> & {
 			kickoff: Reference
 		}
+
+		const existing = await sanity.fetch<ST["participant"] | null>(
+			groq`*[_type == "participant" && recovery_code == $name && kickoff._ref == $kickoffId][0]`,
+			{ name: args.name, kickoffId: args.kickoffId },
+			{ cache: "no-store" },
+		)
+
+		if (existing) return existing
 
 		const data: Data = {
 			_type: "participant",
 			name: args.name,
+			recovery_code: args.recoveryCode,
 			kickoff: {
 				_type: "reference",
 				_weak: true,
