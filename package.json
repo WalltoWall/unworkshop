@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev --turbo",
+		"dev": "concurrently \"next dev --turbo\" \"HOST=localhost PORT=1234 npx y-websocket\"",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint"
@@ -20,9 +20,11 @@
 		"clsx": "^2.1.0",
 		"embla-carousel-react": "^8.0.0-rc15",
 		"just-debounce-it": "^3.2.0",
+		"just-throttle": "^4.2.0",
 		"lucide-react": "^0.308.0",
 		"next": "^14.0.4",
 		"next-sanity": "^7.0.7",
+		"perfect-cursors": "^1.0.5",
 		"perfect-debounce": "^1.0.0",
 		"react": "18.2.0",
 		"react-color": "^2.19.3",
@@ -40,6 +42,9 @@
 		"ts-pattern": "^5.0.6",
 		"uid": "^2.0.2",
 		"vaul": "^0.8.0",
+		"y-presence": "^0.2.3",
+		"y-websocket": "^1.5.3",
+		"yjs": "^13.6.10",
 		"zod": "^3.22.4",
 		"zod-form-data": "^2.0.2"
 	},
@@ -55,6 +60,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.18.1",
 		"@typescript-eslint/parser": "^6.18.1",
 		"autoprefixer": "^10.4.16",
+		"concurrently": "^8.2.2",
 		"eslint": "^8.56.0",
 		"eslint-config-next": "^14.0.4",
 		"postcss": "^8.4.33",

@@ -1,10 +1,12 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import Multiplayer from "@/components/Multiplayer"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { useCaptainAnswers } from "@/sanity/groups"
+import { useMultiplayer } from "@/hooks/use-multiplayer"
 import type { GroupAnswer, IndividualAnswer } from "../groups/types"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
@@ -32,6 +34,7 @@ type QuadrantStepsProps = {
 	finalInstructions: ST["exercise"]["finalize_instructions"]
 	kickoffCode: string
 	readOnly: boolean
+	participantName: string
 }
 
 export const QuadrantSteps = ({
@@ -44,7 +47,13 @@ export const QuadrantSteps = ({
 	finalInstructions,
 	kickoffCode,
 	readOnly,
+	participantName,
 }: QuadrantStepsProps) => {
+	const awareness = useMultiplayer({
+		room: `${kickoffCode}-${exerciseId}`,
+		name: participantName,
+	})
+
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
@@ -85,7 +94,7 @@ export const QuadrantSteps = ({
 		}
 	}
 
-	const [state, setState] = useState<State>(determineNextState(step))
+	const [state, setState] = React.useState<State>(determineNextState(step))
 	const isDisabled =
 		(state === "today_pending" || state === "tomorrow_pending") &&
 		meta?.role !== "contributor"
@@ -162,6 +171,10 @@ export const QuadrantSteps = ({
 				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
 				onNextStep={onStepChange}
 			/>
+
+			{meta?.type === "group" && awareness && (
+				<Multiplayer awareness={awareness} role={meta?.role} />
+			)}
 		</>
 	)
 }
