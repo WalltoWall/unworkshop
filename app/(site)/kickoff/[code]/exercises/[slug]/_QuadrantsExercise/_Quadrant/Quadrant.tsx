@@ -4,6 +4,7 @@ import {
 	type DragEndEvent,
 	type DragMoveEvent,
 } from "@dnd-kit/core"
+import { debounce } from "perfect-debounce"
 import type { ST } from "@/sanity/config"
 import { submitQuadrantAction } from "../actions"
 import { type AnswerDispatch, type State } from "../QuadrantSteps"
@@ -13,6 +14,8 @@ import { QuadrantAxes } from "./QuadrantAxes"
 import { QuadrantDraggable } from "./QuadrantDraggable"
 import { QuadrantDroppable } from "./QuadrantDroppable"
 import { QuadrantImages } from "./QuadrantImages"
+
+const debouncedSubmitQuadrantAction = debounce(submitQuadrantAction, 1000)
 
 type Day = "today" | "tomorrow"
 
@@ -40,7 +43,7 @@ export const Quadrant = ({
 	answerDispatch,
 	onQuadrantClick,
 }: QuadrantProps) => {
-	const [, startTransition] = React.useTransition()
+	const [isPending, startTransition] = React.useTransition()
 	const [arrowData, setArrowData] = React.useState({
 		top: 0,
 		left: 0,
@@ -67,6 +70,16 @@ export const Quadrant = ({
 		}
 	}, [today, tomorrow])
 
+	React.useEffect(() => {
+		const onUnload = (e: BeforeUnloadEvent) => {
+			if (isPending) e.preventDefault()
+		}
+
+		window.addEventListener("beforeunload", onUnload)
+
+		return () => window.removeEventListener("beforeunload", onUnload)
+	}, [isPending])
+
 	const handleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
 		if (clickTarget?.current) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
@@ -76,14 +89,11 @@ export const Quadrant = ({
 			const left =
 				((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
 				100
-
 			let updatedAnswer = {
 				slug: item.slug.current,
 				newAnswer: {},
 			}
-
 			let type = "today" as Day
-
 			if (state === "tomorrow_pending" || state === "tomorrow_placed") {
 				type = "tomorrow"
 			}
@@ -95,15 +105,12 @@ export const Quadrant = ({
 	const handleDragEnd = async (event: DragEndEvent) => {
 		if (clickTarget?.current) {
 			const { ref, type } = event.active.data.current!
-
 			if (ref) {
 				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
-
 				let updatedAnswer = {
 					slug: item.slug.current,
 					newAnswer: {},
 				}
-
 				await savePointLocations(updatedAnswer, top, left, type)
 			}
 		}
@@ -112,14 +119,11 @@ export const Quadrant = ({
 	const handleDragMove = (event: DragMoveEvent) => {
 		if (clickTarget?.current) {
 			const { ref, type } = event.active.data.current!
-
 			if (ref && today && tomorrow) {
 				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
-
 				if (type === "today") {
 					const arrowY = tomorrow.left - left
 					const arrowX = tomorrow.top - top
-
 					setArrowData({
 						top: top,
 						left: left,
@@ -129,7 +133,6 @@ export const Quadrant = ({
 				} else if (type === "tomorrow") {
 					const arrowY = left - today.left!
 					const arrowX = top - today.top!
-
 					setArrowData({
 						top: today.top,
 						left: today.left,
@@ -156,7 +159,7 @@ export const Quadrant = ({
 		return [top, left]
 	}
 
-	const savePointLocations = async (
+	const savePointLocations = (
 		updatedAnswer: { slug: string; newAnswer: Answer },
 		top: number,
 		left: number,
@@ -165,27 +168,24 @@ export const Quadrant = ({
 		if (type === "today") {
 			updatedAnswer.newAnswer = {
 				today: { top, left },
-				...tomorrow,
+				tomorrow,
 			}
 		} else if (type === "tomorrow") {
 			updatedAnswer.newAnswer = {
-				...today,
+				today,
 				tomorrow: { top, left },
 			}
 		}
-
-		startTransition(() => {
+		startTransition(async () => {
 			answerDispatch(updatedAnswer)
-		})
 
+			await debouncedSubmitQuadrantAction({
+				answer: updatedAnswer,
+				exerciseId,
+				isGroup,
+			})
+		})
 		onQuadrantClick()
-
-		const handleSubmit = submitQuadrantAction.bind(null, {
-			answer: updatedAnswer,
-			exerciseId,
-			isGroup,
-		})
-		await handleSubmit()
 	}
 
 	return (
