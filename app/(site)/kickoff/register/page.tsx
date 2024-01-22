@@ -3,6 +3,7 @@ import { unstable_noStore as noStore } from "next/cache"
 import { cookies } from "next/headers"
 import Image from "next/image"
 import { notFound, redirect } from "next/navigation"
+import { uid } from "uid"
 import { z } from "zod"
 import { zfd } from "zod-form-data"
 import { LightLayout } from "@/components/LightLayout"
@@ -39,6 +40,7 @@ const KickoffRegisterPage = async (props: Props) => {
 		const participant = await client.registerParticipant({
 			name: form.name,
 			kickoffId: kickoff!._id,
+			recoveryCode: uid(),
 		})
 
 		cookies().set({
