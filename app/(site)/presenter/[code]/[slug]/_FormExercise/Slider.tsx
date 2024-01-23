@@ -1,26 +1,30 @@
 import React from "react"
 import clsx from "clsx"
-import { Text } from "@/components/Text"
 
 type Props = {
-	responses: string[]
+	children: React.ReactNode
+	className?: string
 }
 
-export const Slider = ({ responses }: Props) => {
+const Container = ({ children, className }: Props) => {
 	const [idx, setIdx] = React.useState(0)
 	const rObs = React.useRef<IntersectionObserver>()
-	const rItems = React.useRef<HTMLElement[]>([])
+	const rContainer = React.useRef<HTMLUListElement>(null)
 
 	React.useEffect(() => {
+		if (!rContainer.current) return
+
+		const items = Array.from(rContainer.current.children)
+
 		rObs.current ??= new IntersectionObserver((entries) => {
 			const entry = entries.find((e) => e.isIntersecting)
 			if (!entry) return
 
-			const newIdx = rItems.current.findIndex((item) => item === entry.target)
+			const newIdx = items.findIndex((item) => item === entry.target)
 			setIdx(newIdx)
 		})
 
-		rItems.current.forEach((item) => {
+		items.forEach((item) => {
 			if (!item) return
 
 			rObs.current?.observe(item)
@@ -29,34 +33,31 @@ export const Slider = ({ responses }: Props) => {
 		return () => rObs.current?.disconnect()
 	}, [])
 
+	const numSlides = React.Children.count(children)
+	const numSlidesArr = new Array(numSlides).fill(0)
+
 	return (
-		<div className="relative flex grow flex-col justify-center">
-			<ul className="scroll-shadow-x -m-9 flex snap-x snap-mandatory items-center gap-20 overflow-auto overscroll-contain p-9 text-center scrollbar-hide scroll-shadow-20">
-				{responses.map((resp) => (
-					<Text
-						key={resp}
-						asChild
-						size={40}
-						className="mx-auto w-full shrink-0 snap-center"
-					>
-						<li ref={(el) => rItems.current.push(el!)}>
-							<div className="mx-auto w-full max-w-[46rem]">{resp}</div>
-						</li>
-					</Text>
-				))}
+		<div
+			className={clsx(className, "relative flex grow flex-col justify-center")}
+		>
+			<ul
+				ref={rContainer}
+				className="scroll-shadow-x -m-9 flex snap-x snap-mandatory items-center gap-20 overflow-auto overscroll-contain p-9 text-center scrollbar-hide scroll-shadow-20"
+			>
+				{children}
 			</ul>
 
 			<div className="absolute bottom-0 left-1/2 flex -translate-x-1/2 gap-3">
-				{responses.length > 1 &&
-					responses.map((resp, i) => (
+				{numSlides > 1 &&
+					numSlidesArr.map((_, i) => (
 						<button
-							key={resp}
+							key={i}
 							className={clsx(
 								"h-4 w-4 rounded-full transition ease-out",
 								idx === i ? "bg-black" : "bg-gray-90",
 							)}
 							onClick={() =>
-								rItems.current.at(i)?.scrollIntoView({
+								rContainer.current?.children[i]?.scrollIntoView({
 									behavior: "smooth",
 									block: "nearest",
 									inline: "center",
@@ -69,4 +70,23 @@ export const Slider = ({ responses }: Props) => {
 			</div>
 		</div>
 	)
+}
+Container.displayName = "Slider.Container"
+
+const Slide = ({
+	className,
+	...props
+}: React.ComponentPropsWithoutRef<"li">) => {
+	return (
+		<li
+			className={clsx("mx-auto w-full shrink-0 snap-center", className)}
+			{...props}
+		/>
+	)
+}
+Slide.displayName = "Slider.Slide"
+
+export const Slider = {
+	Slide,
+	Container,
 }

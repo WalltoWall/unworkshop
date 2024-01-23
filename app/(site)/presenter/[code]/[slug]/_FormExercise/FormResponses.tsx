@@ -24,7 +24,7 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 
 	return (
 		<>
-			<div className="space-y-12 px-8 py-6">
+			<div className="space-y-12 px-8 py-10">
 				{exercise.form?.steps?.map((step, stepIdx) => {
 					return (
 						<div key={step._key}>
@@ -68,6 +68,7 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 													exerciseId={exercise._id}
 													settings={settings}
 													participantNumber={idx + 1}
+													questionNumber={fieldIdx + 1}
 												/>
 											))}
 										</div>
