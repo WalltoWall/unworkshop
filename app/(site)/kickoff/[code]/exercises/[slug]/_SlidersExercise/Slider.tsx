@@ -30,7 +30,7 @@ export const Slider = ({ item, exerciseId, group, answer }: Props) => {
     
     const widthCalc = (value:number, inverse:boolean) => {
         /* Notes:
-         * 7 leaves ~14% width for the number to rotate. 
+         * 7 leaves ~14% width for the number to have space to rotate. 
          *
          * inverse subtracts from 100. Columns that need larger widths
          * from smaller range values will be accurate.
