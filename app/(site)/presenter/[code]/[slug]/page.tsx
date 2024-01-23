@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import { client } from "@/sanity/client"
 import { PresenterHeader } from "../../PresenterHeader"
 import { BrainstormPresenterView } from "./_BrainstormExercise/BrainstormPresenterView"
-import { FormPresenterView } from "./_FormExercise/FormPresenterView"
+import { FormPresenterView } from "./_FormExercise/"
 import { QuadrantsPresenterView } from "./_QuadrantsExercise/QuadrantsPresenterView"
 
 type Props = {

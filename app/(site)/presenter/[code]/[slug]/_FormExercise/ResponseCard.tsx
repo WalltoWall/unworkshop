@@ -1,6 +1,11 @@
-import clsx from "clsx"
+"use client"
+
+import * as Dialog from "@radix-ui/react-dialog"
+import React from "react"
 import { match } from "ts-pattern"
+import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { Text } from "@/components/Text"
+import { HighlightedResponses } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/HighlightedResponses"
 import type {
 	FormField,
 	FormFieldAnswer,
@@ -10,34 +15,26 @@ import type {
 	TaglineFieldAnswer,
 	TextFieldAnswer,
 } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
+import type { FormPresenterViewSettings } from "./FormResponses"
+import { Slider } from "./Slider"
 
-const ShortListResponses = (props: {
-	responses: string[]
-	className?: string
-}) => (
-	<ul className={clsx(props.className, "flex flex-wrap gap-2")}>
-		{props.responses.map((resp) => (
-			<Text
-				key={resp}
-				className="rounded-lg bg-black px-3 py-2 text-white capsize"
-				asChild
-				style="copy"
-				size={14}
-			>
-				<li>{resp}</li>
-			</Text>
-		))}
-	</ul>
-)
+const ListResponseCard = ({
+	settings,
+	answer,
+	participantNumber,
+	participant,
+}: ResponseCardProps<ListFieldAnswer>) => {
+	const name = settings.names
+		? participant.name
+		: `Participant ${participantNumber}`
 
-const ListResponseCard = (props: ResponseCardProps<ListFieldAnswer>) => {
 	return (
 		<div className="max-w-[25rem] rounded-2xl bg-gray-90 p-5">
 			<Text asChild style="heading" size={24}>
-				<h4>{props.participant.name}</h4>
+				<h4>{name}</h4>
 			</Text>
 
-			{props.answer.groups.map((g, idx) => (
+			{answer.groups.map((g, idx) => (
 				<div key={idx}>
 					{g.label && (
 						<Text asChild style="heading" size={18}>
@@ -45,7 +42,13 @@ const ListResponseCard = (props: ResponseCardProps<ListFieldAnswer>) => {
 						</Text>
 					)}
 
-					<ShortListResponses responses={g.responses} className="mt-4" />
+					<HighlightedResponses
+						className="mt-5"
+						responses={g.responses}
+						answers={[]}
+						size={14}
+						validClassName="bg-black text-white"
+					/>
 				</div>
 			))}
 		</div>
@@ -65,6 +68,8 @@ const TaglineResponseCard = ({
 	answer,
 	exerciseId,
 	field,
+	settings,
+	participantNumber,
 }: ResponseCardProps<TaglineFieldAnswer>) => {
 	if (!field.source?.step || !field.source.field) {
 		throw new Error("Invalid tagline source field")
@@ -78,25 +83,61 @@ const TaglineResponseCard = ({
 		throw new Error("Invalid resolved tagline source answer.")
 	}
 
+	const name = settings.names
+		? participant.name
+		: `Participant ${participantNumber}`
+
 	return (
-		<div className="max-w-[25rem] rounded-2xl bg-gray-90 p-5">
-			<Text asChild style="heading" size={24}>
-				<h4>{participant.name}</h4>
-			</Text>
+		<Dialog.Root>
+			<Dialog.Trigger className="max-w-[25rem] rounded-2xl bg-gray-90 p-5 text-left">
+				<Text asChild style="heading" size={24}>
+					<h4>{name}</h4>
+				</Text>
 
-			<ShortListResponses
-				responses={sourceAnswer.groups.at(0)?.responses ?? []}
-				className="mt-4"
-			/>
+				<HighlightedResponses
+					responses={sourceAnswer.groups.at(0)?.responses ?? []}
+					answers={answer.responses}
+					size={14}
+					className="mt-5"
+					validClassName="bg-black text-white"
+				/>
 
-			<ul className="mt-6 space-y-8">
-				{answer.responses.map((resp) => (
-					<Text key={resp} asChild size={18}>
-						<li>{resp}</li>
-					</Text>
-				))}
-			</ul>
-		</div>
+				<ul className="mt-6 space-y-8">
+					{answer.responses.map((resp) => (
+						<Text key={resp} asChild size={18}>
+							<li>{resp}</li>
+						</Text>
+					))}
+				</ul>
+			</Dialog.Trigger>
+
+			<Dialog.Portal>
+				<Dialog.Overlay className="fixed inset-0 bg-black/50" />
+				<Dialog.Content className="fixed left-1/2 top-1/2 z-50 flex min-h-[46.25rem] w-[min(67rem,100%-2.5rem)] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-between gap-12 rounded-[23px] bg-white px-9 py-14">
+					<Dialog.Close className="absolute right-9 top-14 h-8 w-8">
+						<span className="sr-only">Close</span>
+						<BlackXIcon className="h-8 w-8" />
+					</Dialog.Close>
+
+					<HighlightedResponses
+						responses={sourceAnswer.groups.at(0)?.responses ?? []}
+						answers={answer.responses}
+						size={16}
+						className="mt-5 w-full max-w-[40.625rem] items-center justify-center gap-3"
+						validClassName="bg-black text-white"
+						itemClassName="p-4 rounded-xl"
+					/>
+
+					<Slider responses={answer.responses} />
+
+					<Dialog.Title>
+						<Text style="heading" size={32}>
+							{name}
+						</Text>
+					</Dialog.Title>
+				</Dialog.Content>
+			</Dialog.Portal>
+		</Dialog.Root>
 	)
 }
 
@@ -105,6 +146,8 @@ type ResponseCardProps<T extends FormFieldAnswer = FormFieldAnswer> = {
 	participant: FormParticipant
 	field: FormField
 	exerciseId: string
+	settings: FormPresenterViewSettings
+	participantNumber: number
 }
 
 export const ResponseCard = (props: ResponseCardProps) => {

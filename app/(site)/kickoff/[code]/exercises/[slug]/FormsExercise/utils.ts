@@ -9,3 +9,12 @@ const CLEAN_REGEX = /[^a-zA-Z ]/g
 export function sanitizeString(word: string | undefined | null): string {
 	return word?.replace(CLEAN_REGEX, "").toLowerCase() ?? ""
 }
+
+/**
+ * Gets a sanitized list of off-limit words from a list of string respones.
+ *
+ * @param responses The list of responses.
+ */
+export function getOffLimitWords(responses: string[]): string[] {
+	return responses.map(sanitizeString).flatMap((str) => str.split(" "))
+}
