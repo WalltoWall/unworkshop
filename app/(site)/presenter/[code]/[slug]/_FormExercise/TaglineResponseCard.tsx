@@ -61,7 +61,7 @@ export const TaglineResponseCard = ({
 					responses={sourceAnswer.groups.at(0)?.responses ?? []}
 					answers={answer.responses}
 					size={16}
-					className="mt-5 w-full max-w-[40.625rem] items-center justify-center gap-3"
+					className="w-full max-w-[40.625rem] items-center justify-center gap-3"
 					validClassName="bg-black text-white"
 					itemClassName="p-4 rounded-xl"
 				/>
@@ -69,7 +69,10 @@ export const TaglineResponseCard = ({
 				<Slider.Container>
 					{answer.responses.map((resp) => (
 						<Slider.Slide key={resp}>
-							<Text size={40} className="mx-auto w-full max-w-[46rem]">
+							<Text
+								size={40}
+								className="mx-auto w-full max-w-[46rem] text-center"
+							>
 								{resp}
 							</Text>
 						</Slider.Slide>

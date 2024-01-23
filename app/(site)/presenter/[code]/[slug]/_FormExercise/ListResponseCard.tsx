@@ -24,7 +24,7 @@ export const ListResponseCard = ({
 			field={field}
 			questionNumber={questionNumber}
 			trigger={answer.groups.map((g, idx) => (
-				<div key={idx}>
+				<div key={idx} className="mt-5 flex flex-col gap-5 first-of-type:mt-0">
 					{g.label && (
 						<Text asChild style="heading" size={18}>
 							<h5>{g.label}</h5>
@@ -32,7 +32,6 @@ export const ListResponseCard = ({
 					)}
 
 					<HighlightedResponses
-						className="mt-5"
 						responses={g.responses}
 						answers={[]}
 						size={14}

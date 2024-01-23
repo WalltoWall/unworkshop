@@ -36,13 +36,22 @@ const Container = ({ children, className }: Props) => {
 	const numSlides = React.Children.count(children)
 	const numSlidesArr = new Array(numSlides).fill(0)
 
+	const goToSlide = (idx: number) => {
+		rContainer.current?.children[idx]?.scrollIntoView({
+			behavior: "smooth",
+			block: "nearest",
+			inline: "center",
+		})
+		setIdx(idx)
+	}
+
 	return (
 		<div
 			className={clsx(className, "relative flex grow flex-col justify-center")}
 		>
 			<ul
 				ref={rContainer}
-				className="scroll-shadow-x -m-9 flex snap-x snap-mandatory items-center gap-20 overflow-auto overscroll-contain p-9 text-center scrollbar-hide scroll-shadow-20"
+				className="-m-9 flex snap-x snap-mandatory items-center gap-20 overflow-auto overscroll-contain p-9 text-center scrollbar-hide scroll-shadow-x scroll-shadow-20"
 			>
 				{children}
 			</ul>
@@ -56,13 +65,7 @@ const Container = ({ children, className }: Props) => {
 								"h-4 w-4 rounded-full transition ease-out",
 								idx === i ? "bg-black" : "bg-gray-90",
 							)}
-							onClick={() =>
-								rContainer.current?.children[i]?.scrollIntoView({
-									behavior: "smooth",
-									block: "nearest",
-									inline: "center",
-								})
-							}
+							onClick={() => goToSlide(i)}
 						>
 							<span className="sr-only">Go to answer {idx + 1}</span>
 						</button>
