@@ -18,7 +18,7 @@ export const HighlightedResponses = ({
 	className,
 	size = 12,
 	validClassName = "bg-gray-90",
-	invalidClassName = "bg-red-63",
+	invalidClassName = "bg-red-57",
 	itemClassName,
 }: Props) => {
 	const cleanAnswers = answers.map(sanitizeString)

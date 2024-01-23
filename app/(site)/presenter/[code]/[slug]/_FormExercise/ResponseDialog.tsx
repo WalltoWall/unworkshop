@@ -21,7 +21,7 @@ export const ResponseDialog = ({
 }: Props) => {
 	return (
 		<Dialog.Root>
-			<Dialog.Trigger className="flex w-full max-w-[25rem] flex-col gap-5 rounded-2xl bg-gray-90 p-5 text-left">
+			<Dialog.Trigger className="ease flex w-full max-w-[25rem] flex-col gap-5 rounded-2xl bg-gray-90 p-5 text-left transition duration-300 hover:bg-gray-82">
 				<Text asChild style="heading" size={24}>
 					<h4>{name}</h4>
 				</Text>
