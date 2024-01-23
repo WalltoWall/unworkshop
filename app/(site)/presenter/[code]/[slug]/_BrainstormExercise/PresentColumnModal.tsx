@@ -15,11 +15,13 @@ interface PresentColumnProps {
 }
 
 export const PresentColumnModal = ({ columns, index }: PresentColumnProps) => {
-	const [activeColumn, setActiveColumn] = React.useState(columns[index])
 	const [idx, setIdx] = React.useState(index)
+	const activeColumn = columns[idx]
 
 	const isDisabledLeft = idx - 1 <= 0
 	const isDisabledRight = columns.length <= idx + 1
+
+	if (!activeColumn) return
 
 	return (
 		<Dialog.Root>
@@ -69,7 +71,6 @@ export const PresentColumnModal = ({ columns, index }: PresentColumnProps) => {
 							onClick={() => {
 								if (isDisabledLeft) return
 
-								setActiveColumn(columns[idx - 1])
 								setIdx(idx - 1)
 							}}
 							disabled={isDisabledLeft}
@@ -81,7 +82,6 @@ export const PresentColumnModal = ({ columns, index }: PresentColumnProps) => {
 							onClick={() => {
 								if (isDisabledRight) return
 
-								setActiveColumn(columns[idx + 1])
 								setIdx(idx + 1)
 							}}
 							disabled={isDisabledRight}

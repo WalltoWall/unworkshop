@@ -1,14 +1,21 @@
 "use client"
 
 import React from "react"
+import { useRouter } from "next/navigation"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
+import { createClient } from "@sanity/client"
 import clsx from "clsx"
 import { debounce } from "perfect-debounce"
-import { type Slug } from "sanity"
 import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
+import {
+	brainstormExerciseDataQuery,
+	type BrainstormExerciseDataQueryResult,
+} from "@/sanity/queries"
+import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import { env } from "@/env"
 import { submitBoardAction } from "./actions"
 import { CardColumn } from "./CardColumn"
 import { SORTING_COLUMN_ID } from "./constants"
@@ -18,6 +25,14 @@ import {
 	reorder,
 	type ColumnsDispatch,
 } from "./helpers"
+
+const client = createClient({
+	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+	dataset: env.NEXT_PUBLIC_SANITY_DATASET,
+	apiVersion: env.NEXT_PUBLIC_SANITY_API_VERSION,
+	token: env.NEXT_PUBLIC_SANITY_READ_TOKEN,
+	useCdn: false,
+})
 
 export type Card = { response: string; id: string }
 
@@ -31,22 +46,104 @@ export type Column = {
 }
 
 interface PresenterViewProps {
-	exerciseSlug: Slug
-	presenterColumns: Columns
+	exerciseId: string
+	initialData: BrainstormExerciseDataQueryResult
 }
 
 const debounceSubmitBoard = debounce(submitBoardAction, 1500)
 
 export const BrainstormPresenterViewClient = ({
-	exerciseSlug,
-	presenterColumns,
+	exerciseId,
+	initialData,
 }: PresenterViewProps) => {
 	const [showSorter, setShowSorter] = React.useState(true)
 	const formRef = React.useRef<HTMLFormElement>(null)
 	const [, startTransition] = React.useTransition()
+	const { exercise, participants } = initialData
+	const router = useRouter()
+	const routerDebounce = React.useMemo(
+		() => debounce(() => router.refresh(), 500),
+		[router],
+	)
+
+	React.useEffect(() => {
+		const interval = setInterval(() => {
+			routerDebounce()
+		}, 10000)
+
+		return () => clearInterval(interval)
+	}, [routerDebounce])
+
+	React.useEffect(() => {
+		const subscription = client
+			.listen<BrainstormExerciseDataQueryResult>(brainstormExerciseDataQuery, {
+				exerciseId,
+			})
+			.subscribe((update) => {
+				if (
+					participants.some(
+						(participant) => participant._id === update.documentId,
+					)
+				) {
+					routerDebounce()
+				}
+			})
+
+		return () => subscription.unsubscribe()
+	}, [exerciseId, participants, routerDebounce])
+
+	const participantAnswers = participants.flatMap(
+		(participant) => participant.answers?.[exerciseId].answers,
+	) as Array<Answer>
+
+	const answerMap = new Map<string, string>()
+
+	participantAnswers.forEach((answer) =>
+		answerMap.set(answer.id, answer.response),
+	)
+
+	const answersWithResponses = exercise.answers?.map((column) => {
+		const newCol: Column = {
+			...column,
+			cards: column.cards
+				.map((cardId) => {
+					if (!answerMap.has(cardId)) return null
+
+					const response = answerMap.get(cardId)!
+
+					const answer: Answer = {
+						id: cardId,
+						response: response,
+					}
+
+					answerMap.delete(cardId)
+
+					return answer
+				})
+				.filter(Boolean) as Array<Answer>,
+		}
+
+		return newCol
+	}) ?? [
+		{
+			columnId: SORTING_COLUMN_ID,
+			title: "",
+			color: "",
+			cards: participantAnswers,
+		},
+	]
+
+	const unsortedItems = Array.from(answerMap.entries()).map(
+		([id, response]) => ({
+			id,
+			response,
+		}),
+	)
+
+	answersWithResponses[0].cards.unshift(...unsortedItems.toReversed())
 
 	const [optimisticColumns, setOptimisitColumns] =
-		React.useOptimistic(presenterColumns)
+		React.useOptimistic(answersWithResponses)
 
 	const submitForm = async (action: ColumnsDispatch) => {
 		const newColumns = determineColumnState(optimisticColumns, action)
@@ -56,7 +153,7 @@ export const BrainstormPresenterViewClient = ({
 
 			await debounceSubmitBoard({
 				columns: newColumns,
-				exerciseSlug: exerciseSlug.current,
+				exerciseSlug: exercise.slug.current,
 			})
 		})
 	}
@@ -193,7 +290,7 @@ export const BrainstormPresenterViewClient = ({
 									columnTitle={col.title}
 									id={col.columnId}
 									columns={optimisticColumns}
-									exerciseSlug={exerciseSlug.current}
+									exerciseSlug={exercise.slug.current}
 									submitFunction={submitForm}
 								/>
 							)

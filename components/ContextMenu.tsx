@@ -113,6 +113,7 @@ export const ContextMenu = ({
 		})
 	}
 
+	// when editing and moving card to another column it reverts back
 	const finalizeEdit = (newResponse: string) => {
 		setReadOnly(true)
 

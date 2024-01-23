@@ -5,8 +5,17 @@ import { cookies } from "next/headers"
 import type { Reference } from "sanity"
 import { z } from "zod"
 import type { ST } from "@/sanity/config"
+import type {
+	BrainstormExercise,
+	BrainstormParticipant,
+} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { PARTICIPANT_COOKIE } from "@/constants"
 import { env } from "@/env"
+import {
+	allParticipantsInExerciseQuery,
+	brainstormExerciseDataQuery,
+	type BrainstormExerciseDataQueryResult,
+} from "./queries"
 
 export const sanity = createClient({
 	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -85,10 +94,7 @@ export const client = {
 	async findAllParticipantsInExercise<T extends ST["participant"] = ST["participant"]>(exerciseId: string) {
 
 		const participants = await sanity.fetch<Array<T>>(
-			groq`*[_type == "participant" && answers[$exerciseId] != null]{
-				...,
-				answers
-			}`,
+			allParticipantsInExerciseQuery,
 			{exerciseId},
 			{ cache: "no-store" }
 		)
@@ -142,6 +148,16 @@ export const client = {
 			}`,
 			{ slug },
 			{ cache: "no-store" }, // TODO: Note on caching.
+		)
+
+		return data
+	},
+
+	async getBrainstormExerciseData(exerciseId: string) {
+		const data = await sanity.fetch<BrainstormExerciseDataQueryResult>(
+			brainstormExerciseDataQuery,
+			{ exerciseId },
+			{ cache: "no-store" },
 		)
 
 		return data
