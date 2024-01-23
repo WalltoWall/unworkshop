@@ -14,24 +14,20 @@ import { QuadrantsHeaderNav } from "./[code]/[slug]/_QuadrantsExercise/Quadrants
 interface PresenterHeaderProp {
 	kickoffCode?: string
 	exercises?: Array<ST["exercise"]>
-	activeExercise?: ST["exercise"]
-	heading?: string
+	exercise?: ST["exercise"]
 }
 
 export const PresenterHeader = ({
 	kickoffCode,
 	exercises,
-	activeExercise,
-	heading,
+	exercise,
 }: PresenterHeaderProp) => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
 
-	const steps = activeExercise?.quadrants
-		? activeExercise.quadrants.length
-		: null
+	const steps = exercise?.quadrants ? exercise.quadrants.length : null
 
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -49,12 +45,12 @@ export const PresenterHeader = ({
 				<Logo className="h-[3.25rem] w-[3.25rem] text-white" />
 			</Link>
 
-			{heading && (
+			{exercise?.name && (
 				<Text
 					size={48}
 					className="ml-10 font-bold uppercase text-white font-heading"
 				>
-					{heading}
+					{exercise.name}
 				</Text>
 			)}
 
@@ -63,7 +59,7 @@ export const PresenterHeader = ({
 					<select
 						value={step}
 						onChange={changeStep}
-						className="h-9 min-w-28 appearance-none rounded-lg border border-gray-58 bg-black pl-2 pr-7 pt-1 uppercase text-white text-18 font-heading"
+						className="h-9 min-w-28 appearance-none rounded-lg border border-gray-58 bg-black pb-2 pl-2 pr-7 pt-1 uppercase text-white text-18 font-heading"
 					>
 						{[...Array(steps)].map((_, index) => (
 							<option key={index} value={index + 1}>
@@ -72,7 +68,7 @@ export const PresenterHeader = ({
 						))}
 					</select>
 
-					<Chevron className="absolute right-2 top-3 h-[0.75rem] -rotate-90 text-white" />
+					<Chevron className="absolute right-2.5 top-1/2 h-[0.75rem] -translate-y-1/2 -rotate-90 text-white" />
 				</div>
 			)}
 
@@ -86,26 +82,26 @@ export const PresenterHeader = ({
 							isOpen ? "translate-x-0" : "translate-x-full",
 						)}
 					>
-						<ul>
-							{exercises.map((exercise) => (
-								<li key={exercise._id} className="mb-6">
-									<Link
-										className={cx(
-											"relative inline-block pb-1 uppercase text-48 font-heading capsize before:absolute before:bottom-0 before:left-0 before:h-[0.1875rem] before:w-full hover:before:bg-black focus:before:bg-black",
-											activeExercise &&
-												activeExercise.name === heading &&
-												"before:bg-black",
-										)}
-										href={`/presenter/${kickoffCode}/${exercise.slug.current}`}
-									>
-										{exercise.name}
-									</Link>
+						<ul className="flex flex-col gap-10">
+							{exercises.map((e) => {
+								return (
+									<li key={e._id}>
+										<Link
+											className={cx(
+												"relative inline-block pb-1 uppercase underline-offset-8 text-48 font-heading capsize hover:underline",
+												exercise?._id === e._id && "underline",
+											)}
+											href={`/presenter/${kickoffCode}/${e.slug.current}`}
+										>
+											{e.name}
+										</Link>
 
-									{exercise.type === "quadrants" && (
-										<QuadrantsHeaderNav exercise={exercise} />
-									)}
-								</li>
-							))}
+										{e.type === "quadrants" && (
+											<QuadrantsHeaderNav exercise={e} />
+										)}
+									</li>
+								)
+							})}
 						</ul>
 					</nav>
 				</>
@@ -122,7 +118,7 @@ export const StepNavItem = ({ active = false, ...props }: StepNavItemProps) => (
 	<button
 		type="button"
 		className={cx(
-			"mx-6 uppercase transition-opacity text-24 font-heading hover:opacity-100 focus:opacity-100",
+			"mx-6 block uppercase transition-opacity text-24 leading-none font-heading capsize hover:opacity-100 focus:opacity-100",
 			active ? "opacity-100" : "opacity-50",
 		)}
 		{...props}

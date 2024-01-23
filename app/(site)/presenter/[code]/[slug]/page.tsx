@@ -21,8 +21,7 @@ const PresenterExercisePage = async (props: Props) => {
 			<PresenterHeader
 				kickoffCode={props.params.code}
 				exercises={kickoff.exercises}
-				activeExercise={exercise}
-				heading={exercise.name}
+				exercise={exercise}
 			/>
 
 			{exercise.type === "brainstorm" && (
