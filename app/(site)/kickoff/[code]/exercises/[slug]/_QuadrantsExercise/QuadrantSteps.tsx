@@ -5,12 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation"
 import Multiplayer from "@/components/Multiplayer"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
-import { useCaptainAnswers } from "@/sanity/groups"
+import { useAnswers } from "@/hooks/use-answers"
 import { useMultiplayer } from "@/hooks/use-multiplayer"
 import type { GroupAnswer, IndividualAnswer } from "../groups/types"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
-import type { Answer, Answers } from "./types"
+import type { Answer, Answers, QuadrantsParticipant } from "./types"
 
 export type AnswerDispatch = {
 	newAnswer: Answer
@@ -25,52 +25,48 @@ export type State =
 	| "complete"
 
 type QuadrantStepsProps = {
-	answers: Answers
 	exerciseId: string
+	participant: QuadrantsParticipant
 	quadrants: NonNullable<ST["exercise"]["quadrants"]>
-	meta?: IndividualAnswer | GroupAnswer
 	todayInstructions: ST["exercise"]["today_instructions"]
 	tomorrowInstructions: ST["exercise"]["tomorrow_instructions"]
 	finalInstructions: ST["exercise"]["finalize_instructions"]
 	kickoffCode: string
-	readOnly: boolean
-	participantName: string
 }
 
 export const QuadrantSteps = ({
-	answers,
 	exerciseId,
+	participant,
 	quadrants,
-	meta,
 	todayInstructions,
 	tomorrowInstructions,
 	finalInstructions,
 	kickoffCode,
-	readOnly,
-	participantName,
 }: QuadrantStepsProps) => {
-	const awareness = useMultiplayer({
-		room: `${kickoffCode}-${exerciseId}`,
-		name: participantName,
-	})
-
 	const router = useRouter()
 	const searchParams = useSearchParams()
-	const step = parseInt(searchParams?.get("step") ?? "1")
-	const totalSteps = quadrants.length * 2
 
-	const groupCaptainAnswers =
-		useCaptainAnswers(exerciseId, "answers", meta?.group) ?? {}
+	const awareness = useMultiplayer({
+		room: `${kickoffCode}-${exerciseId}`,
+		name: participant.name,
+	})
+
+	const { answers, meta } = useAnswers(participant, exerciseId, "quadrants")
 
 	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
 		Answers,
 		AnswerDispatch
-	>(answers, (state, action) => {
+	>(answers ?? {}, (state, action) => {
 		return {
 			...state,
 			[action.slug]: action.newAnswer,
 		}
 	})
+
+	console.log(answers, optimisticAnswers)
+
+	const step = parseInt(searchParams?.get("step") ?? "1")
+	const totalSteps = quadrants.length * 2
 
 	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {
@@ -84,11 +80,11 @@ export const QuadrantSteps = ({
 		const currentQuadrant = quadrants.at(currentQuadrantIdx)!
 
 		if (selectingForToday) {
-			return answers[currentQuadrant.slug.current]?.today
+			return answers?.[currentQuadrant.slug.current]?.today
 				? "today_placed"
 				: "today_pending"
 		} else {
-			return answers[currentQuadrant.slug.current]?.tomorrow
+			return answers?.[currentQuadrant.slug.current]?.tomorrow
 				? "tomorrow_placed"
 				: "tomorrow_pending"
 		}
@@ -137,13 +133,12 @@ export const QuadrantSteps = ({
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
-								captainAnswer={groupCaptainAnswers[quadrant.slug.current]}
 								answer={optimisticAnswers[quadrant.slug.current]}
 								state={state}
 								index={index}
 								answerDispatch={answerDispatch}
 								onQuadrantClick={handleClick}
-								readOnly={readOnly}
+								readOnly={meta?.role === "contributor"}
 							/>
 						</div>
 					))
@@ -152,13 +147,12 @@ export const QuadrantSteps = ({
 						<Quadrant
 							item={currentQuadrant}
 							exerciseId={exerciseId}
-							captainAnswer={groupCaptainAnswers[currentQuadrant.slug.current]}
 							answer={optimisticAnswers[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}
 							answerDispatch={answerDispatch}
 							onQuadrantClick={handleClick}
-							readOnly={readOnly}
+							readOnly={meta?.role === "contributor"}
 						/>
 					</div>
 				) : null}

@@ -16,23 +16,17 @@ export const QuadrantsExercise = async ({
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
 
-	const meta = participant.answers?.[exercise._id]?.meta
-	const answers = participant.answers?.[exercise._id]?.answers ?? {}
-
 	return (
 		<div className="mt-8 h-full">
 			{exercise.quadrants && (
 				<QuadrantSteps
-					answers={answers}
 					quadrants={exercise.quadrants}
 					exerciseId={exercise._id}
-					meta={meta}
+					participant={participant}
 					todayInstructions={exercise.today_instructions}
 					tomorrowInstructions={exercise.tomorrow_instructions}
 					finalInstructions={exercise.finalize_instructions}
 					kickoffCode={kickoffCode}
-					readOnly={meta?.role === "contributor"}
-					participantName={participant.name}
 				/>
 			)}
 		</div>

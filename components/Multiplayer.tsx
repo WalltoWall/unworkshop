@@ -4,7 +4,7 @@ import React from "react"
 import throttle from "just-throttle"
 import { useUsers } from "y-presence"
 import { WebsocketProvider } from "y-websocket"
-import { useActiveFocus } from "@/hooks/use-active-element"
+import { useActiveFocus } from "@/hooks/use-active-focus"
 import { Cursor } from "./Cursor"
 
 interface MultiplayerProps {

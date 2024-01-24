@@ -24,7 +24,6 @@ type QuadrantProps = {
 	exerciseId: string
 	index: number
 	state: State
-	captainAnswer?: Answer
 	answer?: Answer
 	answerDispatch: (action: AnswerDispatch) => void
 	onQuadrantClick: () => void
@@ -39,7 +38,6 @@ export const Quadrant = ({
 	exerciseId,
 	index,
 	state,
-	captainAnswer,
 	answer,
 	answerDispatch,
 	onQuadrantClick,
@@ -53,8 +51,8 @@ export const Quadrant = ({
 		width: 0,
 	})
 
-	const today = readOnly ? captainAnswer?.today : answer?.today
-	const tomorrow = readOnly ? captainAnswer?.tomorrow : answer?.tomorrow
+	const today = answer?.today
+	const tomorrow = answer?.tomorrow
 
 	const clickTarget = React.useRef<HTMLDivElement>(null)
 
@@ -179,13 +177,13 @@ export const Quadrant = ({
 			}
 		}
 		startTransition(async () => {
-			answerDispatch(updatedAnswer)
-
 			await debouncedSubmitQuadrantAction({
 				answer: updatedAnswer,
 				exerciseId,
 			})
 		})
+
+		answerDispatch(updatedAnswer)
 		onQuadrantClick()
 	}
 

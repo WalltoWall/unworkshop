@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { z } from "zod"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
-import { useCaptainAnswers } from "@/sanity/groups"
+import { useAnswers } from "@/hooks/use-answers"
 import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
@@ -36,15 +36,8 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	const answers = participant.answers?.[exercise._id]
-	const stepAnswers = answers?.steps?.at(stepIdx)
-	const meta = answers?.meta
-	const groupCaptainAnswers = useCaptainAnswers(
-		exercise._id,
-		"steps",
-		meta?.group,
-	)
-	const captainStepAnswers = groupCaptainAnswers?.at(stepIdx)
+	const { answers, meta } = useAnswers(participant, exercise._id, "form")
+	const stepAnswers = answers?.at(stepIdx)
 
 	const onReviewScreen = !stepData && stepIdx === exercise.form.steps.length
 
@@ -53,21 +46,12 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	return (
 		<div className="mt-3">
-			{onReviewScreen && (
-				<Review
-					answers={groupCaptainAnswers || answers?.steps}
-					exercise={exercise}
-				/>
-			)}
+			{onReviewScreen && <Review answers={answers} exercise={exercise} />}
 
 			{!onReviewScreen && (
 				<div>
 					{stepData?.fields?.map((field, fieldIdx) => {
 						let fieldAnswer = stepAnswers?.data.at(fieldIdx)
-
-						if (captainStepAnswers) {
-							fieldAnswer = captainStepAnswers?.data.at(fieldIdx)
-						}
 
 						return (
 							<FieldContainer key={field._key}>
@@ -86,7 +70,7 @@ export const Form = ({ exercise, participant }: Props) => {
 									field={field}
 									stepIdx={stepIdx}
 									fieldIdx={fieldIdx}
-									allAnswers={groupCaptainAnswers || answers?.steps}
+									allAnswers={answers}
 									answer={fieldAnswer}
 									readOnly={meta?.role === "contributor"}
 								/>
