@@ -1,187 +1,286 @@
 "use client"
 
 import React from "react"
-import {
-	DndContext,
-	KeyboardSensor,
-	PointerSensor,
-	useSensor,
-	useSensors,
-} from "@dnd-kit/core"
-import {
-	arrayMove,
-	SortableContext,
-	sortableKeyboardCoordinates,
-} from "@dnd-kit/sortable"
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import clsx from "clsx"
+import { debounce } from "perfect-debounce"
 import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
+import type {
+	Answer,
+	BrainstormExercise,
+	BrainstormParticipant,
+} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import { submitBoardAction } from "./actions"
 import { CardColumn } from "./CardColumn"
-import { Draggable, SortableItem } from "./SortableItem"
+import { SORTING_COLUMN_ID } from "./constants"
+import {
+	determineColumnState,
+	move,
+	reorder,
+	type ColumnsDispatch,
+} from "./helpers"
 
-type Card = { response: string; id: string }
+export type Card = { response: string; id: string }
 
-type Columns = Record<string, Array<Card>>
+export type Columns = Array<Column>
 
-interface PresenterViewProps {
+export type Column = {
+	color: string
+	title: string
 	cards: Array<Card>
+	columnId: string
 }
 
+interface PresenterViewProps {
+	exercise: BrainstormExercise
+	participants: Array<BrainstormParticipant>
+}
+
+const debounceSubmitBoard = debounce(submitBoardAction, 1500)
+
 export const BrainstormPresenterViewClient = ({
-	cards,
+	exercise,
+	participants,
 }: PresenterViewProps) => {
-	const [sortingId] = React.useState(uid())
-	const [columns, setColumns] = React.useState<Columns>({
-		[sortingId]: cards,
-		[uid()]: [
-			{ id: uid(), response: "Testing" },
-			{ id: uid(), response: "Testing moving" },
-			{ id: uid(), response: "Testing Again" },
-		],
-	})
-
 	const [showSorter, setShowSorter] = React.useState(true)
+	const formRef = React.useRef<HTMLFormElement>(null)
+	const [, startTransition] = React.useTransition()
 
-	const removeColumn = (id: string) => {
-		const newColumns = { ...columns }
-		delete newColumns[id]
-		setColumns(newColumns)
-	}
+	const participantAnswers = participants.flatMap(
+		(participant) => participant.answers?.[exercise._id].answers,
+	) as Array<Answer>
 
-	const sensors = useSensors(
-		useSensor(PointerSensor),
-		useSensor(KeyboardSensor, {
-			coordinateGetter: sortableKeyboardCoordinates,
+	const answerMap = new Map<string, string>()
+
+	participantAnswers.forEach((answer) =>
+		answerMap.set(answer.id, answer.response),
+	)
+
+	const answersWithResponses = exercise.answers?.map((column) => {
+		const newCol: Column = {
+			...column,
+			cards: column.cards
+				.map((cardId) => {
+					if (!answerMap.has(cardId)) return null
+
+					const response = answerMap.get(cardId)!
+
+					const answer: Answer = {
+						id: cardId,
+						response: response,
+					}
+
+					answerMap.delete(cardId)
+
+					return answer
+				})
+				.filter(Boolean) as Array<Answer>,
+		}
+
+		return newCol
+	}) ?? [
+		{
+			columnId: SORTING_COLUMN_ID,
+			title: "",
+			color: "",
+			cards: participantAnswers,
+		},
+	]
+
+	const unsortedItems = Array.from(answerMap.entries()).map(
+		([id, response]) => ({
+			id,
+			response,
 		}),
 	)
 
+	answersWithResponses[0].cards.unshift(...unsortedItems.toReversed())
+
+	const [optimisticColumns, setOptimisitColumns] =
+		React.useOptimistic(answersWithResponses)
+
+	const submitForm = async (action: ColumnsDispatch) => {
+		const newColumns = determineColumnState(optimisticColumns, action)
+
+		startTransition(async () => {
+			setOptimisitColumns(newColumns)
+
+			await debounceSubmitBoard({
+				columns: newColumns,
+				exerciseSlug: exercise.slug.current,
+			})
+		})
+	}
+
+	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+		e.preventDefault()
+		submitForm({ type: "Default" })
+	}
+
+	const draggingStyles =
+		"box-border flex list-none items-center !py-2.5 !aspect-auto !h-[3.75rem] !min-w-[17.5rem] opacity-50"
+
 	return (
-		<DndContext
-			sensors={sensors}
-			onDragEnd={({ active, over }) => {
-				if (!over) return
-				if (active.id === over.id) return
-				if (!active.data.current) return
-				if (
-					active.data.current?.sortable.containerId !==
-					over.data.current?.sortable.containerId
-				)
-					return
+		<DragDropContext
+			onDragEnd={(result) => {
+				const { source, destination } = result
 
-				const columnId = active.data.current.sortable.containerId
-				const cards = columns[columnId]
+				if (!destination) return
 
-				const oldIdx = cards.findIndex((card) => card.id === active.id)
-				const newIdx = cards.findIndex((card) => card.id === over.id)
+				const fromColumnId = source.droppableId
+				const toColumnId = destination.droppableId
 
-				setColumns({
-					...columns,
-					[columnId]: arrayMove(cards, oldIdx, newIdx),
-				})
-			}}
-			onDragOver={({ active, over }) => {
-				if (!over || !active.data.current) return
+				const fromCards = optimisticColumns.find(
+					(col) => col.columnId === fromColumnId,
+				)?.cards
 
-				const fromColumnId = active.data.current?.sortable.containerId
-				const toColumnId = over.data.current?.sortable.containerId
+				if (!fromCards) return
 
-				if (!fromColumnId || !toColumnId) return
+				if (fromColumnId === toColumnId) {
+					const items = reorder({
+						list: fromCards,
+						startIndex: source.index,
+						endIndex: destination.index,
+					})
 
-				if (fromColumnId === toColumnId) return
+					submitForm({
+						type: "Update Cards",
+						columnId: fromColumnId,
+						cards: items,
+					})
+				} else {
+					const toCards =
+						optimisticColumns.find((col) => col.columnId === toColumnId)
+							?.cards ?? []
+					const fromIdx = optimisticColumns.findIndex(
+						(col) => col.columnId === fromColumnId,
+					)
+					const toIdx = optimisticColumns.findIndex(
+						(col) => col.columnId === toColumnId,
+					)
 
-				const fromCards = columns[fromColumnId]
-				const toCards = columns[toColumnId]
+					const result = move({
+						sourceCards: fromCards,
+						destinationCards: toCards,
+						sourceIndex: source.index,
+						destinationIndex: destination.index,
+					})
 
-				const activeCard = fromCards.find((card) => card.id === active.id)
+					const newColumns = structuredClone(optimisticColumns)
 
-				if (!activeCard) return
+					newColumns[fromIdx].cards = result.fromCards
+					newColumns[toIdx].cards = result.toCards
 
-				setColumns({
-					...columns,
-					[fromColumnId]: fromCards.filter((card) => card.id !== active.id),
-					[toColumnId]: toCards.toSpliced(
-						over.data.current?.sortable.index,
-						0,
-						activeCard,
-					),
-				})
+					submitForm({
+						type: "Update Columns",
+						replaceColumns: newColumns,
+					})
+				}
 			}}
 		>
-			<div className="relative">
-				<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
-					<button
-						className="flex w-fit items-center gap-3 rounded-lg border-2 border-gray-50 px-2.5 py-2"
-						onClick={() => setShowSorter(!showSorter)}
-					>
-						<Text style={"heading"} size={16} className="text-gray-50">
-							Hide Sorter
-						</Text>
-						<Chevron
-							className={clsx(
-								"w-1.5 text-gray-50 transition duration-150 ease-in",
-								showSorter ? "rotate-[270deg]" : "rotate-90",
-							)}
-						/>
-					</button>
-
-					<SortableContext items={cards} id={sortingId}>
-						<div
-							className={clsx(
-								"flex w-full gap-2",
-								showSorter ? "block" : "hidden",
-							)}
+			<form onSubmit={handleSubmit} ref={formRef}>
+				<div className="relative">
+					<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
+						<button
+							className="flex w-fit items-center gap-3 rounded-lg border-2 border-gray-50 px-2.5 py-2"
+							onClick={() => setShowSorter(!showSorter)}
+							type="button"
 						>
-							{cards.map((card) => (
-								<SortableItem
-									id={card.id}
-									color={""}
-									className="box-border aspect-square w-[135px] list-none rounded-lg bg-white px-3 py-2"
-									key={card.id}
-								>
-									<Draggable response={card.response} />
-								</SortableItem>
-							))}
-						</div>
-					</SortableContext>
-				</div>
-
-				<div className="flex gap-4 pt-5">
-					{Object.entries(columns).map(([columnId, cards]) => {
-						if (columnId === sortingId) return
-
-						return (
-							<CardColumn
-								key={columnId}
-								cards={cards}
-								id={columnId}
-								removeColumn={removeColumn}
+							<Text style={"heading"} size={16} className="text-gray-50">
+								Hide Sorter
+							</Text>
+							<Chevron
+								className={clsx(
+									"w-1.5 text-gray-50 transition duration-150 ease-in",
+									showSorter ? "rotate-[270deg]" : "rotate-90",
+								)}
 							/>
-						)
-					})}
+						</button>
 
-					<button
-						className="flex h-fit w-[306px] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
-						onClick={() => {
-							const id = uid()
+						<Droppable droppableId={SORTING_COLUMN_ID} direction="horizontal">
+							{(provided) => (
+								<div
+									className={clsx(
+										"flex w-full gap-2 overflow-y-clip overflow-x-scroll scrollbar-hide",
+										showSorter ? "block" : "hidden",
+									)}
+									ref={provided.innerRef}
+									{...provided.droppableProps}
+								>
+									{optimisticColumns[0].cards.map((card, idx) => (
+										<Draggable index={idx} draggableId={card.id} key={card.id}>
+											{(cardProvided, cardSnapshot) => (
+												<div
+													ref={cardProvided.innerRef}
+													{...cardProvided.draggableProps}
+													{...cardProvided.dragHandleProps}
+													className={clsx(
+														"box-border aspect-square w-[8.4375rem] min-w-[8.4375rem] list-none rounded-lg bg-white px-3 py-2",
+														cardSnapshot.isDragging && draggingStyles,
+													)}
+												>
+													<p>{card.response}</p>
+												</div>
+											)}
+										</Draggable>
+									))}
 
-							setColumns({
-								...columns,
-								[id]: [
-									{ id: uid(), response: "Testing" },
-									{ id: uid(), response: "Testing 2" },
-								],
-							})
-						}}
-					>
-						<GrayPlusCircleIcon className="w-6" />
-						<Text style={"heading"} size={18} className="text-gray-38">
-							Add Another Board
-						</Text>
-					</button>
+									{provided.placeholder}
+								</div>
+							)}
+						</Droppable>
+					</div>
+
+					<div className="flex flex-wrap gap-4 pt-5">
+						{optimisticColumns.map((col, idx) => {
+							if (col.columnId === SORTING_COLUMN_ID) return
+
+							return (
+								<CardColumn
+									key={col.columnId}
+									index={idx}
+									cards={col.cards}
+									colorHex={col.color}
+									columnTitle={col.title}
+									id={col.columnId}
+									columns={optimisticColumns}
+									exerciseSlug={exercise.slug.current}
+									submitFunction={submitForm}
+								/>
+							)
+						})}
+
+						<button
+							className="flex h-fit w-[19.125rem] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
+							onClick={() => {
+								const id = uid()
+
+								const newColumn = {
+									color: "",
+									title: "New Column",
+									cards: [],
+									columnId: id,
+								}
+
+								submitForm({
+									type: "Create Column",
+									newColumn: newColumn,
+									columnId: id,
+								})
+							}}
+							type="button"
+						>
+							<GrayPlusCircleIcon className="w-6" />
+							<Text style={"heading"} size={18} className="text-gray-38">
+								Add Another Board
+							</Text>
+						</button>
+					</div>
 				</div>
-			</div>
-		</DndContext>
+			</form>
+		</DragDropContext>
 	)
 }

@@ -34,6 +34,7 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 
 							{step.fields?.map((field, fieldIdx) => {
 								const participantWithAnswer = participants
+									.filter((p) => Boolean(p.answers?.[exercise._id].steps))
 									.map((p) => ({
 										answer: p.answers?.[exercise._id].steps
 											.at(stepIdx)
@@ -58,7 +59,7 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 											/>
 										</div>
 
-										<div className="wrap mt-7 flex gap-3">
+										<div className="mt-7 flex flex-wrap gap-3">
 											{participantWithAnswer?.map((p, idx) => (
 												<ResponseCard
 													key={p.answer.type + idx}
