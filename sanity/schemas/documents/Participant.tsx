@@ -1,5 +1,6 @@
 import { User } from "lucide-react"
 import { defineField, defineType } from "@sanity-typed/types"
+import { uid } from "uid"
 
 export const Participant = defineType({
 	type: "document",
@@ -26,6 +27,13 @@ export const Participant = defineType({
 			description: "The name of this participant.",
 			type: "string",
 			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: "recovery_code",
+			title: "Recovery Code",
+			description:
+				"Upon the loss of cookies, this code allows for entering a workshop as an existing user",
+			type: "string",
 		}),
 		defineField({
 			name: "kickoff",

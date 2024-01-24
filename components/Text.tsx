@@ -50,7 +50,7 @@ export const text = cva("", {
 	},
 })
 
-type TextVariants = VariantProps<typeof text>
+export type TextVariants = VariantProps<typeof text>
 type TextProps = Omit<React.ComponentPropsWithoutRef<"div">, "style"> &
 	TextVariants & { asChild?: boolean }
 
