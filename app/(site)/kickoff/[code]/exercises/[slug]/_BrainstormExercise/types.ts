@@ -17,3 +17,29 @@ export type BrainstormParticipant = ST["participant"] & {
 		}
 	}
 }
+
+export type BrainstormExercise = ST["exercise"] & {
+	answers?: Array<{
+		columnId: string
+		color: string
+		title: string
+		cards: Array<string>
+	}>
+}
+
+export type Color = "green" | "red" | "yellow"
+
+export interface CardScrollerProps {
+	cards: Array<Answer>
+	exerciseId: string
+	group: boolean
+	color?: Color
+	step: number
+}
+
+export interface AddCardData {
+	id: string
+	exerciseId: string
+	isGroup: boolean
+	step: number
+}
