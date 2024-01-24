@@ -88,7 +88,7 @@ const FocusRings = ({ awareness }: MultiplayerProps) => {
 					>
 						{value.name && (
 							<span
-								className="absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded p-1 text-white text-14 capsize"
+								className="absolute left-full top-full mt-1 -translate-x-full whitespace-nowrap rounded p-1 text-white text-14 capsize"
 								style={{
 									backgroundColor: value.color,
 								}}

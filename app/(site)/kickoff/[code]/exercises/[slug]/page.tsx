@@ -37,7 +37,9 @@ const ExercisePage = async (props: Props) => {
 					kickoffCode={props.params.code}
 				/>
 			)}
-			{exercise.type === "form" && <FormExercise exercise={exercise} />}
+			{exercise.type === "form" && (
+				<FormExercise exercise={exercise} kickoffCode={props.params.code} />
+			)}
 		</div>
 	)
 }

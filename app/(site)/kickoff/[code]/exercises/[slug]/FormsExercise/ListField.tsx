@@ -22,6 +22,7 @@ type InputProps = {
 	onChange?: React.ChangeEventHandler<HTMLInputElement>
 	name?: string
 	readOnly?: boolean
+	id: string
 }
 
 const Input = ({
@@ -31,6 +32,7 @@ const Input = ({
 	onChange,
 	name = DEFAULT_INPUT_NAME,
 	readOnly = false,
+	id,
 }: InputProps) => {
 	return (
 		<li className="flex gap-2">
@@ -48,6 +50,7 @@ const Input = ({
 				defaultValue={defaultValue}
 				onChange={onChange}
 				readOnly={readOnly}
+				id={id}
 			/>
 		</li>
 	)
@@ -59,6 +62,8 @@ type SourceListSectionProps = {
 	answer?: ListFieldAnswer["groups"][number]
 	onInputChange?: React.ChangeEventHandler<HTMLInputElement>
 	readOnly?: boolean
+	stepIdx: number
+	fieldIdx: number
 }
 
 const SourceListSection = (props: SourceListSectionProps) => {
@@ -92,6 +97,7 @@ const SourceListSection = (props: SourceListSectionProps) => {
 							name={props.label}
 							onChange={props.onInputChange}
 							readOnly={props.readOnly}
+							id={`field-${props.stepIdx}-${props.fieldIdx}-${props.label}-${idx}`}
 						/>
 					)
 				})}
@@ -171,6 +177,8 @@ const SourceListField = ({ answer, ...props }: Props) => {
 					answer={answer?.groups.find((a) => a.label === label)}
 					onInputChange={onInputChange}
 					readOnly={props.readOnly}
+					stepIdx={props.stepIdx}
+					fieldIdx={props.fieldIdx}
 				/>
 			))}
 		</form>
@@ -233,6 +241,7 @@ const PlainListField = ({ answer, ...props }: Props) => {
 							defaultValue={resolvedAnswer?.responses.at(idx)}
 							onChange={onChange}
 							readOnly={props.readOnly}
+							id={`field-${props.stepIdx}-${props.fieldIdx}-${idx}`}
 						/>
 					)
 				})}

@@ -120,6 +120,7 @@ export const TaglineField = ({ source, answer, ...props }: Props) => {
 		readOnly: props.readOnly,
 		offlimitWords,
 		placeholder: props.field.placeholder,
+		id: `field-${props.stepIdx}-${props.fieldIdx}-${INPUT_NAME}`,
 	}
 
 	// TODO: The children type of <Prompt> only accepts strings, not React

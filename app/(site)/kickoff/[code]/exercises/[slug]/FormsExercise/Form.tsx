@@ -3,9 +3,11 @@
 import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { z } from "zod"
+import Multiplayer from "@/components/Multiplayer"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { useAnswers } from "@/hooks/use-answers"
+import { useMultiplayer } from "@/hooks/use-multiplayer"
 import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
@@ -21,12 +23,18 @@ const StepParamSchema = z.coerce
 type Props = {
 	exercise: ST["exercise"]
 	participant: FormParticipant
+	kickoffCode: string
 }
 
-export const Form = ({ exercise, participant }: Props) => {
+export const Form = ({ exercise, participant, kickoffCode }: Props) => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const params = useParams()
+
+	const awareness = useMultiplayer({
+		room: `${kickoffCode}-${exercise._id}`,
+		name: participant.name,
+	})
 
 	const step = StepParamSchema.parse(searchParams.get("step"))
 	const stepIdx = step - 1
@@ -45,48 +53,54 @@ export const Form = ({ exercise, participant }: Props) => {
 		router.push(`/kickoff/${params.code}/exercises`)
 
 	return (
-		<div className="mt-3">
-			{onReviewScreen && (
-				<Review answers={answers?.steps} exercise={exercise} />
+		<>
+			<div className="mt-3">
+				{onReviewScreen && (
+					<Review answers={answers?.steps} exercise={exercise} />
+				)}
+
+				{!onReviewScreen && (
+					<div>
+						{stepData?.fields?.map((field, fieldIdx) => {
+							const fieldAnswer = stepAnswers?.data.at(fieldIdx)
+
+							return (
+								<FieldContainer key={field._key}>
+									{field.type !== "Tagline" && (
+										<Prompt
+											className="mb-5"
+											num={fieldIdx + 1}
+											additionalText={field.additionalText}
+										>
+											{field.prompt}
+										</Prompt>
+									)}
+
+									<FieldRenderer
+										exercise={exercise}
+										field={field}
+										stepIdx={stepIdx}
+										fieldIdx={fieldIdx}
+										allAnswers={answers}
+										answer={fieldAnswer}
+										readOnly={meta?.role === "contributor"}
+									/>
+								</FieldContainer>
+							)
+						})}
+					</div>
+				)}
+
+				<Steps
+					steps={exercise.form.steps.length}
+					activeStep={step}
+					onFinish={goBackToExerciseList}
+				/>
+			</div>
+
+			{meta?.type === "group" && awareness && (
+				<Multiplayer awareness={awareness} role={meta?.role} />
 			)}
-
-			{!onReviewScreen && (
-				<div>
-					{stepData?.fields?.map((field, fieldIdx) => {
-						const fieldAnswer = stepAnswers?.data.at(fieldIdx)
-
-						return (
-							<FieldContainer key={field._key}>
-								{field.type !== "Tagline" && (
-									<Prompt
-										className="mb-5"
-										num={fieldIdx + 1}
-										additionalText={field.additionalText}
-									>
-										{field.prompt}
-									</Prompt>
-								)}
-
-								<FieldRenderer
-									exercise={exercise}
-									field={field}
-									stepIdx={stepIdx}
-									fieldIdx={fieldIdx}
-									allAnswers={answers}
-									answer={fieldAnswer}
-									readOnly={meta?.role === "contributor"}
-								/>
-							</FieldContainer>
-						)
-					})}
-				</div>
-			)}
-
-			<Steps
-				steps={exercise.form.steps.length}
-				activeStep={step}
-				onFinish={goBackToExerciseList}
-			/>
-		</div>
+		</>
 	)
 }

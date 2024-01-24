@@ -5,10 +5,17 @@ import type { FormParticipant } from "./types"
 
 type Props = {
 	exercise: ST["exercise"]
+	kickoffCode: string
 }
 
-export const FormExercise = async ({ exercise }: Props) => {
+export const FormExercise = async ({ exercise, kickoffCode }: Props) => {
 	const participant = await client.findParticipantOrThrow<FormParticipant>()
 
-	return <Form exercise={exercise} participant={participant} />
+	return (
+		<Form
+			exercise={exercise}
+			participant={participant}
+			kickoffCode={kickoffCode}
+		/>
+	)
 }

@@ -86,6 +86,7 @@ export const NarrowField = ({ source, answer, ...props }: Props) => {
 									onClick={handleChange}
 									defaultChecked={answer?.responses.includes(response)}
 									readOnly={props.readOnly}
+									id={`field-${props.stepIdx}-${props.fieldIdx}-${idx}`}
 								/>
 
 								<CheckIcon className="ml-auto w-4 opacity-0 group-has-[:checked]:opacity-100" />

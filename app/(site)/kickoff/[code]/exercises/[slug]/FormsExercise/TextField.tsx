@@ -53,6 +53,7 @@ export const TextField = ({ answer, ...props }: Props) => {
 					<input
 						type="text"
 						className="h-9 w-full rounded-lg border border-gray-90 px-4 py-2.5 text-14 leading-copyMega"
+						id={`field-${props.stepIdx}-${props.fieldIdx}`}
 						{...sharedProps}
 					/>
 				))
