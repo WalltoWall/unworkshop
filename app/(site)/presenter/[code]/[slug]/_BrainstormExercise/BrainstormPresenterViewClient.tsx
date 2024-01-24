@@ -1,21 +1,18 @@
 "use client"
 
 import React from "react"
-import { useRouter } from "next/navigation"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
-import { createClient } from "@sanity/client"
 import clsx from "clsx"
 import { debounce } from "perfect-debounce"
 import { uid } from "uid"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
-import {
-	brainstormExerciseDataQuery,
-	type BrainstormExerciseDataQueryResult,
-} from "@/sanity/queries"
-import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
-import { env } from "@/env"
+import type {
+	Answer,
+	BrainstormExercise,
+	BrainstormParticipant,
+} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { submitBoardAction } from "./actions"
 import { CardColumn } from "./CardColumn"
 import { SORTING_COLUMN_ID } from "./constants"
@@ -25,14 +22,6 @@ import {
 	reorder,
 	type ColumnsDispatch,
 } from "./helpers"
-
-const client = createClient({
-	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-	dataset: env.NEXT_PUBLIC_SANITY_DATASET,
-	apiVersion: env.NEXT_PUBLIC_SANITY_API_VERSION,
-	token: env.NEXT_PUBLIC_SANITY_READ_TOKEN,
-	useCdn: false,
-})
 
 export type Card = { response: string; id: string }
 
@@ -46,54 +35,22 @@ export type Column = {
 }
 
 interface PresenterViewProps {
-	exerciseId: string
-	initialData: BrainstormExerciseDataQueryResult
+	exercise: BrainstormExercise
+	participants: Array<BrainstormParticipant>
 }
 
 const debounceSubmitBoard = debounce(submitBoardAction, 1500)
 
 export const BrainstormPresenterViewClient = ({
-	exerciseId,
-	initialData,
+	exercise,
+	participants,
 }: PresenterViewProps) => {
 	const [showSorter, setShowSorter] = React.useState(true)
 	const formRef = React.useRef<HTMLFormElement>(null)
 	const [, startTransition] = React.useTransition()
-	const { exercise, participants } = initialData
-	const router = useRouter()
-	const routerDebounce = React.useMemo(
-		() => debounce(() => router.refresh(), 500),
-		[router],
-	)
-
-	React.useEffect(() => {
-		const interval = setInterval(() => {
-			routerDebounce()
-		}, 10000)
-
-		return () => clearInterval(interval)
-	}, [routerDebounce])
-
-	React.useEffect(() => {
-		const subscription = client
-			.listen<BrainstormExerciseDataQueryResult>(brainstormExerciseDataQuery, {
-				exerciseId,
-			})
-			.subscribe((update) => {
-				if (
-					participants.some(
-						(participant) => participant._id === update.documentId,
-					)
-				) {
-					routerDebounce()
-				}
-			})
-
-		return () => subscription.unsubscribe()
-	}, [exerciseId, participants, routerDebounce])
 
 	const participantAnswers = participants.flatMap(
-		(participant) => participant.answers?.[exerciseId].answers,
+		(participant) => participant.answers?.[exercise._id].answers,
 	) as Array<Answer>
 
 	const answerMap = new Map<string, string>()

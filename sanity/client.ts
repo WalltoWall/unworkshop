@@ -5,17 +5,8 @@ import { cookies } from "next/headers"
 import type { Reference } from "sanity"
 import { z } from "zod"
 import type { ST } from "@/sanity/config"
-import type {
-	BrainstormExercise,
-	BrainstormParticipant,
-} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { PARTICIPANT_COOKIE } from "@/constants"
 import { env } from "@/env"
-import {
-	allParticipantsInExerciseQuery,
-	brainstormExerciseDataQuery,
-	type BrainstormExerciseDataQueryResult,
-} from "./queries"
 
 export const sanity = createClient({
 	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -33,9 +24,9 @@ export const client = {
 
 		const data = await sanity.fetch<KickoffWithExercises | null>(
 			groq`*[_type == "kickoff" && code.current == $code][0] {
-            ...,
-            exercises[]->
-        }`,
+                ...,
+                exercises[]->
+            }`,
 			{ code: code.toLowerCase() },
 			{ cache: "no-store" },
 		)
@@ -67,9 +58,9 @@ export const client = {
 
 		const data = await sanity.fetch<WithKickoffCode | null>(
 			groq`*[_type == "participant" && _id == $id][0] { 
-                ..., 
-                kickoff->{ "code": code.current } 
-            }`,
+                    ..., 
+                    kickoff->{ "code": code.current } 
+                }`,
 			{ id },
 			{ cache: "no-store" },
 		)
@@ -93,14 +84,17 @@ export const client = {
 	// prettier-ignore
 	async findAllParticipantsInExercise<T extends ST["participant"] = ST["participant"]>(exerciseId: string) {
 
-		const participants = await sanity.fetch<Array<T>>(
-			allParticipantsInExerciseQuery,
-			{exerciseId},
-			{ cache: "no-store" }
-		)
+            const participants = await sanity.fetch<Array<T>>(
+                groq`*[_type == "participant" && answers[$exerciseId] != null]{
+                    ...,
+                    answers
+                }`,
+                {exerciseId},
+                { cache: "no-store" }
+            )
 
-			return participants
-		},
+                return participants
+            },
 
 	async findKickoffOrThrow(code: string) {
 		const kickoff = await client.findKickoff(code)
@@ -144,20 +138,10 @@ export const client = {
 	) {
 		const data = await sanity.fetch<T | null>(
 			groq`*[_type == "exercise" && slug.current == $slug][0]{
-				...,
-			}`,
+                    ...,
+                }`,
 			{ slug },
 			{ cache: "no-store" }, // TODO: Note on caching.
-		)
-
-		return data
-	},
-
-	async getBrainstormExerciseData(exerciseId: string) {
-		const data = await sanity.fetch<BrainstormExerciseDataQueryResult>(
-			brainstormExerciseDataQuery,
-			{ exerciseId },
-			{ cache: "no-store" },
 		)
 
 		return data
