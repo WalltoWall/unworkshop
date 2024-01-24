@@ -9,14 +9,11 @@ interface Props {
 
 export const SettingsMenu = ({ children }: Props) => (
 	<Popover.Root>
-		<Popover.Trigger asChild>
-			<button
-				aria-label="Open Settings Menu"
-				className="fixed bottom-7 right-7 h-10 w-10 p-[0.125rem]"
-			>
-				<Gear />
-			</button>
+		<Popover.Trigger className="ease fixed bottom-7 right-7 h-10 w-10 p-[0.125rem] transition duration-200 hover:opacity-75">
+			<span className="sr-only">Open Settings Menu</span>
+			<Gear />
 		</Popover.Trigger>
+
 		<Popover.Portal>
 			<Popover.Content
 				side="left"
