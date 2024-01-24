@@ -47,8 +47,6 @@ const Cursors = ({ awareness, cursors = false, role }: MultiplayerProps) => {
 					/>
 				)
 			})}
-
-			<div className="fixed bottom-0 right-0">{JSON.stringify(users)}</div>
 		</div>
 	) : null
 }

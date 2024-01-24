@@ -84,7 +84,7 @@ export function useAnswers(
 				subscription.unsubscribe()
 			}
 		}
-	}, [])
+	}, [meta])
 
 	return { answers: data, meta }
 }

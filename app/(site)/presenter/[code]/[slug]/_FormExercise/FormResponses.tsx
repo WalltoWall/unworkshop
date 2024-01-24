@@ -22,8 +22,6 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 		names: false,
 	})
 
-	console.log(participants, exercise._id)
-
 	return (
 		<>
 			<div className="space-y-12 px-8 py-10">

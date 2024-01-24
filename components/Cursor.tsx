@@ -42,7 +42,7 @@ export const Cursor = React.memo(
 			>
 				<CursorIcon />
 				<span
-					className="absolute left-[calc(100%-0.5rem)] top-6 whitespace-nowrap rounded px-1 text-white text-14 capsize"
+					className="absolute left-[calc(100%-0.5rem)] top-6 whitespace-nowrap rounded p-1 text-white text-14 capsize"
 					style={{
 						backgroundColor: color,
 					}}
