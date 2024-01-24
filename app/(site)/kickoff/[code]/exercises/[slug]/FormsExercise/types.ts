@@ -1,4 +1,5 @@
 import type { ST } from "@/sanity/config"
+import type { GroupAnswer, IndividualAnswer } from "@/types"
 
 export type ListFieldAnswer = {
 	type: "List"
@@ -43,6 +44,7 @@ export type FormField = NonNullable<FormStep["fields"]>[number]
 export type FormParticipant = ST["participant"] & {
 	answers?: {
 		[exerciseId: string]: {
+			meta: IndividualAnswer | GroupAnswer
 			steps: Array<FormAnswer>
 		}
 	}

@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { z } from "zod"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
+import { useAnswers } from "@/hooks/use-answers"
 import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
@@ -35,8 +36,8 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	const answers = participant.answers?.[exercise._id]
-	const stepAnswers = answers?.steps.at(stepIdx)
+	const { answers, meta } = useAnswers(participant, exercise._id, "form")
+	const stepAnswers = answers?.at(stepIdx)
 
 	const onReviewScreen = !stepData && stepIdx === exercise.form.steps.length
 
@@ -71,8 +72,9 @@ export const Form = ({ exercise, participant }: Props) => {
 									field={field}
 									stepIdx={stepIdx}
 									fieldIdx={fieldIdx}
-									allAnswers={answers?.steps}
+									allAnswers={answers}
 									answer={fieldAnswer}
+									readOnly={meta?.role === "contributor"}
 								/>
 							</FieldContainer>
 						)
