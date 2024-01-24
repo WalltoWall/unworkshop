@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
@@ -47,17 +47,20 @@ export const QuadrantSteps = ({
 
 	const { answers, meta } = useAnswers(participant, exerciseId, "quadrants")
 
-	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
-		Answers,
-		AnswerDispatch
-	>(answers, (state, action) => {
-		return {
-			...state,
-			[action.slug]: action.newAnswer,
-		}
-	})
+	const [clientAnswers, setClientAnswers] = React.useState<Answers | {}>(
+		answers,
+	)
 
-	console.log(optimisticAnswers)
+	useEffect(() => {
+		setClientAnswers(answers)
+	}, [answers])
+
+	const answerDispatch = (action: AnswerDispatch) => {
+		setClientAnswers({
+			...clientAnswers,
+			[action.slug]: action.newAnswer,
+		})
+	}
 
 	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {
@@ -124,7 +127,7 @@ export const QuadrantSteps = ({
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
-								answer={optimisticAnswers[quadrant.slug.current]}
+								answer={clientAnswers[quadrant.slug.current]}
 								state={state}
 								index={index}
 								answerDispatch={answerDispatch}
@@ -138,7 +141,7 @@ export const QuadrantSteps = ({
 						<Quadrant
 							item={currentQuadrant}
 							exerciseId={exerciseId}
-							answer={optimisticAnswers[currentQuadrant.slug.current]}
+							answer={clientAnswers[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}
 							answerDispatch={answerDispatch}

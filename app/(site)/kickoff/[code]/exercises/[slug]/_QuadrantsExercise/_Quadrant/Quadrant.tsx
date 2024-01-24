@@ -177,13 +177,13 @@ export const Quadrant = ({
 			}
 		}
 		startTransition(async () => {
-			answerDispatch(updatedAnswer)
-
 			await debouncedSubmitQuadrantAction({
 				answer: updatedAnswer,
 				exerciseId,
 			})
 		})
+
+		answerDispatch(updatedAnswer)
 		onQuadrantClick()
 	}
 
