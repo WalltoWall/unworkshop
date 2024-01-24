@@ -2,9 +2,11 @@
 
 import React, { useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import Multiplayer from "@/components/Multiplayer"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { useAnswers } from "@/hooks/use-answers"
+import { useMultiplayer } from "@/hooks/use-multiplayer"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
 import type { Answer, Answers, QuadrantsParticipant } from "./types"
@@ -42,6 +44,12 @@ export const QuadrantSteps = ({
 }: QuadrantStepsProps) => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
+
+	const awareness = useMultiplayer({
+		room: `${kickoffCode}-${exerciseId}`,
+		name: participant.name,
+	})
+
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const totalSteps = quadrants.length * 2
 
@@ -127,7 +135,7 @@ export const QuadrantSteps = ({
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
-								answer={clientAnswers[quadrant.slug.current]}
+								answer={clientAnswers?.[quadrant.slug.current]}
 								state={state}
 								index={index}
 								answerDispatch={answerDispatch}
@@ -141,7 +149,7 @@ export const QuadrantSteps = ({
 						<Quadrant
 							item={currentQuadrant}
 							exerciseId={exerciseId}
-							answer={clientAnswers[currentQuadrant.slug.current]}
+							answer={clientAnswers?.[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}
 							answerDispatch={answerDispatch}
@@ -159,6 +167,10 @@ export const QuadrantSteps = ({
 				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}
 				onNextStep={onStepChange}
 			/>
+
+			{meta?.type === "group" && awareness && (
+				<Multiplayer awareness={awareness} role={meta?.role} cursors />
+			)}
 		</>
 	)
 }
