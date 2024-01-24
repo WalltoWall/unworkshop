@@ -39,6 +39,7 @@ export const QuadrantDraggable = ({
 				top: `${top}%`,
 				left: `${left}%`,
 			}}
+			id={`point-${index}-${type}`}
 			{...listeners}
 			{...attributes}
 		>

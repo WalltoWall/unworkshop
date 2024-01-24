@@ -2,6 +2,7 @@ import React from "react"
 import throttle from "just-throttle"
 import { useUsers } from "y-presence"
 import { WebsocketProvider } from "y-websocket"
+import { useActiveFocus } from "@/hooks/use-active-focus"
 import { Cursor } from "./Cursor"
 
 interface MultiplayerProps {
@@ -51,10 +52,62 @@ const Cursors = ({ awareness, cursors = false, role }: MultiplayerProps) => {
 	) : null
 }
 
+const FocusRings = ({ awareness }: MultiplayerProps) => {
+	const activeElement = useActiveFocus()
+	const users = useUsers(awareness)
+
+	React.useEffect(() => {
+		if (activeElement?.tagName !== "BODY") {
+			awareness.setLocalStateField("focused", activeElement?.id)
+		}
+	}, [activeElement])
+
+	return (
+		<>
+			{Array.from(users.entries()).map(([key, value]) => {
+				if (key === awareness.clientID || value.hidden || !value.focused)
+					return null
+
+				const element = document.getElementById(value.focused)
+
+				if (!element) return null
+
+				const rect = element?.getBoundingClientRect()
+
+				return value.focused ? (
+					<div
+						className="absolute rounded-md outline outline-2"
+						key={key}
+						style={{
+							outlineColor: value.color,
+							width: rect.width,
+							height: rect.height,
+							top: rect?.top,
+							left: rect?.left,
+						}}
+					>
+						{value.name && (
+							<span
+								className="absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded p-1 text-white text-14 capsize"
+								style={{
+									backgroundColor: value.color,
+								}}
+							>
+								{value.name}
+							</span>
+						)}
+					</div>
+				) : null
+			})}
+		</>
+	)
+}
+
 const Multiplayer = (props: MultiplayerProps) => {
 	return props.awareness ? (
 		<div className="pointer-events-none fixed left-0 top-0 z-50 h-full w-full">
 			<Cursors {...props} />
+			<FocusRings {...props} />
 		</div>
 	) : null
 }
