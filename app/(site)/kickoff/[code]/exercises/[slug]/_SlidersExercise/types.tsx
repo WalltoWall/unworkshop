@@ -1,7 +1,5 @@
 import type { ST } from "@/sanity/config"
-
-type IndividualAnswer = { type: "individual"; leader: undefined }
-type GroupAnswer = { type: "group"; leader: string }
+import { GroupAnswer, IndividualAnswer } from "@/types"
 
 export type Answer = {
 	question_text: string
