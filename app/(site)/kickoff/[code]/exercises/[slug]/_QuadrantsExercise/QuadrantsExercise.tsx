@@ -15,17 +15,14 @@ export const QuadrantsExercise = async ({
 }: QuadrantsExerciseProps) => {
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
-	const answers = participant.answers?.[exercise._id]?.answers ?? {}
-	const groups = exercise.groups ?? []
 
 	return (
 		<div className="mt-8 h-full">
 			{exercise.quadrants && (
 				<QuadrantSteps
-					answers={answers}
 					quadrants={exercise.quadrants}
 					exerciseId={exercise._id}
-					group={groups.length > 0}
+					participant={participant}
 					todayInstructions={exercise.today_instructions}
 					tomorrowInstructions={exercise.tomorrow_instructions}
 					finalInstructions={exercise.finalize_instructions}

@@ -33,6 +33,8 @@ export async function submitQuadrantAction(newAnswer: {
 }) {
 	const data = submitQuadrantSchema.parse(newAnswer)
 
+	console.log("action")
+
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
 

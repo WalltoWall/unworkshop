@@ -22,12 +22,12 @@ type Day = "today" | "tomorrow"
 type QuadrantProps = {
 	item: NonNullable<ST["exercise"]["quadrants"]>[number]
 	exerciseId: string
-	isGroup: boolean
 	index: number
 	state: State
 	answer?: Answer
 	answerDispatch: (action: AnswerDispatch) => void
 	onQuadrantClick: () => void
+	readOnly: boolean
 }
 
 // REVIEW: I wonder if it's okay that participants are able to modify the
@@ -36,12 +36,12 @@ type QuadrantProps = {
 export const Quadrant = ({
 	item,
 	exerciseId,
-	isGroup,
 	index,
 	state,
 	answer,
 	answerDispatch,
 	onQuadrantClick,
+	readOnly,
 }: QuadrantProps) => {
 	const [isPending, startTransition] = React.useTransition()
 	const [arrowData, setArrowData] = React.useState({
@@ -81,7 +81,7 @@ export const Quadrant = ({
 	}, [isPending])
 
 	const handleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
 			const top =
 				((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
@@ -103,7 +103,7 @@ export const Quadrant = ({
 	}
 
 	const handleDragEnd = async (event: DragEndEvent) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const { ref, type } = event.active.data.current!
 			if (ref) {
 				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
@@ -117,7 +117,7 @@ export const Quadrant = ({
 	}
 
 	const handleDragMove = (event: DragMoveEvent) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const { ref, type } = event.active.data.current!
 			if (ref && today && tomorrow) {
 				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
@@ -182,7 +182,6 @@ export const Quadrant = ({
 			await debouncedSubmitQuadrantAction({
 				answer: updatedAnswer,
 				exerciseId,
-				isGroup,
 			})
 		})
 		onQuadrantClick()

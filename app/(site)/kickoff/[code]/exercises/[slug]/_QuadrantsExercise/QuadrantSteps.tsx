@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
+import { useAnswers } from "@/hooks/use-answers"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
-import type { Answer, Answers } from "./types"
+import type { Answer, Answers, QuadrantsParticipant } from "./types"
 
 export type AnswerDispatch = {
 	newAnswer: Answer
@@ -21,10 +22,9 @@ export type State =
 	| "complete"
 
 type QuadrantStepsProps = {
-	answers: Answers
 	exerciseId: string
 	quadrants: NonNullable<ST["exercise"]["quadrants"]>
-	group: boolean
+	participant: QuadrantsParticipant
 	todayInstructions: ST["exercise"]["today_instructions"]
 	tomorrowInstructions: ST["exercise"]["tomorrow_instructions"]
 	finalInstructions: ST["exercise"]["finalize_instructions"]
@@ -32,10 +32,9 @@ type QuadrantStepsProps = {
 }
 
 export const QuadrantSteps = ({
-	answers,
 	exerciseId,
 	quadrants,
-	group,
+	participant,
 	todayInstructions,
 	tomorrowInstructions,
 	finalInstructions,
@@ -46,6 +45,8 @@ export const QuadrantSteps = ({
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const totalSteps = quadrants.length * 2
 
+	const { answers, meta } = useAnswers(participant, exerciseId, "quadrants")
+
 	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
 		Answers,
 		AnswerDispatch
@@ -55,6 +56,8 @@ export const QuadrantSteps = ({
 			[action.slug]: action.newAnswer,
 		}
 	})
+
+	console.log(optimisticAnswers)
 
 	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {
@@ -68,18 +71,20 @@ export const QuadrantSteps = ({
 		const currentQuadrant = quadrants.at(currentQuadrantIdx)!
 
 		if (selectingForToday) {
-			return answers[currentQuadrant.slug.current]?.today
+			return answers?.[currentQuadrant.slug.current]?.today
 				? "today_placed"
 				: "today_pending"
 		} else {
-			return answers[currentQuadrant.slug.current]?.tomorrow
+			return answers?.[currentQuadrant.slug.current]?.tomorrow
 				? "tomorrow_placed"
 				: "tomorrow_pending"
 		}
 	}
 
-	const [state, setState] = useState<State>(determineNextState(step))
-	const isDisabled = state === "today_pending" || state === "tomorrow_pending"
+	const [state, setState] = React.useState<State>(determineNextState(step))
+	const isDisabled =
+		(state === "today_pending" || state === "tomorrow_pending") &&
+		meta?.role !== "contributor"
 	const currentQuadrantIdx = Math.ceil(step / 2) - 1
 	const currentQuadrant = quadrants.at(currentQuadrantIdx)
 
@@ -119,12 +124,12 @@ export const QuadrantSteps = ({
 							<Quadrant
 								item={quadrant}
 								exerciseId={exerciseId}
-								isGroup={group}
 								answer={optimisticAnswers[quadrant.slug.current]}
 								state={state}
 								index={index}
 								answerDispatch={answerDispatch}
 								onQuadrantClick={handleClick}
+								readOnly={meta?.role === "contributor"}
 							/>
 						</div>
 					))
@@ -133,12 +138,12 @@ export const QuadrantSteps = ({
 						<Quadrant
 							item={currentQuadrant}
 							exerciseId={exerciseId}
-							isGroup={group}
 							answer={optimisticAnswers[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}
 							answerDispatch={answerDispatch}
 							onQuadrantClick={handleClick}
+							readOnly={meta?.role === "contributor"}
 						/>
 					</div>
 				) : null}
