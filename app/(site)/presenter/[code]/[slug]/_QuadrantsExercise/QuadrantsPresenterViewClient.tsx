@@ -105,10 +105,16 @@ export const QuadrantsPresenterViewClient = ({
 			<Button
 				className="absolute -right-1 -top-5 z-10 cursor-pointer"
 				onClick={animatePoints}
-				icon={animating && <Spinner className="-mt-1 w-[1.125rem]" />}
 				disabled={animating}
 			>
-				{animating ? "Animating" : "Animate"}
+				{animating ? (
+					<>
+						<Spinner className="mt-[3px] w-[1.125rem]" />
+						Animating
+					</>
+				) : (
+					"Animate"
+				)}
 			</Button>
 
 			<div className="h-full overflow-hidden" ref={emblaRef}>

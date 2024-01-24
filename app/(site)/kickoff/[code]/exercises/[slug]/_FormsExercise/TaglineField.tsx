@@ -1,13 +1,13 @@
 import React from "react"
 import clsx from "clsx"
 import debounce from "just-debounce-it"
-import { Text } from "@/components/Text"
 import { submitFieldAnswer } from "./actions"
 import { AddButton } from "./AddButton"
+import { HighlightedResponses } from "./HighlightedResponses"
 import { Prompt } from "./Prompt"
 import { Textarea, textareaStyles } from "./Textarea"
 import type { FieldProps, FormFieldAnswer } from "./types"
-import { sanitizeString } from "./utils"
+import { getOffLimitWords, sanitizeString } from "./utils"
 import { AnswersArray } from "./validators"
 
 const INPUT_NAME = "answer"
@@ -40,8 +40,8 @@ const HighlighterTextarea = ({
 				{words.map((word, idx) => {
 					const cleanWord = sanitizeString(word)
 					const invalid =
-						cleanWord.length > 3 &&
-						offlimitWords.some((off) => off.includes(cleanWord))
+						cleanWord.length > 1 &&
+						offlimitWords.some((off) => cleanWord.includes(off))
 
 					return (
 						<span key={word + idx} className={clsx(invalid && "text-red-63")}>
@@ -112,10 +112,7 @@ export const TaglineField = ({ source, answer, ...props }: Props) => {
 	}
 
 	const sourceResponses = source.groups.at(0)?.responses ?? []
-	const offlimitWords = sourceResponses.map(sanitizeString)
-
-	const cleanAnswerOne = sanitizeString(answerOne)
-	const cleanAnswerTwo = sanitizeString(answerTwo)
+	const offlimitWords = getOffLimitWords(sourceResponses)
 
 	const sharedInputProps = {
 		className: "mt-5",
@@ -135,29 +132,11 @@ export const TaglineField = ({ source, answer, ...props }: Props) => {
 		<form ref={rForm} onSubmit={handleSubmit}>
 			<Prompt num={props.fieldIdx + 1}>{prompt}</Prompt>
 
-			<ul className="mt-5 flex flex-wrap gap-2">
-				{sourceResponses.map((resp) => {
-					const cleanResp = sanitizeString(resp)
-					const invalid =
-						cleanAnswerOne.includes(cleanResp) ||
-						cleanAnswerTwo?.includes(cleanResp)
-
-					return (
-						<Text
-							asChild
-							key={resp}
-							size={12}
-							style="copy"
-							className={clsx(
-								"rounded-lg px-3 py-3",
-								invalid ? "bg-red-63" : "bg-gray-90",
-							)}
-						>
-							<li>{resp}</li>
-						</Text>
-					)
-				})}
-			</ul>
+			<HighlightedResponses
+				responses={sourceResponses}
+				answers={[answerOne, answerTwo ?? ""]}
+				className="mt-5"
+			/>
 
 			<Prompt
 				className="mt-8"

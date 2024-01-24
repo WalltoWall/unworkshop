@@ -21,7 +21,7 @@ export const QuadrantsHeaderNav = ({ exercise }: Props) => {
 	}
 
 	return exercise.quadrants!.length > 0 ? (
-		<ul className="my-4">
+		<ul className="mt-6 flex flex-col gap-3">
 			{exercise.quadrants?.map((quadrant, index) => (
 				<li key={quadrant._key}>
 					<StepNavItem

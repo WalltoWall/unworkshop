@@ -188,7 +188,12 @@ export default {
 
 				".scroll-shadow": {
 					"mask-image":
-						"linear-gradient(#000,#000,transparent 0,#000 var(--scroll-shadow-size),#000 calc(100% - var(--scroll-shadow-size)),transparent)",
+						"linear-gradient(#000, #000, transparent 0, #000 var(--scroll-shadow-size), #000 calc(100% - var(--scroll-shadow-size)), transparent)",
+				},
+
+				".scroll-shadow-x": {
+					"mask-image":
+						"linear-gradient(to right, #000, #000, transparent 0, #000 var(--scroll-shadow-size), #000 calc(100% - var(--scroll-shadow-size)), transparent)",
 				},
 			})
 			matchUtilities(
