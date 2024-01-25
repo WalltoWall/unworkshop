@@ -51,16 +51,16 @@ export function useAnswers(
 	const variant = typeVariants[type]
 
 	const [data, setData] = React.useState<any>(variant.defaultValue)
+	const [isLoaded, setIsLoaded] = React.useState(false)
 
 	const answers = participant.answers?.[exerciseId]
 	const meta = answers?.meta
 
 	React.useEffect(() => {
 		if (!meta?.role || meta?.role === "captain") {
-			setData(answers?.[variant.key])
+			setData(answers?.[variant.key] ?? variant.defaultValue)
+			setIsLoaded(true)
 		}
-
-		if (!data) setData(variant.defaultValue)
 	}, [answers])
 
 	React.useEffect(() => {
@@ -78,6 +78,7 @@ export function useAnswers(
 				})
 				.then((result) => {
 					setData(result ?? variant.defaultValue)
+					setIsLoaded(true)
 				})
 
 			subscription = client
@@ -88,7 +89,10 @@ export function useAnswers(
 					kickoffCode,
 				})
 				.subscribe((update) => {
-					setData(update.result?.answers?.[exerciseId]?.[variant.key])
+					setData(
+						update.result?.answers?.[exerciseId]?.[variant.key] ??
+							variant.defaultValue,
+					)
 				})
 		}
 
@@ -99,5 +103,5 @@ export function useAnswers(
 		}
 	}, [meta])
 
-	return { answers: data, meta }
+	return { answers: data, meta, loaded: isLoaded }
 }

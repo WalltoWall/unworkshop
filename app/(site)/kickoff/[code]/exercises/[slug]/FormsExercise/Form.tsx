@@ -44,7 +44,7 @@ export const Form = ({ exercise, participant, kickoffCode }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	const { answers, meta } = useAnswers(
+	const { answers, meta, loaded } = useAnswers(
 		kickoffCode,
 		participant,
 		exercise._id,
@@ -57,12 +57,10 @@ export const Form = ({ exercise, participant, kickoffCode }: Props) => {
 	const goBackToExerciseList = () =>
 		router.push(`/kickoff/${params.code}/exercises`)
 
-	return (
+	return loaded ? (
 		<>
 			<div className="mt-3">
-				{onReviewScreen && (
-					<Review answers={answers?.steps} exercise={exercise} />
-				)}
+				{onReviewScreen && <Review answers={answers} exercise={exercise} />}
 
 				{!onReviewScreen && (
 					<div>
@@ -107,5 +105,5 @@ export const Form = ({ exercise, participant, kickoffCode }: Props) => {
 				<Multiplayer awareness={awareness} role={meta?.role} />
 			)}
 		</>
-	)
+	) : null
 }

@@ -24,37 +24,36 @@ export const Review = ({ answers = [], exercise }: Props) => {
 				Please, finalize your answers
 			</Text>
 
-			{steps.map(
-				(step, stepIdx) =>
-					step.fields?.map((field, fieldIdx) => {
-						const stepAnswer = answers.at(stepIdx)
-						if (!stepAnswer)
-							throw new Error("No answer foudn for step: " + stepIdx + 1)
+			{steps.map((step, stepIdx) =>
+				step.fields?.map((field, fieldIdx) => {
+					const stepAnswer = answers.at(stepIdx)
+					if (!stepAnswer)
+						throw new Error("No answer found for step: " + stepIdx + 1)
 
-						const fieldAnswer = stepAnswer.data.at(fieldIdx)
+					const fieldAnswer = stepAnswer.data.at(fieldIdx)
 
-						return (
-							<FieldContainer key={field._key}>
-								<Prompt
-									className="mb-5"
-									num={stepIdx + fieldIdx + 1}
-									additionalText={field.additionalText}
-								>
-									{field.prompt}
-								</Prompt>
+					return (
+						<FieldContainer key={field._key}>
+							<Prompt
+								className="mb-5"
+								num={stepIdx + fieldIdx + 1}
+								additionalText={field.additionalText}
+							>
+								{field.prompt}
+							</Prompt>
 
-								<FieldRenderer
-									exercise={exercise}
-									field={field}
-									stepIdx={stepIdx}
-									fieldIdx={fieldIdx}
-									allAnswers={answers}
-									answer={fieldAnswer}
-									readOnly
-								/>
-							</FieldContainer>
-						)
-					}),
+							<FieldRenderer
+								exercise={exercise}
+								field={field}
+								stepIdx={stepIdx}
+								fieldIdx={fieldIdx}
+								allAnswers={answers}
+								answer={fieldAnswer}
+								readOnly
+							/>
+						</FieldContainer>
+					)
+				}),
 			)}
 		</div>
 	)
