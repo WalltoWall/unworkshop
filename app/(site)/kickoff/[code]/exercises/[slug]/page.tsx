@@ -15,7 +15,7 @@ const ExercisePage = async (props: Props) => {
 	if (!exercise) notFound()
 
 	return (
-		<div className="h-full">
+		<div className="flex flex-[1_1_0] flex-col">
 			<InstructionsModal
 				exerciseName={exercise.name}
 				instructions={exercise.instructions}

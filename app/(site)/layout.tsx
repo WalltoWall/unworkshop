@@ -4,6 +4,11 @@ import { cx } from "class-variance-authority"
 import { Toaster } from "sonner"
 import "./globals.css"
 
+// TODO: why
+declare module "valtio" {
+	function useSnapshot<T extends object>(p: T): T
+}
+
 const FontSans = Local({
 	src: "../../assets/fonts/regular.woff2",
 	display: "swap",
@@ -26,17 +31,17 @@ type RootLayoutProps = {
 
 const RootLayout = ({ children }: RootLayoutProps) => {
 	return (
-		<html lang="en">
+		<html lang="en" className="h-full">
 			<head />
 
 			<body
 				className={cx(
-					"font-normal antialiased leading-copy font-sans",
+					"h-full font-normal antialiased leading-copy font-sans",
 					FontSans.variable,
 					FontHeading.variable,
 				)}
 			>
-				<div vaul-drawer-wrapper="" className="min-h-[100vh] bg-white">
+				<div vaul-drawer-wrapper="" className="min-h-svh bg-white">
 					{children}
 				</div>
 

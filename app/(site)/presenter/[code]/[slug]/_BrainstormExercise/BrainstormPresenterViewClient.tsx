@@ -9,7 +9,7 @@ import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
 import type {
-	Answer,
+	BrainstormAnswer,
 	BrainstormExercise,
 	BrainstormParticipant,
 } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
@@ -51,7 +51,7 @@ export const BrainstormPresenterViewClient = ({
 
 	const participantAnswers = participants.flatMap(
 		(participant) => participant.answers?.[exercise._id].answers,
-	) as Array<Answer>
+	) as Array<BrainstormAnswer>
 
 	const answerMap = new Map<string, string>()
 
@@ -68,7 +68,7 @@ export const BrainstormPresenterViewClient = ({
 
 					const response = answerMap.get(cardId)!
 
-					const answer: Answer = {
+					const answer: BrainstormAnswer = {
 						id: cardId,
 						response: response,
 					}
@@ -77,7 +77,7 @@ export const BrainstormPresenterViewClient = ({
 
 					return answer
 				})
-				.filter(Boolean) as Array<Answer>,
+				.filter(Boolean) as Array<BrainstormAnswer>,
 		}
 
 		return newCol

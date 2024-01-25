@@ -41,7 +41,7 @@ export const Steps = ({
 	}
 
 	return (
-		<div className={clsx("my-6", className)}>
+		<div className={clsx("mt-6", className)}>
 			<div className="relative mx-auto h-8 w-8">
 				<div className="absolute right-full top-1/2 mr-2 flex -translate-y-1/2">
 					{Array.from({ length: steps - (steps - activeStep + 1) }).map(

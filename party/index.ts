@@ -15,6 +15,8 @@ export default class Server implements Party.Server {
 
 		return onConnect(conn, this.room, {
 			load: async () => {
+				// TODO: Load initial data from Sanity, re-hydrate yDoc.
+
 				// const data = this.room.id
 				// 	.split("::")
 				// 	.reduce((acc, curr, idx, items) => {
@@ -32,48 +34,27 @@ export default class Server implements Party.Server {
 				// 	}, {} as any)
 
 				const yDoc = new Y.Doc()
+				const yMap = yDoc.getMap("answers")
 
-				// const people = await storage.getItem<Person[]>("people")
+				yMap.set("type", "brainstorm")
+				const ySteps = yMap.set("steps", new Y.Array())
 
-				// const yPeople = yDoc.getArray<Person>("people")
-				// yPeople.insert(0, people ?? [])
+				const step1 = new Y.Map()
+				step1.set("unsorted", new Y.Array())
+				step1.set("sorted", new Y.Array())
+
+				const step2 = new Y.Map()
+				step2.set("unsorted", new Y.Array())
+				step2.set("sorted", new Y.Array())
+
+				ySteps.push([step1, step2])
 
 				return yDoc
 			},
 
 			callback: {
 				async handler(yDoc) {
-					// const sanityExercise = {
-					// 	_id: "klajdf;lkjadslfj",
-					// 	_rev: "ljfl;ajsdflka",
-					// 	name: "Us Vs. Them",
-					// 	slug: "us-vs-them",
-					// 	answers: {
-					// 		type: "brainstorm",
-					// 		columns: [
-					// 			{
-					// 				id: "sorting-column",
-					// 				cards: [
-					// 					{ id: "129309213", response: "My first response" },
-					// 					{ id: "1293012313", response: "Hello there" },
-					// 				],
-					// 			},
-					// 			{
-					// 				id: "1329012482",
-					// 				title: "New Column",
-					// 				cards: [
-					// 					{ id: "3094809480924", response: "Starbucks sucks" },
-					// 					{ id: "021984i9014", response: "I love panda express" },
-					// 				],
-					// 			},
-					// 		],
-					// 	},
-					// }
-					// const yPeople = yDoc.getArray<Person>("people")
-					// return await storage.setItem(
-					// 	"people",
-					// 	yPeople.map((p) => p),
-					// )
+					// TODO: Persist data into Sanity
 				},
 
 				// only save after every 2 seconds (default)

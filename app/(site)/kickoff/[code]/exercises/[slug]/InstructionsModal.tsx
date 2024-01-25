@@ -46,7 +46,7 @@ export const InstructionsModal = ({
 
 					<Text
 						style="copy"
-						size={14}
+						size={16}
 						className="mt-5 whitespace-pre-line text-gray-50"
 					>
 						{instructions}
