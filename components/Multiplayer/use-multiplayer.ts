@@ -8,6 +8,7 @@ import { getRoomId } from "./get-room-id"
 export type MultiplayerArgs = {
 	exerciseId: string
 	group?: number
+    participantId: string
 }
 
 export type MultiplayerData = ReturnType<typeof useMultiplayer>

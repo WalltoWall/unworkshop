@@ -19,6 +19,7 @@ export type BrainstormCard = {
 	id: string
 	response: string
 	participantId: string
+	createdAt: string
 }
 
 export type BrainstormColumn = {

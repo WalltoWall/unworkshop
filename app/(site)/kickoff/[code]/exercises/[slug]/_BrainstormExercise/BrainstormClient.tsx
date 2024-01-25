@@ -2,6 +2,7 @@
 
 import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
+import * as R from "remeda"
 import { uid } from "uid"
 import * as Y from "yjs"
 import {
@@ -24,11 +25,9 @@ type BrainstormClientProps = {
 }
 
 const useMultiplayerBrainstorm = ({
-	participantId,
 	stepIdx,
 	...args
 }: MultiplayerArgs & {
-	participantId: string
 	totalSteps: number
 	stepIdx: number
 }) => {
@@ -53,16 +52,18 @@ const useMultiplayerBrainstorm = ({
 			const yCard = new Y.Map()
 			yCard.set("id", uid())
 			yCard.set("response", new Y.Text(response))
-			yCard.set("participantId", participantId)
+			yCard.set("participantId", args.participantId)
+			yCard.set("createdAt", new Date().toString())
 
 			yUnsorted.push([yCard])
 		},
+
 		editCard: (id, response) => {
 			const ySteps = yMap.get("steps") as Y.Array<Y.Map<any>>
 			const yStep = ySteps.get(stepIdx)
 
 			const yUnsorted = yStep.get("unsorted") as Y.Array<Y.Map<any>>
-			const ySorted = yStep.get("sorted") as Y.Array<Y.Map<any>>
+			const yColumns = yStep.get("columns") as Y.Array<Y.Map<any>>
 
 			const assignCardIfFound = (yCard: Y.Map<any>) => {
 				if (yCard.get("id") !== id) return
@@ -71,17 +72,18 @@ const useMultiplayerBrainstorm = ({
 			}
 
 			yUnsorted.forEach(assignCardIfFound)
-			ySorted.forEach((yColumn) => {
+			yColumns.forEach((yColumn) => {
 				const yCards = yColumn.get("cards") as Y.Array<Y.Map<any>>
 				yCards.forEach(assignCardIfFound)
 			})
 		},
+
 		deleteCard: (id) => {
 			const ySteps = yMap.get("steps") as Y.Array<Y.Map<any>>
 			const yStep = ySteps.get(stepIdx)
 
 			const yUnsorted = yStep.get("unsorted") as Y.Array<Y.Map<any>>
-			const ySorted = yStep.get("sorted") as Y.Array<Y.Map<any>>
+			const yColumns = yStep.get("columns") as Y.Array<Y.Map<any>>
 
 			yUnsorted.forEach((yCard, idx) => {
 				if (yCard.get("id") !== id) return
@@ -89,12 +91,12 @@ const useMultiplayerBrainstorm = ({
 				yUnsorted.delete(idx)
 			})
 
-			ySorted.forEach((yColumn) => {
+			yColumns.forEach((yColumn) => {
 				const yCards = yColumn.get("cards") as Y.Array<Y.Map<any>>
 				yCards.forEach((yCard, idx) => {
 					if (yCard.get("id") !== id) return
 
-					ySorted.delete(idx)
+					yColumns.delete(idx)
 				})
 			})
 		},
@@ -114,14 +116,18 @@ const BrainstormClient = ({ exercise, participant }: BrainstormClientProps) => {
 	const stepIdx = step - 1
 	const stepData = exercise.steps.at(stepIdx)
 
-	const brainstorm = useMultiplayerBrainstorm({
+	const { data, actions } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		participantId: participant._id,
 		totalSteps: exercise.steps.length,
 		stepIdx,
 	})
 
-	const cards = brainstorm.data.steps?.at(stepIdx)?.unsorted ?? []
+	const unsorted = data.steps?.at(stepIdx)?.unsorted ?? []
+	const sorted =
+		data.steps?.at(stepIdx)?.columns.flatMap((col) => col.cards) ?? []
+
+	const cards = R.sortBy(unsorted.concat(sorted), (c) => c.createdAt)
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
@@ -137,11 +143,7 @@ const BrainstormClient = ({ exercise, participant }: BrainstormClientProps) => {
 				</div>
 			)}
 
-			<CardScroller
-				cards={cards}
-				color={stepData?.color}
-				actions={brainstorm.actions}
-			/>
+			<CardScroller cards={cards} color={stepData?.color} actions={actions} />
 
 			<Steps
 				steps={exercise.steps.length - 1}

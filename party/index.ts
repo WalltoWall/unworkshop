@@ -41,11 +41,11 @@ export default class Server implements Party.Server {
 
 				const step1 = new Y.Map()
 				step1.set("unsorted", new Y.Array())
-				step1.set("sorted", new Y.Array())
+				step1.set("columns", new Y.Array())
 
 				const step2 = new Y.Map()
 				step2.set("unsorted", new Y.Array())
-				step2.set("sorted", new Y.Array())
+				step2.set("columns", new Y.Array())
 
 				ySteps.push([step1, step2])
 
