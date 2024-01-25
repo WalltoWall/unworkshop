@@ -2,7 +2,12 @@ import React from "react"
 import clsx from "clsx"
 import { AddCardButton } from "./AddCardButton"
 import { Card } from "./Card"
-import type { BrainstormAnswer, BrainstormCardActions, Color } from "./types"
+import type {
+	BrainstormAnswer,
+	BrainstormCard,
+	BrainstormCardActions,
+	Color,
+} from "./types"
 
 export type CardDispatch = {
 	type: "add" | "delete"
@@ -15,7 +20,7 @@ type ColorVarient = {
 }
 
 interface Props {
-	cards: Array<BrainstormAnswer>
+	cards: Array<BrainstormCard>
 	color?: Color
 	actions: BrainstormCardActions
 }

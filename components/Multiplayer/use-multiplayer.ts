@@ -3,12 +3,9 @@ import useYPartyKit from "y-partykit/react"
 import { useUsers } from "y-presence"
 import { env } from "@/env"
 import { USER_COLORS } from "./colors"
-import { getRoomId } from "./get-room-id"
 
 export type MultiplayerArgs = {
 	exerciseId: string
-	group?: number
-    participantId: string
 }
 
 export type MultiplayerData = ReturnType<typeof useMultiplayer>
@@ -16,7 +13,7 @@ export type MultiplayerData = ReturnType<typeof useMultiplayer>
 export const useMultiplayer = (args: MultiplayerArgs) => {
 	const provider = useYPartyKit({
 		host: env.NEXT_PUBLIC_PARTYKIT_HOST,
-		room: getRoomId(args),
+		room: `exercise::${args.exerciseId}`,
 		options: { disableBc: env.NODE_ENV !== "production" },
 	})
 
