@@ -147,8 +147,6 @@ const BrainstormClient = ({ exercise, participant }: BrainstormClientProps) => {
 		stepIdx,
 	})
 
-	console.log(data)
-
 	const unsorted =
 		data.steps?.at(stepIdx)?.participants?.[participant._id]?.unsorted ?? []
 	const sorted =

@@ -8,6 +8,11 @@ export default class Server implements Party.Server {
 	onConnect(conn: Party.Connection, _ctx: Party.ConnectionContext) {
 		return onConnect(conn, this.room, {
 			load: async () => {
+				// TODO: 1. Get exercise ID from room.
+				// 2. Load exercise document from Sanity.
+				// 3. Based on exercise document, determine how to "hydrate the
+				// Y.Doc" based on the type of answer
+
 				const yDoc = new Y.Doc()
 				const yMap = yDoc.getMap("answers")
 
