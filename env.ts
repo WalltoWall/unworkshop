@@ -18,6 +18,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().min(1),
 		NEXT_PUBLIC_SANITY_DATASET: z.string().default("production"),
 		NEXT_PUBLIC_SANITY_API_VERSION: z.string().default("2023-02-10"),
+		NEXT_PUBLIC_PARTYKIT_HOST: z.string().default("localhost:1999"),
 	},
 
 	/**
@@ -44,6 +45,7 @@ export const env = createEnv({
 		NEXT_PUBLIC_SANITY_PROJECT_ID: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
 		NEXT_PUBLIC_SANITY_DATASET: process.env.NEXT_PUBLIC_SANITY_DATASET,
 		NEXT_PUBLIC_SANITY_API_VERSION: process.env.NEXT_PUBLIC_SANITY_API_VERSION,
+		NEXT_PUBLIC_PARTYKIT_HOST: process.env.NEXT_PUBLIC_PARTYKIT_HOST,
 
 		NODE_ENV: process.env.NODE_ENV,
 	},

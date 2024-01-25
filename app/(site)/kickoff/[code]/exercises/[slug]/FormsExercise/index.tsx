@@ -1,7 +1,9 @@
+import dynamic from "next/dynamic"
 import { client } from "@/sanity/client"
 import type { ST } from "@/sanity/config"
-import { Form } from "./Form"
 import type { FormParticipant } from "./types"
+
+const Form = dynamic(() => import("./Form"), { ssr: false })
 
 type Props = {
 	exercise: ST["exercise"]

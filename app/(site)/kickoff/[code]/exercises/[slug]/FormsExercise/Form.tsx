@@ -2,7 +2,10 @@
 
 import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
+import * as Y from "yjs"
 import { z } from "zod"
+import { Cursors } from "@/components/Multiplayer/Cursors"
+import { useMultiplayer } from "@/components/Multiplayer/use-multiplayer"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { FieldContainer } from "./FieldContainer"
@@ -26,6 +29,7 @@ export const Form = ({ exercise, participant }: Props) => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const params = useParams()
+	const multiplayer = useMultiplayer({ exerciseId: exercise._id })
 
 	const step = StepParamSchema.parse(searchParams.get("step"))
 	const stepIdx = step - 1
@@ -85,6 +89,10 @@ export const Form = ({ exercise, participant }: Props) => {
 				activeStep={step}
 				onFinish={goBackToExerciseList}
 			/>
+
+			<Cursors users={multiplayer.users} awareness={multiplayer.awareness} />
 		</div>
 	)
 }
+
+export default Form
