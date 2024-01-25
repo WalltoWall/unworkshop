@@ -44,7 +44,12 @@ export const Form = ({ exercise, participant, kickoffCode }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	const { answers, meta } = useAnswers(participant, exercise._id, "form")
+	const { answers, meta } = useAnswers(
+		kickoffCode,
+		participant,
+		exercise._id,
+		"form",
+	)
 	const stepAnswers = answers?.at(stepIdx)
 
 	const onReviewScreen = !stepData && stepIdx === exercise.form.steps.length

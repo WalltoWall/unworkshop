@@ -43,6 +43,7 @@ const typeVariants = {
 }
 
 export function useAnswers(
+	kickoffCode: string,
 	participant: ExerciseParticipant,
 	exerciseId: string,
 	type: "form" | "brainstorm" | "sliders" | "quadrants",
@@ -58,22 +59,34 @@ export function useAnswers(
 		if (!meta?.role || meta?.role === "captain") {
 			setData(answers?.[variant.key])
 		}
+
+		if (!data) setData(variant.defaultValue)
 	}, [answers])
 
 	React.useEffect(() => {
 		let subscription = null as any
 
 		if (meta?.type === "group" && meta?.role !== "captain") {
-			const query = `*[_type == "participant" && answers[$exerciseId] != null && answers[$exerciseId].meta.role == "captain" && answers[$exerciseId].meta.group == $group][0].answers[$exerciseId][$key]`
+			const query = `*[_type == "participant" && answers[$exerciseId] != null && answers[$exerciseId].meta.role == "captain" && answers[$exerciseId].meta.group == $group && kickoff._ref in *[_type == "kickoff" && code.current == $kickoffCode]._id][0].answers[$exerciseId][$key]`
 
 			client
-				.fetch(query, { exerciseId, group: meta.group, key: variant.key })
+				.fetch(query, {
+					exerciseId,
+					group: meta.group,
+					key: variant.key,
+					kickoffCode,
+				})
 				.then((result) => {
 					setData(result ?? variant.defaultValue)
 				})
 
 			subscription = client
-				.listen(query, { exerciseId, group: meta.group, key: variant.key })
+				.listen(query, {
+					exerciseId,
+					group: meta.group,
+					key: variant.key,
+					kickoffCode,
+				})
 				.subscribe((update) => {
 					setData(update.result?.answers?.[exerciseId]?.[variant.key])
 				})

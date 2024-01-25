@@ -53,7 +53,12 @@ export const QuadrantSteps = ({
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const totalSteps = quadrants.length * 2
 
-	const { answers, meta } = useAnswers(participant, exerciseId, "quadrants")
+	const { answers, meta } = useAnswers(
+		kickoffCode,
+		participant,
+		exerciseId,
+		"quadrants",
+	)
 
 	const [clientAnswers, setClientAnswers] = React.useState<Answers | {}>(
 		answers,
