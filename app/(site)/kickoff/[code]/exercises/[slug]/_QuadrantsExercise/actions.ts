@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache"
 import zod from "zod"
-import { client, sanity } from "@/sanity/client"
+import { client } from "@/sanity/client"
+import { sanity } from "@/sanity/sanity-client"
 import { type Answer, type QuadrantsParticipant } from "./types"
 
 const submitQuadrantSchema = zod.object({

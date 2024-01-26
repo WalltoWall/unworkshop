@@ -1,7 +1,8 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { client, sanity } from "@/sanity/client"
+import { client } from "@/sanity/client"
+import { sanity } from "@/sanity/sanity-client"
 import { type FormFieldAnswer, type FormParticipant } from "./types"
 
 type Data = {

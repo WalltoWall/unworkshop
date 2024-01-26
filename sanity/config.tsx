@@ -1,8 +1,7 @@
-import { CogIcon } from "lucide-react"
 import { defineConfig, type InferSchemaValues } from "@sanity-typed/types"
 import { visionTool } from "@sanity/vision"
 import { media, mediaAssetSource } from "sanity-plugin-media"
-import { deskTool } from "sanity/desk"
+import { structureTool } from "sanity/structure"
 import { Logo } from "@/components/Logo"
 import { schemaTypes } from "@/sanity/schemas"
 import { env } from "@/env"
@@ -80,7 +79,7 @@ const config = defineConfig({
 	},
 
 	plugins: [
-		deskTool({
+		structureTool({
 			// Customize the content sidebar.
 			structure: (S) => {
 				const hideFromNav = ["settings", "media.tag"]

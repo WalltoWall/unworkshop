@@ -1,20 +1,12 @@
 import "server-only"
 import React from "react"
-import { createClient, groq } from "next-sanity"
+import { groq } from "next-sanity"
 import { cookies } from "next/headers"
 import type { Reference } from "sanity"
 import { z } from "zod"
 import type { ST } from "@/sanity/config"
 import { PARTICIPANT_COOKIE } from "@/constants"
-import { env } from "@/env"
-
-export const sanity = createClient({
-	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-	dataset: env.NEXT_PUBLIC_SANITY_DATASET,
-	apiVersion: env.NEXT_PUBLIC_SANITY_API_VERSION,
-	token: env.SANITY_TOKEN,
-	useCdn: false,
-})
+import { sanity } from "./sanity-client"
 
 export const client = {
 	findKickoff: React.cache(async (code: string) => {

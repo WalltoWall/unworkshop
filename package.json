@@ -47,6 +47,8 @@
 		"tiny-invariant": "^1.3.1",
 		"ts-pattern": "^5.0.6",
 		"uid": "^2.0.2",
+		"valtio": "^1.13.0",
+		"valtio-yjs": "^0.5.1",
 		"vaul": "^0.8.9",
 		"y-partykit": "^0.0.19",
 		"y-presence": "^0.2.3",

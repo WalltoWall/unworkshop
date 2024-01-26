@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache"
 import { zfd } from "zod-form-data"
-import { client, sanity } from "@/sanity/client"
+import { client } from "@/sanity/client"
+import { sanity } from "@/sanity/sanity-client"
 import { type SlidersParticipant } from "./types"
 
 const submitSliderSchema = zfd.formData({

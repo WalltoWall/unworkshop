@@ -4,14 +4,16 @@ import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import * as R from "remeda"
 import { uid } from "uid"
+import { proxy, useSnapshot } from "valtio"
+import { bind } from "valtio-yjs"
 import * as Y from "yjs"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,
 } from "@/components/Multiplayer/use-multiplayer"
 import { Steps } from "@/components/Steps"
-import { useForceUpdate } from "@/lib/use-force-update"
 import type { ST } from "@/sanity/config"
+import { ANSWERS_KEY } from "@/constants"
 import { CardScroller } from "./CardScroller"
 import {
 	type BrainstormAnswers,
@@ -33,100 +35,75 @@ const useMultiplayerBrainstorm = ({
 	participantId: string
 	stepIdx: number
 }) => {
-	const forceUpdate = useForceUpdate()
 	const multiplayer = useMultiplayer(args)
-	const yMap = React.useRef(multiplayer.doc.getMap("answers")).current
+	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
+	const state = React.useRef(
+		proxy<BrainstormAnswers>({
+			steps: [{ participants: {}, groups: {} }],
+		}),
+	).current
+	const snap = useSnapshot(state)
 
-	React.useEffect(() => {
-		const onChange = () => forceUpdate()
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	React.useEffect(() => bind(state, yMap), [])
 
-		multiplayer.doc.on("update", onChange)
+	const getParticipant = () => {
+		state.steps[stepIdx] ??= { groups: {}, participants: {} }
 
-		return () => multiplayer.doc.off("update", onChange)
-	}, [multiplayer.doc, forceUpdate])
+		const step = state.steps[stepIdx]
+		const participants = step.participants
 
-	const getYParticipant = () => {
-		const ySteps = yMap.get("steps") as Y.Array<Y.Map<any>>
-		const yStep = ySteps.get(stepIdx)
-		const yParticipants = yStep.get("participants") as Y.Map<any>
+		participants[participantId] ??= { unsorted: [], columns: [] }
+		const participant = participants[participantId]
 
-		const yParticipant = yParticipants.has(participantId)
-			? (yParticipants.get(participantId) as Y.Map<any>)
-			: yParticipants.set(participantId, new Y.Map<any>())
-
-		return yParticipant
-	}
-
-	const getYUnsorted = (yParticipant: Y.Map<any>) => {
-		const yUnsorted = yParticipant.has("unsorted")
-			? (yParticipant.get("unsorted") as Y.Array<Y.Map<any>>)
-			: yParticipant.set("unsorted", new Y.Array<Y.Map<any>>())
-
-		return yUnsorted
-	}
-
-	const getYColumns = (yParticipant: Y.Map<any>) => {
-		const yColumns = yParticipant.has("columns")
-			? (yParticipant.get("columns") as Y.Array<Y.Map<any>>)
-			: yParticipant.set("columns", new Y.Array<Y.Map<any>>())
-
-		return yColumns
+		return participant
 	}
 
 	const actions: BrainstormCardActions = {
 		addCard: (response) => {
-			const yParticipant = getYParticipant()
-			const yUnsorted = getYUnsorted(yParticipant)
+			const participant = getParticipant()
 
-			const yCard = new Y.Map()
-			yCard.set("id", uid())
-			yCard.set("response", new Y.Text(response))
-			yCard.set("createdAt", new Date().toString())
-
-			yUnsorted.push([yCard])
+			participant.unsorted.push({
+				id: uid(),
+				response,
+				createdAt: Math.floor(new Date().getTime() / 1000),
+			})
 		},
 
 		editCard: (id, response) => {
-			const yParticipant = getYParticipant()
-			const yUnsorted = getYUnsorted(yParticipant)
-			const yColumns = getYColumns(yParticipant)
+			const participant = getParticipant()
 
-			const assignCardIfFound = (yCard: Y.Map<any>) => {
-				if (yCard.get("id") !== id) return
+			const card =
+				participant.unsorted.find((c) => c.id === id) ||
+				participant.columns.flatMap((col) => col.cards).find((c) => c.id === id)
+			if (!card) return
 
-				yCard.set("response", response)
-			}
-
-			yUnsorted.forEach(assignCardIfFound)
-			yColumns.forEach((yColumn) => {
-				const yCards = yColumn.get("cards") as Y.Array<Y.Map<any>>
-				yCards.forEach(assignCardIfFound)
-			})
+			card.response = response
 		},
 
 		deleteCard: (id) => {
-			const yParticipant = getYParticipant()
-			const yUnsorted = getYUnsorted(yParticipant)
-			const yColumns = getYColumns(yParticipant)
+			const participant = getParticipant()
 
-			yUnsorted.forEach((yCard, idx) => {
-				if (yCard.get("id") !== id) return
+			const unsortedIdx = participant.unsorted.findIndex((c) => c.id === id)
+			if (unsortedIdx >= 0) {
+				participant.unsorted.splice(unsortedIdx, 1)
 
-				yUnsorted.delete(idx)
-			})
+				return
+			}
 
-			yColumns.forEach((yColumn) => {
-				const yCards = yColumn.get("cards") as Y.Array<Y.Map<any>>
-				yCards.forEach((yCard, idx) => {
-					if (yCard.get("id") !== id) return
+			const col = participant.columns.find((col) =>
+				col.cards.some((card) => card.id === id),
+			)
+			if (!col) return
 
-					yColumns.delete(idx)
-				})
-			})
+			const sortedIdx = col.cards.findIndex((card) => card.id === id)
+			if (sortedIdx >= 0) {
+				col.cards.splice(sortedIdx, 1)
+			}
 		},
 	}
 
-	return { data: yMap.toJSON() as BrainstormAnswers, multiplayer, actions }
+	return { data: snap, multiplayer, actions }
 }
 
 const BrainstormClient = ({ exercise, participant }: BrainstormClientProps) => {
@@ -146,6 +123,8 @@ const BrainstormClient = ({ exercise, participant }: BrainstormClientProps) => {
 		participantId: participant._id,
 		stepIdx,
 	})
+
+	console.log(data)
 
 	const unsorted =
 		data.steps?.at(stepIdx)?.participants?.[participant._id]?.unsorted ?? []

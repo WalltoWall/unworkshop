@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { zfd } from "zod-form-data"
-import { client, sanity } from "@/sanity/client"
+import { client } from "@/sanity/client"
+import { sanity } from "@/sanity/sanity-client"
 import { type AddCardData, type BrainstormParticipant } from "./types"
 
 const addCardSchema = z.object({

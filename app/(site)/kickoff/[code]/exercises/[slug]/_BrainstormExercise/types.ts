@@ -9,12 +9,12 @@ export type BrainstormCardActions = {
 export type BrainstormCard = {
 	id: string
 	response: string
-	createdAt: string
+	createdAt: number
 }
 
 export type BrainstormAnswer = {
-	columns?: Array<BrainstormColumn>
-	unsorted?: Array<BrainstormCard>
+	columns: Array<BrainstormColumn>
+	unsorted: Array<BrainstormCard>
 }
 
 export type BrainstormColumn = {
@@ -25,8 +25,7 @@ export type BrainstormColumn = {
 }
 
 export type BrainstormAnswers = {
-	type?: "brainstorm"
-	steps?: Array<{
+	steps: Array<{
 		participants: Record<string, BrainstormAnswer>
 		groups: Record<string, BrainstormAnswer>
 	}>
@@ -35,12 +34,7 @@ export type BrainstormAnswers = {
 export type BrainstormParticipant = ST["participant"]
 
 export type BrainstormExercise = ST["exercise"] & {
-	answers?: Array<{
-		columnId: string
-		color: string
-		title: string
-		cards: Array<string>
-	}>
+	answers?: BrainstormAnswers
 }
 
 export type Color = "green" | "red" | "yellow"
