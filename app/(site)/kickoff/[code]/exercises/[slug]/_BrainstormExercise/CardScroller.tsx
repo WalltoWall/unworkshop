@@ -15,39 +15,41 @@ export type CardDispatch = {
 	addCard: (response: string) => void
 }
 
-type ColorVarient = {
-	bgColor: string
+const colors: Record<Color, string> = {
+	green: clsx("bg-green-78 placeholder:text-[color:#2b9a66]"),
+	red: clsx("bg-pink-80 placeholder:text-[color:#e54666]"),
+	yellow: clsx("bg-yellow-77 placeholder:text-[color:#9e6c00]"),
 }
 
-interface Props {
+type Props = {
 	cards: Array<BrainstormCard>
 	color?: Color
 	actions: BrainstormCardActions
+	participantId: string
 }
 
-export const CardScroller = ({ cards, color = "green", actions }: Props) => {
-	const Colors: Record<Color, ColorVarient> = {
-		green: { bgColor: "bg-green-78" },
-		red: { bgColor: "bg-pink-80" },
-		yellow: { bgColor: "" },
-	}
-
+export const CardScroller = ({
+	cards,
+	color = "green",
+	actions,
+	participantId,
+}: Props) => {
 	return (
 		<div
 			className={clsx(
 				"my-8 mb-auto grid min-h-0 flex-[1_1_0] grid-cols-2 content-start gap-2.5 overflow-y-auto py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:grid-cols-[163px_163px]",
 			)}
 		>
-			<AddCardButton addCard={actions.addCard} />
+			<AddCardButton addCard={actions.addCard} participantId={participantId} />
 
 			{cards.map((card) => (
 				<Card
 					key={card.id}
-					cardId={card.id}
-					response={card.response}
-					color={Colors[color].bgColor}
+					card={card}
+					colorClassNames={colors[color]}
 					deleteCard={actions.deleteCard}
 					editCard={actions.editCard}
+					participantId={participantId}
 				/>
 			))}
 		</div>

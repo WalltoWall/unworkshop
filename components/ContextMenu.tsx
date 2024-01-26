@@ -1,21 +1,13 @@
 "use client"
 
 import * as Context from "@radix-ui/react-context-menu"
-import React, { startTransition, type CSSProperties } from "react"
+import React from "react"
 import { flushSync } from "react-dom"
 import {
 	type DraggableProvided,
 	type DraggableStateSnapshot,
 } from "@hello-pangea/dnd"
-import {
-	deleteParticipantAnswer,
-	editParticipantAnswer,
-} from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/actions"
-import type {
-	Card,
-	Columns,
-} from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/BrainstormPresenterViewClient"
-import type { ColumnsDispatch } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/helpers"
+import type { BrainstormCard } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { Text } from "./Text"
 
 const ContextMenuItem = ({
@@ -37,51 +29,20 @@ const ContextMenuItem = ({
 }
 
 interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
-	columns: Columns
-	card: Card
+	card: BrainstormCard
 	color: string
-	exerciseSlug: string
 	cardProvided: DraggableProvided
-	submitForm: (data: ColumnsDispatch) => void
 	cardSnapshot: DraggableStateSnapshot
 }
 
 export const ContextMenu = ({
-	columns,
 	card,
 	color,
-	exerciseSlug,
 	cardProvided,
-	submitForm,
 	cardSnapshot,
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
-
-	const handleReturnItem = () => {
-		const fromColumn = columns.find((col) =>
-			col.cards.find((c) => c.id === card.id),
-		)
-
-		if (!fromColumn) return
-
-		const fromIdx = columns.findIndex(
-			(col) => col.columnId === fromColumn.columnId,
-		)
-
-		const activeCard = fromColumn.cards.find((c) => c.id === card.id)
-
-		const newFromCards = fromColumn.cards.filter((c) => c.id !== card.id)
-
-		if (!activeCard) return
-
-		const newColumns = structuredClone(columns)
-
-		newColumns[fromIdx].cards = newFromCards
-		newColumns[0].cards = [activeCard, ...columns[0].cards]
-
-		submitForm({ type: "Update Columns", replaceColumns: newColumns })
-	}
 
 	const handleEditItem = () => {
 		flushSync(() => {
@@ -91,40 +52,17 @@ export const ContextMenu = ({
 	}
 
 	const handleDeleteItem = () => {
-		const fromColumn = columns.find((col) =>
-			col.cards.find((c) => c.id === card.id),
-		)
+		// TODO:
+	}
 
-		if (!fromColumn) return
-
-		const fromIdx = columns.findIndex(
-			(col) => col.columnId === fromColumn.columnId,
-		)
-
-		const newFromCards = fromColumn.cards.filter((c) => c.id !== card.id)
-
-		const newColumns = structuredClone(columns)
-
-		newColumns[fromIdx].cards = newFromCards
-
-		submitForm({ type: "Update Columns", replaceColumns: newColumns })
-		startTransition(() => {
-			deleteParticipantAnswer({ cardId: card.id, exerciseSlug: exerciseSlug })
-		})
+	const handleReturnItem = () => {
+		// TODO:
 	}
 
 	// when editing and moving card to another column it reverts back
 	const finalizeEdit = (newResponse: string) => {
 		setReadOnly(true)
-
-		startTransition(() => {
-			editParticipantAnswer({ cardId: card.id, exerciseSlug, newResponse })
-		})
-	}
-
-	const style: CSSProperties = {
-		backgroundColor: color,
-		opacity: cardSnapshot.isDragging ? "0.5" : "1",
+		// TODO:
 	}
 
 	return (
@@ -138,7 +76,11 @@ export const ContextMenu = ({
 					ref={cardProvided.innerRef}
 					{...cardProvided.draggableProps}
 					{...cardProvided.dragHandleProps}
-					style={{ ...cardProvided.draggableProps.style, ...style }}
+					style={{
+						...cardProvided.draggableProps.style,
+						backgroundColor: color,
+						opacity: cardSnapshot.isDragging ? "0.5" : "1",
+					}}
 				>
 					<textarea
 						suppressHydrationWarning
@@ -147,14 +89,12 @@ export const ContextMenu = ({
 						readOnly={readOnly}
 						ref={textAreaRef}
 						onKeyDown={(e) => {
-							if (e.key === "Enter") {
-								e.preventDefault()
-								finalizeEdit(e.currentTarget.value)
-							}
-						}}
-						onBlur={(e) => {
+							if (e.key !== "Enter") return
+
+							e.preventDefault()
 							finalizeEdit(e.currentTarget.value)
 						}}
+						onBlur={(e) => finalizeEdit(e.currentTarget.value)}
 					/>
 				</li>
 			</Context.Trigger>

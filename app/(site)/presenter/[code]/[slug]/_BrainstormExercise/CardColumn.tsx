@@ -3,22 +3,17 @@
 import React from "react"
 import { CirclePicker } from "react-color"
 import { Draggable, Droppable } from "@hello-pangea/dnd"
-import debounce from "just-debounce-it"
 import { ContextMenu } from "@/components/ContextMenu"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { Popover } from "@/components/Popover"
-import type { Columns } from "./BrainstormPresenterViewClient"
-import type { ColumnsDispatch } from "./helpers"
+import type { BrainstormCard } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { PresentColumnModal } from "./PresentColumnModal"
 
 interface CardColumnProps {
-	cards: Array<{ response: string; id: string }>
+	cards: BrainstormCard[]
 	id: string
 	colorHex: string
 	columnTitle: string
-	columns: Columns
-	exerciseSlug: string
-	submitFunction: (data: ColumnsDispatch) => void
 	index: number
 }
 
@@ -26,10 +21,7 @@ export const CardColumn = ({
 	cards,
 	colorHex,
 	columnTitle,
-	columns,
 	id,
-	exerciseSlug,
-	submitFunction,
 	index,
 }: CardColumnProps) => {
 	const [color, setColor] = React.useState<string>(colorHex || "#96fad1")
@@ -43,16 +35,6 @@ export const CardColumn = ({
 		"#D59FF8",
 		"#FFB7EF",
 	]
-
-	const debounceTitle = debounce(
-		(title: string) =>
-			submitFunction({
-				type: "Update Title",
-				columnId: id,
-				columnTitle: title,
-			}),
-		2000,
-	)
 
 	return (
 		<div className=" w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
@@ -77,31 +59,23 @@ export const CardColumn = ({
 							circleSize={20}
 							circleSpacing={16}
 							width="7rem"
-							onChange={(newColor) => {
-								setColor(newColor.hex)
-								submitFunction({
-									type: "Update Color",
-									color: newColor.hex,
-									columnId: id,
-								})
-							}}
+							// onChange={(newColor) => {
+							// 	setColor(newColor.hex)
+							// }}
 						/>
 					</Popover>
+
 					<input
-						onChange={(e) => debounceTitle(e.currentTarget.value)}
+						onChange={(e) => updateTitle(e.currentTarget.value)}
 						defaultValue={columnTitle}
 						name="columnTitle"
 						className="bg-transparent font-bold uppercase text-black outline-none ring-0 text-18 leading-[1.3125] font-heading"
 					/>
 				</div>
 				<div className="flex items-center gap-3">
-					<PresentColumnModal columns={columns} index={index} />
-					<button
-						onClick={() =>
-							submitFunction({ type: "Delete Column", columnId: id })
-						}
-						type="button"
-					>
+					<PresentColumnModal columns={{}} index={index} />
+
+					<button onClick={() => deleteColumn()} type="button">
 						<BlackXIcon className="w-7" />
 					</button>
 				</div>
@@ -114,22 +88,19 @@ export const CardColumn = ({
 						ref={provided.innerRef}
 						{...provided.droppableProps}
 					>
-						{cards.length > 0 &&
-							cards.map((card, idx) => (
-								<Draggable index={idx} draggableId={card.id} key={card.id}>
-									{(cardProvided, cardSnapshot) => (
-										<ContextMenu
-											columns={columns}
-											card={card}
-											color={color}
-											exerciseSlug={exerciseSlug}
-											cardProvided={cardProvided}
-											submitForm={submitFunction}
-											cardSnapshot={cardSnapshot}
-										/>
-									)}
-								</Draggable>
-							))}
+						{cards.map((card, idx) => (
+							<Draggable index={idx} draggableId={card.id} key={card.id}>
+								{(cardProvided, cardSnapshot) => (
+									<ContextMenu
+										card={card}
+										color={color}
+										cardProvided={cardProvided}
+										cardSnapshot={cardSnapshot}
+									/>
+								)}
+							</Draggable>
+						))}
+
 						{provided.placeholder}
 					</ul>
 				)}

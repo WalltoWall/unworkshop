@@ -21,20 +21,34 @@ export default class Server implements Party.Server {
 		return onConnect(conn, this.room, {
 			load: async () => {
 				const yDoc = new Y.Doc()
+				const exerciseId = this.exerciseId
+
+				console.info("Loading exercise answers for id: " + exerciseId)
 
 				const doc = await sanity.fetch<ST["exercise"] | null>(
 					'*[_type == "exercise" && _id == $id][0]',
-					{ id: this.exerciseId },
+					{ id: exerciseId },
 				)
-				if (!doc) return yDoc
+				if (!doc) {
+					console.info("No exercise found for id: " + exerciseId)
+
+					return yDoc
+				}
 
 				const yMap = yDoc.getMap(ANSWERS_KEY)
 
 				switch (doc?.type) {
 					case "brainstorm": {
+						console.info("Found brainstorm exercise.")
 						const exercise = doc as BrainstormExercise
-						const initialState = exercise.answers ?? {
-							steps: [{ participants: {}, groups: {} }],
+
+						let initialState: BrainstormExercise["answers"]
+						if (!exercise.answers) {
+							console.info("No existing answers found. Creating initial data.")
+							initialState = { steps: [{ participants: {}, groups: {} }] }
+						} else {
+							console.info("Existing answers found. Persisting data.")
+							initialState = exercise.answers
 						}
 
 						const state = proxy(initialState)

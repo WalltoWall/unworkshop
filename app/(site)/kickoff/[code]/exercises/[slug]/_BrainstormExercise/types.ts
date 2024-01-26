@@ -1,9 +1,13 @@
 import type { ST } from "@/sanity/config"
 
 export type BrainstormCardActions = {
-	addCard: (response: string) => void
-	editCard: (id: string, response: string) => void
-	deleteCard: (id: string) => void
+	addCard: (args: { response: string; participantId: string }) => void
+	editCard: (args: {
+		cardId: string
+		response: string
+		participantId: string
+	}) => void
+	deleteCard: (args: { cardId: string; participantId: string }) => void
 }
 
 export type BrainstormCard = {

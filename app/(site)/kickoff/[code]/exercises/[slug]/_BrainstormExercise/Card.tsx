@@ -1,38 +1,47 @@
 import React from "react"
 import clsx from "clsx"
 import { XCircleIcon } from "@/components/icons/XCircle"
-import type { BrainstormCardActions } from "./types"
+import type { BrainstormCard, BrainstormCardActions } from "./types"
 
-interface CardFormProps {
-	cardId: string
-	response: string
-	color: string
+type Props = {
+	card: BrainstormCard
+	colorClassNames: string
 	deleteCard: BrainstormCardActions["deleteCard"]
 	editCard: BrainstormCardActions["editCard"]
+	participantId: string
 }
 
 export const Card = ({
-	cardId,
-	response = "",
-	color,
+	card,
+	colorClassNames,
 	deleteCard,
 	editCard,
-}: CardFormProps) => {
+	participantId,
+}: Props) => {
 	return (
 		<div className="relative aspect-[163/187]">
 			<textarea
 				className={clsx(
-					color,
-					"h-full w-full resize-none rounded-lg p-3.5 placeholder:text-gray-19 placeholder:text-18 placeholder:leading-[1.25] focus:outline-none",
+					colorClassNames,
+					"h-full w-full resize-none rounded-lg p-3.5 placeholder:text-18 placeholder:leading-[1.25] focus:outline-none",
 				)}
 				placeholder="Type something here to add your perception"
-				defaultValue={response}
+				defaultValue={card.response}
 				name="response"
-				onChange={(e) => editCard(cardId, e.target.value)}
+				onChange={(e) =>
+					editCard({
+						cardId: card.id,
+						participantId,
+						response: e.currentTarget.value,
+					})
+				}
 			/>
 
 			<div className="absolute bottom-2 right-1.5 rounded-full">
-				<button type="submit" onClick={() => deleteCard(cardId)}>
+				<button
+					type="submit"
+					onClick={() => deleteCard({ cardId: card.id, participantId })}
+				>
 					<XCircleIcon className="h-6 w-6" />
 				</button>
 			</div>
