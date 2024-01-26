@@ -21,8 +21,34 @@ export const SlidersPresenterViewClient = ({
 	console.log(answers)
 	
 	const [color, setColor] = React.useState("#fecb2f")
-	const minRange = 1
-	const maxRange = 6
+	const todayBars = () => {
+		let content = [];
+		
+		// 1 = minRange and 6 = max slider range.
+		for (let i = 1; i <= 6; i++) {
+			let count = 1
+			// find answers that match iteration 
+			// const result = answers.find(function(answer) {
+			// 	if (answer.today == i) return count++
+			// })
+			exercise.sliders?.map((slider) => (
+				answers[slider.slug.current].map((answer: any) => (
+					(answer.today == i) ? count++ : count
+				))
+			))
+			
+			// push html to the array
+			content.push(
+				<div 
+					className={"relative block w-full max-w-[4rem] bg-yellow-68"}
+					style={{
+						height: `${count * 10}%`,
+					}}
+				></div>
+			);
+		}
+		return content;
+	}
 
 	return exercise.sliders ? (
 		<div>
@@ -65,39 +91,39 @@ export const SlidersPresenterViewClient = ({
 			{exercise.sliders.map((slider) => (
 				<div key={slider._key} className="mt-12 mb-6 relative w-full">
 					<div className="w-full h-[50vh] bg-black rounded-t-3xl overflow-hidden border-b-[0.666rem] border-black">
-						<div className="flex w-full h-full">
-							<div className="flex w-full h-full">
-								{isFilled.image(slider.left_image) && (
-										<div className="w-full">
-											<Image
-												src={urlFor(slider.left_image).url()!}
-												alt={altFor(slider.left_image)}
-												className="object-cover opacity-50 object-center h-full w-full"
-												width={300}
-												height={300}
-											/>
-										</div>
-									)}
-									{isFilled.image(slider.right_image) && (
-										<div className="w-full">
-											<Image
-												src={urlFor(slider.right_image).url()!}
-												alt={altFor(slider.right_image)}
-												className="object-cover opacity-50 object-center h-full w-full"
-												width={300}
-												height={300}
-											/>
-										</div>
-									)}
-							</div>
+						<div className="flex w-full h-full relative">
+							<>
+								{(isFilled.image(slider.left_image) && isFilled.image(slider.right_image)) && (
+									<div className="flex w-full h-full">
+										{isFilled.image(slider.left_image) && (
+												<div className="w-full">
+													<Image
+														src={urlFor(slider.left_image).url()!}
+														alt={altFor(slider.left_image)}
+														className="object-cover opacity-50 object-center h-full w-full"
+														width={300}
+														height={300}
+													/>
+												</div>
+										)}
+										{isFilled.image(slider.right_image) && (
+											<div className="w-full">
+												<Image
+													src={urlFor(slider.right_image).url()!}
+													alt={altFor(slider.right_image)}
+													className="object-cover opacity-50 object-center h-full w-full"
+													width={300}
+													height={300}
+												/>
+											</div>
+										)}
+									</div>
+								)}
+							</>
 
-							<div className="absolute top-0 left-0 h-full w-full flex justify-evenly items-end gap-4 lg:gap-8">
+							<div className="absolute top-0 left-0 bottom-0 h-full w-full flex justify-evenly items-end gap-4 lg:gap-8">
 								{/* PUT ANSWERS HERE */}
-								{/* <>
-								{answers[slider.slug.current].map((answer, i) => (
-									<div key={i}>{answer.today}</div>
-								))}
-								</> */}
+								{todayBars()}
 							</div>
 						</div>
 					</div>
