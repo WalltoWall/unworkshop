@@ -7,6 +7,7 @@ import Image from "next/image"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 import { SlidersBars } from "./SlidersBars"
+import { SlidersKey } from "./SlidersKey"
 
 interface PresenterViewProps {
 	exercise: ST["exercise"]
@@ -17,48 +18,12 @@ export const SlidersPresenterViewClient = ({
 	exercise,
 	answers,
 }: PresenterViewProps) => {
-	// TODO: remove when done
-	// console.log(answers)
 	
 	const [color, setColor] = React.useState("#fecb2f")
 
 	return exercise.sliders ? (
 		<div>
-			<div className="inline-block rounded-2xl bg-black px-5 py-4 mb-8 text-white">
-				<div className="mb-2 flex items-center">
-					<span
-						className="block h-6 w-6"
-						style={{
-							backgroundColor: color,
-						}}
-					/>
-					<Text className="ml-1 uppercase text-24 font-heading capsize">
-						<span style={{
-							color: color,
-						}}>
-							Today
-						</span>
-					</Text>
-				</div>
-
-				<div className="flex items-center">
-					<span
-						className="block h-6 w-6 border-2"
-						style={{
-							borderColor: color,
-							backgroundImage: `repeating-linear-gradient(-45deg,${color},${color} 2px,rgba(0,0,0,0) 2px,rgba(0,0,0,0) 8px)`,
-							backgroundSize: "50px 50px",
-						}}
-					/>
-					<Text className="ml-1 uppercase text-24 font-heading capsize">
-						<span style={{
-							color: color,
-						}}>
-							Tomorrow
-						</span>
-					</Text>
-				</div>
-			</div>
+			<SlidersKey/>
 
 			{exercise.sliders.map((slider) => (
 				<div key={slider._key} className="mt-12 mb-6 relative w-full">
@@ -91,6 +56,7 @@ export const SlidersPresenterViewClient = ({
 								</div>
 							)}
 							
+							{/* David: Not sure what type to make the slider prop */}
 							<SlidersBars answers={answers} slider={slider} images={(isFilled.image(slider.left_image) && isFilled.image(slider.right_image))}/>
 
 					</div>

@@ -6,6 +6,7 @@ import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_Slide
 
 
 interface barProps {
+    // this works as the exercise type, but its really not an exercise...
 	slider: ST["exercise"]
 	answers: Answer[]
     images: boolean
@@ -16,7 +17,6 @@ export const SlidersBars = ({
 	answers,
     images,
 }: barProps) => {
-	console.log(slider)
 	const [color, setColor] = React.useState("#fecb2f")
 	const Bars = () => {
 		let content = [];
