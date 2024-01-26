@@ -40,7 +40,7 @@ export const CardScroller = ({ cards, color = "green", actions }: Props) => {
 		>
 			<AddCardButton addCard={actions.addCard} />
 
-			{cards.toReversed().map((card) => (
+			{cards.map((card) => (
 				<Card
 					key={card.id}
 					cardId={card.id}

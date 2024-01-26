@@ -6,7 +6,6 @@ import * as R from "remeda"
 import { uid } from "uid"
 import { proxy, useSnapshot } from "valtio"
 import { bind } from "valtio-yjs"
-import * as Y from "yjs"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,
@@ -38,9 +37,7 @@ const useMultiplayerBrainstorm = ({
 	const multiplayer = useMultiplayer(args)
 	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
 	const state = React.useRef(
-		proxy<BrainstormAnswers>({
-			steps: [{ participants: {}, groups: {} }],
-		}),
+		proxy<BrainstormAnswers>({ steps: [{ participants: {}, groups: {} }] }),
 	).current
 	const snap = useSnapshot(state)
 
@@ -103,7 +100,16 @@ const useMultiplayerBrainstorm = ({
 		},
 	}
 
-	return { data: snap, multiplayer, actions }
+	const unsorted =
+		snap.steps?.at(stepIdx)?.participants?.[participantId]?.unsorted ?? []
+	const sorted =
+		snap.steps
+			?.at(stepIdx)
+			?.participants?.[participantId]?.columns?.flatMap((c) => c.cards) ?? []
+
+	const cards = R.sortBy(unsorted.concat(sorted), [(c) => c.createdAt, "desc"])
+
+	return { cards, actions }
 }
 
 const BrainstormClient = ({ exercise, participant }: BrainstormClientProps) => {
@@ -117,23 +123,12 @@ const BrainstormClient = ({ exercise, participant }: BrainstormClientProps) => {
 	const stepIdx = step - 1
 	const stepData = exercise.steps.at(stepIdx)
 
-	const { data, actions } = useMultiplayerBrainstorm({
+	const { cards, actions } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		totalSteps: exercise.steps.length,
 		participantId: participant._id,
 		stepIdx,
 	})
-
-	console.log(data)
-
-	const unsorted =
-		data.steps?.at(stepIdx)?.participants?.[participant._id]?.unsorted ?? []
-	const sorted =
-		data.steps
-			?.at(stepIdx)
-			?.participants?.[participant._id]?.columns?.flatMap((c) => c.cards) ?? []
-
-	const cards = R.sortBy(unsorted.concat(sorted), (c) => c.createdAt)
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
