@@ -1,6 +1,6 @@
 import React from "react"
 import { uid } from "uid"
-import { proxy } from "valtio"
+import { proxy, useSnapshot } from "valtio"
 import { bind } from "valtio-yjs"
 import {
 	useMultiplayer,
@@ -17,15 +17,16 @@ export type BrainstormActions = ReturnType<
 	typeof useMultiplayerBrainstorm
 >["actions"]
 
+const INIT_STATE = { steps: [{ columns: [], unsorted: [] }] }
+
 export const useMultiplayerBrainstorm = ({
 	stepIdx,
 	...args
 }: UseMultiplayerBrainstormArgs) => {
 	const multiplayer = useMultiplayer(args)
 	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
-	const state = React.useRef(
-		proxy<BrainstormAnswers>({ steps: [{ columns: [], unsorted: [] }] }),
-	).current
+	const state = React.useRef(proxy<BrainstormAnswers>(INIT_STATE)).current
+	const snap = useSnapshot(state)
 
 	// TODO: This is pretty jank. Need to code-doc / refactor to a shared function?
 	React.useEffect(() => {
@@ -123,7 +124,7 @@ export const useMultiplayerBrainstorm = ({
 			column.color = args.color
 		},
 
-		deleteColumn: (args: { columnId: string }) => {
+		deleteColumn: async (args: { columnId: string }) => {
 			const step = getStep()
 
 			const columnIdx = step.columns.findIndex(
@@ -135,10 +136,14 @@ export const useMultiplayerBrainstorm = ({
 			if (!column) return
 
 			step.unsorted.push(...column.cards)
+
+			// see: https://github.com/valtiojs/valtio-yjs/issues/28
+			await Promise.resolve()
+
 			step.columns.splice(columnIdx, 1)
 		},
 
-		moveCard: (args: {
+		moveCard: async (args: {
 			from: { columnId: string; idx: number }
 			to: { columnId: string; idx: number }
 		}) => {
@@ -157,11 +162,12 @@ export const useMultiplayerBrainstorm = ({
 
 			const [card] = fromCards.splice(args.from.idx, 1)
 
-			// Batch these two things
-			// toCards.splice(args.to.idx, 0, card)
-			toCards.push(card)
+			// see: https://github.com/valtiojs/valtio-yjs/issues/28
+			await Promise.resolve()
+
+			toCards.splice(args.to.idx, 0, card)
 		},
 	}
 
-	return { state: state as Readonly<typeof state>, actions }
+	return { snap, actions }
 }

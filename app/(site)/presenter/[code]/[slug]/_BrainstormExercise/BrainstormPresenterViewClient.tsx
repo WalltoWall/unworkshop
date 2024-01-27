@@ -23,17 +23,16 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const stepIdx = step - 1
 
-	const { actions, state } = useMultiplayerBrainstorm({
+	const { actions, snap } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
 	})
-	const snap = useSnapshot(state)
 
 	const stepData = snap.steps.at(stepIdx)
 	if (!stepData) return null
 
 	const columns = stepData.columns
-	const unsorted = R.sortBy(stepData.unsorted, [(c) => c.createdAt, "desc"])
+	const unsorted = stepData.unsorted
 
 	return (
 		<DragDropContext
@@ -73,7 +72,7 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 						{(provided) => (
 							<div
 								className={clsx(
-									"flex w-full gap-2 overflow-y-clip overflow-x-scroll scrollbar-hide",
+									"flex min-h-[135px] w-full gap-2 overflow-y-clip overflow-x-scroll scrollbar-hide",
 									showSorter ? "block" : "hidden",
 								)}
 								ref={provided.innerRef}

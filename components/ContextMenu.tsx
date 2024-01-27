@@ -43,6 +43,7 @@ export const ContextMenu = ({
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
+	console.log(card)
 
 	const handleEditItem = () => {
 		flushSync(() => {
@@ -68,8 +69,7 @@ export const ContextMenu = ({
 	return (
 		<Context.Root modal={false}>
 			<Context.Trigger>
-				<li
-					id={card.id}
+				<div
 					className={
 						"box-border flex list-none items-center rounded-lg px-3 py-2.5"
 					}
@@ -84,8 +84,8 @@ export const ContextMenu = ({
 				>
 					<textarea
 						suppressHydrationWarning
-						defaultValue={card.response}
-						className="pointer-events-none h-[40px] w-full resize-none bg-transparent scrollbar-hide focus:outline-none"
+						value={card.response}
+						className="pointer-events-none h-full min-h-10 w-full resize-none bg-transparent scrollbar-hide focus:outline-none"
 						readOnly={readOnly}
 						ref={textAreaRef}
 						onKeyDown={(e) => {
@@ -96,7 +96,7 @@ export const ContextMenu = ({
 						}}
 						onBlur={(e) => finalizeEdit(e.currentTarget.value)}
 					/>
-				</li>
+				</div>
 			</Context.Trigger>
 
 			<Context.Portal>

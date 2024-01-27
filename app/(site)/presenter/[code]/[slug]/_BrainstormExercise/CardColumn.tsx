@@ -82,7 +82,7 @@ export const CardColumn = ({ column, index, actions }: CardColumnProps) => {
 
 			<Droppable droppableId={column.id} direction="vertical">
 				{(provided) => (
-					<ul
+					<div
 						className="mt-5 flex h-full min-h-[200px] w-full flex-col gap-2"
 						ref={provided.innerRef}
 						{...provided.droppableProps}
@@ -101,7 +101,7 @@ export const CardColumn = ({ column, index, actions }: CardColumnProps) => {
 						))}
 
 						{provided.placeholder}
-					</ul>
+					</div>
 				)}
 			</Droppable>
 		</div>
