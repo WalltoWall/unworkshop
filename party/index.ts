@@ -19,6 +19,7 @@ export default class Server implements Party.Server {
 
 	onConnect(conn: Party.Connection, _ctx: Party.ConnectionContext) {
 		return onConnect(conn, this.room, {
+			persist: false,
 			load: async () => {
 				const yDoc = new Y.Doc()
 				const exerciseId = this.exerciseId
@@ -45,7 +46,7 @@ export default class Server implements Party.Server {
 						let initialState: BrainstormExercise["answers"]
 						if (!exercise.answers) {
 							console.info("No existing answers found. Creating initial data.")
-							initialState = { steps: [{ participants: {}, groups: {} }] }
+							initialState = { steps: [{ columns: [], unsorted: [] }] }
 						} else {
 							console.info("Existing answers found. Persisting data.")
 							initialState = exercise.answers
@@ -69,7 +70,7 @@ export default class Server implements Party.Server {
 
 					const answers = yMap.toJSON()
 
-					console.log("Saving exercise: " + exerciseId)
+					console.info("Saving exercise: " + exerciseId)
 
 					await sanity
 						.patch(exerciseId)

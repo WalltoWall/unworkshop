@@ -1,17 +1,17 @@
 import React from "react"
 import { PlusIcon } from "@/components/icons/Plus"
-import type { BrainstormCardActions } from "./types"
+import type { BrainstormActions } from "./use-multiplayer-brainstorm"
 
 type Props = {
-	addCard: BrainstormCardActions["addCard"]
+	actions: BrainstormActions
 	participantId: string
 }
 
-export const AddCardButton = ({ addCard, participantId }: Props) => {
+export const AddCardButton = ({ actions, participantId }: Props) => {
 	return (
 		<button
 			className="flex aspect-[163/187] select-none flex-col items-center justify-center gap-3 rounded-md transition hover:bg-gray-90 focus:bg-gray-90 focus:outline-none"
-			onClick={() => addCard({ participantId, response: "" })}
+			onClick={() => actions.addCard({ participantId, response: "" })}
 		>
 			<PlusIcon className="h-7 w-7 text-black" />
 

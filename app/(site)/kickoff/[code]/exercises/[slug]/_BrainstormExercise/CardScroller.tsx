@@ -2,18 +2,8 @@ import React from "react"
 import clsx from "clsx"
 import { AddCardButton } from "./AddCardButton"
 import { Card } from "./Card"
-import type {
-	BrainstormAnswer,
-	BrainstormCard,
-	BrainstormCardActions,
-	Color,
-} from "./types"
-
-export type CardDispatch = {
-	type: "add" | "delete"
-	payload: BrainstormAnswer
-	addCard: (response: string) => void
-}
+import type { BrainstormCard, Color } from "./types"
+import type { BrainstormActions } from "./use-multiplayer-brainstorm"
 
 const colors: Record<Color, string> = {
 	green: clsx("bg-green-78 placeholder:text-[color:#2b9a66]"),
@@ -24,7 +14,7 @@ const colors: Record<Color, string> = {
 type Props = {
 	cards: Array<BrainstormCard>
 	color?: Color
-	actions: BrainstormCardActions
+	actions: BrainstormActions
 	participantId: string
 }
 
@@ -40,16 +30,14 @@ export const CardScroller = ({
 				"my-8 mb-auto grid min-h-0 flex-[1_1_0] grid-cols-2 content-start gap-2.5 overflow-y-auto py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:grid-cols-[163px_163px]",
 			)}
 		>
-			<AddCardButton addCard={actions.addCard} participantId={participantId} />
+			<AddCardButton actions={actions} participantId={participantId} />
 
 			{cards.map((card) => (
 				<Card
 					key={card.id}
 					card={card}
 					colorClassNames={colors[color]}
-					deleteCard={actions.deleteCard}
-					editCard={actions.editCard}
-					participantId={participantId}
+					actions={actions}
 				/>
 			))}
 		</div>

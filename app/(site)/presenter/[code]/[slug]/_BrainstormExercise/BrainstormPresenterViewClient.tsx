@@ -4,6 +4,8 @@ import React from "react"
 import { useSearchParams } from "next/navigation"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import clsx from "clsx"
+import * as R from "remeda"
+import { useSnapshot } from "valtio"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
 import { Text } from "@/components/Text"
@@ -11,7 +13,6 @@ import type { BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[
 import { useMultiplayerBrainstorm } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/use-multiplayer-brainstorm"
 import { CardColumn } from "./CardColumn"
 import { SORTING_COLUMN_ID } from "./constants"
-import { move, swap } from "./helpers"
 
 type Props = { exercise: BrainstormExercise }
 
@@ -22,44 +23,30 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const stepIdx = step - 1
 
-	const { actions, snap } = useMultiplayerBrainstorm({
+	const { actions, state } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
 	})
+	const snap = useSnapshot(state)
 
-	const answers = Object.values(snap.steps.at(stepIdx)?.participants ?? {})
+	const stepData = snap.steps.at(stepIdx)
+	if (!stepData) return null
 
-	const unsorted = answers.flatMap((a) => a.unsorted)
-	const columns = answers.flatMap((a) => a.columns)
+	const columns = stepData.columns
+	const unsorted = R.sortBy(stepData.unsorted, [(c) => c.createdAt, "desc"])
 
 	return (
 		<DragDropContext
 			onDragEnd={(result) => {
 				const { source, destination } = result
 
+				// We're dropping the card into a non-droppable place, e.g. off
+				// of the screen.
 				if (!destination) return
 
-				const fromColumnId = source.droppableId
-				const toColumnId = destination.droppableId
-
-				// TODO: Reordering items within the same column
-				if (fromColumnId === toColumnId) {
-					const items = swap({
-						list: fromCards,
-						startIdx: source.index,
-						endIdx: destination.index,
-					})
-
-					return
-				}
-
-				// TODO: Moving card from one column to another
-
-				const f = move({
-					sourceCards: fromCards,
-					destinationCards: toCards,
-					sourceIndex: source.index,
-					destinationIndex: destination.index,
+				actions.moveCard({
+					from: { columnId: source.droppableId, idx: source.index },
+					to: { columnId: destination.droppableId, idx: destination.index },
 				})
 			}}
 		>
@@ -73,6 +60,7 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 						<Text style={"heading"} size={16} className="text-gray-50">
 							Hide Sorter
 						</Text>
+
 						<Chevron
 							className={clsx(
 								"w-1.5 text-gray-50 transition duration-150 ease-in",
@@ -117,26 +105,22 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 				</div>
 
 				<div className="flex flex-wrap gap-4 pt-5">
-					{columns.map((col, idx) => {
-						return (
-							<CardColumn
-								key={col.id}
-								index={idx}
-								cards={col.cards}
-								colorHex={col.color}
-								columnTitle={col.title}
-								id={col.id}
-							/>
-						)
-					})}
+					{columns.map((col, idx) => (
+						<CardColumn
+							key={col.id}
+							index={idx}
+							column={col}
+							actions={actions}
+						/>
+					))}
 
 					<button
-						className="flex h-fit w-[19.125rem] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4"
-						onClick={() => actions.createColumn()}
+						className="ease flex h-fit w-[19.125rem] items-center gap-2 rounded-2xl bg-gray-90 px-3.5 py-4 transition hover:bg-gray-82"
+						onClick={() => actions.addColumn()}
 					>
 						<GrayPlusCircleIcon className="w-6" />
-						<Text style={"heading"} size={18} className="text-gray-38">
-							Add Another Board
+						<Text style="heading" size={18} className="text-gray-38">
+							Add New Column
 						</Text>
 					</button>
 				</div>

@@ -1,19 +1,10 @@
 import type { ST } from "@/sanity/config"
 
-export type BrainstormCardActions = {
-	addCard: (args: { response: string; participantId: string }) => void
-	editCard: (args: {
-		cardId: string
-		response: string
-		participantId: string
-	}) => void
-	deleteCard: (args: { cardId: string; participantId: string }) => void
-}
-
 export type BrainstormCard = {
 	id: string
 	response: string
 	createdAt: number
+	participantOrGroupId: string
 }
 
 export type BrainstormAnswer = {
@@ -30,8 +21,8 @@ export type BrainstormColumn = {
 
 export type BrainstormAnswers = {
 	steps: Array<{
-		participants: Record<string, BrainstormAnswer>
-		groups: Record<string, BrainstormAnswer>
+		columns: Array<BrainstormColumn>
+		unsorted: Array<BrainstormCard>
 	}>
 }
 

@@ -1,23 +1,16 @@
 import React from "react"
 import clsx from "clsx"
 import { XCircleIcon } from "@/components/icons/XCircle"
-import type { BrainstormCard, BrainstormCardActions } from "./types"
+import type { BrainstormCard } from "./types"
+import type { BrainstormActions } from "./use-multiplayer-brainstorm"
 
 type Props = {
 	card: BrainstormCard
 	colorClassNames: string
-	deleteCard: BrainstormCardActions["deleteCard"]
-	editCard: BrainstormCardActions["editCard"]
-	participantId: string
+	actions: BrainstormActions
 }
 
-export const Card = ({
-	card,
-	colorClassNames,
-	deleteCard,
-	editCard,
-	participantId,
-}: Props) => {
+export const Card = ({ card, colorClassNames, actions }: Props) => {
 	return (
 		<div className="relative aspect-[163/187]">
 			<textarea
@@ -29,18 +22,14 @@ export const Card = ({
 				defaultValue={card.response}
 				name="response"
 				onChange={(e) =>
-					editCard({
-						cardId: card.id,
-						participantId,
-						response: e.currentTarget.value,
-					})
+					actions.editCard({ cardId: card.id, response: e.target.value })
 				}
 			/>
 
 			<div className="absolute bottom-2 right-1.5 rounded-full">
 				<button
 					type="submit"
-					onClick={() => deleteCard({ cardId: card.id, participantId })}
+					onClick={() => actions.deleteCard({ cardId: card.id })}
 				>
 					<XCircleIcon className="h-6 w-6" />
 				</button>

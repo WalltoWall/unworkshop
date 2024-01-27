@@ -3,6 +3,7 @@
 import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import * as R from "remeda"
+import { useSnapshot } from "valtio"
 import { Steps } from "@/components/Steps"
 import { CardScroller } from "./CardScroller"
 import { type BrainstormExercise, type BrainstormParticipant } from "./types"
@@ -24,19 +25,22 @@ const BrainstormClient = ({ exercise, participant }: Props) => {
 	const stepIdx = step - 1
 	const stepData = exercise.steps.at(stepIdx)
 
-	const { snap, actions } = useMultiplayerBrainstorm({
+	const { state, actions } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
 	})
+	const snap = useSnapshot(state)
+	const snapStepData = snap.steps.at(stepIdx)
+	if (!snapStepData) return null
 
-	const unsorted =
-		snap.steps?.at(stepIdx)?.participants?.[participant._id]?.unsorted ?? []
-	const sorted =
-		snap.steps
-			?.at(stepIdx)
-			?.participants?.[participant._id]?.columns?.flatMap((c) => c.cards) ?? []
+	const unsorted = snapStepData.unsorted
+	const sorted = snapStepData.columns.flatMap((c) => c.cards)
 
-	const cards = R.sortBy(unsorted.concat(sorted), [(c) => c.createdAt, "desc"])
+	const cards = R.pipe(
+		unsorted.concat(sorted),
+		R.sortBy([(c) => c.createdAt, "desc"]),
+		R.filter((c) => c.participantOrGroupId === participant._id),
+	)
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
