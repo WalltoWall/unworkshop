@@ -19,7 +19,7 @@ export const Card = ({ card, colorClassNames, actions }: Props) => {
 					"h-full w-full resize-none rounded-lg p-3.5 placeholder:text-18 placeholder:leading-[1.25] focus:outline-none",
 				)}
 				placeholder="Type something here to add your perception"
-				defaultValue={card.response}
+				value={card.response}
 				name="response"
 				onChange={(e) =>
 					actions.editCard({ cardId: card.id, response: e.target.value })

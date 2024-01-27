@@ -8,6 +8,7 @@ import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { Popover } from "@/components/Popover"
 import type { BrainstormColumn } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import type { BrainstormActions } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/use-multiplayer-brainstorm"
+import { SORTING_COLUMN_ID } from "./constants"
 import { PresentColumnModal } from "./PresentColumnModal"
 
 interface CardColumnProps {
@@ -95,6 +96,9 @@ export const CardColumn = ({ column, index, actions }: CardColumnProps) => {
 										color={column.color}
 										cardProvided={cardProvided}
 										cardSnapshot={cardSnapshot}
+										idx={idx}
+										columnId={column.id}
+										actions={actions}
 									/>
 								)}
 							</Draggable>

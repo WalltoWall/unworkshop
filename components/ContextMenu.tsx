@@ -8,6 +8,8 @@ import {
 	type DraggableStateSnapshot,
 } from "@hello-pangea/dnd"
 import type { BrainstormCard } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import type { BrainstormActions } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/use-multiplayer-brainstorm"
+import { SORTING_COLUMN_ID } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/constants"
 import { Text } from "./Text"
 
 const ContextMenuItem = ({
@@ -33,6 +35,9 @@ interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
 	color: string
 	cardProvided: DraggableProvided
 	cardSnapshot: DraggableStateSnapshot
+	actions: BrainstormActions
+	idx: number
+	columnId: string
 }
 
 export const ContextMenu = ({
@@ -40,38 +45,33 @@ export const ContextMenu = ({
 	color,
 	cardProvided,
 	cardSnapshot,
+	idx,
+	actions,
+	columnId,
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
 
-	const handleEditItem = () => {
-		flushSync(() => {
-			setReadOnly(false)
-		})
+	const enableEdits = () => {
+		flushSync(() => setReadOnly(false))
+
 		textAreaRef.current?.focus()
 	}
 
-	const handleDeleteItem = () => {
-		// TODO:
-	}
+	const disableEdits = () => setReadOnly(false)
 
-	const handleReturnItem = () => {
-		// TODO:
-	}
-
-	// when editing and moving card to another column it reverts back
-	const finalizeEdit = (newResponse: string) => {
-		setReadOnly(true)
-		// TODO:
+	const returnToSorter = () => {
+		actions.moveCard({
+			from: { columnId: columnId, idx },
+			to: { columnId: SORTING_COLUMN_ID, idx: 0 },
+		})
 	}
 
 	return (
 		<Context.Root modal={false}>
 			<Context.Trigger>
 				<div
-					className={
-						"mt-2 box-border flex list-none items-center rounded-lg px-3 py-2.5"
-					}
+					className="mt-2 box-border flex list-none items-center rounded-lg px-3 py-2.5"
 					ref={cardProvided.innerRef}
 					{...cardProvided.draggableProps}
 					{...cardProvided.dragHandleProps}
@@ -87,25 +87,25 @@ export const ContextMenu = ({
 						readOnly={readOnly}
 						ref={textAreaRef}
 						onKeyDown={(e) => {
-							if (e.key !== "Enter") return
-
-							e.preventDefault()
-							finalizeEdit(e.currentTarget.value)
+							if (e.key === "Enter") disableEdits()
 						}}
-						onBlur={(e) => finalizeEdit(e.currentTarget.value)}
+						onChange={(e) =>
+							actions.editCard({ cardId: card.id, response: e.target.value })
+						}
+						onBlur={disableEdits}
 					/>
 				</div>
 			</Context.Trigger>
 
 			<Context.Portal>
 				<Context.Content className="flex min-w-[120px] flex-col overflow-hidden rounded-lg bg-black py-1.5">
-					<ContextMenuItem onClick={() => handleEditItem()}>
-						Edit
-					</ContextMenuItem>
-					<ContextMenuItem onClick={() => handleReturnItem()}>
+					<ContextMenuItem onClick={enableEdits}>Edit</ContextMenuItem>
+					<ContextMenuItem onClick={returnToSorter}>
 						Return to sorter
 					</ContextMenuItem>
-					<ContextMenuItem onClick={() => handleDeleteItem()}>
+					<ContextMenuItem
+						onClick={() => actions.deleteCard({ cardId: card.id })}
+					>
 						Delete
 					</ContextMenuItem>
 				</Context.Content>
