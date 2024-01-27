@@ -43,7 +43,6 @@ export const ContextMenu = ({
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
-	console.log(card)
 
 	const handleEditItem = () => {
 		flushSync(() => {
@@ -71,7 +70,7 @@ export const ContextMenu = ({
 			<Context.Trigger>
 				<div
 					className={
-						"box-border flex list-none items-center rounded-lg px-3 py-2.5"
+						"mt-2 box-border flex list-none items-center rounded-lg px-3 py-2.5"
 					}
 					ref={cardProvided.innerRef}
 					{...cardProvided.draggableProps}
@@ -83,7 +82,6 @@ export const ContextMenu = ({
 					}}
 				>
 					<textarea
-						suppressHydrationWarning
 						value={card.response}
 						className="pointer-events-none h-full min-h-10 w-full resize-none bg-transparent scrollbar-hide focus:outline-none"
 						readOnly={readOnly}
