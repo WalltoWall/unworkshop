@@ -5,19 +5,25 @@ import { CirclePicker } from "react-color"
 import { Draggable, Droppable } from "@hello-pangea/dnd"
 import { ContextMenu } from "@/components/ContextMenu"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
+import type { MultiplayerData } from "@/components/Multiplayer/use-multiplayer"
 import { Popover } from "@/components/Popover"
 import type { BrainstormColumn } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import type { BrainstormActions } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/use-multiplayer-brainstorm"
-import { SORTING_COLUMN_ID } from "./constants"
 import { PresentColumnModal } from "./PresentColumnModal"
 
 interface CardColumnProps {
 	actions: BrainstormActions
 	column: BrainstormColumn
 	index: number
+	multiplayer: MultiplayerData
 }
 
-export const CardColumn = ({ column, index, actions }: CardColumnProps) => {
+export const CardColumn = ({
+	column,
+	index,
+	actions,
+	multiplayer,
+}: CardColumnProps) => {
 	const colorGroups = [
 		"#FE9487",
 		"#FE9E77",
@@ -29,7 +35,7 @@ export const CardColumn = ({ column, index, actions }: CardColumnProps) => {
 	]
 
 	return (
-		<div className="w-[306px] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
+		<div className="w-[19.125rem] animate-fadeIn rounded-2xl bg-gray-90 px-2 py-3">
 			<div className="flex items-center gap-2">
 				<Popover
 					trigger={
@@ -99,6 +105,7 @@ export const CardColumn = ({ column, index, actions }: CardColumnProps) => {
 										idx={idx}
 										columnId={column.id}
 										actions={actions}
+										multiplayer={multiplayer}
 									/>
 								)}
 							</Draggable>

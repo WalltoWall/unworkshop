@@ -169,5 +169,5 @@ export const useMultiplayerBrainstorm = ({
 		},
 	}
 
-	return { snap, actions }
+	return { snap, actions, multiplayer }
 }

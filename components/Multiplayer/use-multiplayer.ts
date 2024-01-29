@@ -8,6 +8,12 @@ export type MultiplayerArgs = {
 	exerciseId: string
 }
 
+export type MultiplayerUser = {
+	intent?: string
+	color?: string
+	point?: [x: number, y: number]
+}
+
 export type MultiplayerData = ReturnType<typeof useMultiplayer>
 
 export const useMultiplayer = (args: MultiplayerArgs) => {
@@ -22,6 +28,17 @@ export const useMultiplayer = (args: MultiplayerArgs) => {
 
 	const users = useUsers(awareness)
 
+	const signalIntent = React.useCallback(
+		(intent: string) => {
+			provider.awareness.setLocalStateField("intent", intent)
+		},
+		[provider.awareness],
+	)
+
+	const clearIntent = React.useCallback(() => {
+		provider.awareness.setLocalStateField("intent", undefined)
+	}, [provider.awareness])
+
 	React.useEffect(() => {
 		const randomColor =
 			USER_COLORS[Math.floor(Math.random() * USER_COLORS.length)]
@@ -29,5 +46,12 @@ export const useMultiplayer = (args: MultiplayerArgs) => {
 		provider.awareness.setLocalStateField("color", randomColor)
 	}, [provider.awareness])
 
-	return { users, provider, awareness, doc }
+	return {
+		users: users as Map<number, MultiplayerUser>,
+		provider,
+		awareness,
+		doc,
+		signalIntent,
+		clearIntent,
+	}
 }

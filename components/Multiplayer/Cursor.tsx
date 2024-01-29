@@ -46,25 +46,16 @@ export const Cursor = React.memo(
 		return (
 			<svg
 				ref={rCursor}
-				className="absolute -left-[15px] -top-[15px] h-[35px] w-[35px]"
-				xmlns="http://www.w3.org/2000/svg"
-				viewBox="0 0 35 35"
-				fill="none"
-				fillRule="evenodd"
+				viewBox="0 0 30.5 30.5"
+				className="absolute -left-4 -top-4 h-6 w-6"
 			>
-				<title>Cursor</title>
-				<g fill="rgba(0,0,0,.2)" transform="translate(1,1)">
-					<path d="m12 24.4219v-16.015l11.591 11.619h-6.781l-.411.124z" />
-					<path d="m21.0845 25.0962-3.605 1.535-4.682-11.089 3.686-1.553z" />
-				</g>
-				<g fill="black">
-					<path d="m12 24.4219v-16.015l11.591 11.619h-6.781l-.411.124z" />
-					<path d="m21.0845 25.0962-3.605 1.535-4.682-11.089 3.686-1.553z" />
-				</g>
-				<g fill={color}>
-					<path d="m19.751 24.4155-1.844.774-3.1-7.374 1.841-.775z" />
-					<path d="m13 10.814v11.188l2.969-2.866.428-.139h4.768z" />
-				</g>
+				<path
+					fill={color}
+					fillRule="nonzero"
+					stroke="#FFF"
+					strokeWidth="1.5"
+					d="m19.47 17.718 8.649-3.145a2.478 2.478 0 0 0 .023-4.649L4.098.908a2.478 2.478 0 0 0-3.19 3.19l9.016 24.044a2.456 2.456 0 0 0 2.32 1.608h.013a2.457 2.457 0 0 0 2.316-1.631l3.145-8.648 1.753-1.753Z"
+				/>
 			</svg>
 		)
 	},

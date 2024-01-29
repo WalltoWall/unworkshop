@@ -10,6 +10,7 @@ import {
 import type { BrainstormCard } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import type { BrainstormActions } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/use-multiplayer-brainstorm"
 import { SORTING_COLUMN_ID } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/constants"
+import type { MultiplayerData } from "./Multiplayer/use-multiplayer"
 import { Text } from "./Text"
 
 const ContextMenuItem = ({
@@ -38,6 +39,7 @@ interface ContextMenuProps extends React.ComponentPropsWithoutRef<"div"> {
 	actions: BrainstormActions
 	idx: number
 	columnId: string
+	multiplayer: MultiplayerData
 }
 
 export const ContextMenu = ({
@@ -48,6 +50,7 @@ export const ContextMenu = ({
 	idx,
 	actions,
 	columnId,
+	multiplayer,
 }: ContextMenuProps) => {
 	const [readOnly, setReadOnly] = React.useState(true)
 	const textAreaRef = React.useRef<HTMLTextAreaElement>(null)
@@ -67,11 +70,16 @@ export const ContextMenu = ({
 		})
 	}
 
+	const otherUserFocusingCard = Array.from(multiplayer.users.entries())
+		.filter(([id]) => id !== multiplayer.awareness.clientID)
+		.map(([, user]) => user)
+		.find((user) => user.intent === card.id)
+
 	return (
 		<Context.Root modal={false}>
 			<Context.Trigger>
 				<div
-					className="mt-2 box-border flex list-none items-center rounded-lg px-3 py-2.5"
+					className="mt-2 box-border flex list-none items-center rounded-lg px-3 py-2.5 outline outline-2 outline-offset-2 outline-transparent"
 					ref={cardProvided.innerRef}
 					{...cardProvided.draggableProps}
 					{...cardProvided.dragHandleProps}
@@ -79,6 +87,7 @@ export const ContextMenu = ({
 						...cardProvided.draggableProps.style,
 						backgroundColor: color,
 						opacity: cardSnapshot.isDragging ? "0.5" : "1",
+						outlineColor: otherUserFocusingCard?.color,
 					}}
 				>
 					<textarea

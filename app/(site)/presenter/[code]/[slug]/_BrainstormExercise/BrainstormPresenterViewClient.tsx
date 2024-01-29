@@ -4,10 +4,9 @@ import React from "react"
 import { useSearchParams } from "next/navigation"
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd"
 import clsx from "clsx"
-import * as R from "remeda"
-import { useSnapshot } from "valtio"
 import { Chevron } from "@/components/icons/Chevron"
 import { GrayPlusCircleIcon } from "@/components/icons/GrayPlusCircle"
+import { Cursors } from "@/components/Multiplayer/Cursors"
 import { Text } from "@/components/Text"
 import type { BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { useMultiplayerBrainstorm } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/use-multiplayer-brainstorm"
@@ -23,7 +22,7 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const stepIdx = step - 1
 
-	const { actions, snap } = useMultiplayerBrainstorm({
+	const { actions, multiplayer, snap } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
 	})
@@ -47,16 +46,19 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 					from: { columnId: source.droppableId, idx: source.index },
 					to: { columnId: destination.droppableId, idx: destination.index },
 				})
+
+				multiplayer.clearIntent()
 			}}
+			onDragStart={(result) => multiplayer.signalIntent(result.draggableId)}
 		>
 			<div className="relative">
-				<div className="flex w-full flex-col gap-3 rounded-2xl bg-gray-90 px-4 py-5">
+				<div className="w-full rounded-2xl bg-gray-90 px-4 py-5">
 					<button
 						className="flex w-fit items-center gap-3 rounded-lg border-2 border-gray-50 px-2.5 py-2"
 						onClick={() => setShowSorter(!showSorter)}
 						type="button"
 					>
-						<Text style={"heading"} size={16} className="text-gray-50">
+						<Text style="heading" size={16} className="text-gray-50">
 							Hide Sorter
 						</Text>
 
@@ -72,30 +74,44 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 						{(provided) => (
 							<div
 								className={clsx(
-									"flex min-h-[135px] w-full gap-2 overflow-y-clip overflow-x-scroll scrollbar-hide",
+									"-mx-4 -my-5 flex min-h-[187px] w-full gap-2 overflow-y-clip overflow-x-scroll px-4 pb-5 pt-8 scrollbar-hide",
 									showSorter ? "block" : "hidden",
 								)}
 								ref={provided.innerRef}
 								{...provided.droppableProps}
 							>
-								{unsorted.map((card, idx) => (
-									<Draggable index={idx} draggableId={card.id} key={card.id}>
-										{(cardProvided, cardSnapshot) => (
-											<div
-												ref={cardProvided.innerRef}
-												{...cardProvided.draggableProps}
-												{...cardProvided.dragHandleProps}
-												className={clsx(
-													"box-border aspect-square w-[8.4375rem] min-w-[8.4375rem] list-none rounded-lg bg-white px-3 py-2",
-													cardSnapshot.isDragging &&
-														"box-border flex !aspect-auto !h-[3.75rem] !min-w-[17.5rem] list-none items-center !py-2.5 opacity-50",
-												)}
-											>
-												<p>{card.response}</p>
-											</div>
-										)}
-									</Draggable>
-								))}
+								{unsorted.map((card, idx) => {
+									const otherUserFocusingCard = Array.from(
+										multiplayer.users.entries(),
+									)
+										.filter(([id]) => id !== multiplayer.awareness.clientID)
+										.map(([, user]) => user)
+										.find((user) => user.intent === card.id)
+
+									return (
+										<Draggable index={idx} draggableId={card.id} key={card.id}>
+											{(cardProvided, cardSnapshot) => (
+												<div
+													ref={cardProvided.innerRef}
+													{...cardProvided.draggableProps}
+													{...cardProvided.dragHandleProps}
+													style={{
+														...cardProvided.draggableProps.style,
+														outlineColor: otherUserFocusingCard?.color,
+													}}
+													className={clsx(
+														"box-border aspect-square w-[8.4375rem] min-w-[8.4375rem] list-none rounded-lg bg-white px-3 py-2",
+														"outline outline-2 outline-offset-2 outline-transparent",
+														cardSnapshot.isDragging &&
+															"box-border flex !aspect-auto !h-[3.75rem] !min-w-[17.5rem] list-none items-center !py-2.5 opacity-50",
+													)}
+												>
+													<p>{card.response}</p>
+												</div>
+											)}
+										</Draggable>
+									)
+								})}
 
 								{provided.placeholder}
 							</div>
@@ -110,6 +126,7 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 							index={idx}
 							column={col}
 							actions={actions}
+							multiplayer={multiplayer}
 						/>
 					))}
 
@@ -124,6 +141,8 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 					</button>
 				</div>
 			</div>
+
+			<Cursors awareness={multiplayer.awareness} users={multiplayer.users} />
 		</DragDropContext>
 	)
 }
