@@ -15,14 +15,14 @@ type Props = {
 	cards: Array<BrainstormCard>
 	color?: Color
 	actions: BrainstormActions
-	participantId: string
+	participantOrGroupId: string
 }
 
 export const CardScroller = ({
 	cards,
 	color = "green",
 	actions,
-	participantId,
+	participantOrGroupId,
 }: Props) => {
 	return (
 		<div
@@ -30,7 +30,10 @@ export const CardScroller = ({
 				"my-8 mb-auto grid min-h-0 flex-[1_1_0] grid-cols-2 content-start gap-2.5 overflow-y-auto py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:grid-cols-[163px_163px]",
 			)}
 		>
-			<AddCardButton actions={actions} participantId={participantId} />
+			<AddCardButton
+				actions={actions}
+				participantOrGroupId={participantOrGroupId}
+			/>
 
 			{cards.map((card) => (
 				<Card

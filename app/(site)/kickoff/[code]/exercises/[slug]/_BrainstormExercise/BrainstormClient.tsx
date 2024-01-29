@@ -57,7 +57,7 @@ const BrainstormClient = ({ exercise, participant }: Props) => {
 				cards={cards}
 				color={stepData?.color}
 				actions={actions}
-				participantId={participant._id}
+				participantOrGroupId={participant._id}
 			/>
 
 			<Steps

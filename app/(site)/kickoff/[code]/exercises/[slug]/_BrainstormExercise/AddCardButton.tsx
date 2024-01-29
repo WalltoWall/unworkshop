@@ -4,14 +4,19 @@ import type { BrainstormActions } from "./use-multiplayer-brainstorm"
 
 type Props = {
 	actions: BrainstormActions
-	participantId: string
+	participantOrGroupId: string
 }
 
-export const AddCardButton = ({ actions, participantId }: Props) => {
+export const AddCardButton = ({ actions, participantOrGroupId }: Props) => {
 	return (
 		<button
 			className="flex aspect-[163/187] select-none flex-col items-center justify-center gap-3 rounded-md transition hover:bg-gray-90 focus:bg-gray-90 focus:outline-none"
-			onClick={() => actions.addCard({ participantId, response: "" })}
+			onClick={() =>
+				actions.addCard({
+					participantOrGroupId: participantOrGroupId,
+					response: "",
+				})
+			}
 		>
 			<PlusIcon className="h-7 w-7 text-black" />
 

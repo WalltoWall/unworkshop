@@ -53,14 +53,14 @@ export const useMultiplayerBrainstorm = ({
 	}
 
 	const actions = {
-		addCard: (args: { response: string; participantId: string }) => {
+		addCard: (args: { response: string; participantOrGroupId: string }) => {
 			const step = getStep()
 
 			step.unsorted.push({
 				id: uid(),
 				response: args.response,
 				createdAt: Math.floor(new Date().getTime() / 1000),
-				participantOrGroupId: args.participantId,
+				participantOrGroupId: args.participantOrGroupId,
 			})
 		},
 
