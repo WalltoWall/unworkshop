@@ -1,3 +1,4 @@
+import React from "react"
 import { redirect } from "next/navigation"
 import { zfd } from "zod-form-data"
 import { Button } from "@/components/Button"
@@ -15,7 +16,7 @@ async function navigateToWorkshop(data: FormData) {
 
 const PresenterPage = () => {
 	return (
-		<>
+		<React.Suspense>
 			<PresenterHeader />
 			<div className="space-y-4 px-7 py-8 text-center">
 				<Text style="heading" size={24}>
@@ -37,7 +38,7 @@ const PresenterPage = () => {
 					<Button color="black">Continue</Button>
 				</form>
 			</div>
-		</>
+		</React.Suspense>
 	)
 }
 

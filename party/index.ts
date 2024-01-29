@@ -5,6 +5,7 @@ import { onConnect } from "y-partykit"
 import * as Y from "yjs"
 import type { ST } from "@/sanity/config"
 import { sanity } from "@/sanity/sanity-client"
+import { INITIAL_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
 import { type BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { ANSWERS_KEY } from "@/constants"
 
@@ -41,14 +42,17 @@ export default class Server implements Party.Server {
 				switch (doc?.type) {
 					case "brainstorm": {
 						console.info("Found brainstorm exercise.")
+
 						const exercise = doc as BrainstormExercise
 
 						let initialState: BrainstormExercise["answers"]
 						if (!exercise.answers) {
 							console.info("No existing answers found. Creating initial data.")
-							initialState = { steps: [{ columns: [], unsorted: [] }] }
+
+							initialState = INITIAL_ANSWERS
 						} else {
 							console.info("Existing answers found. Persisting data.")
+
 							initialState = exercise.answers
 						}
 

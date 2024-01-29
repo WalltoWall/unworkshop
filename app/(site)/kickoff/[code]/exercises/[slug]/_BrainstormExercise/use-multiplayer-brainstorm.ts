@@ -8,6 +8,7 @@ import {
 } from "@/components/Multiplayer/use-multiplayer"
 import { SORTING_COLUMN_ID } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/constants"
 import { ANSWERS_KEY } from "@/constants"
+import { INITIAL_ANSWERS } from "./constants"
 import { type BrainstormAnswers } from "./types"
 
 // TODO: Support groups via participantOrGroupId in args.
@@ -17,18 +18,16 @@ export type BrainstormActions = ReturnType<
 	typeof useMultiplayerBrainstorm
 >["actions"]
 
-const INIT_STATE = { steps: [{ columns: [], unsorted: [] }] }
-
 export const useMultiplayerBrainstorm = ({
 	stepIdx,
 	...args
 }: UseMultiplayerBrainstormArgs) => {
 	const multiplayer = useMultiplayer(args)
 	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
-	const state = React.useRef(proxy<BrainstormAnswers>(INIT_STATE)).current
+	const state = React.useRef(proxy<BrainstormAnswers>(INITIAL_ANSWERS)).current
 	const snap = useSnapshot(state)
 
-	// TODO: This is pretty jank. Need to code-doc / refactor to a shared function?
+	// Kinda janky, but this is required to ensure data is persisted initially.
 	React.useEffect(() => {
 		let unbind: (() => void) | undefined = undefined
 
