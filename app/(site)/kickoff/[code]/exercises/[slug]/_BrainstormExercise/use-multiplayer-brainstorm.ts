@@ -11,8 +11,6 @@ import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_ANSWERS } from "./constants"
 import { type BrainstormAnswers } from "./types"
 
-// TODO: Support groups via participantOrGroupId in args.
-
 export type UseMultiplayerBrainstormArgs = { stepIdx: number } & MultiplayerArgs
 export type BrainstormActions = ReturnType<
 	typeof useMultiplayerBrainstorm

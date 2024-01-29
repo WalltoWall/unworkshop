@@ -11,7 +11,7 @@ export const Cursors = ({
 	React.useEffect(() => {
 		const handleMove = throttle((e: PointerEvent) => {
 			awareness.setLocalStateField("point", [e.clientX, e.clientY])
-		}, 25)
+		}, 35)
 
 		window.addEventListener("pointermove", handleMove, { passive: true })
 
