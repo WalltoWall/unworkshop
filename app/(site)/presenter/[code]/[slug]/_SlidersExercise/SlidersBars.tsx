@@ -17,7 +17,6 @@ export const SlidersBars = ({
 	answers,
     images,
 }: barProps) => {
-    console.log(images)
 	const [color, setColor] = React.useState("#fecb2f")
 	const Bars = (hasImages:boolean) => {
 		let content = [];
