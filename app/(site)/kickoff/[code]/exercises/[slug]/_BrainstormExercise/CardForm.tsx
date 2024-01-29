@@ -47,6 +47,7 @@ export const CardForm = ({
 						submitForm()
 					}}
 					name="response"
+					autoFocus
 				/>
 			</form>
 			<form

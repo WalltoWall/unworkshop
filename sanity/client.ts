@@ -24,9 +24,9 @@ export const client = {
 
 		const data = await sanity.fetch<KickoffWithExercises | null>(
 			groq`*[_type == "kickoff" && code.current == $code][0] {
-            ...,
-            exercises[]->
-        }`,
+                ...,
+                exercises[]->
+            }`,
 			{ code: code.toLowerCase() },
 			{ cache: "no-store" },
 		)
@@ -81,22 +81,20 @@ export const client = {
 		return participant
 	}),
 
-	findAllParticipantsInExercise: React.cache(
-		async <T extends ST["participant"] = ST["participant"]>(
-			exerciseId: string,
-		) => {
-			const participants = await sanity.fetch<Array<T>>(
-				groq`*[_type == "participant" && answers[$exerciseId] != null]{
-				...,
-				answers
-			}`,
-				{ exerciseId },
-				{ cache: "no-store" },
-			)
+	// prettier-ignore
+	async findAllParticipantsInExercise<T extends ST["participant"] = ST["participant"]>(exerciseId: string) {
 
-			return participants
-		},
-	),
+            const participants = await sanity.fetch<Array<T>>(
+                groq`*[_type == "participant" && answers[$exerciseId] != null]{
+                    ...,
+                    answers
+                }`,
+                {exerciseId},
+                { cache: "no-store" }
+            )
+
+                return participants
+            },
 
 	async findKickoffOrThrow(code: string) {
 		const kickoff = await client.findKickoff(code)
@@ -148,9 +146,13 @@ export const client = {
 		return res
 	},
 
-	async findExerciseBySlug(slug: string) {
-		const data = await sanity.fetch<ST["exercise"] | null>(
-			groq`*[_type == "exercise" && slug.current == $slug][0]`,
+	async findExerciseBySlug<T extends ST["exercise"] = ST["exercise"]>(
+		slug: string,
+	) {
+		const data = await sanity.fetch<T | null>(
+			groq`*[_type == "exercise" && slug.current == $slug][0]{
+                    ...,
+                }`,
 			{ slug },
 			{ cache: "no-store" }, // TODO: Note on caching.
 		)

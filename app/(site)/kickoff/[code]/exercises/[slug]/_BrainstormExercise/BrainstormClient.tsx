@@ -3,8 +3,8 @@
 import React from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
-import { CardScroller, type Color } from "./CardScroller"
-import type { Answer } from "./types"
+import { CardScroller } from "./CardScroller"
+import type { Answer, Color } from "./types"
 
 interface BrainstormClientProps {
 	steps:
@@ -43,7 +43,7 @@ const BrainstormClient = ({
 	return (
 		<div className="flex h-full flex-col overflow-hidden">
 			{steps && steps.at(step - 1) && (
-				<div>
+				<div className="mt-1">
 					<h4 className="max-w-[16rem] text-16 leading-[1.4] font-sans capsize">
 						{steps.at(step - 1)?.prompt}
 					</h4>
@@ -57,7 +57,7 @@ const BrainstormClient = ({
 				// Need key prop so that useOptimistic rerenders the cards correctly based off step see:https://github.com/facebook/react/issues/27617
 				// see: https://github.com/vercel/next.js/issues/57662
 				key={step}
-				cards={cards.filter((card) => card.step === step) ?? []}
+				cards={cards.filter((card) => card.step === step)}
 				exerciseId={exerciseId}
 				group={groups.length > 0}
 				color={steps.at(step - 1)?.color}

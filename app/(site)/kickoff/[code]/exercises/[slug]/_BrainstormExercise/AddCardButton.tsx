@@ -1,12 +1,12 @@
 import React from "react"
 import { PlusIcon } from "@/components/icons/Plus"
-import { addCardAction } from "./actions"
+import type { AddCardData } from "./types"
 
 interface AddCardButton {
 	cardId: string
 	exerciseId: string
-	isGroup?: boolean
-	addOptimisticCard: (id: string) => void
+	isGroup: boolean
+	addCard: ({ id, exerciseId, isGroup, step }: AddCardData) => void
 	step: number
 }
 
@@ -15,26 +15,22 @@ export const AddCardButton = ({
 	cardId,
 	exerciseId,
 	isGroup,
-	addOptimisticCard,
+	addCard,
 	step,
 }: AddCardButton) => {
 	return (
 		<form
-			action={async (formData: FormData) => {
-				addOptimisticCard(cardId)
-				await addCardAction(formData)
+			onSubmit={(e) => {
+				e.preventDefault()
+				addCard({
+					id: cardId,
+					exerciseId: exerciseId,
+					isGroup: isGroup,
+					step: step,
+				})
 			}}
 			className="flex flex-col items-center justify-center"
 		>
-			<input type="hidden" value={cardId} name="cardId" />
-			<input type="hidden" value={exerciseId} name="exerciseId" />
-			<input type="hidden" value={step} name="step" />
-			<input
-				type="checkbox"
-				defaultChecked={isGroup}
-				name="isGroup"
-				className="hidden"
-			/>
 			<button className="flex flex-col items-center justify-center gap-3">
 				<PlusIcon className="h-7 w-7 text-black" />
 				<span className="max-w-[5rem] text-14 leading-none font-sans">
