@@ -17,8 +17,9 @@ export const SlidersBars = ({
 	answers,
     images,
 }: barProps) => {
+    console.log(images)
 	const [color, setColor] = React.useState("#fecb2f")
-	const Bars = () => {
+	const Bars = (hasImages:boolean) => {
 		let content = [];
 		
 		// 1 = minRange and 6 = max slider range.
@@ -32,6 +33,7 @@ export const SlidersBars = ({
                 (answer.tomorrow == i) ? countTomorrow++ : countTomorrow
             ))
             
+            // find a percentage of answers.
             let allAnswers = countToday + countTomorrow
             let todayResults = countToday/allAnswers * 100
             let tomorrowResults = countTomorrow/allAnswers * 100
@@ -45,7 +47,11 @@ export const SlidersBars = ({
                         style={{
                             height: countToday == 0 ? "1rem" : `${todayResults}%`,
                         }}
-                    ></div>
+                    >
+                        {!hasImages &&
+                            <span className="absolute z-20 -top-6 w-full text-center">{countToday}</span>
+                        }
+                    </div>
                     <div 
                         key={i}
                         className={"relative block w-full max-w-[4rem] bg-yellow-68"}
@@ -56,7 +62,11 @@ export const SlidersBars = ({
                             border: `2px solid ${color}`,
                             borderBottom: `none`
                         }}
-                    ></div>
+                    >
+                        {!hasImages &&
+                            <span className="absolute z-20 -top-6 w-full text-center">{countTomorrow}</span>
+                        }
+                    </div>
                 </div>
 			);
 		}
@@ -64,13 +74,13 @@ export const SlidersBars = ({
 	}
 
 	return (
-		<div className="top-0 left-0 right-0 p-4 w-full flex justify-evenly items-end gap-4 lg:gap-8"
+		<div className="top-0 left-0 right-0 px-4 pt-8 w-full flex justify-evenly items-end gap-4 lg:gap-8"
         style={{
             position: images ? 'absolute' : 'static',
             height: images ? 'calc(50vh - 0.666rem)' : '100%'
         }}
         >
-			{Bars()}
+			{Bars(images)}
 		</div>
 	)
 }
