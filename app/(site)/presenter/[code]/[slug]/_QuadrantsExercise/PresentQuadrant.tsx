@@ -68,7 +68,7 @@ export const PresentQuadrant = ({
 					)}
 				</div>
 
-				{answers.map((answer, index) => (
+				{answers?.map((answer, index) => (
 					<QuadrantAnswer
 						key={index}
 						answer={answer}
