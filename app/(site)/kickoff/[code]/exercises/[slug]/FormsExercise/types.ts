@@ -1,4 +1,5 @@
 import type { ST } from "@/sanity/config"
+import type { FormActions } from "./use-multiplayer-form"
 
 export type ListFieldAnswer = {
 	type: "List"
@@ -29,9 +30,7 @@ export type FormFieldAnswer =
 	| NarrowFieldAnswer
 	| TaglineFieldAnswer
 
-export type FormAnswer = {
-	data: Array<FormFieldAnswer>
-}
+export type FormStepAnswer = Array<FormFieldAnswer>
 
 export type FormStep = NonNullable<
 	NonNullable<ST["exercise"]["form"]>["steps"]
@@ -39,13 +38,14 @@ export type FormStep = NonNullable<
 
 export type FormField = NonNullable<FormStep["fields"]>[number]
 
-// TODO: Create a shared type for the mapped exercise ids.
-export type FormParticipant = ST["participant"] & {
-	answers?: {
-		[exerciseId: string]: {
-			steps: Array<FormAnswer>
-		}
-	}
+export type FormParticipant = ST["participant"]
+
+export type FormAnswers = {
+	participants: Record<string, Array<FormStepAnswer>>
+}
+
+export type FormExercise = ST["exercise"] & {
+	answers: FormAnswers
 }
 
 export type SharedFieldProps = {
@@ -55,6 +55,7 @@ export type SharedFieldProps = {
 	fieldIdx: number
 	field: FormField
 	readOnly: boolean
+	actions: FormActions
 }
 
 export type FieldProps<T = unknown> = T & SharedFieldProps

@@ -5,11 +5,12 @@ import { NarrowField } from "./NarrowField"
 import { TaglineField } from "./TaglineField"
 import { TextField } from "./TextField"
 import type {
-	FormAnswer,
 	FormField,
 	FormFieldAnswer,
+	FormStepAnswer,
 	SharedFieldProps,
 } from "./types"
+import type { FormActions } from "./use-multiplayer-form"
 import { PositiveNumber } from "./validators"
 
 type Props = {
@@ -18,8 +19,9 @@ type Props = {
 	exercise: ST["exercise"]
 	stepIdx: number
 	fieldIdx: number
-	allAnswers?: FormAnswer[]
+	allAnswers?: FormStepAnswer[]
 	readOnly?: boolean
+	actions: FormActions
 }
 
 export const FieldRenderer = ({
@@ -30,6 +32,7 @@ export const FieldRenderer = ({
 	fieldIdx,
 	allAnswers,
 	readOnly = false,
+	actions,
 }: Props) => {
 	const sharedProps: SharedFieldProps = {
 		exerciseId: exercise._id,
@@ -38,6 +41,7 @@ export const FieldRenderer = ({
 		answer,
 		field,
 		readOnly,
+		actions,
 	}
 
 	function getFieldSource() {
@@ -45,7 +49,7 @@ export const FieldRenderer = ({
 		const fieldSrc = PositiveNumber.parse(field.source?.field)
 
 		const sourceStepAnswer = allAnswers?.at(stepSrc - 1)
-		const source = sourceStepAnswer?.data.at(fieldSrc - 1)
+		const source = sourceStepAnswer?.at(fieldSrc - 1)
 
 		if (!source)
 			throw new Error("No valid source found. Check field or step config.")
