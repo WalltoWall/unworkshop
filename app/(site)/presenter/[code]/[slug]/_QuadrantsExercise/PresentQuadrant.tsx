@@ -74,7 +74,6 @@ export const PresentQuadrant = ({
 						answer={answer}
 						showToday={showToday}
 						showTomorrow={showTomorrow}
-						showLabels={showLabels}
 						showLines={showLines}
 						color={color}
 						animating={animating}
