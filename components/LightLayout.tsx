@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
 import { cx } from "class-variance-authority"
 import { Chevron } from "@/components/icons/Chevron"
 import { Logo } from "@/components/Logo"
@@ -14,6 +14,7 @@ export const LightLayout = (props: {
 	withHeaderBackButton?: boolean
 }) => {
 	const pathname = usePathname()
+	const params = useParams()
 
 	return (
 		<>
@@ -32,7 +33,7 @@ export const LightLayout = (props: {
 						</Link>
 					)}
 
-					<Link href="/">
+					<Link href={params.code ? `/kickoff/${params.code}/exercises` : "/"}>
 						<Logo className="w-[46px]" />
 					</Link>
 

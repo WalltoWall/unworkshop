@@ -1,14 +1,12 @@
 import React from "react"
-import debounce from "just-debounce-it"
 import { match } from "ts-pattern"
 import { Text } from "@/components/Text"
-import { submitFieldAnswer } from "./actions"
 import { AddButton } from "./AddButton"
 import type {
 	FieldProps,
-	FormAnswer,
 	FormField,
 	FormStep,
+	FormStepAnswer,
 	ListFieldAnswer,
 } from "./types"
 import { AnswersArray, PositiveNumber } from "./validators"
@@ -18,7 +16,7 @@ const DEFAULT_INPUT_NAME = "answer"
 type InputProps = {
 	number: number
 	placeholder?: string
-	defaultValue?: string
+	value?: string
 	onChange?: React.ChangeEventHandler<HTMLInputElement>
 	name?: string
 	readOnly?: boolean
@@ -27,7 +25,7 @@ type InputProps = {
 const Input = ({
 	number,
 	placeholder,
-	defaultValue,
+	value,
 	onChange,
 	name = DEFAULT_INPUT_NAME,
 	readOnly = false,
@@ -45,7 +43,7 @@ const Input = ({
 				placeholder={placeholder}
 				name={name}
 				className="h-9 grow rounded-lg border border-gray-90 px-2.5 text-black text-14 placeholder:text-gray-75"
-				defaultValue={defaultValue}
+				value={value}
 				onChange={onChange}
 				readOnly={readOnly}
 			/>
@@ -88,7 +86,7 @@ const SourceListSection = (props: SourceListSectionProps) => {
 							key={number}
 							number={number}
 							placeholder={placeholder}
-							defaultValue={props.answer?.responses.at(idx)}
+							value={props.answer?.responses.at(idx)}
 							name={props.label}
 							onChange={props.onInputChange}
 							readOnly={props.readOnly}
@@ -106,22 +104,21 @@ const SourceListSection = (props: SourceListSectionProps) => {
 	)
 }
 
-type Props = FieldProps & {
-	allAnswers?: FormAnswer[]
+type Props = FieldProps<{
+	allAnswers?: FormStepAnswer[]
 	allSteps?: FormStep[]
-}
+}>
 
-const SourceListField = ({ answer, ...props }: Props) => {
+const SourceListField = ({ answer, actions, ...props }: Props) => {
 	if (answer && answer.type !== "List")
 		throw new Error("Invalid answer data found.")
 
-	const rForm = React.useRef<React.ElementRef<"form">>(null)
-	const [, startTransition] = React.useTransition()
+	const rForm = React.useRef<HTMLFormElement>(null)
 
 	const stepSrc = PositiveNumber.parse(props.field.source?.step)
 	const fieldSrc = PositiveNumber.parse(props.field.source?.field)
 
-	const sourceAnswer = props.allAnswers?.at(stepSrc - 1)?.data.at(fieldSrc - 1)
+	const sourceAnswer = props.allAnswers?.at(stepSrc - 1)?.at(fieldSrc - 1)
 	const sourceField = props.allSteps?.at(stepSrc - 1)?.fields?.at(fieldSrc - 1)
 
 	if (!sourceAnswer || !sourceField)
@@ -138,19 +135,16 @@ const SourceListField = ({ answer, ...props }: Props) => {
 
 		const data = new FormData(rForm.current)
 
-		startTransition(() => {
-			submitFieldAnswer({
-				answer: {
-					type: "List",
-					groups: labels.map((label) => ({
-						label,
-						responses: AnswersArray.parse(data.getAll(label)),
-					})),
-				},
-				exerciseId: props.exerciseId,
-				fieldIdx: props.fieldIdx,
-				stepIdx: props.stepIdx,
-			})
+		actions.submitFieldAnswer({
+			answer: {
+				type: "List",
+				groups: labels.map((label) => ({
+					label,
+					responses: AnswersArray.parse(data.getAll(label)),
+				})),
+			},
+			fieldIdx: props.fieldIdx,
+			stepIdx: props.stepIdx,
 		})
 	}
 
@@ -158,8 +152,6 @@ const SourceListField = ({ answer, ...props }: Props) => {
 		e.preventDefault()
 		submitForm()
 	}
-
-	const onInputChange = debounce(submitForm, 300)
 
 	return (
 		<form ref={rForm} className="space-y-6" onSubmit={handleSubmit}>
@@ -169,7 +161,7 @@ const SourceListField = ({ answer, ...props }: Props) => {
 					label={label}
 					field={props.field}
 					answer={answer?.groups.find((a) => a.label === label)}
-					onInputChange={onInputChange}
+					onInputChange={submitForm}
 					readOnly={props.readOnly}
 				/>
 			))}
@@ -177,12 +169,11 @@ const SourceListField = ({ answer, ...props }: Props) => {
 	)
 }
 
-const PlainListField = ({ answer, ...props }: Props) => {
+const PlainListField = ({ answer, actions, ...props }: Props) => {
 	if (answer && answer.type !== "List")
 		throw new Error("Invalid answer data found.")
 
 	const rForm = React.useRef<React.ElementRef<"form">>(null)
-	const [, startTransition] = React.useTransition()
 
 	const {
 		rows: initialRows = 5,
@@ -202,13 +193,10 @@ const PlainListField = ({ answer, ...props }: Props) => {
 		const data = new FormData(rForm.current)
 		const answers = AnswersArray.parse(data.getAll(DEFAULT_INPUT_NAME))
 
-		startTransition(() => {
-			submitFieldAnswer({
-				answer: { type: "List", groups: [{ responses: answers }] },
-				exerciseId: props.exerciseId,
-				fieldIdx: props.fieldIdx,
-				stepIdx: props.stepIdx,
-			})
+		actions.submitFieldAnswer({
+			answer: { type: "List", groups: [{ responses: answers }] },
+			fieldIdx: props.fieldIdx,
+			stepIdx: props.stepIdx,
 		})
 	}
 
@@ -217,25 +205,21 @@ const PlainListField = ({ answer, ...props }: Props) => {
 		submitForm()
 	}
 
-	const onChange = debounce(submitForm, 300)
-
 	const appendNewRow = () => setRows((prev) => prev + 1)
 
 	return (
 		<form onSubmit={handleSubmit} ref={rForm}>
 			<ul className="flex flex-col gap-2">
-				{arr.map((number, idx) => {
-					return (
-						<Input
-							key={number}
-							number={number}
-							placeholder={placeholder}
-							defaultValue={resolvedAnswer?.responses.at(idx)}
-							onChange={onChange}
-							readOnly={props.readOnly}
-						/>
-					)
-				})}
+				{arr.map((number, idx) => (
+					<Input
+						key={number}
+						number={number}
+						placeholder={placeholder}
+						value={resolvedAnswer?.responses.at(idx) ?? ""}
+						onChange={submitForm}
+						readOnly={props.readOnly}
+					/>
+				))}
 			</ul>
 
 			{showAddButton && !props.readOnly && (

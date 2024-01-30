@@ -7,6 +7,8 @@ import type { ST } from "@/sanity/config"
 import { sanity } from "@/sanity/sanity-client"
 import { INITIAL_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
 import { type BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import type { FormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
+import { INITIAL_FORM_ANSWERS } from "@/app/(site)/presenter/[code]/[slug]/_FormExercise/constants"
 import { ANSWERS_KEY } from "@/constants"
 
 export default class Server implements Party.Server {
@@ -62,6 +64,28 @@ export default class Server implements Party.Server {
 						return yDoc
 					}
 
+					case "form": {
+						console.info("Found form exercise.")
+
+						const exercise = doc as FormExercise
+
+						let initialState: FormExercise["answers"]
+						if (!exercise.answers) {
+							console.info("No existing answers found. Creating initial data.")
+
+							initialState = INITIAL_FORM_ANSWERS
+						} else {
+							console.info("Existing answers found. Persisting data.")
+
+							initialState = exercise.answers
+						}
+
+						const state = proxy(initialState)
+						bind(state, yMap)
+
+						return yDoc
+					}
+
 					default:
 						return yDoc
 				}
@@ -74,7 +98,7 @@ export default class Server implements Party.Server {
 
 					const answers = yMap.toJSON()
 
-					console.info("Saving exercise: " + exerciseId)
+					console.info("Saving exercise...")
 
 					await sanity
 						.patch(exerciseId)
@@ -83,6 +107,8 @@ export default class Server implements Party.Server {
 						.catch((err) =>
 							console.error(`Saving document ${exerciseId} failed: `, err),
 						)
+
+					console.info("Saved exercise: " + exerciseId)
 				},
 
 				// only save after every 2 seconds (default)

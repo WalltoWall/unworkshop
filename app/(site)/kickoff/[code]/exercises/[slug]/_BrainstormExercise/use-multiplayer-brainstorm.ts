@@ -31,17 +31,21 @@ export const useMultiplayerBrainstorm = ({
 
 		// This function runs once we know a connection has been made to our
 		// backend and we've checked that data exists in Sanity.
-		multiplayer.doc.once("update", () => {
-			if (multiplayer.provider.ws?.OPEN) {
+		const onSync = (isSynced: boolean) => {
+			if (isSynced) {
 				const initialState = yMap.toJSON() as BrainstormAnswers
 				state.steps = initialState.steps
 
 				unbind = bind(state, yMap)
 			}
-		})
+		}
+		multiplayer.provider.on("sync", onSync)
 
-		return () => unbind?.()
-	}, [multiplayer.doc, yMap, multiplayer.provider.ws?.OPEN, state])
+		return () => {
+			unbind?.()
+			multiplayer.provider.off("sync", onSync)
+		}
+	}, [multiplayer.provider, state, yMap])
 
 	const getStep = () => {
 		state.steps[stepIdx] ??= { columns: [], unsorted: [] }

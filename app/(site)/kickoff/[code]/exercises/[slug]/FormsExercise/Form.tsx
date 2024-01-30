@@ -2,10 +2,7 @@
 
 import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
-import * as Y from "yjs"
 import { z } from "zod"
-import { Cursors } from "@/components/Multiplayer/Cursors"
-import { useMultiplayer } from "@/components/Multiplayer/use-multiplayer"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { FieldContainer } from "./FieldContainer"
@@ -13,6 +10,7 @@ import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
 import { Review } from "./Review"
 import type { FormParticipant } from "./types"
+import { useMultiplayerForm } from "./use-multiplayer-form"
 
 const StepParamSchema = z.coerce
 	.number()
@@ -29,7 +27,12 @@ export const Form = ({ exercise, participant }: Props) => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const params = useParams()
-	const multiplayer = useMultiplayer({ exerciseId: exercise._id })
+	const { actions, multiplayer, snap } = useMultiplayerForm({
+		exerciseId: exercise._id,
+		participantId: participant._id,
+	})
+
+	console.log(snap)
 
 	const step = StepParamSchema.parse(searchParams.get("step"))
 	const stepIdx = step - 1
@@ -39,8 +42,9 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	const answers = participant.answers?.[exercise._id]
-	const stepAnswers = answers?.steps.at(stepIdx)
+	// Or group id?
+	const answers = snap.participants[participant._id] ?? []
+	const stepAnswers = answers.at(stepIdx)
 
 	const onReviewScreen = !stepData && stepIdx === exercise.form.steps.length
 
@@ -48,15 +52,15 @@ export const Form = ({ exercise, participant }: Props) => {
 		router.push(`/kickoff/${params.code}/exercises`)
 
 	return (
-		<div className="mt-3">
+		<div className="mt-3 flex flex-[1_1_0] flex-col justify-between">
 			{onReviewScreen && (
-				<Review answers={answers?.steps} exercise={exercise} />
+				<Review allAnswers={answers} exercise={exercise} actions={actions} />
 			)}
 
 			{!onReviewScreen && (
 				<div>
 					{stepData?.fields?.map((field, fieldIdx) => {
-						const fieldAnswer = stepAnswers?.data.at(fieldIdx)
+						const fieldAnswer = stepAnswers?.at(fieldIdx)
 
 						return (
 							<FieldContainer key={field._key}>
@@ -75,8 +79,9 @@ export const Form = ({ exercise, participant }: Props) => {
 									field={field}
 									stepIdx={stepIdx}
 									fieldIdx={fieldIdx}
-									allAnswers={answers?.steps}
+									allAnswers={answers}
 									answer={fieldAnswer}
+									actions={actions}
 								/>
 							</FieldContainer>
 						)
@@ -89,8 +94,6 @@ export const Form = ({ exercise, participant }: Props) => {
 				activeStep={step}
 				onFinish={goBackToExerciseList}
 			/>
-
-			<Cursors users={multiplayer.users} awareness={multiplayer.awareness} />
 		</div>
 	)
 }

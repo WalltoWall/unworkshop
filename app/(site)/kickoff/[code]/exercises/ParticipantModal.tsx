@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { Drawer } from "vaul"
 import { Button } from "@/components/Button"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
@@ -11,23 +10,15 @@ interface ParticipantModalProps {
 	heading: string
 	message: string
 	code: string
-	onConfirm: () => void
+	onConfirmAction: () => void
 }
 
 export const ParticipantModal = ({
 	participantName,
 	heading,
 	message,
-	code,
-	onConfirm,
+	onConfirmAction,
 }: ParticipantModalProps) => {
-	const router = useRouter()
-
-	const handleConfirm = async () => {
-		await onConfirm()
-		router.push(`/kickoff/register?code=${code}`)
-	}
-
 	return (
 		<Drawer.Root shouldScaleBackground>
 			<Text style="copy" size={16} className="ml-4 mr-auto">
@@ -52,7 +43,7 @@ export const ParticipantModal = ({
 						</Drawer.Close>
 					</div>
 
-					<div className="flex flex-col">
+					<form className="flex flex-col" action={onConfirmAction}>
 						<Text
 							style="copy"
 							size={14}
@@ -61,10 +52,8 @@ export const ParticipantModal = ({
 							{message}
 						</Text>
 
-						<Button onClick={handleConfirm} className="mt-8">
-							Confirm
-						</Button>
-					</div>
+						<Button className="mt-8">Confirm</Button>
+					</form>
 				</Drawer.Content>
 			</Drawer.Portal>
 		</Drawer.Root>

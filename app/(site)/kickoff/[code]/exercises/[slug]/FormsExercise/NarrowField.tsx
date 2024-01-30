@@ -3,7 +3,6 @@ import React from "react"
 import { toast } from "sonner"
 import { Text } from "@/components/Text"
 import { pluralize } from "@/lib/pluralize"
-import { submitFieldAnswer } from "./actions"
 import type { FieldProps, FormFieldAnswer } from "./types"
 import { AnswersArray } from "./validators"
 
@@ -13,7 +12,7 @@ type Props = FieldProps<{
 	source: FormFieldAnswer
 }>
 
-export const NarrowField = ({ source, answer, ...props }: Props) => {
+export const NarrowField = ({ source, answer, actions, ...props }: Props) => {
 	if (source.type !== "List")
 		throw new Error(
 			"Narrow fields only support List field answers as a source.",
@@ -23,7 +22,6 @@ export const NarrowField = ({ source, answer, ...props }: Props) => {
 
 	const { max = Infinity } = props.field
 	const rForm = React.useRef<React.ElementRef<"form">>(null)
-	const [, startTransition] = React.useTransition()
 
 	const submitForm = () => {
 		if (!rForm.current || props.readOnly) return
@@ -31,13 +29,10 @@ export const NarrowField = ({ source, answer, ...props }: Props) => {
 		const data = new FormData(rForm.current)
 		const answers = AnswersArray.parse(data.getAll(INPUT_NAME))
 
-		startTransition(() => {
-			submitFieldAnswer({
-				answer: { type: "Narrow", responses: answers },
-				exerciseId: props.exerciseId,
-				fieldIdx: props.fieldIdx,
-				stepIdx: props.stepIdx,
-			})
+		actions.submitFieldAnswer({
+			answer: { type: "Narrow", responses: answers },
+			fieldIdx: props.fieldIdx,
+			stepIdx: props.stepIdx,
 		})
 	}
 

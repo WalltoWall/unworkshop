@@ -1,7 +1,5 @@
 import React from "react"
 import clsx from "clsx"
-import debounce from "just-debounce-it"
-import { submitFieldAnswer } from "./actions"
 import { AddButton } from "./AddButton"
 import { HighlightedResponses } from "./HighlightedResponses"
 import { Prompt } from "./Prompt"
@@ -58,7 +56,7 @@ type Props = FieldProps<{
 	source: FormFieldAnswer
 }>
 
-export const TaglineField = ({ source, answer, ...props }: Props) => {
+export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 	if (source.type !== "List")
 		throw new Error(
 			"Tagline fields only support List field answers as a source.",
@@ -66,49 +64,17 @@ export const TaglineField = ({ source, answer, ...props }: Props) => {
 	if (answer && answer.type !== "Tagline")
 		throw new Error("Invalid answer data found.")
 
-	const rForm = React.useRef<React.ElementRef<"form">>(null)
-	const [answerOne, setAnswerOne] = React.useState(
-		() => answer?.responses.at(0) ?? "",
-	)
-	const [answerTwo, setAnswerTwo] = React.useState(
-		() => answer?.responses.at(1) ?? null,
-	)
-	const [, startTransition] = React.useTransition()
+	const answerOne = answer?.responses.at(0) ?? ""
+	const answerTwo = answer?.responses.at(1)
 
-	const submitForm = React.useCallback(() => {
-		if (!rForm.current || props.readOnly) return
+	const handleChange = (answerOne: string, answerTwo?: string) => {
+		const answers = AnswersArray.parse([answerOne, answerTwo])
 
-		const data = new FormData(rForm.current)
-		const answers = AnswersArray.parse(data.getAll(INPUT_NAME))
-
-		startTransition(() => {
-			submitFieldAnswer({
-				answer: { type: "Tagline", responses: answers },
-				exerciseId: props.exerciseId,
-				fieldIdx: props.fieldIdx,
-				stepIdx: props.stepIdx,
-			})
+		actions.submitFieldAnswer({
+			answer: { type: "Tagline", responses: answers },
+			fieldIdx: props.fieldIdx,
+			stepIdx: props.stepIdx,
 		})
-	}, [props.exerciseId, props.fieldIdx, props.readOnly, props.stepIdx])
-
-	const debouncedSubmit = React.useMemo(
-		() => debounce(submitForm, 300),
-		[submitForm],
-	)
-
-	const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
-		e.preventDefault()
-		submitForm()
-	}
-
-	const handleChange = (
-		value: string,
-		setState:
-			| React.Dispatch<React.SetStateAction<string>>
-			| React.Dispatch<React.SetStateAction<string | null>>,
-	) => {
-		setState(value)
-		debouncedSubmit()
 	}
 
 	const sourceResponses = source.groups.at(0)?.responses ?? []
@@ -129,7 +95,7 @@ export const TaglineField = ({ source, answer, ...props }: Props) => {
 	const prompt = `Your brand in ${sourceResponses.length.toString()} words.`
 
 	return (
-		<form ref={rForm} onSubmit={handleSubmit}>
+		<div>
 			<Prompt num={props.fieldIdx + 1}>{prompt}</Prompt>
 
 			<HighlightedResponses
@@ -148,23 +114,26 @@ export const TaglineField = ({ source, answer, ...props }: Props) => {
 
 			<HighlighterTextarea
 				value={answerOne}
-				onChange={(e) => handleChange(e.currentTarget.value, setAnswerOne)}
+				onChange={(e) => handleChange(e.currentTarget.value, answerTwo)}
 				{...sharedInputProps}
 			/>
 
 			{answerTwo === null && !props.readOnly && (
-				<AddButton className="mt-2.5" onClick={() => setAnswerTwo("")}>
+				<AddButton
+					className="mt-2.5"
+					onClick={() => handleChange(answerOne, "")}
+				>
 					Add another response
 				</AddButton>
 			)}
 
-			{answerTwo !== null && (
+			{typeof answerTwo !== "undefined" && (
 				<HighlighterTextarea
 					value={answerTwo}
-					onChange={(e) => handleChange(e.currentTarget.value, setAnswerTwo)}
+					onChange={(e) => handleChange(answerOne, e.currentTarget.value)}
 					{...sharedInputProps}
 				/>
 			)}
-		</form>
+		</div>
 	)
 }

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 import { LightLayout } from "@/components/LightLayout"
 import { client } from "@/sanity/client"
 import { PARTICIPANT_COOKIE } from "@/constants"
@@ -14,6 +15,7 @@ const ExercisesLayout = async (props: {
 		"use server"
 
 		cookies().delete(PARTICIPANT_COOKIE)
+		redirect("/kickoff/register?code=" + props.params.code)
 	}
 
 	return (
@@ -25,7 +27,7 @@ const ExercisesLayout = async (props: {
 					heading="Not You?"
 					message="Press the confirm button to re-register under a new name."
 					code={props.params.code}
-					onConfirm={removeParticipantCookie}
+					onConfirmAction={removeParticipantCookie}
 				/>
 			}
 		>

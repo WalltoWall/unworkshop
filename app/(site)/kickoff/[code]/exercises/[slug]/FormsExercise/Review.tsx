@@ -1,17 +1,18 @@
-import clsx from "clsx"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
 import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
-import type { FormAnswer } from "./types"
+import type { FormStepAnswer } from "./types"
+import type { FormActions } from "./use-multiplayer-form"
 
 type Props = {
-	answers?: FormAnswer[]
+	allAnswers?: FormStepAnswer[]
+	actions: FormActions
 	exercise: ST["exercise"]
 }
 
-export const Review = ({ answers = [], exercise }: Props) => {
+export const Review = ({ allAnswers = [], exercise, actions }: Props) => {
 	const steps = exercise.form!.steps ?? []
 
 	return (
@@ -24,37 +25,37 @@ export const Review = ({ answers = [], exercise }: Props) => {
 				Please, finalize your answers
 			</Text>
 
-			{steps.map(
-				(step, stepIdx) =>
-					step.fields?.map((field, fieldIdx) => {
-						const stepAnswer = answers.at(stepIdx)
-						if (!stepAnswer)
-							throw new Error("No answer foudn for step: " + stepIdx + 1)
+			{steps.map((step, stepIdx) =>
+				step.fields?.map((field, fieldIdx) => {
+					const stepAnswer = allAnswers.at(stepIdx)
+					if (!stepAnswer)
+						throw new Error("No answer foudn for step: " + stepIdx + 1)
 
-						const fieldAnswer = stepAnswer.data.at(fieldIdx)
+					const fieldAnswer = stepAnswer.at(fieldIdx)
 
-						return (
-							<FieldContainer key={field._key}>
-								<Prompt
-									className="mb-5"
-									num={stepIdx + fieldIdx + 1}
-									additionalText={field.additionalText}
-								>
-									{field.prompt}
-								</Prompt>
+					return (
+						<FieldContainer key={field._key}>
+							<Prompt
+								className="mb-5"
+								num={stepIdx + fieldIdx + 1}
+								additionalText={field.additionalText}
+							>
+								{field.prompt}
+							</Prompt>
 
-								<FieldRenderer
-									exercise={exercise}
-									field={field}
-									stepIdx={stepIdx}
-									fieldIdx={fieldIdx}
-									allAnswers={answers}
-									answer={fieldAnswer}
-									readOnly
-								/>
-							</FieldContainer>
-						)
-					}),
+							<FieldRenderer
+								exercise={exercise}
+								field={field}
+								stepIdx={stepIdx}
+								fieldIdx={fieldIdx}
+								allAnswers={allAnswers}
+								answer={fieldAnswer}
+								readOnly
+								actions={actions}
+							/>
+						</FieldContainer>
+					)
+				}),
 			)}
 		</div>
 	)
