@@ -7,7 +7,11 @@ import {
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_SLIDERS_ANSWERS } from "./constants"
-import { type SliderAnswers, type SlidersAnswers } from "./types"
+import {
+	type Answer,
+	type SlidersAnswers,
+	type SlidersParticipant,
+} from "./types"
 
 export type UseMultiplayerSlidersArgs = {
 	stepIdx: number
@@ -33,17 +37,21 @@ export const useMultiplayerSliders = ({
 
 		// This function runs once we know a connection has been made to our
 		// backend and we've checked that data exists in Sanity.
-		multiplayer.doc.once("update", () => {
-			if (multiplayer.provider.ws?.OPEN) {
+		const onSync = (isSynced: boolean) => {
+			if (isSynced) {
 				const initialState = yMap.toJSON() as SlidersAnswers
 				state.participants = initialState.participants
 
 				unbind = bind(state, yMap)
 			}
-		})
+		}
+		multiplayer.provider.on("sync", onSync)
 
-		return () => unbind?.()
-	}, [multiplayer.doc, yMap, multiplayer.provider.ws?.OPEN, state])
+		return () => {
+			unbind?.()
+			multiplayer.provider.off("sync", onSync)
+		}
+	}, [multiplayer.provider, state, yMap])
 
 	const getStep = () => {
 		state.participants[participantId] ??= []
@@ -64,6 +72,26 @@ export const useMultiplayerSliders = ({
 			const step = getStep()
 
 			step.tomorrow = args.tomorrow
+		},
+
+		getAllAnswers: (args: { participants: Array<SlidersParticipant> }) => {
+			let allAnswers: Array<Answer> = []
+
+			args.participants.forEach((participant) => {
+				if (state.participants[participant._id]) {
+					console.log(state.participants[participant._id])
+					const p = (state.participants[participant._id] ??= [])
+					if (p.length < 0) return
+
+					p[stepIdx] ??= {}
+
+					if (Object.entries(p[stepIdx]).length > 0) {
+						allAnswers.push(p[stepIdx])
+					}
+				}
+			})
+
+			return allAnswers
 		},
 	}
 

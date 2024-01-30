@@ -4,6 +4,7 @@ import { PresenterHeader } from "../../PresenterHeader"
 import { BrainstormPresenterView } from "./_BrainstormExercise/BrainstormPresenterView"
 import { FormPresenterView } from "./_FormExercise/"
 import { QuadrantsPresenterView } from "./_QuadrantsExercise/QuadrantsPresenterView"
+import { SlidersPresenterView } from "./_SlidersExercise/SlidersPresenterView"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -31,6 +32,10 @@ const PresenterExercisePage = async (props: Props) => {
 				<QuadrantsPresenterView exercise={exercise} />
 			)}
 			{exercise.type === "form" && <FormPresenterView exercise={exercise} />}
+
+			{exercise.type === "sliders" && (
+				<SlidersPresenterView exercise={exercise} />
+			)}
 		</>
 	)
 }
