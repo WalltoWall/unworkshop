@@ -7,6 +7,8 @@ import type { ST } from "@/sanity/config"
 import { sanity } from "@/sanity/sanity-client"
 import { INITIAL_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
 import { type BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import { INITIAL_SLIDERS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/constants"
+import type { SlidersExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 import { ANSWERS_KEY } from "@/constants"
 
 export default class Server implements Party.Server {
@@ -52,6 +54,30 @@ export default class Server implements Party.Server {
 							initialState = INITIAL_ANSWERS
 						} else {
 							console.info("Existing answers found. Persisting data.")
+
+							initialState = exercise.answers
+						}
+
+						const state = proxy(initialState)
+						bind(state, yMap)
+
+						return yDoc
+					}
+					case "sliders": {
+						console.info("Found sliders exercise.")
+
+						const exercise = doc as SlidersExercise
+
+						let initialState: SlidersExercise["answers"]
+
+						if (!exercise.answers) {
+							console.info(
+								"No existing answers found. Creating initial sliders data.",
+							)
+
+							initialState = INITIAL_SLIDERS_ANSWERS
+						} else {
+							console.info("Found existing sliders answers. Persisting data.")
 
 							initialState = exercise.answers
 						}
