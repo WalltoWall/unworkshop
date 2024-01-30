@@ -3,15 +3,10 @@
 import React, { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
-import type { ST } from "@/sanity/config"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
-import type { Answer, Answers } from "./types"
-
-export type AnswerDispatch = {
-	newAnswer: Answer
-	slug: string
-}
+import type { QuadrantsExercise, QuadrantsParticipant } from "./types"
+import { useMultiplayerQuadrants } from "./use-multiplayer-quadrants"
 
 export type State =
 	| "today_pending"
@@ -20,41 +15,38 @@ export type State =
 	| "tomorrow_placed"
 	| "complete"
 
-type QuadrantStepsProps = {
-	answers: Answers
-	exerciseId: string
-	quadrants: NonNullable<ST["exercise"]["quadrants"]>
-	group: boolean
-	todayInstructions: ST["exercise"]["today_instructions"]
-	tomorrowInstructions: ST["exercise"]["tomorrow_instructions"]
-	finalInstructions: ST["exercise"]["finalize_instructions"]
+type QuadrantsClientProps = {
+	exercise: QuadrantsExercise
+	participant: QuadrantsParticipant
 	kickoffCode: string
 }
 
-export const QuadrantSteps = ({
-	answers,
-	exerciseId,
-	quadrants,
-	group,
-	todayInstructions,
-	tomorrowInstructions,
-	finalInstructions,
+export const QuadrantsClient = ({
+	exercise,
+	participant,
 	kickoffCode,
-}: QuadrantStepsProps) => {
+}: QuadrantsClientProps) => {
+	if (!exercise.quadrants)
+		throw new Error("Invalid Quadrant Exercise. No quadrants configured.")
+
 	const router = useRouter()
 	const searchParams = useSearchParams()
-	const step = parseInt(searchParams?.get("step") ?? "1")
-	const totalSteps = quadrants.length * 2
 
-	const [optimisticAnswers, answerDispatch] = React.useOptimistic<
-		Answers,
-		AnswerDispatch
-	>(answers, (state, action) => {
-		return {
-			...state,
-			[action.slug]: action.newAnswer,
-		}
+	const step = parseInt(searchParams?.get("step") ?? "1")
+	const totalSteps = exercise.quadrants.length * 2
+
+	const todayInstructions = exercise.today_instructions
+	const tomorrowInstructions = exercise.tomorrow_instructions
+	const finalInstructions = exercise.finalize_instructions
+
+	const currentQuadrantIdx = Math.ceil(step / 2) - 1
+	const currentQuadrant = exercise.quadrants.at(currentQuadrantIdx)
+
+	const { snap, actions } = useMultiplayerQuadrants({
+		exerciseId: exercise._id,
+		participantId: participant._id,
 	})
+	const participantAnswers = snap.participants?.[participant._id]
 
 	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {
@@ -62,17 +54,15 @@ export const QuadrantSteps = ({
 		if (step - 1 === totalSteps) {
 			return "complete"
 		}
-
 		const selectingForToday = step & 1
 		const currentQuadrantIdx = Math.ceil(step / 2) - 1
-		const currentQuadrant = quadrants.at(currentQuadrantIdx)!
-
+		const currentQuadrant = exercise.quadrants!.at(currentQuadrantIdx)!
 		if (selectingForToday) {
-			return answers[currentQuadrant.slug.current]?.today
+			return participantAnswers?.[currentQuadrant.slug.current]?.today
 				? "today_placed"
 				: "today_pending"
 		} else {
-			return answers[currentQuadrant.slug.current]?.tomorrow
+			return participantAnswers?.[currentQuadrant.slug.current]?.tomorrow
 				? "tomorrow_placed"
 				: "tomorrow_pending"
 		}
@@ -80,8 +70,6 @@ export const QuadrantSteps = ({
 
 	const [state, setState] = useState<State>(determineNextState(step))
 	const isDisabled = state === "today_pending" || state === "tomorrow_pending"
-	const currentQuadrantIdx = Math.ceil(step / 2) - 1
-	const currentQuadrant = quadrants.at(currentQuadrantIdx)
 
 	const onStepChange = (step: number) => {
 		setState(determineNextState(step))
@@ -110,7 +98,7 @@ export const QuadrantSteps = ({
 				/>
 
 				{state === "complete" ? (
-					quadrants.map((quadrant, index) => (
+					exercise.quadrants.map((quadrant, index) => (
 						<div key={quadrant._key}>
 							{index !== 0 && (
 								<div className="-ml-7 h-[0.125rem] w-[calc(100%+3.5rem)] bg-gray-90" />
@@ -118,12 +106,10 @@ export const QuadrantSteps = ({
 
 							<Quadrant
 								item={quadrant}
-								exerciseId={exerciseId}
-								isGroup={group}
-								answer={optimisticAnswers[quadrant.slug.current]}
+								answer={participantAnswers?.[quadrant.slug.current]}
 								state={state}
 								index={index}
-								answerDispatch={answerDispatch}
+								actions={actions}
 								onQuadrantClick={handleClick}
 							/>
 						</div>
@@ -132,12 +118,10 @@ export const QuadrantSteps = ({
 					<div key={currentQuadrant?._key}>
 						<Quadrant
 							item={currentQuadrant}
-							exerciseId={exerciseId}
-							isGroup={group}
-							answer={optimisticAnswers[currentQuadrant.slug.current]}
+							answer={participantAnswers?.[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}
-							answerDispatch={answerDispatch}
+							actions={actions}
 							onQuadrantClick={handleClick}
 						/>
 					</div>
@@ -154,3 +138,5 @@ export const QuadrantSteps = ({
 		</>
 	)
 }
+
+export default QuadrantsClient

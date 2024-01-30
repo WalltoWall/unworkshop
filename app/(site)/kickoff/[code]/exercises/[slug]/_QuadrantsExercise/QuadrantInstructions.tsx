@@ -1,7 +1,7 @@
 import { RichText, type RichTextContent } from "@/components/RichText"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
-import { type State } from "./QuadrantSteps"
+import { type State } from "./QuadrantsClient"
 
 const serializers = {
 	strong: ({ children }: { children?: string[] | React.ReactNode }) => (

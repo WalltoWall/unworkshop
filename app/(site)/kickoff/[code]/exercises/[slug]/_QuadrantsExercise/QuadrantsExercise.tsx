@@ -1,8 +1,12 @@
 import React from "react"
+import dynamic from "next/dynamic"
 import { client } from "@/sanity/client"
 import type { ST } from "@/sanity/config"
-import { QuadrantSteps } from "./QuadrantSteps"
 import type { QuadrantsParticipant } from "./types"
+
+const QuadrantsClient = dynamic(() => import("./QuadrantsClient"), {
+	ssr: false,
+})
 
 export interface QuadrantsExerciseProps {
 	exercise: ST["exercise"]
@@ -15,20 +19,13 @@ export const QuadrantsExercise = async ({
 }: QuadrantsExerciseProps) => {
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
-	const answers = participant.answers?.[exercise._id]?.answers ?? {}
-	const groups = exercise.groups ?? []
 
 	return (
 		<div className="mt-8 h-full">
 			{exercise.quadrants && (
-				<QuadrantSteps
-					answers={answers}
-					quadrants={exercise.quadrants}
-					exerciseId={exercise._id}
-					group={groups.length > 0}
-					todayInstructions={exercise.today_instructions}
-					tomorrowInstructions={exercise.tomorrow_instructions}
-					finalInstructions={exercise.finalize_instructions}
+				<QuadrantsClient
+					exercise={exercise}
+					participant={participant}
 					kickoffCode={kickoffCode}
 				/>
 			)}
