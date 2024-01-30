@@ -32,8 +32,6 @@ export const Form = ({ exercise, participant }: Props) => {
 		participantId: participant._id,
 	})
 
-	console.log(snap)
-
 	const step = StepParamSchema.parse(searchParams.get("step"))
 	const stepIdx = step - 1
 
@@ -50,6 +48,9 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	const goBackToExerciseList = () =>
 		router.push(`/kickoff/${params.code}/exercises`)
+
+	// TODO: Loading indicator
+	if (!multiplayer.provider.synced) return null
 
 	return (
 		<div className="mt-3 flex flex-[1_1_0] flex-col justify-between">

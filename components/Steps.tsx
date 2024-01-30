@@ -1,7 +1,9 @@
+import React from "react"
 import { usePathname, useRouter } from "next/navigation"
 import clsx from "clsx"
 import { Text } from "@/components/Text"
 import { Checkmark } from "./icons/Checkmark"
+import { Spinner } from "./Spinner"
 
 interface Props {
 	disabled?: boolean
@@ -22,19 +24,23 @@ export const Steps = ({
 }: Props) => {
 	const router = useRouter()
 	const pathname = usePathname()
+	const [isPending, startTransition] = React.useTransition()
 
 	if (!steps) return null
 
 	const goToStep = (step: number) => {
-		const params = new URLSearchParams({ step: step.toString() })
-		router.push(pathname + "?" + params.toString(), { scroll: false })
-
-		onNextStep?.(step)
+		startTransition(() => {
+			const params = new URLSearchParams({ step: step.toString() })
+			router.push(pathname + "?" + params.toString(), { scroll: false })
+			onNextStep?.(step)
+		})
 	}
 
 	const handleNext = () => {
 		if (activeStep - 1 === steps) {
-			onFinish?.()
+			startTransition(() => {
+				onFinish?.()
+			})
 		} else {
 			goToStep(activeStep + 1)
 		}
@@ -60,7 +66,9 @@ export const Steps = ({
 					onClick={handleNext}
 					disabled={disabled}
 				>
-					{activeStep - 1 === steps ? (
+					{isPending ? (
+						<Spinner />
+					) : activeStep - 1 === steps ? (
 						<Checkmark />
 					) : (
 						<svg viewBox="0 0 7.412 11.996" className="ml-0.5 w-[9px]">
