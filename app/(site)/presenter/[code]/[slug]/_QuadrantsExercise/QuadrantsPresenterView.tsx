@@ -19,20 +19,6 @@ export const QuadrantsPresenterView = async ({
 }: QuadrantsPresenterViewProps) => {
 	const participants = await client.findAllParticipantsInExercise(exercise._id)
 
-	// const participantAnswers = participants.flatMap(
-	// 	(participant) => participant.answers[exercise._id].answers,
-	// )
-
-	// const groupedAnswers = participantAnswers.reduce((group, answer) => {
-	// 	const slugs = Object.keys(answer)
-	// 	slugs.forEach((slug) => {
-	// 		group[slug] = group[slug] ?? []
-	// 		group[slug].push(answer[slug])
-	// 	})
-
-	// 	return group
-	// }, {})
-
 	return (
 		<div className="h-[calc(100vh-5.5rem)] px-8 py-12">
 			<QuadrantsPresenterViewClient
