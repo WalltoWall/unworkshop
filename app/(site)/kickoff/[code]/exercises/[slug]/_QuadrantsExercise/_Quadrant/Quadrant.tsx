@@ -7,8 +7,9 @@ import {
 import { debounce } from "perfect-debounce"
 import type { ST } from "@/sanity/config"
 import { submitQuadrantAction } from "../actions"
-import { type AnswerDispatch, type State } from "../QuadrantSteps"
+import { type State } from "../QuadrantsClient"
 import type { Answer } from "../types"
+import type { QuadrantsActions } from "../use-multiplayer-quadrants"
 import { QuadrantArrow } from "./QuadrantArrow"
 import { QuadrantAxes } from "./QuadrantAxes"
 import { QuadrantDraggable } from "./QuadrantDraggable"
@@ -21,12 +22,10 @@ type Day = "today" | "tomorrow"
 
 type QuadrantProps = {
 	item: NonNullable<ST["exercise"]["quadrants"]>[number]
-	exerciseId: string
-	isGroup: boolean
 	index: number
 	state: State
 	answer?: Answer
-	answerDispatch: (action: AnswerDispatch) => void
+	actions: QuadrantsActions
 	onQuadrantClick: () => void
 }
 
@@ -35,15 +34,12 @@ type QuadrantProps = {
 // something we want to run-by the larger team during review.
 export const Quadrant = ({
 	item,
-	exerciseId,
-	isGroup,
 	index,
 	state,
 	answer,
-	answerDispatch,
+	actions,
 	onQuadrantClick,
 }: QuadrantProps) => {
-	const [isPending, startTransition] = React.useTransition()
 	const [arrowData, setArrowData] = React.useState({
 		top: 0,
 		left: 0,
@@ -70,35 +66,29 @@ export const Quadrant = ({
 		}
 	}, [today, tomorrow])
 
-	React.useEffect(() => {
-		const onUnload = (e: BeforeUnloadEvent) => {
-			if (isPending) e.preventDefault()
-		}
-
-		window.addEventListener("beforeunload", onUnload)
-
-		return () => window.removeEventListener("beforeunload", onUnload)
-	}, [isPending])
-
 	const handleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
 		if (clickTarget?.current) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
+
 			const top =
 				((event.clientY - parentRect.top) / clickTarget.current.clientHeight) *
 				100
 			const left =
 				((event.clientX - parentRect.left) / clickTarget.current.clientWidth) *
 				100
-			let updatedAnswer = {
-				slug: item.slug.current,
-				newAnswer: {},
-			}
+
 			let type = "today" as Day
 			if (state === "tomorrow_pending" || state === "tomorrow_placed") {
 				type = "tomorrow"
 			}
 
-			await savePointLocations(updatedAnswer, top, left, type)
+			await actions.setPointValue({
+				slug: item.slug.current,
+				day: type,
+				top,
+				left,
+			})
+			onQuadrantClick()
 		}
 	}
 
@@ -107,11 +97,14 @@ export const Quadrant = ({
 			const { ref, type } = event.active.data.current!
 			if (ref) {
 				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
-				let updatedAnswer = {
+
+				await actions.setPointValue({
 					slug: item.slug.current,
-					newAnswer: {},
-				}
-				await savePointLocations(updatedAnswer, top, left, type)
+					day: type,
+					top,
+					left,
+				})
+				onQuadrantClick()
 			}
 		}
 	}
@@ -157,35 +150,6 @@ export const Quadrant = ({
 		left = left > 100 ? 100 : left < 0 ? 0 : left
 
 		return [top, left]
-	}
-
-	const savePointLocations = (
-		updatedAnswer: { slug: string; newAnswer: Answer },
-		top: number,
-		left: number,
-		type: Day,
-	) => {
-		if (type === "today") {
-			updatedAnswer.newAnswer = {
-				today: { top, left },
-				tomorrow,
-			}
-		} else if (type === "tomorrow") {
-			updatedAnswer.newAnswer = {
-				today,
-				tomorrow: { top, left },
-			}
-		}
-		startTransition(async () => {
-			answerDispatch(updatedAnswer)
-
-			await debouncedSubmitQuadrantAction({
-				answer: updatedAnswer,
-				exerciseId,
-				isGroup,
-			})
-		})
-		onQuadrantClick()
 	}
 
 	return (

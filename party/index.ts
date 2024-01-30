@@ -7,6 +7,8 @@ import type { ST } from "@/sanity/config"
 import { sanity } from "@/sanity/sanity-client"
 import { INITIAL_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
 import { type BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import { INITIAL_QUADRANTS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/contants"
+import type { QuadrantsExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
 import { INITIAL_SLIDERS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/constants"
 import type { SlidersExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 import type { FormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
@@ -65,6 +67,7 @@ export default class Server implements Party.Server {
 
 						return yDoc
 					}
+
 					case "sliders": {
 						console.info("Found sliders exercise.")
 
@@ -80,6 +83,31 @@ export default class Server implements Party.Server {
 							initialState = INITIAL_SLIDERS_ANSWERS
 						} else {
 							console.info("Found existing sliders answers. Persisting data.")
+
+							initialState = exercise.answers
+						}
+
+						const state = proxy(initialState)
+						bind(state, yMap)
+
+						return yDoc
+					}
+
+					case "quadrants": {
+						console.info("Found quadrants exercise.")
+
+						const exercise = doc as QuadrantsExercise
+
+						let initialState: QuadrantsExercise["answers"]
+
+						if (!exercise.answers) {
+							console.info(
+								"No existing answers found. Creating initial quadrants data.",
+							)
+
+							initialState = INITIAL_QUADRANTS_ANSWERS
+						} else {
+							console.info("Found existing quadrants answers. Persisting data.")
 
 							initialState = exercise.answers
 						}
