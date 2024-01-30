@@ -7,10 +7,10 @@ import {
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_QUADRANTS_ANSWERS } from "./contants"
-import type { QuadrantsAnswers, QuadrantsParticipant } from "./types"
+import type { Answer, QuadrantsAnswers, QuadrantsParticipant } from "./types"
 
 export type UseMultiplayerQuadrantsArgs = {
-	participantId: string
+	participantId?: string
 } & MultiplayerArgs
 export type QuadrantsActions = ReturnType<
 	typeof useMultiplayerQuadrants
@@ -49,12 +49,16 @@ export const useMultiplayerQuadrants = ({
 	}, [multiplayer.provider, state, yMap])
 
 	const getQuadrant = (slug: string) => {
-		state.participants[participantId] ??= {}
-		const participant = state.participants[participantId]
+		if (participantId) {
+			state.participants[participantId] ??= {}
+			const participant = state.participants[participantId]
 
-		participant[slug] ??= {}
-		const quadrant = participant[slug]
-		return quadrant
+			participant[slug] ??= {}
+			const quadrant = participant[slug]
+			return quadrant
+		}
+
+		return null
 	}
 
 	const actions = {
@@ -66,14 +70,33 @@ export const useMultiplayerQuadrants = ({
 		}) => {
 			const quadrant = getQuadrant(args.slug)
 
-			quadrant[args.day] = {
-				top: args.top,
-				left: args.left,
+			if (quadrant) {
+				quadrant[args.day] = {
+					top: args.top,
+					left: args.left,
+				}
 			}
 		},
 
 		getAllAnswers: (args: { participants: Array<QuadrantsParticipant> }) => {
-			return []
+			let allAnswers: { [key: string]: Array<Answer> } = {}
+
+			const participantAnswers = Object.values(state.participants)
+
+			allAnswers = participantAnswers.reduce(
+				(group: typeof allAnswers, answer) => {
+					const slugs = Object.keys(answer)
+					slugs.forEach((slug) => {
+						group[slug] = group[slug] ?? []
+						group[slug].push(answer[slug])
+					})
+
+					return group
+				},
+				{},
+			)
+
+			return allAnswers
 		},
 	}
 
