@@ -79,7 +79,6 @@ export const useMultiplayerSliders = ({
 
 			args.participants.forEach((participant) => {
 				if (state.participants[participant._id]) {
-					console.log(state.participants[participant._id])
 					const p = (state.participants[participant._id] ??= [])
 					if (p.length < 0) return
 

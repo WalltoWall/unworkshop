@@ -73,13 +73,13 @@ export const SlidersPresenterViewClient = ({
 								</div>
 							)}
 
-						{/* <SlidersBars
+						<SlidersBars
 							answers={answers}
 							images={
 								isFilled.image(slider.left_image) &&
 								isFilled.image(slider.right_image)
 							}
-						/> */}
+						/>
 					</div>
 
 					<div className="mt-10 flex w-full items-end justify-between">

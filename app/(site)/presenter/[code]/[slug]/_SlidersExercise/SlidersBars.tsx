@@ -1,10 +1,10 @@
 "use client"
 
 import React from "react"
-import type { SlidersAnswers } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
+import type { SliderAnswers } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 
 interface barProps {
-	answers: SlidersAnswers
+	answers: SliderAnswers
 	images: boolean
 }
 
@@ -19,12 +19,12 @@ export const SlidersBars = ({ answers, images }: barProps) => {
 			let countTomorrow = 0
 
 			// find answers that match iteration
-			// answers[participantId].map(
-			// 	(answer) => (
-			// 		answer.today == i ? countToday++ : countToday,
-			// 		answer.tomorrow == i ? countTomorrow++ : countTomorrow
-			// 	),
-			// )
+			answers.map(
+				(answer) => (
+					answer.today == i ? countToday++ : countToday,
+					answer.tomorrow == i ? countTomorrow++ : countTomorrow
+				),
+			)
 
 			// find a percentage of answers.
 			let allAnswers = countToday + countTomorrow
