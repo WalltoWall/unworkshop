@@ -13,12 +13,16 @@ import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
 import { Spinner } from "@/components/Spinner"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
-import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
+import type {
+	Answer,
+	QuadrantsParticipant,
+} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
+import { useMultiplayerQuadrants } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/use-multiplayer-quadrants"
 import { PresentQuadrant } from "./PresentQuadrant"
 
 interface PresenterViewProps {
 	exercise: ST["exercise"]
-	answers: Record<string, Answer[]>
+	participants: Array<QuadrantsParticipant>
 }
 
 const colors = [
@@ -33,12 +37,21 @@ const colors = [
 
 export const QuadrantsPresenterViewClient = ({
 	exercise,
-	answers,
+	participants,
 }: PresenterViewProps) => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
+
+	const { actions, multiplayer, snap } = useMultiplayerQuadrants({
+		exerciseId: exercise._id,
+	})
+
+	const answers = actions.getAllAnswers({
+		participants,
+	})
+
 	const [isPending, startTransition] = React.useTransition()
 
 	const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -245,3 +258,5 @@ const ArrowButton = ({
 		{loading ? <Spinner /> : <Arrow />}
 	</button>
 )
+
+export default QuadrantsPresenterViewClient

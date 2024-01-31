@@ -68,13 +68,12 @@ export const PresentQuadrant = ({
 					)}
 				</div>
 
-				{answers.map((answer, index) => (
+				{answers?.map((answer, index) => (
 					<QuadrantAnswer
 						key={index}
 						answer={answer}
 						showToday={showToday}
 						showTomorrow={showTomorrow}
-						showLabels={showLabels}
 						showLines={showLines}
 						color={color}
 						animating={animating}

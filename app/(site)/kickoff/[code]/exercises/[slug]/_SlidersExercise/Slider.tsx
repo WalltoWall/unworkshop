@@ -1,8 +1,7 @@
-import React, { useState } from "react"
+import React from "react"
 import Image from "next/image"
 import { Text } from "@/components/Text"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
-import { submitSliderAction } from "./actions"
 import { type SliderItem } from "./SlidersExercise"
 import type { Answer } from "./types"
 import type { SliderActions } from "./use-multiplayer-sliders"
@@ -13,13 +12,14 @@ type SliderProps = {
 	actions: SliderActions
 }
 
+// TODO: Images need to be fixed to actual aspect ratio,
+// Make today tomorrow text editable via CMS
+
 export const Slider = ({ item, answer, actions }: SliderProps) => {
-	const [values, setValues] = useState({
+	const values = {
 		todayValue: answer?.today || 3,
 		tomorrowValue: answer?.tomorrow || 3,
-	})
-
-	const formRef = React.useRef<HTMLFormElement>(null)
+	}
 
 	const fullRange = 6
 
@@ -50,7 +50,7 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 		<div className="mt-8" key={item._key}>
 			<h3>{item.question_text}</h3>
 
-			<form action={submitSliderAction} ref={formRef}>
+			<div>
 				{/* TODAY */}
 				<div className="mt-2 rounded-lg bg-gray-97 p-4">
 					<Text>Where are we today?</Text>
@@ -139,10 +139,6 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						value={values.todayValue}
 						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
 						onChange={(e) => {
-							setValues({
-								...values,
-								todayValue: parseInt(e.target.value),
-							})
 							actions.setTodayValue({
 								today: parseInt(e.target.value),
 							})
@@ -245,11 +241,6 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						value={values.tomorrowValue}
 						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
 						onChange={(e) => {
-							setValues({
-								...values,
-								tomorrowValue: parseInt(e.target.value),
-							})
-
 							actions.setTomorrowValue({
 								tomorrow: parseInt(e.target.value),
 							})
@@ -260,7 +251,7 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						<Text>{item.right_value}</Text>
 					</div>
 				</div>
-			</form>
+			</div>
 		</div>
 	)
 }

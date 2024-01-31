@@ -6,7 +6,6 @@ interface Props {
 	answer: Answer
 	showToday: boolean
 	showTomorrow: boolean
-	showLabels: boolean
 	showLines: boolean
 	color: string
 	animating: boolean
@@ -16,7 +15,6 @@ export const QuadrantAnswer = ({
 	answer,
 	showToday,
 	showTomorrow,
-	showLabels,
 	showLines,
 	color,
 	animating,
@@ -39,7 +37,7 @@ export const QuadrantAnswer = ({
 
 	React.useEffect(() => {
 		getArrowStyles()
-	}, [showLabels])
+	}, [today, tomorrow])
 
 	const getArrowStyles = () => {
 		if (todayRef.current && tomorrowRef.current) {
