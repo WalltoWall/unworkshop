@@ -1,6 +1,7 @@
 "use client"
 
 import { useParams, useRouter, useSearchParams } from "next/navigation"
+import { Spinner } from "@/components/Spinner"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { Slider } from "./Slider"
@@ -24,17 +25,20 @@ export const SlidersClient = ({ exercise, participant }: Props) => {
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const stepIdx = step - 1
 
-	const { snap, actions } = useMultiplayerSliders({
+	const { snap, actions, multiplayer } = useMultiplayerSliders({
 		exerciseId: exercise._id,
-		stepIdx,
 		participantId: participant._id,
+		slug: exercise.sliders[stepIdx].slug.current,
 	})
 
 	const sliders = exercise.sliders
 	const participantAnswers = snap.participants[participant._id]
 	let answer = {}
 
-	if (participantAnswers) answer = participantAnswers[stepIdx]
+	if (participantAnswers)
+		answer = participantAnswers[exercise.sliders[stepIdx].slug.current]
+
+	if (!multiplayer.provider.synced) return null
 
 	return (
 		<div className="mt-8">

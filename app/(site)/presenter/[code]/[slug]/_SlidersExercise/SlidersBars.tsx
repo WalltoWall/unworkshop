@@ -1,86 +1,84 @@
 "use client"
 
 import React from "react"
-import type { SliderAnswers } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
+import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 
 interface barProps {
-	answers: SliderAnswers
-	images: boolean
+	answers: Array<Answer>
+	showImages: boolean
+	barColor: string
+	showNumbers: boolean
 }
 
-export const SlidersBars = ({ answers, images }: barProps) => {
-	const [color, setColor] = React.useState("#fecb2f")
-	const Bars = (hasImages: boolean) => {
-		let content = []
-
-		// 1 = minRange and 6 = max slider range.
-		for (let i = 1; i <= 6; i++) {
-			let countToday = 0
-			let countTomorrow = 0
-
-			// find answers that match iteration
-			answers.map(
-				(answer) => (
-					answer.today == i ? countToday++ : countToday,
-					answer.tomorrow == i ? countTomorrow++ : countTomorrow
-				),
-			)
-
-			// find a percentage of answers.
-			let allAnswers = countToday + countTomorrow
-			let todayResults = (countToday / allAnswers) * 100
-			let tomorrowResults = (countTomorrow / allAnswers) * 100
-
-			// push html to the array
-			content.push(
-				<div
-					key={i}
-					className="flex h-full w-full items-end justify-between gap-2"
-				>
-					<div
-						className={"bg-yellow-68 relative block w-full max-w-[4rem]"}
-						style={{
-							height: countToday == 0 ? "1rem" : `${todayResults}%`,
-						}}
-					>
-						{!hasImages && (
-							<span className="absolute -top-6 z-20 w-full text-center">
-								{countToday}
-							</span>
-						)}
-					</div>
-					<div
-						key={i}
-						className={"bg-yellow-68 relative block w-full max-w-[4rem]"}
-						style={{
-							height: countTomorrow == 0 ? "1rem" : `${tomorrowResults}%`,
-							backgroundImage: `repeating-linear-gradient(-45deg,${color},${color} 2px,rgba(0,0,0,0) 2px,rgba(0,0,0,0) 18px)`,
-							backgroundColor: "transparent",
-							border: `2px solid ${color}`,
-							borderBottom: `none`,
-						}}
-					>
-						{!hasImages && (
-							<span className="absolute -top-6 z-20 w-full text-center">
-								{countTomorrow}
-							</span>
-						)}
-					</div>
-				</div>,
-			)
-		}
-		return content
-	}
+export const SlidersBars = ({
+	answers,
+	barColor,
+	showNumbers,
+	showImages,
+}: barProps) => {
+	let today = 0
+	let tomorrow = 0
+	const fakeArray = Array(6).fill("")
 
 	return (
 		<div
-			className="left-0 right-0 top-0 flex w-full items-end justify-evenly gap-4 px-4 pt-8 lg:gap-8"
+			className="left-0 right-0 top-0 flex w-full min-w-0 items-end justify-evenly px-4 pt-8 [flex:0_0_100%]"
 			style={{
-				position: images ? "absolute" : "static",
-				height: images ? "calc(50vh - 0.666rem)" : "100%",
+				position: showImages ? "absolute" : "static",
+				height: showImages ? "calc(45vh - 0.666rem)" : "100%",
 			}}
 		>
-			{Bars(images)}
+			{fakeArray.map((_val, idx) => {
+				today = 0
+				tomorrow = 0
+
+				answers.map((answer) => {
+					if (answer.today === idx + 1) today++
+					if (answer.tomorrow === idx + 1) tomorrow++
+				})
+
+				return (
+					<div
+						key={`today-tomorrow-${idx}`}
+						className="flex h-full w-full items-end gap-2"
+					>
+						<div
+							className="relative w-full max-w-[4rem]"
+							style={{
+								height:
+									today == 0
+										? "1rem"
+										: `${(today / (today + tomorrow)) * 100}%`,
+								backgroundColor: barColor,
+							}}
+						>
+							{showNumbers && (
+								<span className="absolute -top-6 z-20 w-full text-center">
+									{today}
+								</span>
+							)}
+						</div>
+						<div
+							className="relative w-full max-w-[4rem]"
+							style={{
+								height:
+									tomorrow == 0
+										? "1rem"
+										: `${(tomorrow / (today + tomorrow)) * 100}%`,
+								backgroundImage: `repeating-linear-gradient(-45deg,${barColor},${barColor} 2px,rgba(0,0,0,0) 2px,rgba(0,0,0,0) 18px)`,
+								backgroundColor: "transparent",
+								border: `2px solid ${barColor}`,
+							}}
+						>
+							{showNumbers && (
+								<span className="absolute -top-6 z-20 w-full text-center">
+									{tomorrow}
+								</span>
+							)}
+						</div>
+					</div>
+				)
+			})}
 		</div>
 	)
 }

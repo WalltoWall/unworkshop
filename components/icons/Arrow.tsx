@@ -1,9 +1,15 @@
 export const Arrow = (props: React.ComponentPropsWithoutRef<"svg">) => {
 	return (
-		<svg viewBox="0 0 14 12" {...props}>
-			<g fill="none" fillRule="evenodd" stroke="currentColor" strokeWidth={1.5}>
-				<path strokeLinecap="round" strokeLinejoin="round" d="M0 6h14" />
-				<path strokeLinecap="square" d="m8 0 6 6-6 6" />
+		<svg {...props} viewBox="0 0 32 32">
+			<g fill="none" fillRule="evenodd">
+				<path d="M0 0h32v32H0z" />
+				<path
+					stroke="currentColor"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+					strokeWidth="3"
+					d="M27 16H5M14 7l-9 9 9 9"
+				/>
 			</g>
 		</svg>
 	)
