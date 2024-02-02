@@ -7,7 +7,7 @@ import {
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_QUADRANTS_ANSWERS } from "./contants"
-import type { Answer, QuadrantsAnswers, QuadrantsParticipant } from "./types"
+import type { Answer, QuadrantsAnswers } from "./types"
 
 export type UseMultiplayerQuadrantsArgs = {
 	participantId?: string
@@ -83,7 +83,7 @@ export const useMultiplayerQuadrants = ({
 			}
 		},
 
-		getAllAnswers: (args: { participants: Array<QuadrantsParticipant> }) => {
+		getAllAnswers: () => {
 			let allAnswers: { [key: string]: Array<Answer> } = {}
 
 			const participantAnswers = Object.values(state.participants)

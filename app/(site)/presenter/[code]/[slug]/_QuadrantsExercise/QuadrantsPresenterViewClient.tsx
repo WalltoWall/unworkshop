@@ -13,16 +13,11 @@ import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
 import { Spinner } from "@/components/Spinner"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
-import type {
-	Answer,
-	QuadrantsParticipant,
-} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
 import { useMultiplayerQuadrants } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/use-multiplayer-quadrants"
 import { PresentQuadrant } from "./PresentQuadrant"
 
 interface PresenterViewProps {
 	exercise: ST["exercise"]
-	participants: Array<QuadrantsParticipant>
 }
 
 const colors = [
@@ -37,20 +32,17 @@ const colors = [
 
 export const QuadrantsPresenterViewClient = ({
 	exercise,
-	participants,
 }: PresenterViewProps) => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
 
-	const { actions, multiplayer, snap } = useMultiplayerQuadrants({
+	const { actions } = useMultiplayerQuadrants({
 		exerciseId: exercise._id,
 	})
 
-	const answers = actions.getAllAnswers({
-		participants,
-	})
+	const answers = actions.getAllAnswers()
 
 	const [isPending, startTransition] = React.useTransition()
 
