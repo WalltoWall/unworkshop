@@ -5,6 +5,7 @@ import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
 import { FormExercise } from "./FormsExercise"
 import { InstructionsModal } from "./InstructionsModal"
+import { RoleHeader } from "./RoleHeader"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -16,6 +17,8 @@ const ExercisePage = async (props: Props) => {
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
+			<RoleHeader exercise={exercise} />
+
 			<InstructionsModal
 				exerciseName={exercise.name}
 				instructions={exercise.instructions}

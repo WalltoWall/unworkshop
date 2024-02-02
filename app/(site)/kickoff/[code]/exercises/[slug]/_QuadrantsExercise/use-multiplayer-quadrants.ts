@@ -36,6 +36,7 @@ export const useMultiplayerQuadrants = ({
 			if (isSynced) {
 				const initialState = yMap.toJSON() as QuadrantsAnswers
 				state.participants = initialState.participants
+				state.groups = initialState.groups
 
 				unbind = bind(state, yMap)
 			}
@@ -50,8 +51,12 @@ export const useMultiplayerQuadrants = ({
 
 	const getQuadrant = (slug: string) => {
 		if (participantId) {
-			state.participants[participantId] ??= {}
-			const participant = state.participants[participantId]
+			const group = state.groups?.[participantId]
+
+			const participantOrGroupId = group ? group.slug : participantId
+
+			state.participants[participantOrGroupId] ??= {}
+			const participant = state.participants[participantOrGroupId]
 
 			participant[slug] ??= {}
 			const quadrant = participant[slug]
