@@ -32,8 +32,6 @@ export const Form = ({ exercise, participant }: Props) => {
 		participantId: participant._id,
 	})
 
-	console.log(snap)
-
 	const step = StepParamSchema.parse(searchParams.get("step"))
 	const stepIdx = step - 1
 

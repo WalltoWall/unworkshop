@@ -2,6 +2,8 @@ import React from "react"
 import dynamic from "next/dynamic"
 import { client } from "@/sanity/client"
 import type { ST } from "@/sanity/config"
+import { InstructionsModal } from "../InstructionsModal"
+import { RoleHeader } from "../RoleHeader"
 import type { QuadrantsParticipant } from "./types"
 
 const QuadrantsClient = dynamic(() => import("./QuadrantsClient"), {
@@ -21,14 +23,23 @@ export const QuadrantsExercise = async ({
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
 
 	return (
-		<div className="mt-8 h-full">
-			{exercise.quadrants && (
-				<QuadrantsClient
-					exercise={exercise}
-					participant={participant}
-					kickoffCode={kickoffCode}
-				/>
-			)}
-		</div>
+		<>
+			<RoleHeader exercise={exercise} participantId={participant._id} />
+
+			<InstructionsModal
+				exerciseName={exercise.name}
+				instructions={exercise.instructions}
+			/>
+
+			<div className="mt-8 h-full">
+				{exercise.quadrants && (
+					<QuadrantsClient
+						exercise={exercise}
+						participant={participant}
+						kickoffCode={kickoffCode}
+					/>
+				)}
+			</div>
+		</>
 	)
 }

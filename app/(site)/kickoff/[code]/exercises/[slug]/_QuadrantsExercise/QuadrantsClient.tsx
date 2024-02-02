@@ -49,8 +49,6 @@ export const QuadrantsClient = ({
 	})
 	const { answers, role } = useAnswers(snap, participant._id)
 
-	console.log(snap)
-
 	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {
 		// We are on the last quadrant, so we need to mark this is as complete.
