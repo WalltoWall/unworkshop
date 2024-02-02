@@ -1,5 +1,6 @@
 import React from "react"
 import Image from "next/image"
+import clsx from "clsx"
 import { Text } from "@/components/Text"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
 import { type SliderItem } from "./SlidersExercise"
@@ -23,28 +24,10 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 
 	const fullRange = 6
 
-	const widthCalc = (value: number, inverse: boolean) => {
-		/* Notes:
-		 * 7 leaves ~14% width for the number to have space to rotate.
-		 *
-		 * inverse subtracts from 100. Columns that need larger widths
-		 * from smaller range values will be accurate.
-		 */
-
-		return inverse ? 100 - (value / 7) * 100 : (value / 7) * 100
-	}
-
-	const grayScaleCalc = (value: number, inverse: boolean) => {
-		/*
-		 * This makes 1's into 0's so that the grayScale() filter can
-		 * recieve a 0 instead of 0.16 aka 1/6.
-		 */
-		const adjustedValue = value == 1 ? 0 : value
-
-		return inverse
-			? 100 - (adjustedValue / fullRange) * 100
-			: (adjustedValue / fullRange) * 100
-	}
+	const leftToday = (values.todayValue - 1) / (fullRange - 1)
+	const leftTomorrow = (values.tomorrowValue - 1) / (fullRange - 1)
+	const rightToday = 1 - leftToday
+	const rightTomorrow = 1 - leftTomorrow
 
 	return (
 		<div className="mt-8" key={item._key}>
@@ -60,36 +43,29 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 								<Image
 									src={urlFor(item.left_image).url()!}
 									alt={altFor(item.left_image)}
-									className="h-full w-full object-cover object-center opacity-100 transition-[filter] transition-opacity"
+									className="h-full w-full object-cover object-center opacity-100 duration-300"
 									width={300}
 									height={300}
 									style={{
 										opacity: 1.1 - values.todayValue / 10,
-										filter: `grayScale(${grayScaleCalc(values.todayValue, false) + "%"})`,
+										filter: `grayScale(${leftToday * 100 + "%"})`,
 									}}
 								/>
 							</div>
 						) : (
 							<div
-								className="flex h-full items-center justify-center bg-pink-85 px-2 transition-[width]"
+								className="flex h-full min-w-min items-center justify-center bg-pink-85 px-2 text-center transition-[width]"
 								style={{
-									width: widthCalc(values.todayValue, true) + "%",
+									width: leftToday * 100 + "%",
 								}}
 							>
 								<p
-									className="uppercase transition-[font-size] transition-[transform] font-heading capsize"
-									style={{
-										transform:
-											values.todayValue == fullRange
-												? "rotate(-90deg)"
-												: "rotate(0deg)",
-									}}
+									className={clsx(
+										"uppercase transition font-heading",
+										values.todayValue === 1 && "[writing-mode:vertical-lr]",
+									)}
 								>
-									<svg className="w-full" viewBox="0 0 75 18">
-										<text x="0" y="15">
-											{item.left_value}
-										</text>
-									</svg>
+									{item.left_value}
 								</p>
 							</div>
 						)}
@@ -99,34 +75,29 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 								<Image
 									src={urlFor(item.right_image).url()!}
 									alt={altFor(item.right_image)}
-									className="h-full w-full object-cover object-center opacity-100 transition-[filter] transition-opacity"
+									className="h-full w-full object-cover object-center opacity-100 duration-300"
 									width={300}
 									height={300}
 									style={{
 										opacity: 0.4 + values.todayValue / 10,
-										filter: `grayScale(${grayScaleCalc(values.todayValue, true) + "%"})`,
+										filter: `grayScale(${rightToday * 100 + "%"})`,
 									}}
 								/>
 							</div>
 						) : (
 							<div
-								className="flex h-full items-center justify-center bg-green-78 px-2 transition-[width]"
+								className="flex h-full min-w-min items-center justify-center bg-green-78 px-2 text-center transition-[width]"
 								style={{
-									width: widthCalc(values.todayValue, false) + "%",
+									width: rightToday * 100 + "%",
 								}}
 							>
 								<p
-									className="w-full uppercase transition-[font-size] transition-[transform] font-heading capsize"
-									style={{
-										transform:
-											values.todayValue == 1 ? "rotate(90deg)" : "rotate(0deg)",
-									}}
+									className={clsx(
+										"w-full uppercase transition font-heading",
+										values.todayValue === 6 && "[writing-mode:vertical-rl]",
+									)}
 								>
-									<svg className="w-full" viewBox="0 0 75 18">
-										<text x="0" y="15">
-											{item.right_value}
-										</text>
-									</svg>
+									{item.right_value}
 								</p>
 							</div>
 						)}
@@ -159,36 +130,29 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 								<Image
 									src={urlFor(item.left_image).url()!}
 									alt={altFor(item.left_image)}
-									className="h-full w-full object-cover object-center opacity-100 transition-[filter] transition-opacity"
+									className="h-full w-full object-cover object-center opacity-100 transition"
 									width={300}
 									height={300}
 									style={{
 										opacity: 1.1 - values.tomorrowValue / 10,
-										filter: `grayScale(${grayScaleCalc(values.tomorrowValue, false) + "%"})`,
+										filter: `grayScale(${leftTomorrow * 100 + "%"})`,
 									}}
 								/>
 							</div>
 						) : (
 							<div
-								className="flex h-full items-center justify-center bg-pink-85 px-2 transition-[width]"
+								className="flex h-full min-w-min items-center justify-center bg-pink-85 px-2 text-center transition-[width]"
 								style={{
-									width: widthCalc(values.tomorrowValue, true) + "%",
+									width: leftTomorrow * 100 + "%",
 								}}
 							>
 								<p
-									className="uppercase transition-[font-size] transition-[transform] font-heading capsize"
-									style={{
-										transform:
-											values.tomorrowValue == fullRange
-												? "rotate(-90deg)"
-												: "rotate(0deg)",
-									}}
+									className={clsx(
+										"uppercase transition font-heading",
+										values.tomorrowValue === 1 && "[writing-mode:vertical-lr]",
+									)}
 								>
-									<svg className="w-full" viewBox="0 0 75 18">
-										<text x="0" y="15">
-											{item.left_value}
-										</text>
-									</svg>
+									{item.left_value}
 								</p>
 							</div>
 						)}
@@ -198,36 +162,29 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 								<Image
 									src={urlFor(item.right_image).url()!}
 									alt={altFor(item.right_image)}
-									className="h-full w-full object-cover object-center opacity-100 transition-[filter] transition-opacity"
+									className="h-full w-full object-cover object-center opacity-100 transition"
 									width={300}
 									height={300}
 									style={{
 										opacity: 0.4 + values.tomorrowValue / 10,
-										filter: `grayScale(${grayScaleCalc(values.tomorrowValue, true) + "%"})`,
+										filter: `grayScale(${rightTomorrow * 100 + "%"})`,
 									}}
 								/>
 							</div>
 						) : (
 							<div
-								className="flex h-full items-center justify-center bg-green-78 px-2 transition-[width]"
+								className="flex h-full min-w-min items-center justify-center bg-green-78 px-2 text-center transition-[width]"
 								style={{
-									width: widthCalc(values.tomorrowValue, false) + "%",
+									width: rightTomorrow * 100 + "%",
 								}}
 							>
 								<p
-									className="w-full uppercase transition-[font-size] transition-[transform] font-heading capsize"
-									style={{
-										transform:
-											values.tomorrowValue == 1
-												? "rotate(90deg)"
-												: "rotate(0deg)",
-									}}
+									className={clsx(
+										"w-full uppercase transition font-heading",
+										values.tomorrowValue === 6 && "[writing-mode:vertical-rl]",
+									)}
 								>
-									<svg className="w-full" viewBox="0 0 75 18">
-										<text x="0" y="15">
-											{item.right_value}
-										</text>
-									</svg>
+									{item.right_value}
 								</p>
 							</div>
 						)}

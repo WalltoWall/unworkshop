@@ -7,21 +7,17 @@ import {
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_SLIDERS_ANSWERS } from "./constants"
-import {
-	type Answer,
-	type SlidersAnswers,
-	type SlidersParticipant,
-} from "./types"
+import { type Answer, type SlidersAnswers } from "./types"
 
 export type UseMultiplayerSlidersArgs = {
-	stepIdx: number
 	participantId: string
+	slug: string
 } & MultiplayerArgs
 export type SliderActions = ReturnType<typeof useMultiplayerSliders>["actions"]
 
 export const useMultiplayerSliders = ({
-	stepIdx,
 	participantId,
+	slug,
 	...args
 }: UseMultiplayerSlidersArgs) => {
 	const multiplayer = useMultiplayer(args)
@@ -53,44 +49,25 @@ export const useMultiplayerSliders = ({
 		}
 	}, [multiplayer.provider, state, yMap])
 
-	const getStep = () => {
-		state.participants[participantId] ??= []
+	const getSlider = () => {
+		state.participants[participantId] ??= {}
 		const participant = state.participants[participantId]
-		participant[stepIdx] ??= {}
-		const step = participant[stepIdx]
+		participant[slug] ??= {}
+		const step = participant[slug]
 
 		return step
 	}
 
 	const actions = {
 		setTodayValue: (args: { today: number }) => {
-			const step = getStep()
+			const step = getSlider()
 
 			step.today = args.today
 		},
 		setTomorrowValue: (args: { tomorrow: number }) => {
-			const step = getStep()
+			const step = getSlider()
 
 			step.tomorrow = args.tomorrow
-		},
-
-		getAllAnswers: (args: { participants: Array<SlidersParticipant> }) => {
-			let allAnswers: Array<Answer> = []
-
-			args.participants.forEach((participant) => {
-				if (state.participants[participant._id]) {
-					const p = (state.participants[participant._id] ??= [])
-					if (p.length < 0) return
-
-					p[stepIdx] ??= {}
-
-					if (Object.entries(p[stepIdx]).length > 0) {
-						allAnswers.push(p[stepIdx])
-					}
-				}
-			})
-
-			return allAnswers
 		},
 	}
 

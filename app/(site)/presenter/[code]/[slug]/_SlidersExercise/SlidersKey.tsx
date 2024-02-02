@@ -3,8 +3,12 @@
 import React from "react"
 import { Text } from "@/components/Text"
 
-export const SlidersKey = () => {
-	const [color, setColor] = React.useState("#fecb2f")
+interface SlidersKeyProps {
+	barColor: string
+}
+
+export const SlidersKey = ({ barColor }: SlidersKeyProps) => {
+	const [color] = React.useState(barColor)
 
 	return (
 		<div className="mb-8 inline-block rounded-2xl bg-black px-5 py-4 text-white">

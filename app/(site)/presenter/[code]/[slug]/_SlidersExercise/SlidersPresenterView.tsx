@@ -22,15 +22,11 @@ export const SlidersPresenterView = async ({
 }: SlidersPresenterViewProps) => {
 	const participant = await client.findParticipantOrThrow<SlidersParticipant>()
 
-	const allParticipants =
-		await client.findAllParticipantsInExercise<SlidersParticipant>(exercise._id)
-
 	return (
 		<div className="px-8 pt-12">
 			<SlidersPresenterViewClient
 				exercise={exercise}
 				participantId={participant._id}
-				allParticipants={allParticipants}
 			/>
 		</div>
 	)

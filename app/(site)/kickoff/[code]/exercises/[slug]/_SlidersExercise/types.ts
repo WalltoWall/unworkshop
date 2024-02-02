@@ -6,7 +6,9 @@ export type Answer = {
 	participantOrGroupId?: string
 }
 
-export type SliderAnswers = Array<Answer>
+export type SliderAnswers = {
+	[slug: string]: Answer
+}
 
 export type SlidersParticipant = ST["participant"]
 
