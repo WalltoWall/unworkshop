@@ -166,6 +166,20 @@ export const Exercise = defineType({
 							validation: (Rule) => Rule.required(),
 						}),
 						defineField({
+							name: "today_text",
+							title: "Today Text",
+							description: "Text that will be shown above the today slider.",
+							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
+							name: "tomorrow_text",
+							title: "Tomorrow Text",
+							description: "Text that will be shown above the tomrrow slider.",
+							type: "string",
+							validation: (Rule) => Rule.required(),
+						}),
+						defineField({
 							name: "slug",
 							title: "Slug",
 							description: "Determines the URL of the slider.",

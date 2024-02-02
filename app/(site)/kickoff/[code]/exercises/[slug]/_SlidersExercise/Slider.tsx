@@ -14,7 +14,6 @@ type SliderProps = {
 }
 
 // TODO: Images need to be fixed to actual aspect ratio,
-// Make today tomorrow text editable via CMS
 
 export const Slider = ({ item, answer, actions }: SliderProps) => {
 	const values = {
@@ -36,7 +35,7 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 			<div>
 				{/* TODAY */}
 				<div className="mt-2 rounded-lg bg-gray-97 p-4">
-					<Text>Where are we today?</Text>
+					<Text>{item.today_text}</Text>
 					<div className="relative my-3 flex h-32 justify-between overflow-hidden rounded-lg">
 						{isFilled.image(item.left_image) ? (
 							<div className="h-32 w-1/2 bg-black">
@@ -123,7 +122,7 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 
 				{/* TOMORROW */}
 				<div className="mt-8 rounded-lg bg-gray-97 p-4">
-					<Text>Where are we tomorrow?</Text>
+					<Text>{item.tomorrow_text}</Text>
 					<div className="relative my-3 flex h-32 justify-between overflow-hidden rounded-lg">
 						{isFilled.image(item.left_image) ? (
 							<div className="h-32 w-1/2 bg-black">
