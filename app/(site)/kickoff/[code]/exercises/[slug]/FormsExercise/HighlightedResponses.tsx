@@ -21,13 +21,18 @@ export const HighlightedResponses = ({
 	invalidClassName = "bg-red-57",
 	itemClassName,
 }: Props) => {
-	const cleanAnswers = answers.map(sanitizeString)
+	const cleanAnswers = answers
+		.flatMap((a) => a.split(" "))
+		.filter(Boolean)
+		.map(sanitizeString)
 
 	return (
 		<ul className={clsx(className, "flex flex-wrap gap-2")}>
 			{responses.map((resp) => {
 				const cleanResp = sanitizeString(resp)
-				const invalid = cleanAnswers.some((a) => a.includes(cleanResp))
+				const invalid = cleanAnswers.some((a) => cleanResp === a)
+
+				console.log(cleanAnswers, cleanResp)
 
 				return (
 					<Text

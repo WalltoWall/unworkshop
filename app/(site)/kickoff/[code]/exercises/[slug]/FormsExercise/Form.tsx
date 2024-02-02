@@ -40,7 +40,7 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	// Or group id?
+	// TODO: Or group id?
 	const answers = snap.participants[participant._id] ?? []
 	const stepAnswers = answers.at(stepIdx)
 
