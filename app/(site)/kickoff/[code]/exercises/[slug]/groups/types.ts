@@ -1,15 +1,18 @@
 import type { ST } from "@/sanity/config"
 
 export type Group = {
-	slug: string
-	role: "captain" | "contributor"
+	[participantId: string]: "captain" | "contributor"
+}
+
+export type Groups = {
+	[groupSlug: string]: Group
 }
 
 export type GroupParticipant = ST["participant"]
 
 export type ExerciseAnswers = {
 	participants: Record<string, any>
-	groups: Record<string, Group>
+	groups: Groups
 }
 
 export type GroupExercise = ST["exercise"] & {

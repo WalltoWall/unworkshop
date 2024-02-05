@@ -6,7 +6,7 @@ import {
 	type MultiplayerArgs,
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
-import { INITIAL_GROUP_ANSWERS } from "./contants"
+import { INITIAL_GROUP_ANSWERS } from "./constants"
 import type { Role } from "./GroupForm"
 import type { ExerciseAnswers } from "./types"
 
@@ -53,9 +53,9 @@ export const useMultiplayerGroups = ({
 	const actions = {
 		setGroup: (args: { slug: string; role: Role }) => {
 			if (participantId) {
-				state.groups[participantId] = {
-					slug: args.slug,
-					role: args.role,
+				state.groups[args.slug] = {
+					...state.groups[args.slug],
+					[participantId]: args.role,
 				}
 			}
 		},

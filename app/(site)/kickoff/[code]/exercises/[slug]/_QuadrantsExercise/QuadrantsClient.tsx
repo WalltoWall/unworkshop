@@ -19,12 +19,14 @@ export type State =
 type QuadrantsClientProps = {
 	exercise: QuadrantsExercise
 	participant: QuadrantsParticipant
+	groupSlug?: string
 	kickoffCode: string
 }
 
 export const QuadrantsClient = ({
 	exercise,
 	participant,
+	groupSlug,
 	kickoffCode,
 }: QuadrantsClientProps) => {
 	if (!exercise.quadrants)
@@ -43,11 +45,13 @@ export const QuadrantsClient = ({
 	const currentQuadrantIdx = Math.ceil(step / 2) - 1
 	const currentQuadrant = exercise.quadrants.at(currentQuadrantIdx)
 
-	const { snap, actions } = useMultiplayerQuadrants({
+	const { actions } = useMultiplayerQuadrants({
 		exerciseId: exercise._id,
 		participantId: participant._id,
+		groupSlug: groupSlug,
 	})
-	const { answers, role } = useAnswers(snap, participant._id)
+
+	const { answers, role } = actions.getAnswers()
 
 	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {

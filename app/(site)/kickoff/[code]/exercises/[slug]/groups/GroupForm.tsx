@@ -1,6 +1,6 @@
 "use client"
 
-import React, { type FormEvent } from "react"
+import React from "react"
 import { useRouter } from "next/navigation"
 import { cx } from "class-variance-authority"
 import type { ST } from "@/sanity/config"
@@ -14,14 +14,14 @@ interface GroupFormProps {
 	exerciseId: string
 	participantId: string
 	groups: ST["exercise"]["groups"]
-	backHref: string
+	pushHref: string
 }
 
 export const GroupForm = ({
 	exerciseId,
 	participantId,
 	groups,
-	backHref,
+	pushHref,
 }: GroupFormProps) => {
 	const router = useRouter()
 
@@ -32,7 +32,7 @@ export const GroupForm = ({
 
 	const [group, setGroup] = React.useState<string | null>(null)
 
-	const handleGroupChange = (event: FormEvent<HTMLFieldSetElement>) => {
+	const handleGroupChange = (event: React.FormEvent<HTMLFieldSetElement>) => {
 		const role = event.target?.value
 
 		if (group && role) {
@@ -41,7 +41,7 @@ export const GroupForm = ({
 				role,
 			})
 
-			router.push(backHref)
+			router.push(`${pushHref}/${group}`)
 		}
 	}
 

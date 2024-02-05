@@ -28,7 +28,7 @@ const GroupsPage = async (props: Props) => {
 				groups={groups}
 				exerciseId={exercise._id}
 				participantId={participant._id}
-				backHref={`/kickoff/${props.params.code}/exercises/${props.params.slug}`}
+				pushHref={`/kickoff/${props.params.code}/exercises/${props.params.slug}/groups`}
 			/>
 		</div>
 	)

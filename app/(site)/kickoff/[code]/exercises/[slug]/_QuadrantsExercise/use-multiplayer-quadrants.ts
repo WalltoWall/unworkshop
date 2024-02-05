@@ -11,6 +11,7 @@ import type { Answer, QuadrantsAnswers } from "./types"
 
 export type UseMultiplayerQuadrantsArgs = {
 	participantId?: string
+	groupSlug?: string
 } & MultiplayerArgs
 export type QuadrantsActions = ReturnType<
 	typeof useMultiplayerQuadrants
@@ -18,6 +19,7 @@ export type QuadrantsActions = ReturnType<
 
 export const useMultiplayerQuadrants = ({
 	participantId,
+	groupSlug,
 	...args
 }: UseMultiplayerQuadrantsArgs) => {
 	const multiplayer = useMultiplayer(args)
@@ -51,9 +53,7 @@ export const useMultiplayerQuadrants = ({
 
 	const getQuadrant = (slug: string) => {
 		if (participantId) {
-			const group = state.groups?.[participantId]
-
-			const participantOrGroupId = group ? group.slug : participantId
+			const participantOrGroupId = groupSlug ?? participantId
 
 			state.participants[participantOrGroupId] ??= {}
 			const participant = state.participants[participantOrGroupId]
@@ -81,6 +81,23 @@ export const useMultiplayerQuadrants = ({
 					left: args.left,
 				}
 			}
+		},
+
+		getAnswers: () => {
+			let answers = null
+			let role = null
+
+			if (participantId) {
+				const participantOrGroupId = groupSlug ?? participantId
+
+				answers = state.participants[participantOrGroupId]
+
+				if (groupSlug) {
+					role = state.groups?.[groupSlug]?.[participantId]
+				}
+			}
+
+			return { answers, role }
 		},
 
 		getAllAnswers: () => {

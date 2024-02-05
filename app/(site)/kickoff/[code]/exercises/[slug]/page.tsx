@@ -4,7 +4,7 @@ import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
 import { FormExercise } from "./FormsExercise"
-import { RoleHeader } from "./RoleHeader"
+import { InstructionsModal } from "./InstructionsModal"
 
 type Props = {
 	params: { code: string; slug: string }
@@ -17,6 +17,11 @@ const ExercisePage = async (props: Props) => {
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
+			<InstructionsModal
+				exerciseName={exercise.name}
+				instructions={exercise.instructions}
+			/>
+
 			{exercise.type === "brainstorm" && (
 				<BrainstormExercise
 					exercise={exercise}

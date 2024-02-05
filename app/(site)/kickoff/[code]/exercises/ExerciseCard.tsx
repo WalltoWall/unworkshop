@@ -40,7 +40,8 @@ type Props = {
 	slug: string | undefined
 	name: string
 	type: ST["exercise"]["type"]
-	group?: boolean
+	groups?: boolean
+	groupSlug?: string
 	presenter?: boolean
 }
 
@@ -51,8 +52,8 @@ export const ExerciseCard = (props: Props) => {
 
 	if (props.presenter) {
 		href = `/presenter/${props.kickoffCode}/${props.slug}`
-	} else if (props.group) {
-		href = `/kickoff/${props.kickoffCode}/exercises/${props.slug}/groups`
+	} else if (props.groups) {
+		href = `/kickoff/${props.kickoffCode}/exercises/${props.slug}/groups${props.groupSlug ? `/${props.groupSlug}` : ""}`
 	}
 
 	return (
