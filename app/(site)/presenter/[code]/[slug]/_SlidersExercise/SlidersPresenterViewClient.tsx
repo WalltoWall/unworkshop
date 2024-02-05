@@ -12,6 +12,8 @@ import type { ST } from "@/sanity/config"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 import { useMultiplayerSliders } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/use-multiplayer-sliders"
+import { QuadrantAnswer } from "../_QuadrantsExercise/QuadrantAnswer"
+import { GraphView } from "./GraphView"
 import { SlidersBars } from "./SlidersBars"
 import { SlidersKey } from "./SlidersKey"
 
@@ -27,6 +29,10 @@ export const SlidersPresenterViewClient = ({
 	const [color, setColor] = React.useState("#fecb2f")
 	const [showImages, setShowImages] = React.useState(true)
 	const [showNumbers, setShowNumbers] = React.useState(true)
+	const [showGraph, setShowGraph] = React.useState(false)
+	const [showToday, setShowToday] = React.useState(true)
+	const [showTomorrow, setShowTomorrow] = React.useState(true)
+	const [showLines, setShowLines] = React.useState(true)
 	const [sliderIndex, setSliderIndex] = React.useState(0)
 
 	const searchParams = useSearchParams()
@@ -70,101 +76,149 @@ export const SlidersPresenterViewClient = ({
 
 	return (
 		<div>
-			<SlidersKey barColor={color} key={color} />
+			{showGraph ? (
+				<div className="relative">
+					<QuadrantAnswer
+						animating={false}
+						color={color}
+						showLines={showLines}
+						showToday={showToday}
+						showTomorrow={showTomorrow}
+						answer={{
+							today: { left: 1, top: 10 },
+							tomorrow: { left: 10, top: 10 },
+						}}
+					/>
+				</div>
+			) : (
+				<div>
+					<SlidersKey barColor={color} key={color} />
 
-			{slider && (
-				<div key={slider._key} className="relative mb-6 mt-12 w-full">
-					<div className="h-[45vh] w-full overflow-hidden rounded-t-3xl border-b-[0.667rem] border-black">
-						{isFilled.image(slider.left_image) &&
-							showImages &&
-							isFilled.image(slider.right_image) && (
-								<div className="flex h-full w-full bg-black">
-									{isFilled.image(slider.left_image) && (
-										<div className="w-full">
-											<Image
-												src={urlFor(slider.left_image).url()!}
-												alt={altFor(slider.left_image)}
-												className="h-full w-full object-cover object-center opacity-50"
-												width={300}
-												height={300}
-											/>
+					{slider && (
+						<div key={slider._key} className="relative mb-6 mt-12 w-full">
+							<div className="h-[45vh] w-full overflow-hidden rounded-t-3xl border-b-[0.667rem] border-black">
+								{isFilled.image(slider.left_image) &&
+									showImages &&
+									isFilled.image(slider.right_image) && (
+										<div className="flex h-full w-full bg-black">
+											{isFilled.image(slider.left_image) && (
+												<div className="w-full">
+													<Image
+														src={urlFor(slider.left_image).url()!}
+														alt={altFor(slider.left_image)}
+														className="h-full w-full object-cover object-center opacity-50"
+														width={300}
+														height={300}
+													/>
+												</div>
+											)}
+											{isFilled.image(slider.right_image) && (
+												<div className="w-full">
+													<Image
+														src={urlFor(slider.right_image).url()!}
+														alt={altFor(slider.right_image)}
+														className="h-full w-full object-cover object-center opacity-50"
+														width={300}
+														height={300}
+													/>
+												</div>
+											)}
 										</div>
 									)}
-									{isFilled.image(slider.right_image) && (
-										<div className="w-full">
-											<Image
-												src={urlFor(slider.right_image).url()!}
-												alt={altFor(slider.right_image)}
-												className="h-full w-full object-cover object-center opacity-50"
-												width={300}
-												height={300}
-											/>
-										</div>
-									)}
-								</div>
-							)}
 
-						<SlidersBars
-							answers={currentAnswers}
-							barColor={color}
-							showNumbers={showNumbers}
-							showImages={showImages}
-						/>
-					</div>
+								<SlidersBars
+									answers={currentAnswers}
+									barColor={color}
+									showNumbers={showNumbers}
+									showImages={showImages}
+								/>
+							</div>
 
-					<div className="mt-10 flex w-full items-end justify-between">
-						<Text className="ml-1 uppercase text-40 font-heading capsize">
-							{slider.left_value}
-						</Text>
-						<Text className="ml-1 uppercase text-40 font-heading capsize">
-							{slider.right_value}
-						</Text>
-					</div>
+							<div className="mt-10 flex w-full items-end justify-between">
+								<Text className="ml-1 uppercase text-40 font-heading capsize">
+									{slider.left_value}
+								</Text>
+								<Text className="ml-1 uppercase text-40 font-heading capsize">
+									{slider.right_value}
+								</Text>
+							</div>
+						</div>
+					)}
 				</div>
 			)}
-
 			<div className="relative">
-				<div className="flex items-center justify-center gap-5">
-					<button
-						onClick={() => {
-							if (isDisabledLeft) return
+				{!showGraph && (
+					<div className="flex items-center justify-center gap-5">
+						<button
+							onClick={() => {
+								if (isDisabledLeft) return
 
-							setSliderIndex((idx) => idx - 1)
-						}}
-						disabled={isDisabledLeft}
-						className="disabled:opacity-50"
-					>
-						<span className="sr-only">Previous Slider</span>
-						<Arrow className="w-7 text-gray-50" />
-					</button>
+								setSliderIndex((idx) => idx - 1)
+							}}
+							disabled={isDisabledLeft}
+							className="disabled:opacity-50"
+						>
+							<span className="sr-only">Previous Slider</span>
+							<Arrow className="w-7 text-gray-50" />
+						</button>
 
-					<button
-						onClick={() => {
-							if (isDisabledRight) return
+						<button
+							onClick={() => {
+								if (isDisabledRight) return
 
-							setSliderIndex((idx) => idx + 1)
-						}}
-						disabled={isDisabledRight}
-						className="disabled:opacity-50"
-					>
-						<span className="sr-only">Next Slider</span>
-						<Arrow className="w-7 rotate-180 text-gray-50" />
-					</button>
-				</div>
+								setSliderIndex((idx) => idx + 1)
+							}}
+							disabled={isDisabledRight}
+							className="disabled:opacity-50"
+						>
+							<span className="sr-only">Next Slider</span>
+							<Arrow className="w-7 rotate-180 text-gray-50" />
+						</button>
+					</div>
+				)}
 
 				<SettingsMenu>
+					{!showGraph && (
+						<>
+							<SettingVisibility
+								label="Photos"
+								isVisible={showImages}
+								toggleVisibility={() => setShowImages((prev) => !prev)}
+							/>
+							<SettingVisibility
+								label="Numbers"
+								isVisible={showNumbers}
+								toggleVisibility={() => setShowNumbers((prev) => !prev)}
+							/>
+						</>
+					)}
 					<SettingVisibility
-						label="Photos"
-						isVisible={showImages}
-						toggleVisibility={() => setShowImages((prev) => !prev)}
+						label="Timeline Animation"
+						isVisible={showGraph}
+						toggleVisibility={() => setShowGraph((prev) => !prev)}
 					/>
-					<SettingVisibility
-						label="Numbers"
-						isVisible={showNumbers}
-						toggleVisibility={() => setShowNumbers((prev) => !prev)}
-					/>
+
+					{showGraph && (
+						<>
+							<SettingVisibility
+								label="Show Today"
+								isVisible={showToday}
+								toggleVisibility={() => setShowToday((prev) => !prev)}
+							/>
+							<SettingVisibility
+								label="Show Tomorrow"
+								isVisible={showTomorrow}
+								toggleVisibility={() => setShowTomorrow((prev) => !prev)}
+							/>
+							<SettingVisibility
+								label="Show Lines"
+								isVisible={showLines}
+								toggleVisibility={() => setShowLines((prev) => !prev)}
+							/>
+						</>
+					)}
 					<Text size={12} className="block pt-2 text-white">
-						Bar Colors
+						{showGraph ? "Dot Color" : "Bar Color"}
 					</Text>
 					<CirclePicker
 						color={color}
