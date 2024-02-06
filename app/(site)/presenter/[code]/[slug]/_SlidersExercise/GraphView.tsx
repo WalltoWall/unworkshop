@@ -160,6 +160,7 @@ export const GraphView = ({
 					showToday={showToday}
 					showTomorrow={showTomorrow}
 					answer={answer}
+					dotSize="w-5 h-5"
 				/>
 			))}
 		</div>

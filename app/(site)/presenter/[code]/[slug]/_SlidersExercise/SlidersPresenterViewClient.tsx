@@ -34,6 +34,8 @@ export const SlidersPresenterViewClient = ({
 	const [showTomorrow, setShowTomorrow] = React.useState(false)
 	const [showLines, setShowLines] = React.useState(false)
 	const [animating, setAnimating] = React.useState(false)
+	const [showTodayBar, setShowTodayBar] = React.useState(true)
+	const [showTomorrowBar, setShowTomorrowBar] = React.useState(true)
 	const [sliderIndex, setSliderIndex] = React.useState(0)
 
 	const searchParams = useSearchParams()
@@ -84,6 +86,31 @@ export const SlidersPresenterViewClient = ({
 		(answer) => answer.slug === slider.slug.current,
 	)
 
+	const fakeData = [
+		{ today: 1, tomorrow: 6 },
+		{ today: 2, tomorrow: 4 },
+		{ today: 3, tomorrow: 6 },
+		{ today: 3, tomorrow: 5 },
+		{ today: 2, tomorrow: 4 },
+		{ today: 1, tomorrow: 3 },
+		{ today: 1, tomorrow: 2 },
+		{ today: 5, tomorrow: 4 },
+		{ today: 4, tomorrow: 5 },
+		{ today: 3, tomorrow: 2 },
+		{ today: 2, tomorrow: 3 },
+		{ today: 1, tomorrow: 5 },
+		{ today: 1, tomorrow: 6 },
+		{ today: 1, tomorrow: 5 },
+		{ today: 3, tomorrow: 4 },
+		{ today: 2, tomorrow: 2 },
+		{ today: 2, tomorrow: 3 },
+		{ today: 1, tomorrow: 4 },
+		{ today: 4, tomorrow: 5 },
+		{ today: 3, tomorrow: 4 },
+		{ today: 2, tomorrow: 5 },
+		{ today: 1, tomorrow: 6 },
+	]
+
 	return (
 		<div>
 			{showGraph ? (
@@ -94,7 +121,7 @@ export const SlidersPresenterViewClient = ({
 					showToday={showToday}
 					showTomorrow={showTomorrow}
 					animatePoints={animatePoints}
-					answers={getGraphValues({ answers: currentAnswers })}
+					answers={getGraphValues({ answers: fakeData })}
 					leftText={slider.left_value}
 					rightText={slider.right_value}
 					isDisabledLeft={isDisabledLeft}
@@ -142,6 +169,8 @@ export const SlidersPresenterViewClient = ({
 									barColor={color}
 									showNumbers={showNumbers}
 									showImages={showImages}
+									showToday={showTodayBar}
+									showTomorrow={showTomorrowBar}
 								/>
 							</div>
 
@@ -200,6 +229,16 @@ export const SlidersPresenterViewClient = ({
 								label="Numbers"
 								isVisible={showNumbers}
 								toggleVisibility={() => setShowNumbers((prev) => !prev)}
+							/>
+							<SettingVisibility
+								label="Show Today"
+								isVisible={showTodayBar}
+								toggleVisibility={() => setShowTodayBar((prev) => !prev)}
+							/>
+							<SettingVisibility
+								label="Show Tomorrow"
+								isVisible={showTomorrowBar}
+								toggleVisibility={() => setShowTomorrowBar((prev) => !prev)}
 							/>
 						</>
 					)}

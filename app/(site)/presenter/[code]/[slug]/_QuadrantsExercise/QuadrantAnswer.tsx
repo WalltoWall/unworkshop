@@ -9,6 +9,7 @@ interface Props {
 	showLines: boolean
 	color: string
 	animating: boolean
+	dotSize?: string
 }
 
 export const QuadrantAnswer = ({
@@ -18,6 +19,7 @@ export const QuadrantAnswer = ({
 	showLines,
 	color,
 	animating,
+	dotSize = "w-8 h-8",
 }: Props) => {
 	const todayRef = useRef<HTMLDivElement>(null)
 	const tomorrowRef = useRef<HTMLDivElement>(null)
@@ -85,8 +87,9 @@ export const QuadrantAnswer = ({
 				>
 					<div
 						className={cx(
-							"h-8 w-8 rounded-full border-4 transition-colors",
+							"rounded-full border-4 transition-colors",
 							animating ? "duration-[3s]" : "duration-0",
+							dotSize,
 						)}
 						style={{
 							borderColor: color,
@@ -109,7 +112,7 @@ export const QuadrantAnswer = ({
 					}}
 				>
 					<div
-						className="h-8 w-8 rounded-full"
+						className={cx("rounded-full", dotSize)}
 						style={{
 							backgroundColor: color,
 						}}

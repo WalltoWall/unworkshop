@@ -25,22 +25,22 @@ function evenlyDistributeNumbers(start: number, end: number, count: number) {
 function getLeftValue(leftValue: number) {
 	switch (leftValue) {
 		case 1: {
-			return 0.5
+			return 1
 		}
 		case 2: {
-			return 20.5
+			return 20.6
 		}
 		case 3: {
-			return 40
+			return 40.3
 		}
 		case 4: {
-			return 59.5
+			return 60
 		}
 		case 5: {
-			return 79.5
+			return 80
 		}
 		case 6: {
-			return 99.5
+			return 100
 		}
 		default: {
 			return 1

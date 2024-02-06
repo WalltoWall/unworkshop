@@ -8,6 +8,8 @@ interface barProps {
 	showImages: boolean
 	barColor: string
 	showNumbers: boolean
+	showToday: boolean
+	showTomorrow: boolean
 }
 
 export const SlidersBars = ({
@@ -15,6 +17,8 @@ export const SlidersBars = ({
 	barColor,
 	showNumbers,
 	showImages,
+	showToday,
+	showTomorrow,
 }: barProps) => {
 	let today = 0
 	let tomorrow = 0
@@ -22,7 +26,7 @@ export const SlidersBars = ({
 
 	return (
 		<div
-			className="left-0 right-0 top-0 flex w-full min-w-0 items-end justify-between px-4 pt-8"
+			className="left-0 right-0 top-0 flex w-full min-w-0 items-end justify-between px-4 pt-10"
 			style={{
 				position: showImages ? "absolute" : "static",
 				height: showImages ? "calc(45vh - 0.666rem)" : "100%",
@@ -42,40 +46,44 @@ export const SlidersBars = ({
 						key={`today-tomorrow-${idx}`}
 						className="flex h-full w-fit min-w-[8rem] items-end gap-2"
 					>
-						<div
-							className="relative w-full max-w-[4rem]"
-							style={{
-								height:
-									today == 0
-										? "1rem"
-										: `${(today / (today + tomorrow)) * 100}%`,
-								backgroundColor: barColor,
-							}}
-						>
-							{showNumbers && (
-								<span className="absolute -top-6 z-20 w-full text-center">
-									{today}
-								</span>
-							)}
-						</div>
-						<div
-							className="relative w-full max-w-[4rem]"
-							style={{
-								height:
-									tomorrow == 0
-										? "1rem"
-										: `${(tomorrow / (today + tomorrow)) * 100}%`,
-								backgroundImage: `repeating-linear-gradient(-45deg,${barColor},${barColor} 2px,rgba(0,0,0,0) 2px,rgba(0,0,0,0) 18px)`,
-								backgroundColor: "transparent",
-								border: `2px solid ${barColor}`,
-							}}
-						>
-							{showNumbers && (
-								<span className="absolute -top-6 z-20 w-full text-center">
-									{tomorrow}
-								</span>
-							)}
-						</div>
+						{showToday && (
+							<div
+								className="relative w-full"
+								style={{
+									height:
+										today == 0
+											? "1rem"
+											: `${(today / (today + tomorrow)) * 100}%`,
+									backgroundColor: barColor,
+								}}
+							>
+								{showNumbers && (
+									<span className="absolute -top-10 z-20 w-full text-center text-24 font-heading">
+										{today}
+									</span>
+								)}
+							</div>
+						)}
+						{showTomorrow && (
+							<div
+								className="relative w-full"
+								style={{
+									height:
+										tomorrow == 0
+											? "1rem"
+											: `${(tomorrow / (today + tomorrow)) * 100}%`,
+									backgroundImage: `repeating-linear-gradient(-45deg,${barColor},${barColor} 2px,rgba(0,0,0,0) 2px,rgba(0,0,0,0) 18px)`,
+									backgroundColor: "transparent",
+									border: `2px solid ${barColor}`,
+								}}
+							>
+								{showNumbers && (
+									<span className="absolute -top-10 z-20 w-full text-center text-24 font-heading">
+										{tomorrow}
+									</span>
+								)}
+							</div>
+						)}
 					</div>
 				)
 			})}
