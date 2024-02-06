@@ -28,7 +28,7 @@ export const SlidersPresenterView = async ({
 	}, {})
 
 	return (
-		<div className="px-8 pt-12">
+		<div className="pt-12">
 			<SlidersPresenterViewClient
 				exercise={exercise}
 				answers={groupedAnswers}
