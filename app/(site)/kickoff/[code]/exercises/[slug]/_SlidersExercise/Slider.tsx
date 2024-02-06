@@ -20,6 +20,18 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 		todayValue: answer?.today || 3,
 		tomorrowValue: answer?.tomorrow || 3,
 	}
+	const [leftFontSize, setLeftFontSize] = React.useState(
+		`${values.todayValue * 10}px`,
+	)
+	const [rightFontSize, setRightFontSize] = React.useState(
+		`${(values.todayValue * 10 - 70) * -1}px`,
+	)
+	const [leftTomorrowFontSize, setLeftTomorrowFontSize] = React.useState(
+		`${values.tomorrowValue * 10}px`,
+	)
+	const [rightTomorrowFontSize, setRightTomorrowFontSize] = React.useState(
+		`${(values.tomorrowValue * 10 - 70) * -1}px`,
+	)
 
 	const fullRange = 6
 
@@ -60,11 +72,14 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 							>
 								<p
 									className={clsx(
-										"uppercase transition font-heading",
+										"uppercase transition-all  font-heading",
 										values.todayValue === 1 && "[writing-mode:vertical-lr]",
 									)}
+									style={{
+										fontSize: leftFontSize,
+									}}
 								>
-									{item.left_value}
+									{item.right_value}
 								</p>
 							</div>
 						)}
@@ -95,8 +110,11 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 										"w-full uppercase transition font-heading",
 										values.todayValue === 6 && "[writing-mode:vertical-rl]",
 									)}
+									style={{
+										fontSize: rightFontSize,
+									}}
 								>
-									{item.right_value}
+									{item.left_value}
 								</p>
 							</div>
 						)}
@@ -109,6 +127,9 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						value={values.todayValue}
 						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
 						onChange={(e) => {
+							setLeftFontSize(`${parseInt(e.target.value) * 10}px`)
+							setRightFontSize(`${(parseInt(e.target.value) * 10 - 70) * -1}px`)
+
 							actions.setTodayValue({
 								today: parseInt(e.target.value),
 							})
@@ -150,8 +171,11 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 										"uppercase transition font-heading",
 										values.tomorrowValue === 1 && "[writing-mode:vertical-lr]",
 									)}
+									style={{
+										fontSize: leftTomorrowFontSize,
+									}}
 								>
-									{item.left_value}
+									{item.right_value}
 								</p>
 							</div>
 						)}
@@ -182,8 +206,11 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 										"w-full uppercase transition font-heading",
 										values.tomorrowValue === 6 && "[writing-mode:vertical-rl]",
 									)}
+									style={{
+										fontSize: rightTomorrowFontSize,
+									}}
 								>
-									{item.right_value}
+									{item.left_value}
 								</p>
 							</div>
 						)}
@@ -197,6 +224,11 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						value={values.tomorrowValue}
 						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
 						onChange={(e) => {
+							setLeftTomorrowFontSize(`${parseInt(e.target.value) * 10}px`)
+							setRightTomorrowFontSize(
+								`${(parseInt(e.target.value) * 10 - 70) * -1}px`,
+							)
+
 							actions.setTomorrowValue({
 								tomorrow: parseInt(e.target.value),
 							})

@@ -12,8 +12,8 @@ import type { ST } from "@/sanity/config"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 import { useMultiplayerSliders } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/use-multiplayer-sliders"
-import { QuadrantAnswer } from "../_QuadrantsExercise/QuadrantAnswer"
 import { GraphView } from "./GraphView"
+import { getGraphValues } from "./helpers"
 import { SlidersBars } from "./SlidersBars"
 import { SlidersKey } from "./SlidersKey"
 
@@ -31,8 +31,9 @@ export const SlidersPresenterViewClient = ({
 	const [showNumbers, setShowNumbers] = React.useState(true)
 	const [showGraph, setShowGraph] = React.useState(false)
 	const [showToday, setShowToday] = React.useState(true)
-	const [showTomorrow, setShowTomorrow] = React.useState(true)
-	const [showLines, setShowLines] = React.useState(true)
+	const [showTomorrow, setShowTomorrow] = React.useState(false)
+	const [showLines, setShowLines] = React.useState(false)
+	const [animating, setAnimating] = React.useState(false)
 	const [sliderIndex, setSliderIndex] = React.useState(0)
 
 	const searchParams = useSearchParams()
@@ -64,6 +65,15 @@ export const SlidersPresenterViewClient = ({
 		return answers
 	})
 
+	const animatePoints = () => {
+		setAnimating(true)
+
+		setTimeout(() => {
+			setAnimating(false)
+		}, 4000)
+		setShowTomorrow(true)
+	}
+
 	if (!exercise.sliders) return
 
 	const slider = exercise.sliders[sliderIndex]
@@ -77,19 +87,20 @@ export const SlidersPresenterViewClient = ({
 	return (
 		<div>
 			{showGraph ? (
-				<div className="relative">
-					<QuadrantAnswer
-						animating={false}
-						color={color}
-						showLines={showLines}
-						showToday={showToday}
-						showTomorrow={showTomorrow}
-						answer={{
-							today: { left: 1, top: 10 },
-							tomorrow: { left: 10, top: 10 },
-						}}
-					/>
-				</div>
+				<GraphView
+					animating={animating}
+					color={color}
+					showLines={showLines}
+					showToday={showToday}
+					showTomorrow={showTomorrow}
+					animatePoints={animatePoints}
+					answers={getGraphValues({ answers: currentAnswers })}
+					leftText={slider.left_value}
+					rightText={slider.right_value}
+					isDisabledLeft={isDisabledLeft}
+					isDisabledRight={isDisabledRight}
+					setSliderIndex={setSliderIndex}
+				/>
 			) : (
 				<div>
 					<SlidersKey barColor={color} key={color} />

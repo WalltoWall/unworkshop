@@ -22,7 +22,7 @@ export const SlidersBars = ({
 
 	return (
 		<div
-			className="left-0 right-0 top-0 flex w-full min-w-0 items-end justify-evenly px-4 pt-8 [flex:0_0_100%]"
+			className="left-0 right-0 top-0 flex w-full min-w-0 items-end justify-between px-4 pt-8"
 			style={{
 				position: showImages ? "absolute" : "static",
 				height: showImages ? "calc(45vh - 0.666rem)" : "100%",
@@ -40,7 +40,7 @@ export const SlidersBars = ({
 				return (
 					<div
 						key={`today-tomorrow-${idx}`}
-						className="flex h-full w-full items-end gap-2"
+						className="flex h-full w-fit min-w-[8rem] items-end gap-2"
 					>
 						<div
 							className="relative w-full max-w-[4rem]"

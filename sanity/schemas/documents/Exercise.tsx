@@ -194,7 +194,16 @@ export const Exercise = defineType({
 							title: "Left Value",
 							description: "This text is on the left side of the slider",
 							type: "string",
-							validation: (Rule) => Rule.required(),
+							validation: (Rule) =>
+								Rule.required().custom((val) => {
+									if (!val) return "This value is required."
+
+									const split = val.split(" ")
+									if (split.length > 1)
+										return "This value should be two words or less."
+
+									return true
+								}),
 						}),
 						defineField({
 							name: "left_image",
@@ -208,7 +217,16 @@ export const Exercise = defineType({
 							title: "Right Value",
 							description: "This text is on the right side of the slider",
 							type: "string",
-							validation: (Rule) => Rule.required(),
+							validation: (Rule) =>
+								Rule.required().custom((val) => {
+									if (!val) return "This value is required."
+
+									const split = val.split(" ")
+									if (split.length > 1)
+										return "This value should be two words or less."
+
+									return true
+								}),
 						}),
 						defineField({
 							name: "right_image",
