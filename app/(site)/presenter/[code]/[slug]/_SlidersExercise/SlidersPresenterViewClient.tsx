@@ -14,6 +14,8 @@ import useEmblaCarousel, { type EmblaCarouselType } from "embla-carousel-react"
 import { Arrow } from "@/components/icons/Arrow"
 import { Spinner } from "@/components/Spinner"
 
+import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
+import { CirclePicker } from "react-color"
 
 
 
@@ -22,12 +24,25 @@ interface PresenterViewProps {
 	answers: Answer[]
 }
 
+const colors = [
+	"#ff5745",
+	"#ff7a45",
+	"#fecb2f",
+	"#19f49b",
+	"#5c6dff",
+	"#b652f7",
+	"#ff93ea",
+]
+
 export const SlidersPresenterViewClient = ({
 	exercise,
 	answers,
 }: PresenterViewProps) => {
 	
 	const [color, setColor] = React.useState("#fecb2f")
+	const [showPhotos, setShowPhotos] = React.useState(true)
+	const [showToday, setShowToday] = React.useState(true)
+	const [showTomorrow, setShowTomorrow] = React.useState(true)
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
@@ -91,7 +106,10 @@ export const SlidersPresenterViewClient = ({
 							<div className="w-full h-[50vh] rounded-t-3xl overflow-hidden border-b-[0.666rem] border-black">
 
 									{(isFilled.image(slider.left_image) && isFilled.image(slider.right_image)) && (
-										<div className="flex w-full h-full bg-black">
+										<div className="flex w-full h-full transition-[background] duration-300"
+										style={{
+											background: showPhotos ? "black" : "transparent"
+										}}>
 											{isFilled.image(slider.left_image) && (
 													<div className="w-full">
 														<Image
@@ -100,6 +118,9 @@ export const SlidersPresenterViewClient = ({
 															className="object-cover opacity-50 object-center h-full w-full"
 															width={300}
 															height={300}
+															style={{
+																display: showPhotos ? "block" : "none"
+															}}
 														/>
 													</div>
 											)}
@@ -111,6 +132,9 @@ export const SlidersPresenterViewClient = ({
 														className="object-cover opacity-50 object-center h-full w-full"
 														width={300}
 														height={300}
+														style={{
+															display: showPhotos ? "block" : "none"
+														}}
 													/>
 												</div>
 											)}
@@ -118,7 +142,7 @@ export const SlidersPresenterViewClient = ({
 									)}
 									
 									{/* David: Not sure what type to make the slider prop */}
-									<SlidersBars answers={answers} slider={slider} images={(isFilled.image(slider.left_image) && isFilled.image(slider.right_image))}/>
+									<SlidersBars showToday={showToday} showTomorrow={showTomorrow} color={color} answers={answers} slider={slider} images={(isFilled.image(slider.left_image) && isFilled.image(slider.right_image))}/>
 
 							</div>
 							
@@ -144,6 +168,42 @@ export const SlidersPresenterViewClient = ({
 					loading={isPending}
 				/>
 			</div>
+
+			<SettingsMenu>
+				<SettingVisibility
+					label="Today"
+					isVisible={showToday}
+					toggleVisibility={() => setShowToday((prev) => !prev)}
+				/>
+				<SettingVisibility
+					label="Tomorrow"
+					isVisible={showTomorrow}
+					toggleVisibility={() => setShowTomorrow((prev) => !prev)}
+				/>
+				
+				<SettingVisibility
+					label="Photos"
+					isVisible={showPhotos}
+					toggleVisibility={() => setShowPhotos((prev) => !prev)}
+				/>
+				{/* 
+				<SettingVisibility
+					label="Labels"
+					isVisible={showLabels}
+					toggleVisibility={() => setShowLabels((prev) => !prev)}
+				/> */}
+				<Text size={12} className="block pt-2 text-white">
+					Bar Colors
+				</Text>
+				<CirclePicker
+					color={color}
+					colors={colors}
+					circleSize={20}
+					circleSpacing={8}
+					width="7.5rem"
+					onChange={(newColor) => setColor(newColor.hex)}
+				/>
+			</SettingsMenu>
 		</div>
 	) : null
 }

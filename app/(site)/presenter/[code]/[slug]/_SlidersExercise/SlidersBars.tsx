@@ -10,14 +10,19 @@ interface barProps {
 	slider: ST["exercise"]
 	answers: Answer[]
     images: boolean
+    color: string
+	showToday: boolean
+	showTomorrow: boolean
 }
 
 export const SlidersBars = ({
 	slider,
 	answers,
+	showToday,
+	showTomorrow,
     images,
+    color,
 }: barProps) => {
-	const [color, setColor] = React.useState("#fecb2f")
 	const Bars = (hasImages:boolean) => {
 		let content = [];
 		
@@ -42,9 +47,11 @@ export const SlidersBars = ({
 			content.push(
                 <div key={i} className="h-full w-full flex justify-between items-end gap-2">
                     <div 
-                        className={"relative block w-full max-w-[4rem] bg-yellow-68"}
+                        className={"transition-opacity transition-[background] relative block w-full max-w-[4rem]"}
                         style={{
+                            backgroundColor: color,
                             height: countToday == 0 ? "1rem" : `${todayResults}%`,
+                            opacity: showToday ? "1":"0"
                         }}
                     >
                         {!hasImages &&
@@ -53,13 +60,14 @@ export const SlidersBars = ({
                     </div>
                     <div 
                         key={i}
-                        className={"relative block w-full max-w-[4rem] bg-yellow-68"}
+                        className={"transition-opacity transition-[background] relative block w-full max-w-[4rem] bg-yellow-68"}
                         style={{
                             height: countTomorrow == 0 ? "1rem" : `${tomorrowResults}%`,
                             backgroundImage: `repeating-linear-gradient(-45deg,${color},${color} 2px,rgba(0,0,0,0) 2px,rgba(0,0,0,0) 18px)`,
                             backgroundColor: 'transparent',
                             border: `2px solid ${color}`,
-                            borderBottom: `none`
+                            borderBottom: `none`,
+                            opacity: showTomorrow ? "1":"0"
                         }}
                     >
                         {!hasImages &&
