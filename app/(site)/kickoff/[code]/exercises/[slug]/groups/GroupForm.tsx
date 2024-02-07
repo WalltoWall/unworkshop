@@ -4,6 +4,7 @@ import React from "react"
 import { useRouter } from "next/navigation"
 import { cx } from "class-variance-authority"
 import type { ST } from "@/sanity/config"
+import { CaptainModal } from "./CaptainModal"
 import { GroupRoleSelector } from "./GroupRoleSelector"
 import { GroupSelector } from "./GroupSelector"
 import { useMultiplayerGroups } from "./use-multiplayer-groups"
@@ -25,24 +26,49 @@ export const GroupForm = ({
 }: GroupFormProps) => {
 	const router = useRouter()
 
-	const { actions } = useMultiplayerGroups({
+	const { snap, actions } = useMultiplayerGroups({
 		exerciseId,
 		participantId,
 	})
 
+	const [openCaptainModal, setOpenCaptainModal] = React.useState(false)
 	const [group, setGroup] = React.useState<string | null>(null)
 
-	const handleGroupChange = (event: React.FormEvent<HTMLFieldSetElement>) => {
-		const role = event.target?.value
+	const currentCaptain =
+		group && snap.groups
+			? Object.keys(snap.groups[group]).find(
+					(key) => snap.groups[group][key] === "captain",
+				)
+			: null
 
+	const handleGroupChange = (role: Role) => {
 		if (group && role) {
-			actions.setGroup({
-				slug: group,
-				role,
-			})
+			if (currentCaptain && role === "captain") {
+				setOpenCaptainModal(true)
+			} else {
+				actions.setGroup({
+					slug: group,
+					role,
+				})
 
-			router.push(`${pushHref}/${group}`)
+				router.push(`${pushHref}/${group}`)
+			}
 		}
+	}
+
+	const handleCancel = () => {
+		setOpenCaptainModal(false)
+	}
+
+	const handleCaptainChange = () => {
+		setOpenCaptainModal(false)
+
+		actions.replaceCaptain({
+			slug: group!,
+			captainId: currentCaptain!,
+		})
+
+		router.push(`${pushHref}/${group}`)
 	}
 
 	return (
@@ -54,6 +80,12 @@ export const GroupForm = ({
 			<div className={cx(!group && "hidden")}>
 				<GroupRoleSelector onGroupChange={handleGroupChange} />
 			</div>
+
+			<CaptainModal
+				open={openCaptainModal}
+				handleCancel={handleCancel}
+				handleConfirm={handleCaptainChange}
+			/>
 		</div>
 	)
 }

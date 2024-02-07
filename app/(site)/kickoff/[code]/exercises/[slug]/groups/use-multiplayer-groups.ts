@@ -59,6 +59,18 @@ export const useMultiplayerGroups = ({
 				}
 			}
 		},
+
+		replaceCaptain: (args: { slug: string; captainId: string }) => {
+			if (participantId) {
+				state.groups[args.slug] = {
+					...state.groups[args.slug],
+					[args.captainId]: "contributor",
+					[participantId]: "captain",
+				}
+
+				delete state?.participants?.[args.slug]
+			}
+		},
 	}
 
 	return { snap, actions }

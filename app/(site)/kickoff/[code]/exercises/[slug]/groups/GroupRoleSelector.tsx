@@ -1,4 +1,4 @@
-import React, { type FormEvent } from "react"
+import React from "react"
 import Image from "next/image"
 import { cx } from "class-variance-authority"
 import { Text } from "@/components/Text"
@@ -24,7 +24,7 @@ const variants = {
 }
 
 interface GroupRoleSelectorProps {
-	onGroupChange: (event: FormEvent<HTMLFieldSetElement>) => void
+	onGroupChange: (role: Role) => void
 }
 
 export const GroupRoleSelector = ({
@@ -36,9 +36,9 @@ export const GroupRoleSelector = ({
 				What's your role?
 			</Text>
 
-			<fieldset className="grid gap-4" onChange={onGroupChange}>
-				<RoleCard type="contributor" />
-				<RoleCard type="captain" />
+			<fieldset className="grid gap-4">
+				<RoleCard type="contributor" setRole={onGroupChange} />
+				<RoleCard type="captain" setRole={onGroupChange} />
 			</fieldset>
 		</div>
 	)
@@ -46,9 +46,10 @@ export const GroupRoleSelector = ({
 
 interface RoleCardProps {
 	type: Role
+	setRole: (role: Role) => void
 }
 
-const RoleCard = ({ type }: RoleCardProps) => {
+const RoleCard = ({ type, setRole }: RoleCardProps) => {
 	const variant = variants[type as keyof typeof variants]
 
 	return (
@@ -63,6 +64,7 @@ const RoleCard = ({ type }: RoleCardProps) => {
 				name="role"
 				value={type}
 				className="absolute -left-[9999px] h-[1px] w-[1px]"
+				onClick={() => setRole(type)}
 			/>
 
 			<Image
