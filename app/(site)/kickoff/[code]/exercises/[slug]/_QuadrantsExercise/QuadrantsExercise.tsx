@@ -10,11 +10,13 @@ const QuadrantsClient = dynamic(() => import("./QuadrantsClient"), {
 
 export interface QuadrantsExerciseProps {
 	exercise: ST["exercise"]
+	groupSlug?: string
 	kickoffCode: string
 }
 
 export const QuadrantsExercise = async ({
 	exercise,
+	groupSlug,
 	kickoffCode,
 }: QuadrantsExerciseProps) => {
 	const participant =
@@ -26,6 +28,7 @@ export const QuadrantsExercise = async ({
 				<QuadrantsClient
 					exercise={exercise}
 					participant={participant}
+					groupSlug={groupSlug}
 					kickoffCode={kickoffCode}
 				/>
 			)}

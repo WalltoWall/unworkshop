@@ -59,6 +59,16 @@ export const Exercise = defineType({
 							description: "The name of this group.",
 							validation: (Rule) => Rule.required(),
 						}),
+						defineField({
+							name: "slug",
+							title: "Slug",
+							description: "Determines the URL of the group.",
+							type: "slug",
+							options: {
+								source: (_, opts) => (opts.parent as any)?.name,
+							},
+							validation: (Rule) => Rule.required(),
+						}),
 					],
 				}),
 			],

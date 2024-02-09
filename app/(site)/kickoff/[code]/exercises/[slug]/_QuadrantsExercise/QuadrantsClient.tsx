@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
+import { useAnswers } from "../groups/use-answers"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
 import type { QuadrantsExercise, QuadrantsParticipant } from "./types"
@@ -18,12 +19,14 @@ export type State =
 type QuadrantsClientProps = {
 	exercise: QuadrantsExercise
 	participant: QuadrantsParticipant
+	groupSlug?: string
 	kickoffCode: string
 }
 
 export const QuadrantsClient = ({
 	exercise,
 	participant,
+	groupSlug,
 	kickoffCode,
 }: QuadrantsClientProps) => {
 	if (!exercise.quadrants)
@@ -42,11 +45,13 @@ export const QuadrantsClient = ({
 	const currentQuadrantIdx = Math.ceil(step / 2) - 1
 	const currentQuadrant = exercise.quadrants.at(currentQuadrantIdx)
 
-	const { snap, actions } = useMultiplayerQuadrants({
+	const { actions } = useMultiplayerQuadrants({
 		exerciseId: exercise._id,
 		participantId: participant._id,
+		groupSlug: groupSlug,
 	})
-	const participantAnswers = snap.participants?.[participant._id]
+
+	const { answers, role } = actions.getAnswers()
 
 	// step is passed explicitely here since this fires before url params have been updated
 	const determineNextState = (step: number) => {
@@ -58,11 +63,11 @@ export const QuadrantsClient = ({
 		const currentQuadrantIdx = Math.ceil(step / 2) - 1
 		const currentQuadrant = exercise.quadrants!.at(currentQuadrantIdx)!
 		if (selectingForToday) {
-			return participantAnswers?.[currentQuadrant.slug.current]?.today
+			return answers?.[currentQuadrant.slug.current]?.today
 				? "today_placed"
 				: "today_pending"
 		} else {
-			return participantAnswers?.[currentQuadrant.slug.current]?.tomorrow
+			return answers?.[currentQuadrant.slug.current]?.tomorrow
 				? "tomorrow_placed"
 				: "tomorrow_pending"
 		}
@@ -106,11 +111,12 @@ export const QuadrantsClient = ({
 
 							<Quadrant
 								item={quadrant}
-								answer={participantAnswers?.[quadrant.slug.current]}
+								answer={answers?.[quadrant.slug.current]}
 								state={state}
 								index={index}
 								actions={actions}
 								onQuadrantClick={handleClick}
+								readOnly={role === "contributor"}
 							/>
 						</div>
 					))
@@ -118,11 +124,12 @@ export const QuadrantsClient = ({
 					<div key={currentQuadrant?._key}>
 						<Quadrant
 							item={currentQuadrant}
-							answer={participantAnswers?.[currentQuadrant.slug.current]}
+							answer={answers?.[currentQuadrant.slug.current]}
 							index={currentQuadrantIdx}
 							state={state}
 							actions={actions}
 							onQuadrantClick={handleClick}
+							readOnly={role === "contributor"}
 						/>
 					</div>
 				) : null}

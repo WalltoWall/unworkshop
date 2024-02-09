@@ -4,9 +4,7 @@ import {
 	type DragEndEvent,
 	type DragMoveEvent,
 } from "@dnd-kit/core"
-import { debounce } from "perfect-debounce"
 import type { ST } from "@/sanity/config"
-import { submitQuadrantAction } from "../actions"
 import { type State } from "../QuadrantsClient"
 import type { Answer } from "../types"
 import type { QuadrantsActions } from "../use-multiplayer-quadrants"
@@ -15,8 +13,6 @@ import { QuadrantAxes } from "./QuadrantAxes"
 import { QuadrantDraggable } from "./QuadrantDraggable"
 import { QuadrantDroppable } from "./QuadrantDroppable"
 import { QuadrantImages } from "./QuadrantImages"
-
-const debouncedSubmitQuadrantAction = debounce(submitQuadrantAction, 1000)
 
 type Day = "today" | "tomorrow"
 
@@ -27,6 +23,7 @@ type QuadrantProps = {
 	answer?: Answer
 	actions: QuadrantsActions
 	onQuadrantClick: () => void
+	readOnly?: boolean
 }
 
 // REVIEW: I wonder if it's okay that participants are able to modify the
@@ -39,6 +36,7 @@ export const Quadrant = ({
 	answer,
 	actions,
 	onQuadrantClick,
+	readOnly = false,
 }: QuadrantProps) => {
 	const [arrowData, setArrowData] = React.useState({
 		top: 0,
@@ -67,7 +65,7 @@ export const Quadrant = ({
 	}, [today, tomorrow])
 
 	const handleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const parentRect = clickTarget.current.getBoundingClientRect()
 
 			const top =
@@ -93,7 +91,7 @@ export const Quadrant = ({
 	}
 
 	const handleDragEnd = async (event: DragEndEvent) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const { ref, type } = event.active.data.current!
 			if (ref) {
 				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
@@ -110,7 +108,7 @@ export const Quadrant = ({
 	}
 
 	const handleDragMove = (event: DragMoveEvent) => {
-		if (clickTarget?.current) {
+		if (clickTarget?.current && !readOnly) {
 			const { ref, type } = event.active.data.current!
 			if (ref && today && tomorrow) {
 				const [top, left] = getLocationsDuringDrag(ref, clickTarget.current)
