@@ -10,6 +10,7 @@ interface Props {
 	color: string
 	animating: boolean
 	dotSize?: string
+	lineProps?: string
 }
 
 export const QuadrantAnswer = ({
@@ -20,6 +21,7 @@ export const QuadrantAnswer = ({
 	color,
 	animating,
 	dotSize = "w-8 h-8",
+	lineProps = "left-[0.875rem] w-[calc(100%-1.875rem)] -top-[0.125rem]",
 }: Props) => {
 	const todayRef = useRef<HTMLDivElement>(null)
 	const tomorrowRef = useRef<HTMLDivElement>(null)
@@ -135,7 +137,7 @@ export const QuadrantAnswer = ({
 					}}
 				>
 					<div
-						className="absolute -top-[0.125rem] left-[0.875rem] h-full w-[calc(100%-1.875rem)]"
+						className={cx("absolute h-full", lineProps)}
 						style={{
 							backgroundColor: color,
 						}}
