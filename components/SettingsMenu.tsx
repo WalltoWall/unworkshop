@@ -20,7 +20,7 @@ export const SettingsMenu = ({ children }: Props) => (
 				align="end"
 				alignOffset={30}
 				sideOffset={-4}
-				className="grid min-w-[9rem] gap-4 rounded-2xl bg-black px-5 py-4 text-white"
+				className="z-20 grid min-w-[9rem] gap-4 rounded-2xl bg-black px-5 py-4 text-white"
 			>
 				{children}
 			</Popover.Content>

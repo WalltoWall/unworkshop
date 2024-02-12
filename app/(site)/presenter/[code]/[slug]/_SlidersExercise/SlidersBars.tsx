@@ -58,7 +58,7 @@ export const SlidersBars = ({
 								}}
 							>
 								{showNumbers && (
-									<span className="absolute -top-10 z-20 w-full text-center text-24 font-heading">
+									<span className="absolute -top-10 z-10 w-full text-center text-24 font-heading">
 										{today}
 									</span>
 								)}
@@ -78,7 +78,7 @@ export const SlidersBars = ({
 								}}
 							>
 								{showNumbers && (
-									<span className="absolute -top-10 z-20 w-full text-center text-24 font-heading">
+									<span className="absolute -top-10 z-10 w-full text-center text-24 font-heading">
 										{tomorrow}
 									</span>
 								)}

@@ -161,7 +161,8 @@ export const GraphView = ({
 					showTomorrow={showTomorrow}
 					answer={answer}
 					dotSize="w-5 h-5"
-					lineProps="left-[0.2rem] w-[calc(100%-1.7rem)] -top-[0.325rem]"
+					lineProps="left-[0.2rem] w-[calc(100%-1.7rem)] -top-[0.525rem]"
+					arrowHeadProps="-top-[1.2rem]"
 				/>
 			))}
 		</div>

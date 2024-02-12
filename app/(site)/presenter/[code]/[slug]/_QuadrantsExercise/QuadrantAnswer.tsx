@@ -11,6 +11,7 @@ interface Props {
 	animating: boolean
 	dotSize?: string
 	lineProps?: string
+	arrowHeadProps?: string
 }
 
 export const QuadrantAnswer = ({
@@ -22,6 +23,7 @@ export const QuadrantAnswer = ({
 	animating,
 	dotSize = "w-8 h-8",
 	lineProps = "left-[0.875rem] w-[calc(100%-1.875rem)] -top-[0.125rem]",
+	arrowHeadProps = "-top-[0.75rem]",
 }: Props) => {
 	const todayRef = useRef<HTMLDivElement>(null)
 	const tomorrowRef = useRef<HTMLDivElement>(null)
@@ -143,7 +145,10 @@ export const QuadrantAnswer = ({
 						}}
 					/>
 					<div
-						className="absolute -top-[0.75rem] right-3 h-0 w-0 border-y-[0.75rem] border-l-[1.5rem] !border-y-transparent"
+						className={cx(
+							"absolute right-3 h-0 w-0 border-y-[0.75rem] border-l-[1.5rem] !border-y-transparent",
+							arrowHeadProps,
+						)}
 						style={{
 							borderColor: color,
 						}}
