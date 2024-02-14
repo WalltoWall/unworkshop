@@ -1,7 +1,6 @@
 "use client"
 
 import { useParams, useRouter, useSearchParams } from "next/navigation"
-import { Spinner } from "@/components/Spinner"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/config"
 import { Slider } from "./Slider"
@@ -31,14 +30,11 @@ export const SlidersClient = ({ exercise, participant }: Props) => {
 		slug: exercise.sliders[stepIdx].slug.current,
 	})
 
+	if (!multiplayer.provider.synced) return null
+
 	const sliders = exercise.sliders
 	const participantAnswers = snap.participants[participant._id]
-	let answer = {}
-
-	if (participantAnswers)
-		answer = participantAnswers[exercise.sliders[stepIdx].slug.current]
-
-	if (!multiplayer.provider.synced) return null
+	const answer = participantAnswers?.[exercise.sliders[stepIdx].slug.current]
 
 	return (
 		<div className="mt-8">

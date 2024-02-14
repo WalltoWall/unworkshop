@@ -7,7 +7,7 @@ import {
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_SLIDERS_ANSWERS } from "./constants"
-import { type Answer, type SlidersAnswers } from "./types"
+import { type SlidersAnswers } from "./types"
 
 export type UseMultiplayerSlidersArgs = {
 	participantId: string
