@@ -6,7 +6,7 @@ import { Prompt } from "./Prompt"
 import { Textarea, textareaStyles } from "./Textarea"
 import type { FieldProps, FormFieldAnswer } from "./types"
 import { getOffLimitWords, sanitizeString } from "./utils"
-import { AnswersArray } from "./validators"
+import { AnswersArray, StringArray } from "./validators"
 
 const INPUT_NAME = "answer"
 
@@ -68,7 +68,7 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 	const answerTwo = answer?.responses.at(1)
 
 	const handleChange = (answerOne: string, answerTwo?: string) => {
-		const answers = AnswersArray.parse([answerOne, answerTwo])
+		const answers = StringArray.parse([answerOne, answerTwo])
 
 		actions.submitFieldAnswer({
 			answer: { type: "Tagline", responses: answers },
@@ -118,7 +118,7 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 				{...sharedInputProps}
 			/>
 
-			{answerTwo === null && !props.readOnly && (
+			{typeof answerTwo === "undefined" && !props.readOnly && (
 				<AddButton
 					className="mt-2.5"
 					onClick={() => handleChange(answerOne, "")}

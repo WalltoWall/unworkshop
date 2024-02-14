@@ -7,10 +7,11 @@ import {
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_QUADRANTS_ANSWERS } from "./contants"
-import type { Answer, QuadrantsAnswers, QuadrantsParticipant } from "./types"
+import type { Answer, QuadrantsAnswers } from "./types"
 
 export type UseMultiplayerQuadrantsArgs = {
 	participantId?: string
+	groupSlug?: string
 } & MultiplayerArgs
 export type QuadrantsActions = ReturnType<
 	typeof useMultiplayerQuadrants
@@ -18,6 +19,7 @@ export type QuadrantsActions = ReturnType<
 
 export const useMultiplayerQuadrants = ({
 	participantId,
+	groupSlug,
 	...args
 }: UseMultiplayerQuadrantsArgs) => {
 	const multiplayer = useMultiplayer(args)
@@ -36,6 +38,7 @@ export const useMultiplayerQuadrants = ({
 			if (isSynced) {
 				const initialState = yMap.toJSON() as QuadrantsAnswers
 				state.participants = initialState.participants
+				state.groups = initialState.groups
 
 				unbind = bind(state, yMap)
 			}
@@ -50,8 +53,10 @@ export const useMultiplayerQuadrants = ({
 
 	const getQuadrant = (slug: string) => {
 		if (participantId) {
-			state.participants[participantId] ??= {}
-			const participant = state.participants[participantId]
+			const participantOrGroupId = groupSlug ?? participantId
+
+			state.participants[participantOrGroupId] ??= {}
+			const participant = state.participants[participantOrGroupId]
 
 			participant[slug] ??= {}
 			const quadrant = participant[slug]
@@ -78,7 +83,24 @@ export const useMultiplayerQuadrants = ({
 			}
 		},
 
-		getAllAnswers: (args: { participants: Array<QuadrantsParticipant> }) => {
+		getAnswers: () => {
+			let answers = null
+			let role = null
+
+			if (participantId) {
+				const participantOrGroupId = groupSlug ?? participantId
+
+				answers = state.participants[participantOrGroupId]
+
+				if (groupSlug) {
+					role = state.groups?.[groupSlug]?.[participantId]
+				}
+			}
+
+			return { answers, role }
+		},
+
+		getAllAnswers: () => {
 			let allAnswers: { [key: string]: Array<Answer> } = {}
 
 			const participantAnswers = Object.values(state.participants)

@@ -1,5 +1,6 @@
 import React from "react"
 import Image from "next/image"
+import clsx from "clsx"
 import { Text } from "@/components/Text"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
 import { type SliderItem } from "./SlidersExercise"
@@ -13,38 +14,31 @@ type SliderProps = {
 }
 
 // TODO: Images need to be fixed to actual aspect ratio,
-// Make today tomorrow text editable via CMS
 
 export const Slider = ({ item, answer, actions }: SliderProps) => {
 	const values = {
 		todayValue: answer?.today || 3,
 		tomorrowValue: answer?.tomorrow || 3,
 	}
+	const [leftFontSize, setLeftFontSize] = React.useState(
+		`${values.todayValue * 10}px`,
+	)
+	const [rightFontSize, setRightFontSize] = React.useState(
+		`${(values.todayValue * 10 - 70) * -1}px`,
+	)
+	const [leftTomorrowFontSize, setLeftTomorrowFontSize] = React.useState(
+		`${values.tomorrowValue * 10}px`,
+	)
+	const [rightTomorrowFontSize, setRightTomorrowFontSize] = React.useState(
+		`${(values.tomorrowValue * 10 - 70) * -1}px`,
+	)
 
 	const fullRange = 6
 
-	const widthCalc = (value: number, inverse: boolean) => {
-		/* Notes:
-		 * 7 leaves ~14% width for the number to have space to rotate.
-		 *
-		 * inverse subtracts from 100. Columns that need larger widths
-		 * from smaller range values will be accurate.
-		 */
-
-		return inverse ? 100 - (value / 7) * 100 : (value / 7) * 100
-	}
-
-	const grayScaleCalc = (value: number, inverse: boolean) => {
-		/*
-		 * This makes 1's into 0's so that the grayScale() filter can
-		 * recieve a 0 instead of 0.16 aka 1/6.
-		 */
-		const adjustedValue = value == 1 ? 0 : value
-
-		return inverse
-			? 100 - (adjustedValue / fullRange) * 100
-			: (adjustedValue / fullRange) * 100
-	}
+	const leftToday = (values.todayValue - 1) / (fullRange - 1)
+	const leftTomorrow = (values.tomorrowValue - 1) / (fullRange - 1)
+	const rightToday = 1 - leftToday
+	const rightTomorrow = 1 - leftTomorrow
 
 	return (
 		<div className="mt-8" key={item._key}>
@@ -53,43 +47,39 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 			<div>
 				{/* TODAY */}
 				<div className="mt-2 rounded-lg bg-gray-97 p-4">
-					<Text>Where are we today?</Text>
+					<Text>{item.today_text}</Text>
 					<div className="relative my-3 flex h-32 justify-between overflow-hidden rounded-lg">
 						{isFilled.image(item.left_image) ? (
 							<div className="h-32 w-1/2 bg-black">
 								<Image
 									src={urlFor(item.left_image).url()!}
 									alt={altFor(item.left_image)}
-									className="h-full w-full object-cover object-center opacity-100 transition-[filter] transition-opacity"
+									className="h-full w-full object-cover object-center opacity-100 duration-300"
 									width={300}
 									height={300}
 									style={{
 										opacity: 1.1 - values.todayValue / 10,
-										filter: `grayScale(${grayScaleCalc(values.todayValue, false) + "%"})`,
+										filter: `grayScale(${leftToday * 100 + "%"})`,
 									}}
 								/>
 							</div>
 						) : (
 							<div
-								className="flex h-full items-center justify-center bg-pink-85 px-2 transition-[width]"
+								className="flex h-full min-w-min items-center justify-center bg-pink-85 px-2 text-center transition-[width]"
 								style={{
-									width: widthCalc(values.todayValue, true) + "%",
+									width: leftToday * 100 + "%",
 								}}
 							>
 								<p
-									className="uppercase transition-[font-size] transition-[transform] font-heading capsize"
+									className={clsx(
+										"uppercase transition-all  font-heading",
+										values.todayValue === 1 && "[writing-mode:vertical-lr]",
+									)}
 									style={{
-										transform:
-											values.todayValue == fullRange
-												? "rotate(-90deg)"
-												: "rotate(0deg)",
+										fontSize: leftFontSize,
 									}}
 								>
-									<svg className="w-full" viewBox="0 0 75 18">
-										<text x="0" y="15">
-											{item.left_value}
-										</text>
-									</svg>
+									{item.right_value}
 								</p>
 							</div>
 						)}
@@ -99,34 +89,32 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 								<Image
 									src={urlFor(item.right_image).url()!}
 									alt={altFor(item.right_image)}
-									className="h-full w-full object-cover object-center opacity-100 transition-[filter] transition-opacity"
+									className="h-full w-full object-cover object-center opacity-100 duration-300"
 									width={300}
 									height={300}
 									style={{
 										opacity: 0.4 + values.todayValue / 10,
-										filter: `grayScale(${grayScaleCalc(values.todayValue, true) + "%"})`,
+										filter: `grayScale(${rightToday * 100 + "%"})`,
 									}}
 								/>
 							</div>
 						) : (
 							<div
-								className="flex h-full items-center justify-center bg-green-78 px-2 transition-[width]"
+								className="flex h-full min-w-min items-center justify-center bg-green-78 px-2 text-center transition-[width]"
 								style={{
-									width: widthCalc(values.todayValue, false) + "%",
+									width: rightToday * 100 + "%",
 								}}
 							>
 								<p
-									className="w-full uppercase transition-[font-size] transition-[transform] font-heading capsize"
+									className={clsx(
+										"w-full uppercase transition font-heading",
+										values.todayValue === 6 && "[writing-mode:vertical-rl]",
+									)}
 									style={{
-										transform:
-											values.todayValue == 1 ? "rotate(90deg)" : "rotate(0deg)",
+										fontSize: rightFontSize,
 									}}
 								>
-									<svg className="w-full" viewBox="0 0 75 18">
-										<text x="0" y="15">
-											{item.right_value}
-										</text>
-									</svg>
+									{item.left_value}
 								</p>
 							</div>
 						)}
@@ -139,6 +127,9 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						value={values.todayValue}
 						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
 						onChange={(e) => {
+							setLeftFontSize(`${parseInt(e.target.value) * 10}px`)
+							setRightFontSize(`${(parseInt(e.target.value) * 10 - 70) * -1}px`)
+
 							actions.setTodayValue({
 								today: parseInt(e.target.value),
 							})
@@ -152,43 +143,39 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 
 				{/* TOMORROW */}
 				<div className="mt-8 rounded-lg bg-gray-97 p-4">
-					<Text>Where are we tomorrow?</Text>
+					<Text>{item.tomorrow_text}</Text>
 					<div className="relative my-3 flex h-32 justify-between overflow-hidden rounded-lg">
 						{isFilled.image(item.left_image) ? (
 							<div className="h-32 w-1/2 bg-black">
 								<Image
 									src={urlFor(item.left_image).url()!}
 									alt={altFor(item.left_image)}
-									className="h-full w-full object-cover object-center opacity-100 transition-[filter] transition-opacity"
+									className="h-full w-full object-cover object-center opacity-100 transition"
 									width={300}
 									height={300}
 									style={{
 										opacity: 1.1 - values.tomorrowValue / 10,
-										filter: `grayScale(${grayScaleCalc(values.tomorrowValue, false) + "%"})`,
+										filter: `grayScale(${leftTomorrow * 100 + "%"})`,
 									}}
 								/>
 							</div>
 						) : (
 							<div
-								className="flex h-full items-center justify-center bg-pink-85 px-2 transition-[width]"
+								className="flex h-full min-w-min items-center justify-center bg-pink-85 px-2 text-center transition-[width]"
 								style={{
-									width: widthCalc(values.tomorrowValue, true) + "%",
+									width: leftTomorrow * 100 + "%",
 								}}
 							>
 								<p
-									className="uppercase transition-[font-size] transition-[transform] font-heading capsize"
+									className={clsx(
+										"uppercase transition font-heading",
+										values.tomorrowValue === 1 && "[writing-mode:vertical-lr]",
+									)}
 									style={{
-										transform:
-											values.tomorrowValue == fullRange
-												? "rotate(-90deg)"
-												: "rotate(0deg)",
+										fontSize: leftTomorrowFontSize,
 									}}
 								>
-									<svg className="w-full" viewBox="0 0 75 18">
-										<text x="0" y="15">
-											{item.left_value}
-										</text>
-									</svg>
+									{item.right_value}
 								</p>
 							</div>
 						)}
@@ -198,36 +185,32 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 								<Image
 									src={urlFor(item.right_image).url()!}
 									alt={altFor(item.right_image)}
-									className="h-full w-full object-cover object-center opacity-100 transition-[filter] transition-opacity"
+									className="h-full w-full object-cover object-center opacity-100 transition"
 									width={300}
 									height={300}
 									style={{
 										opacity: 0.4 + values.tomorrowValue / 10,
-										filter: `grayScale(${grayScaleCalc(values.tomorrowValue, true) + "%"})`,
+										filter: `grayScale(${rightTomorrow * 100 + "%"})`,
 									}}
 								/>
 							</div>
 						) : (
 							<div
-								className="flex h-full items-center justify-center bg-green-78 px-2 transition-[width]"
+								className="flex h-full min-w-min items-center justify-center bg-green-78 px-2 text-center transition-[width]"
 								style={{
-									width: widthCalc(values.tomorrowValue, false) + "%",
+									width: rightTomorrow * 100 + "%",
 								}}
 							>
 								<p
-									className="w-full uppercase transition-[font-size] transition-[transform] font-heading capsize"
+									className={clsx(
+										"w-full uppercase transition font-heading",
+										values.tomorrowValue === 6 && "[writing-mode:vertical-rl]",
+									)}
 									style={{
-										transform:
-											values.tomorrowValue == 1
-												? "rotate(90deg)"
-												: "rotate(0deg)",
+										fontSize: rightTomorrowFontSize,
 									}}
 								>
-									<svg className="w-full" viewBox="0 0 75 18">
-										<text x="0" y="15">
-											{item.right_value}
-										</text>
-									</svg>
+									{item.left_value}
 								</p>
 							</div>
 						)}
@@ -241,6 +224,11 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						value={values.tomorrowValue}
 						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
 						onChange={(e) => {
+							setLeftTomorrowFontSize(`${parseInt(e.target.value) * 10}px`)
+							setRightTomorrowFontSize(
+								`${(parseInt(e.target.value) * 10 - 70) * -1}px`,
+							)
+
 							actions.setTomorrowValue({
 								tomorrow: parseInt(e.target.value),
 							})

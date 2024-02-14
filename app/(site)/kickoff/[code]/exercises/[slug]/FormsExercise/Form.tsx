@@ -40,7 +40,7 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	// Or group id?
+	// TODO: Or group id?
 	const answers = snap.participants[participant._id] ?? []
 	const stepAnswers = answers.at(stepIdx)
 
@@ -48,6 +48,9 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	const goBackToExerciseList = () =>
 		router.push(`/kickoff/${params.code}/exercises`)
+
+	// TODO: Loading indicator
+	if (!multiplayer.provider.synced) return null
 
 	return (
 		<div className="mt-3 flex flex-[1_1_0] flex-col justify-between">

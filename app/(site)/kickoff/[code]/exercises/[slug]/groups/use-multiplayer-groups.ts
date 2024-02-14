@@ -6,28 +6,28 @@ import {
 	type MultiplayerArgs,
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
-import { INITIAL_SLIDERS_ANSWERS } from "./constants"
-import { type Answer, type SlidersAnswers } from "./types"
+import { INITIAL_GROUP_ANSWERS } from "./constants"
+import type { Role } from "./GroupForm"
+import type { ExerciseAnswers } from "./types"
 
-export type UseMultiplayerSlidersArgs = {
-	participantId: string
-	slug: string
+export type UseMultiplayerGroupsArgs = {
+	participantId?: string
 } & MultiplayerArgs
-export type SliderActions = ReturnType<typeof useMultiplayerSliders>["actions"]
+export type QuadrantsActions = ReturnType<
+	typeof useMultiplayerGroups
+>["actions"]
 
-export const useMultiplayerSliders = ({
+export const useMultiplayerGroups = ({
 	participantId,
-	slug,
 	...args
-}: UseMultiplayerSlidersArgs) => {
+}: UseMultiplayerGroupsArgs) => {
 	const multiplayer = useMultiplayer(args)
 	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
 	const state = React.useRef(
-		proxy<SlidersAnswers>(INITIAL_SLIDERS_ANSWERS),
+		proxy<ExerciseAnswers>(INITIAL_GROUP_ANSWERS),
 	).current
 	const snap = useSnapshot(state)
 
-	// Kinda janky, but this is required to ensure data is persisted initially.
 	React.useEffect(() => {
 		let unbind: (() => void) | undefined = undefined
 
@@ -35,8 +35,9 @@ export const useMultiplayerSliders = ({
 		// backend and we've checked that data exists in Sanity.
 		const onSync = (isSynced: boolean) => {
 			if (isSynced) {
-				const initialState = yMap.toJSON() as SlidersAnswers
+				const initialState = yMap.toJSON() as ExerciseAnswers
 				state.participants = initialState.participants
+				state.groups = initialState.groups
 
 				unbind = bind(state, yMap)
 			}
@@ -49,27 +50,28 @@ export const useMultiplayerSliders = ({
 		}
 	}, [multiplayer.provider, state, yMap])
 
-	const getSlider = () => {
-		state.participants[participantId] ??= {}
-		const participant = state.participants[participantId]
-		participant[slug] ??= {}
-		const step = participant[slug]
-
-		return step
-	}
-
 	const actions = {
-		setTodayValue: (args: { today: number }) => {
-			const step = getSlider()
-
-			step.today = args.today
+		setGroup: (args: { slug: string; role: Role }) => {
+			if (participantId) {
+				state.groups[args.slug] = {
+					...state.groups[args.slug],
+					[participantId]: args.role,
+				}
+			}
 		},
-		setTomorrowValue: (args: { tomorrow: number }) => {
-			const step = getSlider()
 
-			step.tomorrow = args.tomorrow
+		replaceCaptain: (args: { slug: string; captainId: string }) => {
+			if (participantId) {
+				state.groups[args.slug] = {
+					...state.groups[args.slug],
+					[args.captainId]: "contributor",
+					[participantId]: "captain",
+				}
+
+				delete state?.participants?.[args.slug]
+			}
 		},
 	}
 
-	return { snap, actions, multiplayer }
+	return { snap, actions }
 }

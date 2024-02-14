@@ -12,6 +12,7 @@ type Props = {
 
 const ExercisePage = async (props: Props) => {
 	const exercise = await client.findExerciseBySlug(props.params.slug)
+
 	if (!exercise) notFound()
 
 	return (
