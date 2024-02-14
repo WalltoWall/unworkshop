@@ -32,8 +32,6 @@ export const HighlightedResponses = ({
 				const cleanResp = sanitizeString(resp)
 				const invalid = cleanAnswers.some((a) => cleanResp === a)
 
-				console.log(cleanAnswers, cleanResp)
-
 				return (
 					<Text
 						asChild

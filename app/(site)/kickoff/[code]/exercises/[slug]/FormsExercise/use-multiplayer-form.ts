@@ -11,10 +11,9 @@ import { type FormAnswers, type FormFieldAnswer } from "./types"
 
 export type FormActions = ReturnType<typeof useMultiplayerForm>["actions"]
 
-export const useMultiplayerForm = ({
-	participantId,
-	...args
-}: MultiplayerArgs & { participantId: string }) => {
+type Args = MultiplayerArgs & { participantId?: string }
+
+export const useMultiplayerForm = ({ participantId, ...args }: Args) => {
 	const multiplayer = useMultiplayer(args)
 	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
 	const state = React.useRef(proxy<FormAnswers>(INITIAL_FORM_ANSWERS)).current
@@ -49,6 +48,8 @@ export const useMultiplayerForm = ({
 			fieldIdx: number
 			stepIdx: number
 		}) => {
+			if (!participantId) return
+
 			state.participants[participantId] ??= []
 			const participant = state.participants[participantId]
 

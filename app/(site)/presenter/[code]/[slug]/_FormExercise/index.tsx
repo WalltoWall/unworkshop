@@ -5,13 +5,18 @@ import { FormResponses } from "./FormResponses"
 
 type Props = {
 	exercise: ST["exercise"]
+	kickoff: ST["kickoff"]
 }
 
 export const FormPresenterView = async (props: Props) => {
-	const participants =
-		await client.findAllParticipantsInExercise<FormParticipant>(
-			props.exercise._id,
-		)
+	const participants = await client.findAllParticipantsInKickoff(
+		props.kickoff._id,
+	)
 
-	return <FormResponses participants={participants} exercise={props.exercise} />
+	const participantsById: Record<string, FormParticipant> = {}
+	participants.forEach((p) => (participantsById[p._id] = p))
+
+	return (
+		<FormResponses participants={participantsById} exercise={props.exercise} />
+	)
 }

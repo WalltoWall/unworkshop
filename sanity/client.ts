@@ -75,18 +75,27 @@ export const client = {
 
 	// prettier-ignore
 	async findAllParticipantsInExercise<T extends ST["participant"] = ST["participant"]>(exerciseId: string) {
+        const participants = await sanity.fetch<Array<T>>(
+            groq`*[_type == "participant" && answers[$exerciseId] != null]{
+                ...,
+                answers
+            }`,
+            {exerciseId},
+            { cache: "no-store" }
+        )
 
-            const participants = await sanity.fetch<Array<T>>(
-                groq`*[_type == "participant" && answers[$exerciseId] != null]{
-                    ...,
-                    answers
-                }`,
-                {exerciseId},
-                { cache: "no-store" }
-            )
+        return participants
+    },
 
-                return participants
-            },
+	async findAllParticipantsInKickoff(kickoffId: string) {
+		const participants = await sanity.fetch<Array<ST["participant"]>>(
+			groq`*[_type == "participant" && kickoff._ref == $kickoffId]`,
+			{ kickoffId },
+			{ cache: "no-store" },
+		)
+
+		return participants
+	},
 
 	async findKickoffOrThrow(code: string) {
 		const kickoff = await client.findKickoff(code)

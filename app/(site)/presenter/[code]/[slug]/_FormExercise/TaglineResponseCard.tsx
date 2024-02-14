@@ -9,7 +9,7 @@ import { Slider } from "./Slider"
 export const TaglineResponseCard = ({
 	participant,
 	answer,
-	exerciseId,
+	allParticipantAnswers,
 	field,
 	settings,
 	participantNumber,
@@ -19,9 +19,9 @@ export const TaglineResponseCard = ({
 		throw new Error("Invalid tagline source field")
 	}
 
-	const sourceAnswer = participant.answers?.[exerciseId]?.steps
+	const sourceAnswer = allParticipantAnswers
 		.at(field.source.step - 1)
-		?.data.at(field.source.field - 1)
+		?.at(field.source.field - 1)
 
 	if (!sourceAnswer || sourceAnswer.type !== "List") {
 		throw new Error("Invalid resolved tagline source answer.")

@@ -31,7 +31,9 @@ const PresenterExercisePage = async (props: Props) => {
 			{exercise.type === "quadrants" && (
 				<QuadrantsPresenterView exercise={exercise} />
 			)}
-			{exercise.type === "form" && <FormPresenterView exercise={exercise} />}
+			{exercise.type === "form" && (
+				<FormPresenterView kickoff={kickoff} exercise={exercise} />
+			)}
 
 			{exercise.type === "sliders" && (
 				<SlidersPresenterView exercise={exercise} />

@@ -1,16 +1,18 @@
 "use client"
 
 import React from "react"
+import * as R from "remeda"
 import snarkdown from "snarkdown"
 import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/config"
-import { type FormParticipant } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
+import type { FormParticipant } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
+import { useMultiplayerForm } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/use-multiplayer-form"
 import { ResponseCard } from "./ResponseCard"
 
 type Props = {
 	exercise: ST["exercise"]
-	participants: FormParticipant[]
+	participants: Record<string, FormParticipant>
 }
 
 export type FormPresenterViewSettings = {
@@ -21,6 +23,14 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 	const [settings, setSettings] = React.useState<FormPresenterViewSettings>({
 		names: false,
 	})
+	const { snap, multiplayer } = useMultiplayerForm({ exerciseId: exercise._id })
+
+	if (!multiplayer.provider.synced) return null
+
+	const participantAnswers = R.mapValues(snap.participants, (answers, id) => ({
+		answers,
+		participant: participants[id],
+	}))
 
 	return (
 		<>
@@ -33,13 +43,10 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 							</Text>
 
 							{step.fields?.map((field, fieldIdx) => {
-								const participantWithAnswer = participants
-									.filter((p) => Boolean(p.answers?.[exercise._id].steps))
-									.map((p) => ({
-										answer: p.answers?.[exercise._id].steps
-											.at(stepIdx)
-											?.data.at(fieldIdx)!,
-										participant: p,
+								const participantWithAnswer = R.values(participantAnswers)
+									.map((pa) => ({
+										answer: pa.answers.at(stepIdx)?.at(fieldIdx)!,
+										participant: pa.participant,
 									}))
 									.filter((val) => Boolean(val.answer))
 
@@ -64,9 +71,11 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 												<ResponseCard
 													key={p.answer.type + idx}
 													answer={p.answer}
+													allParticipantAnswers={
+														participantAnswers[p.participant._id].answers
+													}
 													participant={p.participant}
 													field={field}
-													exerciseId={exercise._id}
 													settings={settings}
 													participantNumber={idx + 1}
 													questionNumber={fieldIdx + 1}

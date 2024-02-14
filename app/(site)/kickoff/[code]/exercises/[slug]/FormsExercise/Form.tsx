@@ -27,7 +27,7 @@ export const Form = ({ exercise, participant }: Props) => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const params = useParams()
-	const { actions, snap } = useMultiplayerForm({
+	const { actions, multiplayer, snap } = useMultiplayerForm({
 		exerciseId: exercise._id,
 		participantId: participant._id,
 	})

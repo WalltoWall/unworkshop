@@ -11,7 +11,7 @@ export const NarrowResponseCard = ({
 	participant,
 	field,
 	questionNumber,
-	exerciseId,
+	allParticipantAnswers,
 }: ResponseCardProps<NarrowFieldAnswer>) => {
 	const name = settings.names
 		? participant.name
@@ -20,9 +20,7 @@ export const NarrowResponseCard = ({
 	const sourceStep = field.source?.step ?? Infinity
 	const sourceField = field.source?.step ?? Infinity
 
-	const sourceAnswer = participant.answers?.[exerciseId]?.steps
-		.at(sourceStep - 1)
-		?.data.at(sourceField - 1)
+	const sourceAnswer = allParticipantAnswers.at(sourceStep)?.at(sourceField)
 
 	if (sourceAnswer && sourceAnswer.type !== "List") {
 		throw new Error(

@@ -6,6 +6,7 @@ import type {
 	FormField,
 	FormFieldAnswer,
 	FormParticipant,
+	FormStepAnswer,
 } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
 import type { FormPresenterViewSettings } from "./FormResponses"
 import { ListResponseCard } from "./ListResponseCard"
@@ -15,9 +16,9 @@ import { TextResponseCard } from "./TextResponseCard"
 
 export type ResponseCardProps<T extends FormFieldAnswer = FormFieldAnswer> = {
 	answer: T
+	allParticipantAnswers: FormStepAnswer[]
 	participant: FormParticipant
 	field: FormField
-	exerciseId: string
 	settings: FormPresenterViewSettings
 	participantNumber: number
 	questionNumber: number
