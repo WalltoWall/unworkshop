@@ -27,12 +27,10 @@ export const Form = ({ exercise, participant }: Props) => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const params = useParams()
-	const { actions, multiplayer, snap } = useMultiplayerForm({
+	const { actions, snap } = useMultiplayerForm({
 		exerciseId: exercise._id,
 		participantId: participant._id,
 	})
-
-	console.log(snap)
 
 	const step = StepParamSchema.parse(searchParams.get("step"))
 	const stepIdx = step - 1
