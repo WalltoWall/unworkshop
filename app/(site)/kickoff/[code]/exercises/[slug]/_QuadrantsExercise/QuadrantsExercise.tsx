@@ -1,7 +1,7 @@
 import React from "react"
 import dynamic from "next/dynamic"
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import type { QuadrantsParticipant } from "./types"
 
 const QuadrantsClient = dynamic(() => import("./QuadrantsClient"), {

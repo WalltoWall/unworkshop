@@ -1,6 +1,6 @@
 import { RichText, type RichTextContent } from "@/components/RichText"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { type State } from "./QuadrantsClient"
 
 const serializers = {

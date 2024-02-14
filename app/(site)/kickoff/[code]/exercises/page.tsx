@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import type { ExerciseAnswers, GroupExercise } from "./[slug]/groups/types"
 import { ExerciseCard } from "./ExerciseCard"
 

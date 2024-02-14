@@ -1,5 +1,5 @@
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { type FormParticipant } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
 import { FormResponses } from "./FormResponses"
 

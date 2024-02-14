@@ -8,7 +8,7 @@ import { Chevron } from "@/components/icons/Chevron"
 import { Hamburger } from "@/components/icons/Hamburger"
 import { Logo } from "@/components/Logo"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { QuadrantsHeaderNav } from "./[code]/[slug]/_QuadrantsExercise/QuadrantsHeaderNav"
 
 interface PresenterHeaderProp {

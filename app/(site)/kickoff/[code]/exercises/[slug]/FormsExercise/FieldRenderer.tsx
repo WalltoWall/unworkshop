@@ -1,5 +1,5 @@
 import { unreachable } from "@/lib/unreachable"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { ListField } from "./ListField"
 import { NarrowField } from "./NarrowField"
 import { TaglineField } from "./TaglineField"

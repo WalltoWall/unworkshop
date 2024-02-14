@@ -2,7 +2,7 @@
 
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { Slider } from "./Slider"
 import type { SlidersExercise, SlidersParticipant } from "./types"
 import { useMultiplayerSliders } from "./use-multiplayer-sliders"

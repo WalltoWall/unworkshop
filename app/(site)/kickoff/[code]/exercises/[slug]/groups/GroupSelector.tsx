@@ -1,7 +1,7 @@
 import type { Dispatch } from "react"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 
 interface GroupSelectorProps {
 	groups: ST["exercise"]["groups"]

@@ -4,7 +4,7 @@ import {
 	type DragEndEvent,
 	type DragMoveEvent,
 } from "@dnd-kit/core"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { type State } from "../QuadrantsClient"
 import type { Answer } from "../types"
 import type { QuadrantsActions } from "../use-multiplayer-quadrants"

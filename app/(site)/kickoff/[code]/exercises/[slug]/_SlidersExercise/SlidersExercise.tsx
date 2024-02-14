@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic"
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import type { SlidersParticipant } from "./types"
 
 export type SliderItem = NonNullable<ST["exercise"]["sliders"]>[number]

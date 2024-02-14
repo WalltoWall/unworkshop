@@ -3,7 +3,7 @@
 import React from "react"
 import { useRouter } from "next/navigation"
 import { cx } from "class-variance-authority"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { CaptainModal } from "./CaptainModal"
 import { GroupRoleSelector } from "./GroupRoleSelector"
 import { GroupSelector } from "./GroupSelector"

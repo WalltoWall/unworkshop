@@ -6,7 +6,7 @@ import { Prompt } from "./Prompt"
 import { Textarea, textareaStyles } from "./Textarea"
 import type { FieldProps, FormFieldAnswer } from "./types"
 import { getOffLimitWords, sanitizeString } from "./utils"
-import { AnswersArray, StringArray } from "./validators"
+import { StringArray } from "./validators"
 
 const INPUT_NAME = "answer"
 

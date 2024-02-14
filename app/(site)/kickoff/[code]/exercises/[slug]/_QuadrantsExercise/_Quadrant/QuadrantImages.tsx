@@ -1,6 +1,6 @@
 import Image from "next/image"
-import type { ST } from "@/sanity/config"
 import { altFor, urlFor, type SanityImage } from "@/sanity/helpers"
+import type { ST } from "@/sanity/types.gen"
 
 const QuadrantImage = ({ image }: { image: SanityImage }) => {
 	const url = urlFor(image).width(150).height(150).format("webp").toString()

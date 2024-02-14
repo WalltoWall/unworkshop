@@ -1,4 +1,4 @@
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 
 export type Answer = {
 	today?: number

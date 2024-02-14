@@ -1,5 +1,5 @@
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"

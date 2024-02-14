@@ -3,7 +3,6 @@
 import React, { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
-import { useAnswers } from "../groups/use-answers"
 import { Quadrant } from "./_Quadrant/Quadrant"
 import { QuadrantInstructions } from "./QuadrantInstructions"
 import type { QuadrantsExercise, QuadrantsParticipant } from "./types"

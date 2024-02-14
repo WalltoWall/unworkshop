@@ -1,4 +1,4 @@
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import type { FormActions } from "./use-multiplayer-form"
 
 export type ListFieldAnswer = {

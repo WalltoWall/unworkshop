@@ -1,19 +1,15 @@
 "use client"
 
-// REVIEW: I have to show you Framer Motion one day 😁, I think you'd really
-// like it.
 import useEmblaCarousel, { type EmblaCarouselType } from "embla-carousel-react"
 import React, { useEffect } from "react"
 import { CirclePicker } from "react-color"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { cx } from "class-variance-authority"
 import { ArrowButton } from "@/components/ArrowButton"
 import { Button } from "@/components/Button"
-import { Arrow } from "@/components/icons/Arrow"
 import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
 import { Spinner } from "@/components/Spinner"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { useMultiplayerQuadrants } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/use-multiplayer-quadrants"
 import { PresentQuadrant } from "./PresentQuadrant"
 

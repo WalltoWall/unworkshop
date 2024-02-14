@@ -1,5 +1,5 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { StepNavItem } from "../../../PresenterHeader"
 
 interface Props {

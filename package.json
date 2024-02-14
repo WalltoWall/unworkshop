@@ -3,10 +3,11 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "concurrently -p \"{name}:\" -c \"yellow.bold,cyan.bold\" \"npm:dev:*\"",
+		"dev": "concurrently -p \"{name}:\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm:dev:*\"",
 		"dev:next": "next dev --turbo",
 		"dev:partykit": "npx partykit dev",
-		"start": "concurrently -p \"{name}:\" -c \"yellow.bold,cyan.bold\" \"npm:start:*\"",
+		"dev:codegen": "turbowatch ./sanity/codegen.ts",
+		"start": "concurrently -p \"{name}:\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm:start:*\"",
 		"start:next": "next start",
 		"start:partykit": "npx partykit dev",
 		"build": "next build",
@@ -79,6 +80,8 @@
 		"prettier": "^3.2.5",
 		"prettier-plugin-tailwindcss": "^0.5.11",
 		"tailwindcss": "^3.4.1",
+		"ts-simplify": "^0.1.2",
+		"turbowatch": "^2.29.4",
 		"typescript": "^5.3.3"
 	}
 }

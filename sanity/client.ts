@@ -4,7 +4,7 @@ import { groq } from "next-sanity"
 import { cookies } from "next/headers"
 import type { Reference } from "sanity"
 import { z } from "zod"
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 import { PARTICIPANT_COOKIE } from "@/constants"
 import { sanity } from "./sanity-client"
 

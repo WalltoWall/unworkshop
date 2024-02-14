@@ -65,19 +65,6 @@ const config = defineConfig({
 		},
 	},
 
-	document: {
-		// Enables the "Open Preview" in the options context menu for a
-		// document. This isn't really a preview, but moreso a "quick-link" to
-		// the page.
-		// productionUrl: async (_prev, context) => {
-		// 	const slug = slugResolver(
-		// 		(context.document as PreviewableDocument)?.slug?.current,
-		// 	)
-		// 	const url = new URL(slug, env.NEXT_PUBLIC_ROOT_URL)
-		// 	return url.toString()
-		// },
-	},
-
 	plugins: [
 		structureTool({
 			// Customize the content sidebar.

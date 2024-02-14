@@ -1,4 +1,4 @@
-import type { ST } from "@/sanity/config"
+import type { ST } from "@/sanity/types.gen"
 
 type QuadrantAxesProps = {
 	item: NonNullable<ST["exercise"]["quadrants"]>[number]
