@@ -253,12 +253,18 @@ export const SlidersPresenterViewClient = ({
 							<SettingVisibility
 								label="Show Today"
 								isVisible={showToday}
-								toggleVisibility={() => setShowToday((prev) => !prev)}
+								toggleVisibility={() => {
+									setShowToday((prev) => !prev)
+									setShowTomorrow(false)
+								}}
 							/>
 							<SettingVisibility
 								label="Show Tomorrow"
 								isVisible={showTomorrow}
-								toggleVisibility={() => setShowTomorrow((prev) => !prev)}
+								toggleVisibility={() => {
+									setShowTomorrow(false)
+									setShowTomorrow(true)
+								}}
 							/>
 							<SettingVisibility
 								label="Show Lines"
