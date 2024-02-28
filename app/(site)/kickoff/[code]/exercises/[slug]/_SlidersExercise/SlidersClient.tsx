@@ -12,9 +12,10 @@ export type SliderItem = NonNullable<ST["exercise"]["sliders"]>[number]
 type Props = {
 	exercise: SlidersExercise
 	participant: SlidersParticipant
+	groupSlug?: string
 }
 
-export const SlidersClient = ({ exercise, participant }: Props) => {
+export const SlidersClient = ({ exercise, participant, groupSlug }: Props) => {
 	if (!exercise.sliders) throw new Error("Invalid Sliders Exercise steps.")
 
 	const router = useRouter()
@@ -28,13 +29,15 @@ export const SlidersClient = ({ exercise, participant }: Props) => {
 		exerciseId: exercise._id,
 		participantId: participant._id,
 		slug: exercise.sliders[stepIdx].slug.current,
+		groupSlug,
 	})
+
+	const { answers, role } = actions.getAnswers()
 
 	if (!multiplayer.provider.synced) return null
 
 	const sliders = exercise.sliders
-	const participantAnswers = snap.participants[participant._id]
-	const answer = participantAnswers?.[exercise.sliders[stepIdx].slug.current]
+	const answer = answers?.[exercise.sliders[stepIdx].slug.current]
 
 	return (
 		<div className="mt-8">
@@ -46,6 +49,7 @@ export const SlidersClient = ({ exercise, participant }: Props) => {
 							item={slider}
 							answer={answer}
 							actions={actions}
+							readOnly={role === "contributor"}
 						/>
 					)}
 				</div>

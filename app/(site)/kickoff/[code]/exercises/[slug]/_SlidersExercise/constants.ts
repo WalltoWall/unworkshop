@@ -1,1 +1,1 @@
-export const INITIAL_SLIDERS_ANSWERS = { participants: {} }
+export const INITIAL_SLIDERS_ANSWERS = { participants: {}, groups: {} }

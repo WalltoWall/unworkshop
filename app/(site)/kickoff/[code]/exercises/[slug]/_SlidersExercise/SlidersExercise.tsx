@@ -11,14 +11,19 @@ const SlidersClient = dynamic(() => import("./SlidersClient"), {
 
 type Props = {
 	exercise: ST["exercise"]
+	groupSlug?: string
 }
 
-export const SlidersExercise = async ({ exercise }: Props) => {
+export const SlidersExercise = async ({ exercise, groupSlug }: Props) => {
 	const participant = await client.findParticipantOrThrow<SlidersParticipant>()
 
 	return (
 		<div className="mt-8">
-			<SlidersClient exercise={exercise} participant={participant} />
+			<SlidersClient
+				exercise={exercise}
+				participant={participant}
+				groupSlug={groupSlug}
+			/>
 		</div>
 	)
 }

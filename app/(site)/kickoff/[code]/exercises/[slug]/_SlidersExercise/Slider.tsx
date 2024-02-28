@@ -9,13 +9,19 @@ import type { SliderActions } from "./use-multiplayer-sliders"
 
 type SliderProps = {
 	item: SliderItem
-	answer: Answer
+	answer: Answer | undefined
 	actions: SliderActions
+	readOnly?: boolean
 }
 
 // TODO: Images need to be fixed to actual aspect ratio,
 
-export const Slider = ({ item, answer, actions }: SliderProps) => {
+export const Slider = ({
+	item,
+	answer,
+	actions,
+	readOnly = false,
+}: SliderProps) => {
 	const values = {
 		todayValue: answer?.today || 3,
 		tomorrowValue: answer?.tomorrow || 3,
@@ -125,8 +131,10 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						min={1}
 						max={fullRange}
 						value={values.todayValue}
+						readOnly={readOnly}
 						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
 						onChange={(e) => {
+							if (readOnly) return
 							setLeftFontSize(`${parseInt(e.target.value) * 10}px`)
 							setRightFontSize(`${(parseInt(e.target.value) * 10 - 70) * -1}px`)
 
@@ -222,8 +230,10 @@ export const Slider = ({ item, answer, actions }: SliderProps) => {
 						min={1}
 						max={fullRange}
 						value={values.tomorrowValue}
+						readOnly={readOnly}
 						className="range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat"
 						onChange={(e) => {
+							if (readOnly) return
 							setLeftTomorrowFontSize(`${parseInt(e.target.value) * 10}px`)
 							setRightTomorrowFontSize(
 								`${(parseInt(e.target.value) * 10 - 70) * -1}px`,

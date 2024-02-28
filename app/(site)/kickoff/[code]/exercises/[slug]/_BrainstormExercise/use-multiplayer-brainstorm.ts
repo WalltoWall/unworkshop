@@ -11,13 +11,17 @@ import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_ANSWERS } from "./constants"
 import { type BrainstormAnswers } from "./types"
 
-export type UseMultiplayerBrainstormArgs = { stepIdx: number } & MultiplayerArgs
+export type UseMultiplayerBrainstormArgs = {
+	stepIdx: number
+	groupSlug?: string
+} & MultiplayerArgs
 export type BrainstormActions = ReturnType<
 	typeof useMultiplayerBrainstorm
 >["actions"]
 
 export const useMultiplayerBrainstorm = ({
 	stepIdx,
+	groupSlug,
 	...args
 }: UseMultiplayerBrainstormArgs) => {
 	const multiplayer = useMultiplayer(args)

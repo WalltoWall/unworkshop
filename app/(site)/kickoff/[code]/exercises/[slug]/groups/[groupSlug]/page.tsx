@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { client } from "@/sanity/client"
 import { QuadrantsExercise } from "../../_QuadrantsExercise/QuadrantsExercise"
+import { SlidersExercise } from "../../_SlidersExercise/SlidersExercise"
 import { InstructionsModal } from "../../InstructionsModal"
 import { RoleHeader } from "../../RoleHeader"
 import type { GroupParticipant } from "../types"
@@ -23,6 +24,13 @@ const GroupExercisePage = async (props: Props) => {
 				exerciseName={exercise.name}
 				instructions={exercise.instructions}
 			/>
+
+			{exercise.type === "sliders" && (
+				<SlidersExercise
+					exercise={exercise}
+					groupSlug={props.params.groupSlug}
+				/>
+			)}
 
 			{exercise.type === "quadrants" && (
 				<QuadrantsExercise

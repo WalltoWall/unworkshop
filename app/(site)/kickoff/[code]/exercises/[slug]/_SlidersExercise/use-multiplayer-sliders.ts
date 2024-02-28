@@ -12,12 +12,14 @@ import { type SlidersAnswers } from "./types"
 export type UseMultiplayerSlidersArgs = {
 	participantId: string
 	slug: string
+	groupSlug?: string
 } & MultiplayerArgs
 export type SliderActions = ReturnType<typeof useMultiplayerSliders>["actions"]
 
 export const useMultiplayerSliders = ({
 	participantId,
 	slug,
+	groupSlug,
 	...args
 }: UseMultiplayerSlidersArgs) => {
 	const multiplayer = useMultiplayer(args)
@@ -37,6 +39,7 @@ export const useMultiplayerSliders = ({
 			if (isSynced) {
 				const initialState = yMap.toJSON() as SlidersAnswers
 				state.participants = initialState.participants
+				state.groups = initialState.groups
 
 				unbind = bind(state, yMap)
 			}
@@ -50,8 +53,11 @@ export const useMultiplayerSliders = ({
 	}, [multiplayer.provider, state, yMap])
 
 	const getSlider = () => {
-		state.participants[participantId] ??= {}
-		const participant = state.participants[participantId]
+		const participantOrGroupId = groupSlug ?? participantId
+
+		state.participants[participantOrGroupId] ??= {}
+		const participant = state.participants[participantOrGroupId]
+
 		participant[slug] ??= {}
 		const step = participant[slug]
 
@@ -68,6 +74,22 @@ export const useMultiplayerSliders = ({
 			const step = getSlider()
 
 			step.tomorrow = args.tomorrow
+		},
+		getAnswers: () => {
+			let answers = null
+			let role = null
+
+			if (participantId) {
+				const participantOrGroupId = groupSlug ?? participantId
+
+				answers = state.participants[participantOrGroupId]
+
+				if (groupSlug) {
+					role = state.groups?.[groupSlug]?.[participantId]
+				}
+			}
+
+			return { answers, role }
 		},
 	}
 

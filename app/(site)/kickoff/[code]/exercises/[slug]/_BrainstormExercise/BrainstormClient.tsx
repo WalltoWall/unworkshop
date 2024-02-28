@@ -11,9 +11,10 @@ import { useMultiplayerBrainstorm } from "./use-multiplayer-brainstorm"
 type Props = {
 	exercise: BrainstormExercise
 	participant: BrainstormParticipant
+	groupSlug?: string
 }
 
-const BrainstormClient = ({ exercise, participant }: Props) => {
+const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 	if (!exercise.steps) throw new Error("Invalid brainstorm Exercise steps.")
 
 	const router = useRouter()
@@ -27,6 +28,7 @@ const BrainstormClient = ({ exercise, participant }: Props) => {
 	const { snap, actions } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
+		groupSlug,
 	})
 	const unsorted = snap.steps[stepIdx].unsorted
 	const columns = snap.steps[stepIdx].columns

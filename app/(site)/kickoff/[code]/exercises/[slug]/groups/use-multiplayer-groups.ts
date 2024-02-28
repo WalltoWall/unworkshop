@@ -53,9 +53,17 @@ export const useMultiplayerGroups = ({
 	const actions = {
 		setGroup: (args: { slug: string; role: Role }) => {
 			if (participantId) {
-				state.groups[args.slug] = {
-					...state.groups[args.slug],
-					[participantId]: args.role,
+				if (!state.groups) {
+					state.groups = {
+						[args.slug]: {
+							[participantId]: args.role,
+						},
+					}
+				} else {
+					state.groups[args.slug] = {
+						...state.groups[args.slug],
+						[participantId]: args.role,
+					}
 				}
 			}
 		},
