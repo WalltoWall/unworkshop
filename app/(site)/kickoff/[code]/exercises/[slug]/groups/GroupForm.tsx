@@ -35,7 +35,7 @@ export const GroupForm = ({
 	const [group, setGroup] = React.useState<string | null>(null)
 
 	const currentCaptain =
-		group && snap.groups
+		group && Object(snap.groups).length > 0
 			? Object.keys(snap.groups[group]).find(
 					(key) => snap.groups[group][key] === "captain",
 				)

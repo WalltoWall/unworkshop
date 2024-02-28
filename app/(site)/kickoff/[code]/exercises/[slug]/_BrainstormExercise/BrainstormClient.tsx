@@ -28,7 +28,6 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 	const { snap, actions } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
-		groupSlug,
 	})
 	const unsorted = snap.steps[stepIdx].unsorted
 	const columns = snap.steps[stepIdx].columns
@@ -38,8 +37,10 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 	const cards = R.pipe(
 		unsorted.concat(sorted),
 		R.sortBy([(c) => c.createdAt, "desc"]),
-		R.filter((c) => c.participantOrGroupId === participant._id),
+		R.filter((c) => c.participantOrGroupId === groupSlug ?? participant._id),
 	)
+
+	const role = groupSlug && snap.groups?.[groupSlug]?.[participant._id]
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
@@ -59,7 +60,8 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 				cards={cards}
 				color={stepData?.color}
 				actions={actions}
-				participantOrGroupId={participant._id}
+				participantOrGroupId={groupSlug ?? participant._id}
+				readOnly={role === "contributor"}
 			/>
 
 			<Steps

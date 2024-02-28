@@ -1,4 +1,5 @@
 import type { ST } from "@/sanity/types.gen"
+import type { Group } from "../groups/types"
 
 export type BrainstormCard = {
 	id: string
@@ -24,6 +25,7 @@ export type BrainstormAnswers = {
 		columns: Array<BrainstormColumn>
 		unsorted: Array<BrainstormCard>
 	}>
+	groups: Record<string, Group>
 }
 
 export type BrainstormParticipant = ST["participant"]

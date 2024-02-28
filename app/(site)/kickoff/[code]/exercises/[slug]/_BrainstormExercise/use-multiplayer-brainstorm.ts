@@ -13,7 +13,6 @@ import { type BrainstormAnswers } from "./types"
 
 export type UseMultiplayerBrainstormArgs = {
 	stepIdx: number
-	groupSlug?: string
 } & MultiplayerArgs
 export type BrainstormActions = ReturnType<
 	typeof useMultiplayerBrainstorm
@@ -21,7 +20,6 @@ export type BrainstormActions = ReturnType<
 
 export const useMultiplayerBrainstorm = ({
 	stepIdx,
-	groupSlug,
 	...args
 }: UseMultiplayerBrainstormArgs) => {
 	const multiplayer = useMultiplayer(args)
