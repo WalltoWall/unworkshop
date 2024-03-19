@@ -2,8 +2,8 @@ import React from "react"
 import Image from "next/image"
 import { cx } from "class-variance-authority"
 import { Text } from "@/components/Text"
-import captainIllustration from "@/assets/images/captain-illustration.jpg"
-import contibutorIllustration from "@/assets/images/contributor-illustration.jpg"
+import captainIllustration from "@/assets/images/captain-illustration.png"
+import contibutorIllustration from "@/assets/images/contributerImage.png"
 import type { Role } from "./GroupForm"
 
 const variants = {
@@ -11,7 +11,7 @@ const variants = {
 		name: "Contributor",
 		instructions: "I'll answer with my group.",
 		instructionsClassName: "text-gray-75",
-		className: "bg-black text-white",
+		className: "bg-white",
 		imageSrc: contibutorIllustration,
 	},
 	captain: {
@@ -55,7 +55,7 @@ const RoleCard = ({ type, setRole }: RoleCardProps) => {
 	return (
 		<label
 			className={cx(
-				"relative flex aspect-[308/200] cursor-pointer flex-col overflow-hidden rounded-lg p-3 text-left focus-within:opacity-75 hover:opacity-75",
+				"hover:bg-green-40 focus-within:bg-green-40 relative flex aspect-[308/200] cursor-pointer flex-col overflow-hidden rounded-lg p-3 text-left",
 				variant.className,
 			)}
 		>
