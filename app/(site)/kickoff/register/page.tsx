@@ -7,6 +7,7 @@ import { uid } from "uid"
 import { z } from "zod"
 import { zfd } from "zod-form-data"
 import { LightLayout } from "@/components/LightLayout"
+import { Logo } from "@/components/Logo"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import registerIllustration from "@/assets/images/register-illustration.jpg"
@@ -54,9 +55,27 @@ const KickoffRegisterPage = async (props: Props) => {
 
 	return (
 		<LightLayout withHeaderBackButton mainClassName="justify-between">
-			<Text asChild style="heading" size={56} className="max-w-[276px]">
-				<h1>{kickoff.title}</h1>
-			</Text>
+			<div className="max-w-[290px]">
+				<Text asChild style="copy" size={48} className="font-bold">
+					<h1>Hey, {kickoff.title}.</h1>
+				</Text>
+				<br />
+				<div className="flex w-full flex-wrap items-center">
+					<Text asChild style="copy" size={48} className="font-bold">
+						<h1>Let's</h1>
+					</Text>
+					<div className="ml-3 flex items-center">
+						<Logo className="-mr-2 w-[53px]" />
+						<Text asChild style="copy" size={48} className="font-bold">
+							<h1>ravel</h1>
+						</Text>
+					</div>
+				</div>
+				<br />
+				<Text asChild style="copy" size={48} className="font-bold">
+					<h1>your brand.</h1>
+				</Text>
+			</div>
 
 			<Image
 				src={registerIllustration}
@@ -69,7 +88,7 @@ const KickoffRegisterPage = async (props: Props) => {
 				action={register}
 				className="mt-8 flex flex-col items-center text-center"
 			>
-				<Text style="heading" size={24} asChild>
+				<Text style="heading" size={24} asChild className="text-green-40">
 					<h2>Let's get started</h2>
 				</Text>
 

@@ -74,7 +74,7 @@ export const ExerciseCard = (props: Props) => {
 						Start Exercise
 					</Text>
 
-					<Arrow className="w-3" />
+					<Arrow className="w-3 rotate-180" />
 				</div>
 			</div>
 

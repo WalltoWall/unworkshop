@@ -19,7 +19,11 @@ export const RegisterInput = () => {
 			/>
 
 			<button className="w-4 shrink-0" disabled={status.pending}>
-				{status.pending ? <Spinner className="animate-spin" /> : <Arrow />}
+				{status.pending ? (
+					<Spinner className="animate-spin" />
+				) : (
+					<Arrow className="rotate-180" />
+				)}
 			</button>
 		</div>
 	)

@@ -4,7 +4,7 @@ export const Logo = (props: React.ComponentPropsWithoutRef<"svg">) => {
 			<defs>
 				<path id="a" d="M0 0h312v312H0z" />
 			</defs>
-			<g fill="none" fill-rule="evenodd">
+			<g fill="none" fillRule="evenodd">
 				<g transform="rotate(5.5 14.951 311.282)">
 					<mask id="b" fill="#fff">
 						<use xlinkHref="#a" />

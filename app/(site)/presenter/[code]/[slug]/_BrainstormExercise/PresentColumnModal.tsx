@@ -76,7 +76,7 @@ export const PresentColumnModal = ({ columns, index }: PresentColumnProps) => {
 							disabled={isDisabledLeft}
 							className={clsx(isDisabledLeft && "opacity-50")}
 						>
-							<Arrow className="w-6 rotate-180 text-white" />
+							<Arrow className="w-6  text-white" />
 						</button>
 						<button
 							onClick={() => {
@@ -87,7 +87,7 @@ export const PresentColumnModal = ({ columns, index }: PresentColumnProps) => {
 							disabled={isDisabledRight}
 							className={clsx(isDisabledRight && "opacity-50")}
 						>
-							<Arrow className="w-6 text-white" />
+							<Arrow className="w-6 rotate-180 text-white" />
 						</button>
 					</div>
 				</Dialog.Content>
