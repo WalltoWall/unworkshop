@@ -3,6 +3,7 @@ import { zfd } from "zod-form-data"
 import { Button } from "@/components/Button"
 import { DarkLayout } from "@/components/DarkLayout"
 import { Text } from "@/components/Text"
+import { UnworkshopTitle } from "@/components/UnworkshopTitle"
 
 const FormSchema = zfd.formData({ code: zfd.text() })
 
@@ -16,10 +17,8 @@ async function navigateToWorkshop(data: FormData) {
 const Home = () => {
 	return (
 		<DarkLayout>
-			<div className="px-7">
-				<Text style="heading" size={40} className="max-w-[206px] text-right">
-					Brand WWorkshop
-				</Text>
+			<div className="mx-auto">
+				<UnworkshopTitle className="w-[250px]" />
 			</div>
 
 			<div className="space-y-4 px-7 py-8 text-center">

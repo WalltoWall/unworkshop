@@ -19,7 +19,7 @@ export const GroupSelector = ({ groups, setGroup }: GroupSelectorProps) => {
 				{groups?.map((group) => (
 					<label
 						key={group._key}
-						className="relative cursor-pointer rounded-lg bg-gray-90 py-5 pl-3 pr-11 text-left uppercase transition-colors text-24 font-heading capsize focus-within:bg-black focus-within:text-white hover:bg-black hover:text-white focus:bg-black focus:text-white"
+						className="focus-within:bg-green-40 focus:bg-green-40 hover:bg-green-40 relative cursor-pointer rounded-lg bg-gray-90 py-5 pl-3 pr-11 text-left uppercase transition-colors text-24 font-heading capsize"
 					>
 						<input
 							name="group"
