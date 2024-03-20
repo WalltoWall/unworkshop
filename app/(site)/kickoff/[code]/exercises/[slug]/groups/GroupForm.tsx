@@ -9,7 +9,7 @@ import { GroupRoleSelector } from "./GroupRoleSelector"
 import { GroupSelector } from "./GroupSelector"
 import { useMultiplayerGroups } from "./use-multiplayer-groups"
 
-export type Role = "contributor" | "captain"
+export type Role = "contributor" | "captain" | "unset"
 
 interface GroupFormProps {
 	exerciseId: string
@@ -32,7 +32,19 @@ export const GroupForm = ({
 	})
 
 	const [openCaptainModal, setOpenCaptainModal] = React.useState(false)
-	const [group, setGroup] = React.useState<string | null>(null)
+	const group = actions.getGroup()
+
+	React.useEffect(() => {
+		if (group) {
+			let role = actions.getRole({
+				slug: group,
+			})
+
+			if (role !== "unset") {
+				router.push(`${pushHref}/${group}`)
+			}
+		}
+	}, [group])
 
 	const currentCaptain =
 		group && Object(snap.groups).length > 0
@@ -46,9 +58,9 @@ export const GroupForm = ({
 			if (currentCaptain && role === "captain") {
 				setOpenCaptainModal(true)
 			} else {
-				actions.setGroup({
+				actions.setRole({
+					role: role,
 					slug: group,
-					role,
 				})
 
 				router.push(`${pushHref}/${group}`)
@@ -74,7 +86,7 @@ export const GroupForm = ({
 	return (
 		<div>
 			<div className={cx(group && "hidden")}>
-				<GroupSelector groups={groups} setGroup={setGroup} />
+				<GroupSelector groups={groups} setGroup={actions.setGroup} />
 			</div>
 
 			<div className={cx(!group && "hidden")}>

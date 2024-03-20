@@ -145,11 +145,16 @@ export default {
 					from: { opacity: "1" },
 					to: { opacity: "0" },
 				},
+				"caret-blink": {
+					"0%,70%,100%": { opacity: "1" },
+					"20%,50%": { opacity: "0" },
+				},
 			},
 
 			animation: {
 				fadeIn: "fadeIn 300ms linear",
 				fadeOut: "fadeOut 300ms linear",
+				"caret-blink": "caret-blink 1.2s ease-out infinite",
 			},
 
 			transitionProperty: {

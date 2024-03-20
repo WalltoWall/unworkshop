@@ -26,6 +26,7 @@
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.0",
 		"embla-carousel-react": "^8.0.0-rc15",
+		"input-otp": "^1.2.2",
 		"just-throttle": "^4.2.0",
 		"lucide-react": "^0.330.0",
 		"next": "^14.1.0",

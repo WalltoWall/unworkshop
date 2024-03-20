@@ -1,7 +1,8 @@
 import type { ST } from "@/sanity/types.gen"
+import type { Role } from "./GroupForm"
 
 export type Group = {
-	[participantId: string]: "captain" | "contributor"
+	[participantId: string]: Role
 }
 
 export type Groups = {

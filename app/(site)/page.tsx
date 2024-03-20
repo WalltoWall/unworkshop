@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { zfd } from "zod-form-data"
-import { Button } from "@/components/Button"
 import { DarkLayout } from "@/components/DarkLayout"
+import { RegisterInput } from "@/components/RegisterInput"
 import { Text } from "@/components/Text"
 import { UnworkshopTitle } from "@/components/UnworkshopTitle"
 
@@ -11,7 +11,14 @@ async function navigateToWorkshop(data: FormData) {
 	"use server"
 
 	const form = FormSchema.parse(data)
-	redirect(`/kickoff/${form.code.toLowerCase()}`)
+
+	const code = form.code.toLowerCase()
+
+	if (code.includes("-")) return redirect(`/kickoff/${code}`)
+
+	const newCode = code.slice(0, 3) + "-" + code.slice(3)
+
+	redirect(`/kickoff/${newCode}`)
 }
 
 const Home = () => {
@@ -26,18 +33,11 @@ const Home = () => {
 					Enter your group code
 				</Text>
 
-				<form className="flex flex-col space-y-1.5" action={navigateToWorkshop}>
-					<input
-						type="text"
-						name="code"
-						className="w-full rounded-2xl bg-gray-75 px-4 pb-2 text-center align-middle uppercase text-black text-56 leading-none font-heading placeholder:text-gray-38"
-						placeholder="WTW-1234"
-						required
-					/>
-
-					<Button size="sm" color="gray" outline>
-						Continue
-					</Button>
+				<form
+					className="flex flex-col space-y-1.5 pb-10"
+					action={navigateToWorkshop}
+				>
+					<RegisterInput />
 				</form>
 			</div>
 		</DarkLayout>
