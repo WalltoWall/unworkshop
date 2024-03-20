@@ -19,7 +19,7 @@ export const GroupSelector = ({ groups, setGroup }: GroupSelectorProps) => {
 				{groups?.map((group) => (
 					<label
 						key={group._key}
-						className="focus-within:bg-green-40 focus:bg-green-40 hover:bg-green-40 relative cursor-pointer rounded-lg bg-gray-90 py-5 pl-3 pr-11 text-left uppercase transition-colors text-24 font-heading capsize"
+						className="relative cursor-pointer rounded-lg bg-gray-90 py-5 pl-3 pr-11 text-left uppercase transition-colors text-24 font-heading capsize focus-within:bg-green-40 hover:bg-green-40 focus:bg-green-40"
 					>
 						<input
 							name="group"
@@ -29,7 +29,7 @@ export const GroupSelector = ({ groups, setGroup }: GroupSelectorProps) => {
 							className="absolute -left-[9999px] h-[1px] w-[1px]"
 						/>
 						{group.name}
-						<Arrow className="absolute right-3 top-1/2 w-5 -translate-y-1/2" />
+						<Arrow className="absolute right-3 top-1/2 w-5 -translate-y-1/2 rotate-180" />
 					</label>
 				))}
 			</fieldset>
