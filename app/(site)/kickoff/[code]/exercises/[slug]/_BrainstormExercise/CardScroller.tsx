@@ -16,6 +16,7 @@ type Props = {
 	color?: Color
 	actions: BrainstormActions
 	participantOrGroupId: string
+	readOnly?: boolean
 }
 
 export const CardScroller = ({
@@ -23,6 +24,7 @@ export const CardScroller = ({
 	color = "green",
 	actions,
 	participantOrGroupId,
+	readOnly = false,
 }: Props) => {
 	return (
 		<div
@@ -33,6 +35,7 @@ export const CardScroller = ({
 			<AddCardButton
 				actions={actions}
 				participantOrGroupId={participantOrGroupId}
+				readOnly={readOnly}
 			/>
 
 			{cards.map((card) => (
@@ -41,6 +44,7 @@ export const CardScroller = ({
 					card={card}
 					colorClassNames={colors[color]}
 					actions={actions}
+					readOnly={readOnly}
 				/>
 			))}
 		</div>

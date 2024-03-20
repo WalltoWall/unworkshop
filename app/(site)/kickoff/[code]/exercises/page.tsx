@@ -22,6 +22,7 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 		if (groups!.length > 0) {
 			if (answers) {
 				groups?.forEach((group) => {
+					if (!answers.groups) return
 					const foundRole =
 						answers.groups[group.slug.current]?.[participant._id]
 

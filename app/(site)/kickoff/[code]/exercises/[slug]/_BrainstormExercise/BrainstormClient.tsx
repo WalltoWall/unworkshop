@@ -11,9 +11,10 @@ import { useMultiplayerBrainstorm } from "./use-multiplayer-brainstorm"
 type Props = {
 	exercise: BrainstormExercise
 	participant: BrainstormParticipant
+	groupSlug?: string
 }
 
-const BrainstormClient = ({ exercise, participant }: Props) => {
+const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 	if (!exercise.steps) throw new Error("Invalid brainstorm Exercise steps.")
 
 	const router = useRouter()
@@ -36,8 +37,10 @@ const BrainstormClient = ({ exercise, participant }: Props) => {
 	const cards = R.pipe(
 		unsorted.concat(sorted),
 		R.sortBy([(c) => c.createdAt, "desc"]),
-		R.filter((c) => c.participantOrGroupId === participant._id),
+		R.filter((c) => c.participantOrGroupId === groupSlug ?? participant._id),
 	)
+
+	const role = groupSlug && snap.groups?.[groupSlug]?.[participant._id]
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
@@ -57,7 +60,8 @@ const BrainstormClient = ({ exercise, participant }: Props) => {
 				cards={cards}
 				color={stepData?.color}
 				actions={actions}
-				participantOrGroupId={participant._id}
+				participantOrGroupId={groupSlug ?? participant._id}
+				readOnly={role === "contributor"}
 			/>
 
 			<Steps

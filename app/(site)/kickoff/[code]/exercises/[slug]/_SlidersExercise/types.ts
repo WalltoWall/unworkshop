@@ -1,4 +1,5 @@
 import type { ST } from "@/sanity/types.gen"
+import type { Group } from "../groups/types"
 
 export type Answer = {
 	today?: number
@@ -16,6 +17,7 @@ export type SlidersParticipant = ST["participant"]
 // where the index of the array represents the step and the answers at that step
 export type SlidersAnswers = {
 	participants: Record<string, SliderAnswers>
+	groups: Record<string, Group>
 }
 
 export type SlidersExercise = ST["exercise"] & {

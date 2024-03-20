@@ -8,9 +8,15 @@ type Props = {
 	card: BrainstormCard
 	colorClassNames: string
 	actions: BrainstormActions
+	readOnly?: boolean
 }
 
-export const Card = ({ card, colorClassNames, actions }: Props) => {
+export const Card = ({
+	card,
+	colorClassNames,
+	actions,
+	readOnly = false,
+}: Props) => {
 	return (
 		<div className="relative aspect-[163/187]">
 			<textarea
@@ -20,6 +26,7 @@ export const Card = ({ card, colorClassNames, actions }: Props) => {
 				)}
 				placeholder="Type something here to add your perception"
 				value={card.response}
+				readOnly={readOnly}
 				name="response"
 				onChange={(e) =>
 					actions.editCard({ cardId: card.id, response: e.target.value })
@@ -29,7 +36,11 @@ export const Card = ({ card, colorClassNames, actions }: Props) => {
 			<div className="absolute bottom-2 right-1.5 rounded-full">
 				<button
 					type="submit"
-					onClick={() => actions.deleteCard({ cardId: card.id })}
+					disabled={readOnly}
+					onClick={() => {
+						if (readOnly) return
+						actions.deleteCard({ cardId: card.id })
+					}}
 				>
 					<XCircleIcon className="h-6 w-6" />
 				</button>

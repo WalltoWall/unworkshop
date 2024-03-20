@@ -1,1 +1,4 @@
-export const INITIAL_ANSWERS = { steps: [{ columns: [], unsorted: [] }] }
+export const INITIAL_ANSWERS = {
+	steps: [{ columns: [], unsorted: [] }],
+	groups: {},
+}

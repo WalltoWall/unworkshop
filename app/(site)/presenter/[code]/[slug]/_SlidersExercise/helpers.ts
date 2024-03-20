@@ -22,7 +22,32 @@ function evenlyDistributeNumbers(start: number, end: number, count: number) {
 	return result
 }
 
-function getLeftValue(leftValue: number) {
+function getLeftValue(leftValue: number, isTomorrow?: boolean) {
+	if (isTomorrow) {
+		switch (leftValue) {
+			case 1: {
+				return 3
+			}
+			case 2: {
+				return 23
+			}
+			case 3: {
+				return 43
+			}
+			case 4: {
+				return 63
+			}
+			case 5: {
+				return 83
+			}
+			case 6: {
+				return 98
+			}
+			default: {
+				return 1
+			}
+		}
+	}
 	switch (leftValue) {
 		case 1: {
 			return 1
@@ -57,10 +82,10 @@ export const getGraphValues = ({ answers }: GraphValuesProps) => {
 		return {
 			today: {
 				left: getLeftValue(answer.today!),
-				top: topVal,
+				top: idx * 2,
 			},
 			tomorrow: {
-				left: getLeftValue(answer.tomorrow!),
+				left: getLeftValue(answer.tomorrow!, true),
 				top: topVal,
 			},
 		}
