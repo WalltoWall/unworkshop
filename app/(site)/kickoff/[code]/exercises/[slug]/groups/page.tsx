@@ -9,11 +9,11 @@ type Props = {
 }
 
 const GroupsPage = async (props: Props) => {
-	const exercise = await client.findExerciseBySlug(props.params.slug)
-
+	const [exercise, participant] = await Promise.all([
+		client.findExerciseBySlug(props.params.slug),
+		client.findParticipantOrThrow<GroupParticipant>(),
+	])
 	if (!exercise) notFound()
-
-	const participant = await client.findParticipantOrThrow<GroupParticipant>()
 
 	const groups = exercise.groups ?? []
 

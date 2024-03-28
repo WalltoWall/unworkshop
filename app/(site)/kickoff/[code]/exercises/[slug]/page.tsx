@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { client } from "@/sanity/client"
 import { BrainstormExercise } from "./_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "./_QuadrantsExercise/QuadrantsExercise"
@@ -14,6 +14,11 @@ const ExercisePage = async (props: Props) => {
 	const exercise = await client.findExerciseBySlug(props.params.slug)
 
 	if (!exercise) notFound()
+	if (exercise.groups && exercise.groups.length >= 1) {
+		redirect(
+			`/kickoff/${props.params.code}/exercises/${props.params.slug}/groups`,
+		)
+	}
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">

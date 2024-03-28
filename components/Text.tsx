@@ -19,8 +19,7 @@ export const text = cva("", {
 			12: "text-12",
 		},
 		style: {
-			heading:
-				"font-heading uppercase font-extrabold leading-[0.9] tracking-tight",
+			heading: "font-heading uppercase font-extrabold leading-none",
 			copy: "font-sans leading-[1.25]",
 			contextMenu: "font-sans leading-[1.07]",
 		},
@@ -30,6 +29,17 @@ export const text = cva("", {
 		},
 	},
 	compoundVariants: [
+		{
+			size: 40,
+			style: "heading",
+			className: "tracking-[0.13px]",
+		},
+		{
+			size: 32,
+			style: "heading",
+			className: "tracking-[0.1px]",
+		},
+
 		{
 			size: 24,
 			style: "copy",
