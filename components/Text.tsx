@@ -22,6 +22,7 @@ export const text = cva("", {
 			heading: "font-heading uppercase font-extrabold leading-none",
 			copy: "font-sans leading-[1.25]",
 			contextMenu: "font-sans leading-[1.07]",
+			serif: "font-serif font-semibold leading-none",
 		},
 		trim: {
 			true: "capsize",
@@ -29,6 +30,11 @@ export const text = cva("", {
 		},
 	},
 	compoundVariants: [
+		{
+			size: 64,
+			style: "heading",
+			className: "tracking-[0.23px]",
+		},
 		{
 			size: 40,
 			style: "heading",

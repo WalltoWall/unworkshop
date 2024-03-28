@@ -9,11 +9,14 @@ interface RoleHeaderProps {
 
 export const RoleHeader = ({ children, className }: RoleHeaderProps) => {
 	return (
-		<div className={cx("bg-gray-50 p-4 text-white", className)}>
-			<div className="mx-auto flex w-full max-w-64 items-center justify-start">
-				<PencilCircle className="mr-1 w-5" />
-				<Text size={16}>{children}</Text>
-			</div>
+		<div
+			className={cx(
+				"flex items-center justify-center gap-1 bg-gray-50 p-4 text-white",
+				className,
+			)}
+		>
+			<PencilCircle className="mr-1 w-5" />
+			<Text size={16}>{children}</Text>
 		</div>
 	)
 }

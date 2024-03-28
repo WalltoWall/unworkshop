@@ -55,25 +55,26 @@ const KickoffRegisterPage = async (props: Props) => {
 
 	return (
 		<LightLayout withHeaderBackButton mainClassName="justify-between">
-			<div className="max-w-[290px]">
-				<Text asChild style="copy" size={48} className="font-bold">
-					<h1>Hey, {kickoff.title}.</h1>
+			<div className="space-y-3">
+				<Text style="heading" size={64} className="!normal-case">
+					Hey, {kickoff.title}.
 				</Text>
-				<br />
+
 				<div className="flex w-full flex-wrap items-center">
-					<Text asChild style="copy" size={48} className="font-bold">
-						<h1>Let's</h1>
+					<Text size={64} style="heading" className="!normal-case">
+						Let's
 					</Text>
+
 					<div className="ml-3 flex items-center">
-						<Logo className="-mr-2 w-[53px]" />
-						<Text asChild style="copy" size={48} className="font-bold">
-							<h1>ravel</h1>
+						<Logo className="-mr-1.5 w-[53px] rotate-6" />
+						<Text size={64} style="heading" className="!normal-case">
+							ravel
 						</Text>
 					</div>
 				</div>
-				<br />
-				<Text asChild style="copy" size={48} className="font-bold">
-					<h1>your brand.</h1>
+
+				<Text size={64} style="heading" className="!normal-case">
+					your brand.
 				</Text>
 			</div>
 

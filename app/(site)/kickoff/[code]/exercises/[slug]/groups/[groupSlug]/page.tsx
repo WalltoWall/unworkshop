@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation"
 import { client } from "@/sanity/client"
+import { BrainstormExercise } from "../../_BrainstormExercise/BrainstormExercise"
+import { QuadrantsExercise } from "../../_QuadrantsExercise/QuadrantsExercise"
+import { SlidersExercise } from "../../_SlidersExercise/SlidersExercise"
 import type { GroupParticipant } from "../types"
 import { GroupExerciseSubmissionForm } from "./GroupExerciseSubmissionForm.tsx"
 
@@ -19,7 +22,30 @@ const GroupExercisePage = async (props: Props) => {
 			exercise={exercise}
 			participant={participant}
 			groupSlug={props.params.groupSlug}
-		/>
+		>
+			{exercise.type === "brainstorm" && (
+				<BrainstormExercise
+					exercise={exercise}
+					kickoffCode={props.params.code}
+					groupSlug={props.params.groupSlug}
+				/>
+			)}
+
+			{exercise.type === "sliders" && (
+				<SlidersExercise
+					exercise={exercise}
+					groupSlug={props.params.groupSlug}
+				/>
+			)}
+
+			{exercise.type === "quadrants" && (
+				<QuadrantsExercise
+					exercise={exercise}
+					kickoffCode={props.params.code}
+					groupSlug={props.params.groupSlug}
+				/>
+			)}
+		</GroupExerciseSubmissionForm>
 	)
 }
 

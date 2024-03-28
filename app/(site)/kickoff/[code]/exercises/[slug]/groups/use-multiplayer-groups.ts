@@ -1,4 +1,5 @@
 import React from "react"
+import * as R from "remeda"
 import { proxy, useSnapshot } from "valtio"
 import { bind } from "valtio-yjs"
 import {
@@ -61,22 +62,26 @@ export const useMultiplayerGroups = ({
 		},
 
 		setRole: (args: { slug: string; role: Role }) => {
-			if (!participantId) return
-			if (!state.groups) return
+			if (!participantId || !state.groups) return
 
 			state.groups[args.slug][participantId] = args.role
 		},
 
-		replaceCaptain: (args: { slug: string; captainId: string }) => {
-			if (participantId) {
-				state.groups[args.slug] = {
-					...state.groups[args.slug],
-					[args.captainId]: "contributor",
-					[participantId]: "captain",
-				}
+		replaceCaptain: (args: { slug: string }) => {
+			if (!participantId || !state.groups) return
 
-				delete state?.participants?.[args.slug]
+			const group = state.groups[args.slug]
+			const captain = R.pipe(
+				R.entries(group),
+				R.find(([_id, role]) => role === "captain"),
+			)
+
+			const captainId = captain?.[0]
+			if (captainId) {
+				state.groups[args.slug][captainId] = "contributor"
 			}
+
+			state.groups[args.slug][participantId] = "captain"
 		},
 	}
 

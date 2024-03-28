@@ -1,10 +1,13 @@
 "use client"
 
+import React from "react"
+import * as R from "remeda"
 import { Text } from "@/components/Text"
 import captainIllustration from "@/assets/images/captain-illustration.png"
 import contibutorIllustration from "@/assets/images/contributerImage.png"
 import { InstructionsModal } from "../../InstructionsModal"
 import { RoleHeader } from "../../RoleHeader"
+import { CaptainModal } from "../CaptainModal"
 import { RoleCard } from "../RoleCard"
 import type { Group, GroupExercise, GroupParticipant, Role } from "../types"
 import { useMultiplayerGroups } from "../use-multiplayer-groups"
@@ -13,30 +16,68 @@ interface Props {
 	participant: GroupParticipant
 	exercise: GroupExercise
 	groupSlug: string
+	children: React.ReactNode
 }
 
+// TODO: Don't really like that rendering the exercise component or the group
+// selector is a conditional based on state. I think having it separated into
+// different routes would be ideal, as it would allow folks to seamlessly switch
+// roles if they need to. It also preserves back/forward button behavior like
+// the rest of the app does.
 export const GroupExerciseSubmissionForm = ({
 	participant,
 	exercise,
 	groupSlug,
+	children,
 }: Props) => {
+	const [captainModalOpen, setCaptainModalOpen] = React.useState(false)
 	const { snap, actions } = useMultiplayerGroups({
 		exerciseId: exercise._id,
 		participantId: participant._id,
 	})
 
-	const group: Group | undefined = snap.groups[groupSlug]
-	const role: Role | undefined = group?.[participant._id]
+	const groupParticipants: Group | undefined = snap.groups[groupSlug]
+	const role: Role | undefined = groupParticipants?.[participant._id]
+	const group = exercise.groups?.find((g) => g.slug.current === groupSlug)
 
-	const shouldShowRolePicker = !group || !role || role === "unset"
+	const shouldShowRolePicker = !groupParticipants || !role || role === "unset"
 
-	const onRoleCardClick = (newRole: Role) =>
+	const onRoleCardClick = (newRole: Role) => {
+		const existingCaptain = R.pipe(
+			groupParticipants,
+			R.omit([participant._id]),
+			R.values,
+			R.find((role) => role === "captain"),
+		)
+
+		if (newRole === "captain" && existingCaptain) {
+			return setCaptainModalOpen(true)
+		}
+
 		actions.setRole({ role: newRole, slug: groupSlug })
+	}
+
+	const onCaptainModalConfirm = () =>
+		actions.replaceCaptain({ slug: groupSlug })
+
+	const onCaptainModalCancel = () => setCaptainModalOpen(false)
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
-			{!shouldShowRolePicker && (
-				<RoleHeader className="-mx-7 -mt-3.5 mb-7">YOooo</RoleHeader>
+			{!shouldShowRolePicker && group && (
+				<RoleHeader className="-mx-7 -mt-3.5 mb-7">
+					{role === "captain" ? (
+						<>
+							You are the <strong>captain</strong> of{" "}
+							<strong>{group.name}</strong>.
+						</>
+					) : (
+						<>
+							You are a <strong>collaborator</strong> in{" "}
+							<strong>{group.name}</strong>.
+						</>
+					)}
+				</RoleHeader>
 			)}
 
 			<InstructionsModal
@@ -66,31 +107,16 @@ export const GroupExerciseSubmissionForm = ({
 							instructions="I’ll lead and write for my group."
 						/>
 					</div>
+
+					<CaptainModal
+						open={captainModalOpen}
+						onCancel={onCaptainModalCancel}
+						onConfirm={onCaptainModalConfirm}
+					/>
 				</div>
 			)}
 
-			{/* {exercise.type === "brainstorm" && (
-				<BrainstormExercise
-					exercise={exercise}
-					kickoffCode={props.params.code}
-					groupSlug={props.params.groupSlug}
-				/>
-			)}
-
-			{exercise.type === "sliders" && (
-				<SlidersExercise
-					exercise={exercise}
-					groupSlug={props.params.groupSlug}
-				/>
-			)}
-
-			{exercise.type === "quadrants" && (
-				<QuadrantsExercise
-					exercise={exercise}
-					groupSlug={props.params.groupSlug}
-					kickoffCode={props.params.code}
-				/>
-			)} */}
+			{!shouldShowRolePicker && children}
 		</div>
 	)
 }

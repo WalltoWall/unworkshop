@@ -28,9 +28,14 @@ const KickoffPage = async (props: Props) => {
 	return (
 		<LightLayout mainClassName="mt-2">
 			<div>
-				<Text asChild style="heading" size={56} className="max-w-[276px]">
-					<h1>Welcome, {participant.name}</h1>
-				</Text>
+				<h1>
+					<Text asChild style="heading" size={64}>
+						<div>Welcome</div>
+					</Text>
+					<Text asChild style="serif" size={56} className="mt-5">
+						<div>{participant.name}</div>
+					</Text>
+				</h1>
 
 				<Text
 					style="copy"
