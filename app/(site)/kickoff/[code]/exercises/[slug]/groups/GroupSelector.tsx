@@ -1,41 +1,36 @@
+"use client"
+
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
 import type { ST } from "@/sanity/types.gen"
 
 interface GroupSelectorProps {
 	groups: ST["exercise"]["groups"]
-	setGroup: (args: { slug: string }) => void
 }
 
-export const GroupSelector = ({ groups, setGroup }: GroupSelectorProps) => {
+export const GroupSelector = ({ groups }: GroupSelectorProps) => {
+	const pathname = usePathname()
+
 	return (
 		<div className="my-4">
-			<Text size={16} className="mb-7">
-				Select your group
-			</Text>
+			<Text size={16}>Select your group</Text>
 
-			<fieldset className="grid gap-4">
+			<div className="mt-7 flex flex-col gap-2">
 				{groups?.map((group) => (
-					<label
+					<Link
 						key={group._key}
-						className="focus-within:bg-green-40 hover:bg-green-40 focus:bg-green-40 relative cursor-pointer rounded-lg bg-gray-90 py-5 pl-3 pr-11 text-left uppercase transition-colors text-24 font-heading capsize"
+						href={pathname + "/" + group.slug.current}
+						className="flex items-center justify-between rounded-lg bg-gray-90 px-3 py-5 transition leading-none focus-within:bg-green-40 hover:bg-green-40 focus:bg-green-40"
 					>
-						<input
-							name="group"
-							type="radio"
-							value={group.slug.current}
-							onChange={() =>
-								setGroup({
-									slug: group.slug.current,
-								})
-							}
-							className="absolute -left-[9999px] h-[1px] w-[1px]"
-						/>
-						{group.name}
-						<Arrow className="absolute right-3 top-1/2 w-5 -translate-y-1/2 rotate-180" />
-					</label>
+						<Text size={32} style="heading">
+							{group.name}
+						</Text>
+						<Arrow className="w-5 rotate-180" />
+					</Link>
 				))}
-			</fieldset>
+			</div>
 		</div>
 	)
 }

@@ -7,8 +7,7 @@ import {
 } from "@/components/Multiplayer/use-multiplayer"
 import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_GROUP_ANSWERS } from "./constants"
-import type { Role } from "./GroupForm"
-import type { ExerciseAnswers } from "./types"
+import type { ExerciseAnswers, Role } from "./types"
 
 export type UseMultiplayerGroupsArgs = {
 	participantId?: string
@@ -51,61 +50,21 @@ export const useMultiplayerGroups = ({
 	}, [multiplayer.provider, state, yMap])
 
 	const actions = {
-		getGroup: () => {
-			if (participantId) {
-				if (!state.groups) return null
-				let group = null
-
-				for (const [key, value] of Object.entries(state.groups)) {
-					group = key
-
-					for (const [key] of Object.entries(value)) {
-						if (key === participantId) {
-							return group
-						}
-					}
-				}
-
-				return null
-			}
-		},
-
 		setGroup: (args: { slug: string }) => {
-			if (participantId) {
-				if (!state.groups) {
-					state.groups = {
-						[args.slug]: {
-							[participantId]: "unset",
-						},
-					}
-				} else {
-					state.groups[args.slug] = {
-						...state.groups[args.slug],
-						[participantId]: "unset",
-					}
-				}
+			if (!participantId) return
+
+			state.groups ??= {}
+			state.groups[args.slug] = {
+				...state.groups[args.slug],
+				[participantId]: "unset",
 			}
 		},
 
 		setRole: (args: { slug: string; role: Role }) => {
-			if (participantId) {
-				state.groups[args.slug] = {
-					...state.groups[args.slug],
-					[participantId]: args.role,
-				}
-			}
-		},
+			if (!participantId) return
+			if (!state.groups) return
 
-		getRole: (args: { slug: string }) => {
-			if (participantId) {
-				if (!state.groups) return null
-
-				for (const [key, value] of Object.entries(state.groups[args.slug])) {
-					if (key === participantId) {
-						return value
-					}
-				}
-			}
+			state.groups[args.slug][participantId] = args.role
 		},
 
 		replaceCaptain: (args: { slug: string; captainId: string }) => {

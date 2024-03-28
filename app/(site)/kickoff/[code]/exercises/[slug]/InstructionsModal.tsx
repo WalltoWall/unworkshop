@@ -1,5 +1,6 @@
 "use client"
 
+import { cx } from "class-variance-authority"
 import { Drawer } from "vaul"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { QuestionMark } from "@/components/icons/QuestionMark"
@@ -8,17 +9,19 @@ import { Text } from "@/components/Text"
 interface InstructionsModalProps {
 	exerciseName: string
 	instructions: string
+	className?: string
 }
 
 export const InstructionsModal = ({
 	exerciseName,
 	instructions,
+	className,
 }: InstructionsModalProps) => {
 	if (!instructions) return null
 
 	return (
 		<Drawer.Root shouldScaleBackground>
-			<div className="flex items-start gap-2">
+			<div className={cx(className, "flex items-start gap-2")}>
 				<Text style="heading" size={40} asChild>
 					<h1>{exerciseName}</h1>
 				</Text>

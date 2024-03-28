@@ -1,18 +1,14 @@
 import { notFound } from "next/navigation"
 import { client } from "@/sanity/client"
 import { InstructionsModal } from "../InstructionsModal"
-import { GroupForm } from "./GroupForm"
-import type { GroupParticipant } from "./types"
+import { GroupSelector } from "./GroupSelector"
 
 type Props = {
 	params: { code: string; slug: string }
 }
 
 const GroupsPage = async (props: Props) => {
-	const [exercise, participant] = await Promise.all([
-		client.findExerciseBySlug(props.params.slug),
-		client.findParticipantOrThrow<GroupParticipant>(),
-	])
+	const exercise = await client.findExerciseBySlug(props.params.slug)
 	if (!exercise) notFound()
 
 	const groups = exercise.groups ?? []
@@ -24,12 +20,7 @@ const GroupsPage = async (props: Props) => {
 				instructions="Select the group you will be a part of, then select your role within the group."
 			/>
 
-			<GroupForm
-				groups={groups}
-				exerciseId={exercise._id}
-				participantId={participant._id}
-				pushHref={`/kickoff/${props.params.code}/exercises/${props.params.slug}/groups`}
-			/>
+			<GroupSelector groups={groups} />
 		</div>
 	)
 }
