@@ -62,10 +62,16 @@ export const GroupExerciseSubmissionForm = ({
 
 	const onCaptainModalCancel = () => setCaptainModalOpen(false)
 
+	const onRoleHeaderClear = () =>
+		actions.setRole({ slug: groupSlug, role: "unset" })
+
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
 			{!shouldShowRolePicker && group && (
-				<RoleHeader className="-mx-7 -mt-3.5 mb-7">
+				<RoleHeader
+					className="-mx-7 -mt-3.5 mb-7"
+					onClearClick={onRoleHeaderClear}
+				>
 					{role === "captain" ? (
 						<>
 							You are the <strong>captain</strong> of{" "}
