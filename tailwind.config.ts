@@ -1,3 +1,4 @@
+//@ts-ignore
 import tailwindCapsize from "@asyarb/tailwind-capsize"
 import type { Config } from "tailwindcss"
 import plugin from "tailwindcss/plugin"
@@ -12,6 +13,7 @@ export default {
 	theme: {
 		fontFamily: {
 			sans: ["var(--sans)", "system-ui"],
+			serif: ["var(--serif)", "serif"],
 			heading: ["var(--heading)", "system-ui"],
 		},
 
@@ -24,7 +26,7 @@ export default {
 					lineGap: 0,
 					unitsPerEm: 1000,
 					xHeight: 518,
-					xWidthAvg: 425,
+					xWidthAvg: 431,
 				},
 				heading: {
 					capHeight: 718,
@@ -32,8 +34,17 @@ export default {
 					descent: -201,
 					lineGap: 0,
 					unitsPerEm: 1000,
-					xHeight: 520,
-					xWidthAvg: 293,
+					xHeight: 522,
+					xWidthAvg: 316,
+				},
+				serif: {
+					capHeight: 700,
+					ascent: 994,
+					descent: -513,
+					lineGap: 0,
+					unitsPerEm: 1000,
+					xHeight: 450,
+					xWidthAvg: 419,
 				},
 			},
 		},

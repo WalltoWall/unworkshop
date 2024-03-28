@@ -18,10 +18,18 @@ const FontSans = Local({
 })
 
 const FontHeading = Local({
-	src: "../../assets/fonts/condensed.woff2",
+	src: "../../assets/fonts/compressed.woff2",
 	display: "swap",
 	variable: "--heading",
-	weight: "700",
+	weight: "800",
+	style: "normal",
+})
+
+const FontSerif = Local({
+	src: "../../assets/fonts/serif.woff2",
+	display: "swap",
+	variable: "--serif",
+	weight: "500",
 	style: "normal",
 })
 
@@ -39,6 +47,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 					"h-full font-normal antialiased leading-copy font-sans",
 					FontSans.variable,
 					FontHeading.variable,
+					FontSerif.variable,
 				)}
 			>
 				<div vaul-drawer-wrapper="" className="min-h-svh bg-white">
