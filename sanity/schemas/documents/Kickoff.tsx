@@ -33,13 +33,19 @@ export const Kickoff = defineType({
 			name: "code",
 			title: "Code",
 			description:
-				"The project code for this kickoff. Will be used as the URL.",
+				'The project code for this kickoff. Will be used as the URL. Must be in the format of "abc-1234".',
 			type: "slug",
 			validation: (Rule) => [
 				Rule.required(),
 				Rule.custom((val) => {
 					if (val?.current?.toLowerCase() !== val?.current)
 						return "Code must be lowercase."
+
+					if (val?.current.length !== 8)
+						return "Code must be 8 characters in length."
+
+					if (val.current.at(3) !== "-")
+						return "The 3rd character in a code must be a hyphen (-)."
 
 					return true
 				}),
