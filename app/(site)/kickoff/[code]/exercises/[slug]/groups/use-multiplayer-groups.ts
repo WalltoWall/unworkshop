@@ -17,6 +17,8 @@ export type QuadrantsActions = ReturnType<
 	typeof useMultiplayerGroups
 >["actions"]
 
+// TODO: Consider passing in the group slug to the hook to prevent needing it in
+// every action argument
 export const useMultiplayerGroups = ({
 	participantId,
 	...args
@@ -51,24 +53,30 @@ export const useMultiplayerGroups = ({
 	}, [multiplayer.provider, state, yMap])
 
 	const actions = {
-		setGroup: (args: { slug: string }) => {
-			if (!participantId) return
-
-			state.groups ??= {}
-			state.groups[args.slug] = {
-				...state.groups[args.slug],
-				[participantId]: "unset",
-			}
-		},
-
 		setRole: (args: { slug: string; role: Role }) => {
 			if (!participantId || !state.groups) return
 
+			state.groups ??= {}
+			state.groups[args.slug] ??= {}
+
+			// Remove this participant from all other groups first. Ensures
+			// that a participant cannot be a member of multiple groups.
+			R.forEachObj(state.groups, (group) =>
+				R.keys(group).forEach((pId) => {
+					if (pId === participantId) delete group[participantId]
+				}),
+			)
+
+			// Then, set the participant to be a part of the group
+			// they are "enrolling" into.
 			state.groups[args.slug][participantId] = args.role
 		},
 
 		replaceCaptain: (args: { slug: string }) => {
 			if (!participantId || !state.groups) return
+
+			state.groups ??= {}
+			state.groups[args.slug] ??= {}
 
 			const group = state.groups[args.slug]
 			const captain = R.pipe(

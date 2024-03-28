@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Link from "next/link"
 import * as R from "remeda"
 import { Text } from "@/components/Text"
 import captainIllustration from "@/assets/images/captain-illustration.png"
@@ -16,6 +17,7 @@ interface Props {
 	participant: GroupParticipant
 	exercise: GroupExercise
 	groupSlug: string
+	kickoffCode: string
 	children: React.ReactNode
 }
 
@@ -28,6 +30,7 @@ export const GroupExerciseSubmissionForm = ({
 	participant,
 	exercise,
 	groupSlug,
+	kickoffCode,
 	children,
 }: Props) => {
 	const [captainModalOpen, setCaptainModalOpen] = React.useState(false)
@@ -36,7 +39,7 @@ export const GroupExerciseSubmissionForm = ({
 		participantId: participant._id,
 	})
 
-	const groupParticipants: Group | undefined = snap.groups[groupSlug]
+	const groupParticipants: Group | undefined = snap.groups?.[groupSlug]
 	const role: Role | undefined = groupParticipants?.[participant._id]
 	const group = exercise.groups?.find((g) => g.slug.current === groupSlug)
 
@@ -44,7 +47,7 @@ export const GroupExerciseSubmissionForm = ({
 
 	const onRoleCardClick = (newRole: Role) => {
 		const existingCaptain = R.pipe(
-			groupParticipants,
+			groupParticipants ?? {},
 			R.omit([participant._id]),
 			R.values,
 			R.find((role) => role === "captain"),
@@ -79,7 +82,7 @@ export const GroupExerciseSubmissionForm = ({
 						</>
 					) : (
 						<>
-							You are a <strong>collaborator</strong> in{" "}
+							You are a <strong>contributor</strong> in{" "}
 							<strong>{group.name}</strong>.
 						</>
 					)}
@@ -93,8 +96,16 @@ export const GroupExerciseSubmissionForm = ({
 
 			{shouldShowRolePicker && (
 				<div className="mt-4">
-					<Text size={16} className="mb-7">
-						What's your role?
+					<Text asChild size={16} className="mb-7">
+						<div>
+							What's your role?{" "}
+							<Link
+								href={`/kickoff/${kickoffCode}/exercises/${exercise.slug.current}/groups`}
+								className="text-gray-19 underline"
+							>
+								Wrong group?
+							</Link>
+						</div>
 					</Text>
 
 					<div className="flex flex-col gap-4">

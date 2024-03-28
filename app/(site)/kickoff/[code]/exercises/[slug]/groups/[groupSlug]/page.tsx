@@ -22,6 +22,7 @@ const GroupExercisePage = async (props: Props) => {
 			exercise={exercise}
 			participant={participant}
 			groupSlug={props.params.groupSlug}
+			kickoffCode={props.params.code}
 		>
 			{exercise.type === "brainstorm" && (
 				<BrainstormExercise
