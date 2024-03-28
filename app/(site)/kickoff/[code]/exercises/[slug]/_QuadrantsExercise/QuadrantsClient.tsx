@@ -20,6 +20,8 @@ type QuadrantsClientProps = {
 	participant: QuadrantsParticipant
 	groupSlug?: string
 	kickoffCode: string
+	// FIXME: This is hacky, but i need this to work for now.
+	keepStepperActive?: boolean
 }
 
 export const QuadrantsClient = ({
@@ -27,6 +29,7 @@ export const QuadrantsClient = ({
 	participant,
 	groupSlug,
 	kickoffCode,
+	keepStepperActive = false,
 }: QuadrantsClientProps) => {
 	if (!exercise.quadrants)
 		throw new Error("Invalid Quadrant Exercise. No quadrants configured.")
@@ -135,7 +138,7 @@ export const QuadrantsClient = ({
 			</div>
 
 			<Steps
-				disabled={isDisabled}
+				disabled={keepStepperActive ? false : isDisabled}
 				steps={totalSteps}
 				activeStep={step}
 				onFinish={() => router.push(`/kickoff/${kickoffCode}/exercises`)}

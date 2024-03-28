@@ -16,11 +16,11 @@ export const Exercise = defineType({
 	icon: () => <Dumbbell width={24} height={24} />,
 
 	preview: {
-		select: { title: "name", subtitle: "type" },
+		select: { title: "name", slug: "slug.current" },
 		prepare(select) {
 			return {
 				title: select.title,
-				subtitle: select.subtitle,
+				subtitle: select.slug,
 				media: () => <Dumbbell width={24} height={24} />,
 			}
 		},

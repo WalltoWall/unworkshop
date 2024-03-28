@@ -12,12 +12,14 @@ export interface QuadrantsExerciseProps {
 	exercise: ST["exercise"]
 	groupSlug?: string
 	kickoffCode: string
+	keepStepperActive?: boolean
 }
 
 export const QuadrantsExercise = async ({
 	exercise,
 	groupSlug,
 	kickoffCode,
+	keepStepperActive,
 }: QuadrantsExerciseProps) => {
 	const participant =
 		await client.findParticipantOrThrow<QuadrantsParticipant>()
@@ -30,6 +32,7 @@ export const QuadrantsExercise = async ({
 					participant={participant}
 					groupSlug={groupSlug}
 					kickoffCode={kickoffCode}
+					keepStepperActive={keepStepperActive}
 				/>
 			)}
 		</div>

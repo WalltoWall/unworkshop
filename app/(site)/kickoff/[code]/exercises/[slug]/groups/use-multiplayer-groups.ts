@@ -93,5 +93,5 @@ export const useMultiplayerGroups = ({
 		},
 	}
 
-	return { snap, actions }
+	return { snap, actions, multiplayer }
 }

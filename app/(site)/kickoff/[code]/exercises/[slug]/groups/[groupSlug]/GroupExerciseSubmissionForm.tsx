@@ -43,6 +43,7 @@ export const GroupExerciseSubmissionForm = ({
 	const role: Role | undefined = groupParticipants?.[participant._id]
 	const group = exercise.groups?.find((g) => g.slug.current === groupSlug)
 
+	// FIXME: Flicker of incorrect content on hard refresh.
 	const shouldShowRolePicker = !groupParticipants || !role || role === "unset"
 
 	const onRoleCardClick = (newRole: Role) => {
@@ -103,7 +104,7 @@ export const GroupExerciseSubmissionForm = ({
 								href={`/kickoff/${kickoffCode}/exercises/${exercise.slug.current}/groups`}
 								className="text-gray-19 underline"
 							>
-								Wrong group?
+								(Wrong group?)
 							</Link>
 						</div>
 					</Text>
@@ -137,3 +138,5 @@ export const GroupExerciseSubmissionForm = ({
 		</div>
 	)
 }
+
+export default GroupExerciseSubmissionForm
