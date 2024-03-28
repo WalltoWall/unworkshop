@@ -7,10 +7,13 @@ const Form = dynamic(() => import("./Form"), { ssr: false })
 
 type Props = {
 	exercise: ST["exercise"]
+	groupSlug?: string
 }
 
-export const FormExercise = async ({ exercise }: Props) => {
+export const FormExercise = async ({ exercise, groupSlug }: Props) => {
 	const participant = await client.findParticipantOrThrow<FormParticipant>()
 
-	return <Form exercise={exercise} participant={participant} />
+	return (
+		<Form exercise={exercise} participant={participant} groupSlug={groupSlug} />
+	)
 }

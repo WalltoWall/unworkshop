@@ -10,17 +10,15 @@ export const ListResponseCard = ({
 	settings,
 	answer,
 	participantNumber,
-	participant,
+	name,
 	field,
 	questionNumber,
 }: ResponseCardProps<ListFieldAnswer>) => {
-	const name = settings.names
-		? participant.name
-		: `Participant ${participantNumber}`
+	const displayName = settings.names ? name : `Participant ${participantNumber}`
 
 	return (
 		<ResponseDialog
-			name={name}
+			name={displayName}
 			field={field}
 			questionNumber={questionNumber}
 			trigger={answer.groups.map((g, idx) => (

@@ -7,7 +7,7 @@ import { ResponseDialog } from "./ResponseDialog"
 import { Slider } from "./Slider"
 
 export const TaglineResponseCard = ({
-	participant,
+	name,
 	answer,
 	allParticipantAnswers,
 	field,
@@ -27,13 +27,11 @@ export const TaglineResponseCard = ({
 		throw new Error("Invalid resolved tagline source answer.")
 	}
 
-	const name = settings.names
-		? participant.name
-		: `Participant ${participantNumber}`
+	const displayName = settings.names ? name : `Participant ${participantNumber}`
 
 	return (
 		<ResponseDialog
-			name={name}
+			name={displayName}
 			field={field}
 			questionNumber={questionNumber}
 			trigger={

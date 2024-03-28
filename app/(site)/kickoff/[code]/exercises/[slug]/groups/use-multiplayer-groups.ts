@@ -54,7 +54,7 @@ export const useMultiplayerGroups = ({
 
 	const actions = {
 		setRole: (args: { slug: string; role: Role }) => {
-			if (!participantId || !state.groups) return
+			if (!participantId) return
 
 			state.groups ??= {}
 			state.groups[args.slug] ??= {}
@@ -73,7 +73,7 @@ export const useMultiplayerGroups = ({
 		},
 
 		replaceCaptain: (args: { slug: string }) => {
-			if (!participantId || !state.groups) return
+			if (!participantId) return
 
 			state.groups ??= {}
 			state.groups[args.slug] ??= {}

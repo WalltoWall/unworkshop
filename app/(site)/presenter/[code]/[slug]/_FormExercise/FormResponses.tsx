@@ -20,17 +20,37 @@ export type FormPresenterViewSettings = {
 }
 
 export const FormResponses = ({ exercise, participants }: Props) => {
+	const groups = exercise.groups ?? []
 	const [settings, setSettings] = React.useState<FormPresenterViewSettings>({
-		names: false,
+		names: groups.length > 1,
 	})
-	const { snap, multiplayer } = useMultiplayerForm({ exerciseId: exercise._id })
+	const { snap } = useMultiplayerForm({ exerciseId: exercise._id })
 
-	if (!multiplayer.provider.synced) return null
+	const participantOrGroupAnswers = R.mapValues(
+		snap.participants,
+		(answers, id) => {
+			const participant: FormParticipant | undefined = participants[id]
+			const group = exercise.groups?.find((group) => group.slug.current === id)
 
-	const participantAnswers = R.mapValues(snap.participants, (answers, id) => ({
-		answers,
-		participant: participants[id],
-	}))
+			if (group) {
+				return {
+					answers,
+					name: group.name,
+					id: group.slug.current,
+				}
+			}
+
+			return {
+				answers,
+				name: participant.name,
+				id: participant._id,
+			}
+		},
+	)
+
+	// console.log(participantAnswers)
+
+	// return null
 
 	return (
 		<>
@@ -43,10 +63,12 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 							</Text>
 
 							{step.fields?.map((field, fieldIdx) => {
-								const participantWithAnswer = R.values(participantAnswers)
+								const participantOrGroup = R.values(participantOrGroupAnswers)
 									.map((pa) => ({
 										answer: pa.answers.at(stepIdx)?.at(fieldIdx)!,
-										participant: pa.participant,
+										name: pa.name,
+										allAnswers: pa.answers,
+										id: pa.id,
 									}))
 									.filter((val) => Boolean(val.answer))
 
@@ -67,14 +89,14 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 										</div>
 
 										<div className="mt-7 flex flex-wrap gap-3">
-											{participantWithAnswer?.map((p, idx) => (
+											{participantOrGroup?.map((pOrG, idx) => (
 												<ResponseCard
-													key={p.answer.type + idx}
-													answer={p.answer}
+													key={pOrG.answer.type + idx}
+													answer={pOrG.answer}
 													allParticipantAnswers={
-														participantAnswers[p.participant._id].answers
+														participantOrGroupAnswers[pOrG.id].answers
 													}
-													participant={p.participant}
+													name={pOrG.name}
 													field={field}
 													settings={settings}
 													participantNumber={idx + 1}

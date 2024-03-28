@@ -165,8 +165,8 @@ export default class Server implements Party.Server {
 					console.info("Saved exercise: " + exerciseId)
 				},
 
-				// only save after every 2 seconds (default)
-				debounceWait: 2000,
+				// only save after every 5 seconds (default)
+				debounceWait: 5000,
 
 				// if updates keep coming, save at least once every 10 seconds (default)
 				debounceMaxWait: 10000,

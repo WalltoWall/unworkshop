@@ -67,7 +67,7 @@ export const Steps = ({
 					disabled={disabled}
 				>
 					{isPending ? (
-						<Spinner />
+						<Spinner className="text-white" />
 					) : activeStep - 1 === steps ? (
 						<Checkmark />
 					) : (

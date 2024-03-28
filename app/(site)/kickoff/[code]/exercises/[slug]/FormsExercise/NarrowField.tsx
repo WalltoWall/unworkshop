@@ -79,7 +79,7 @@ export const NarrowField = ({ source, answer, actions, ...props }: Props) => {
 									value={response}
 									className="appearance-none outline-none"
 									onClick={handleChange}
-									defaultChecked={answer?.responses.includes(response)}
+									checked={answer?.responses.includes(response)}
 									readOnly={props.readOnly}
 								/>
 

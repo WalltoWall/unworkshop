@@ -7,17 +7,15 @@ export const TextResponseCard = ({
 	settings,
 	answer,
 	participantNumber,
-	participant,
+	name,
 	field,
 	questionNumber,
 }: ResponseCardProps<TextFieldAnswer>) => {
-	const name = settings.names
-		? participant.name
-		: `Participant ${participantNumber}`
+	const displayName = settings.names ? name : `Participant ${participantNumber}`
 
 	return (
 		<ResponseDialog
-			name={name}
+			name={displayName}
 			field={field}
 			questionNumber={questionNumber}
 			trigger={

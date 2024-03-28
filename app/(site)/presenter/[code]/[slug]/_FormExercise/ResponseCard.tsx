@@ -5,7 +5,6 @@ import { match } from "ts-pattern"
 import type {
 	FormField,
 	FormFieldAnswer,
-	FormParticipant,
 	FormStepAnswer,
 } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
 import type { FormPresenterViewSettings } from "./FormResponses"
@@ -17,7 +16,7 @@ import { TextResponseCard } from "./TextResponseCard"
 export type ResponseCardProps<T extends FormFieldAnswer = FormFieldAnswer> = {
 	answer: T
 	allParticipantAnswers: FormStepAnswer[]
-	participant: FormParticipant
+	name: string
 	field: FormField
 	settings: FormPresenterViewSettings
 	participantNumber: number

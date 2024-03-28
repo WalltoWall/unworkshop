@@ -21,15 +21,18 @@ const StepParamSchema = z.coerce
 type Props = {
 	exercise: ST["exercise"]
 	participant: FormParticipant
+	groupSlug?: string
 }
 
-export const Form = ({ exercise, participant }: Props) => {
+export const Form = ({ exercise, participant, groupSlug }: Props) => {
+	const participantOrGroupId = groupSlug ?? participant._id
+
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const params = useParams()
-	const { actions, multiplayer, snap } = useMultiplayerForm({
+	const { actions, snap, multiplayer } = useMultiplayerForm({
 		exerciseId: exercise._id,
-		participantId: participant._id,
+		participantOrGroupId,
 	})
 
 	const step = StepParamSchema.parse(searchParams.get("step"))
@@ -40,8 +43,7 @@ export const Form = ({ exercise, participant }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	// TODO: Or group id?
-	const answers = snap.participants[participant._id] ?? []
+	const answers = snap.participants[participantOrGroupId] ?? []
 	const stepAnswers = answers.at(stepIdx)
 
 	const onReviewScreen = !stepData && stepIdx === exercise.form.steps.length
@@ -49,7 +51,8 @@ export const Form = ({ exercise, participant }: Props) => {
 	const goBackToExerciseList = () =>
 		router.push(`/kickoff/${params.code}/exercises`)
 
-	// TODO: Loading indicator
+	const role = groupSlug ? snap.groups?.[groupSlug][participant._id] : undefined
+
 	if (!multiplayer.provider.synced) return null
 
 	return (
@@ -83,6 +86,7 @@ export const Form = ({ exercise, participant }: Props) => {
 									allAnswers={answers}
 									answer={fieldAnswer}
 									actions={actions}
+									readOnly={role && role !== "captain"}
 								/>
 							</FieldContainer>
 						)

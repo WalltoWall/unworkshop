@@ -26,7 +26,11 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 
 					const groupSlug = R.pipe(
 						R.entries(exercise.answers?.groups ?? {}),
-						R.find(([_gSlug, group]) => group[participant?._id] !== "unset"),
+						R.find(
+							([_gSlug, group]) =>
+								group[participant._id] === "captain" ||
+								group[participant._id] === "contributor",
+						),
 						(result) => result?.[0],
 					)
 

@@ -11,13 +11,14 @@ import { type FormAnswers, type FormFieldAnswer } from "./types"
 
 export type FormActions = ReturnType<typeof useMultiplayerForm>["actions"]
 
-type Args = MultiplayerArgs & { participantId?: string }
+type Args = MultiplayerArgs & { participantOrGroupId?: string }
 
-export const useMultiplayerForm = ({ participantId, ...args }: Args) => {
+export const useMultiplayerForm = ({ participantOrGroupId, ...args }: Args) => {
 	const multiplayer = useMultiplayer(args)
 	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
 	const state = React.useRef(proxy<FormAnswers>(INITIAL_FORM_ANSWERS)).current
 	const snap = useSnapshot(state)
+	const [, forceUpdate] = React.useState(0)
 
 	// Kinda janky, but this is required to ensure data is persisted initially.
 	React.useEffect(() => {
@@ -31,6 +32,12 @@ export const useMultiplayerForm = ({ participantId, ...args }: Args) => {
 				state.participants = initialState.participants
 
 				unbind = bind(state, yMap)
+
+				// FIXME: In Safari, checking `synced` in hook consumers
+				// doesn't seem to update in-time when hard reloading, so
+				// we just force react to re-render one more time which seems
+				// to resolve. kill me
+				if (multiplayer.provider.synced) forceUpdate((p) => p++)
 			}
 		}
 
@@ -48,10 +55,10 @@ export const useMultiplayerForm = ({ participantId, ...args }: Args) => {
 			fieldIdx: number
 			stepIdx: number
 		}) => {
-			if (!participantId) return
+			if (!participantOrGroupId) return
 
-			state.participants[participantId] ??= []
-			const participant = state.participants[participantId]
+			state.participants[participantOrGroupId] ??= []
+			const participant = state.participants[participantOrGroupId]
 
 			participant[args.stepIdx] ??= []
 			const step = participant[args.stepIdx]

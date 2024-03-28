@@ -1,4 +1,5 @@
 import type { ST } from "@/sanity/types.gen"
+import type { Group } from "../groups/types"
 import type { FormActions } from "./use-multiplayer-form"
 
 export type ListFieldAnswer = {
@@ -42,6 +43,7 @@ export type FormParticipant = ST["participant"]
 
 export type FormAnswers = {
 	participants: Record<string, Array<FormStepAnswer>>
+	groups: Record<string, Group>
 }
 
 export type FormExercise = ST["exercise"] & {

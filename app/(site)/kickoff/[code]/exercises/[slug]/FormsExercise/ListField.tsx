@@ -57,6 +57,7 @@ type SourceListSectionProps = {
 	answer?: ListFieldAnswer["groups"][number]
 	onInputChange?: React.ChangeEventHandler<HTMLInputElement>
 	readOnly?: boolean
+	appendNewRow?: () => void
 }
 
 const SourceListSection = (props: SourceListSectionProps) => {
@@ -68,10 +69,8 @@ const SourceListSection = (props: SourceListSectionProps) => {
 	} = props.field
 
 	const answerCount = props.answer?.responses.length ?? 0
-	const [rows, setRows] = React.useState(Math.max(answerCount, initialRows))
+	const rows = Math.max(answerCount, initialRows)
 	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
-
-	const appendNewRow = () => setRows((prev) => prev + 1)
 
 	return (
 		<div>
@@ -96,7 +95,7 @@ const SourceListSection = (props: SourceListSectionProps) => {
 			</ul>
 
 			{showAddButton && (
-				<AddButton className="mt-2.5" onClick={appendNewRow}>
+				<AddButton className="mt-2.5" onClick={props.appendNewRow}>
 					{addButtonText}
 				</AddButton>
 			)}
@@ -184,7 +183,7 @@ const PlainListField = ({ answer, actions, ...props }: Props) => {
 
 	const resolvedAnswer = answer?.groups.at(0)
 	const answerCount = resolvedAnswer?.responses.length ?? 0
-	const [rows, setRows] = React.useState(Math.max(answerCount, initialRows))
+	const rows = Math.max(answerCount, initialRows)
 	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
 
 	const submitForm = () => {
@@ -205,7 +204,15 @@ const PlainListField = ({ answer, actions, ...props }: Props) => {
 		submitForm()
 	}
 
-	const appendNewRow = () => setRows((prev) => prev + 1)
+	const appendNewRow = () => {
+		const answers = AnswersArray.parse(resolvedAnswer?.responses ?? [""])
+
+		actions.submitFieldAnswer({
+			answer: { type: "List", groups: [{ responses: [...answers, ""] }] },
+			fieldIdx: props.fieldIdx,
+			stepIdx: props.stepIdx,
+		})
+	}
 
 	return (
 		<form onSubmit={handleSubmit} ref={rForm}>

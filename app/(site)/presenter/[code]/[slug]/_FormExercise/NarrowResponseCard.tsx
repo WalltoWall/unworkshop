@@ -8,14 +8,12 @@ export const NarrowResponseCard = ({
 	settings,
 	answer,
 	participantNumber,
-	participant,
 	field,
+	name,
 	questionNumber,
 	allParticipantAnswers,
 }: ResponseCardProps<NarrowFieldAnswer>) => {
-	const name = settings.names
-		? participant.name
-		: `Participant ${participantNumber}`
+	const displayName = settings.names ? name : `Participant ${participantNumber}`
 
 	const sourceStep = field.source?.step ?? Infinity
 	const sourceField = field.source?.step ?? Infinity
@@ -30,7 +28,7 @@ export const NarrowResponseCard = ({
 
 	return (
 		<ResponseDialog
-			name={name}
+			name={displayName}
 			field={field}
 			questionNumber={questionNumber}
 			trigger={

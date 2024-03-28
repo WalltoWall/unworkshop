@@ -3,6 +3,7 @@ import { client } from "@/sanity/client"
 import { BrainstormExercise } from "../../_BrainstormExercise/BrainstormExercise"
 import { QuadrantsExercise } from "../../_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "../../_SlidersExercise/SlidersExercise"
+import { FormExercise } from "../../FormsExercise"
 import type { GroupParticipant } from "../types"
 import { GroupExerciseSubmissionForm } from "./GroupExerciseSubmissionForm"
 
@@ -46,6 +47,10 @@ const GroupExercisePage = async (props: Props) => {
 					groupSlug={props.params.groupSlug}
 					keepStepperActive
 				/>
+			)}
+
+			{exercise.type === "form" && (
+				<FormExercise exercise={exercise} groupSlug={props.params.groupSlug} />
 			)}
 		</GroupExerciseSubmissionForm>
 	)
