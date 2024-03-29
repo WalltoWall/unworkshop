@@ -51,7 +51,9 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 	const goBackToExerciseList = () =>
 		router.push(`/kickoff/${params.code}/exercises`)
 
-	const role = groupSlug ? snap.groups?.[groupSlug][participant._id] : undefined
+	const role = groupSlug
+		? snap.groups?.[groupSlug]?.[participant._id]
+		: undefined
 
 	if (!multiplayer.provider.synced) return null
 

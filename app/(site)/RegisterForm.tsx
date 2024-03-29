@@ -1,17 +1,19 @@
 "use client"
 
 import React from "react"
-import { useFormStatus } from "react-dom"
+import { useFormState, useFormStatus } from "react-dom"
 import clsx from "clsx"
 import {
 	OTPInput,
 	REGEXP_ONLY_DIGITS_AND_CHARS,
 	type SlotProps,
 } from "input-otp"
-import { Chevron } from "./icons/Chevron"
-import { Spinner } from "./Spinner"
+import { toast } from "sonner"
+import { Chevron } from "../../components/icons/Chevron"
+import { Spinner } from "../../components/Spinner"
+import { registerForKickoff } from "./actions"
 
-function Slot(props: SlotProps) {
+const Slot = (props: SlotProps) => {
 	return (
 		<div
 			className={clsx(
@@ -28,7 +30,7 @@ function Slot(props: SlotProps) {
 	)
 }
 
-function FakeCaret() {
+const FakeCaret = () => {
 	return (
 		<div className="pointer-events-none absolute inset-0 flex animate-caret-blink items-center justify-center">
 			<div className="h-8 w-px bg-green-40" />
@@ -36,7 +38,7 @@ function FakeCaret() {
 	)
 }
 
-function FakeDash() {
+const FakeDash = () => {
 	return (
 		<div className="flex w-10 items-center justify-center">
 			<div className="h-1 w-3 rounded-full bg-white" />
@@ -44,7 +46,7 @@ function FakeDash() {
 	)
 }
 
-export const RegisterInput = () => {
+const RegisterInput = () => {
 	const [showSubmit, setShowSubmit] = React.useState(false)
 	const status = useFormStatus()
 
@@ -92,5 +94,21 @@ export const RegisterInput = () => {
 				</button>
 			)}
 		</div>
+	)
+}
+
+export const RegisterForm = () => {
+	const [state, action] = useFormState(registerForKickoff, { error: "" })
+
+	React.useEffect(() => {
+		if (!state.error) return
+
+		toast.error(state.error)
+	})
+
+	return (
+		<form className="flex flex-col space-y-1.5" action={action}>
+			<RegisterInput />
+		</form>
 	)
 }
