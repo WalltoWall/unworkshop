@@ -17,9 +17,9 @@ function Slot(props: SlotProps) {
 			className={clsx(
 				"relative h-[4.5rem] w-10",
 				"flex items-center justify-center rounded-lg",
-				"border-green-40 border",
+				"border border-green-40",
 				props.char &&
-					"bg-green-40 font-bold uppercase text-black text-40 font-sans",
+					"bg-green-40 font-extrabold uppercase text-black text-48 font-heading",
 			)}
 		>
 			{props.char !== null && <div>{props.char}</div>}
@@ -30,8 +30,8 @@ function Slot(props: SlotProps) {
 
 function FakeCaret() {
 	return (
-		<div className="animate-caret-blink pointer-events-none absolute inset-0 flex items-center justify-center">
-			<div className="bg-green-40 h-8 w-px" />
+		<div className="pointer-events-none absolute inset-0 flex animate-caret-blink items-center justify-center">
+			<div className="h-8 w-px bg-green-40" />
 		</div>
 	)
 }
@@ -81,7 +81,7 @@ export const RegisterInput = () => {
 			/>
 			{showSubmit && (
 				<button
-					className="bg-green-40 absolute -bottom-5 -right-5 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-black"
+					className="absolute -bottom-5 -right-5 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-black bg-green-40"
 					type="submit"
 				>
 					{status.pending ? (

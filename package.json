@@ -11,6 +11,7 @@
 		"start:next": "next start",
 		"start:partykit": "npx partykit dev",
 		"build": "next build",
+        "deploy:partykit": "npx partykit deploy --with-vars",
 		"lint": "next lint"
 	},
 	"dependencies": {
