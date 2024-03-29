@@ -99,7 +99,7 @@ export const GroupExerciseSubmissionForm = ({
 				<div className="mt-4">
 					<Text asChild size={16} className="mb-7">
 						<div>
-							What's your role?{" "}
+							What's your role? - <strong>{group?.name}</strong> -{" "}
 							<Link
 								href={`/kickoff/${kickoffCode}/exercises/${exercise.slug.current}/groups`}
 								className="text-gray-19 underline"
