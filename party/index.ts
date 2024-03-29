@@ -1,12 +1,12 @@
+import { createClient } from "@sanity/client"
 import type * as Party from "partykit/server"
 import { proxy } from "valtio"
 import { bind } from "valtio-yjs"
 import { onConnect } from "y-partykit"
 import * as Y from "yjs"
-import { sanity } from "@/sanity/sanity-client"
 import type { ST } from "@/sanity/types.gen"
 import { INITIAL_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
-import { type BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import type { BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { INITIAL_QUADRANTS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/contants"
 import type { QuadrantsExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
 import { INITIAL_SLIDERS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/constants"
@@ -14,6 +14,15 @@ import type { SlidersExercise } from "@/app/(site)/kickoff/[code]/exercises/[slu
 import type { FormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
 import { INITIAL_FORM_ANSWERS } from "@/app/(site)/presenter/[code]/[slug]/_FormExercise/constants"
 import { ANSWERS_KEY } from "@/constants"
+
+const sanity = createClient({
+	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+	dataset: process.env.NEXT_PUBLIC_SANITY_DATASET ?? "development",
+	apiVersion: process.env.NEXT_PUBLIC_SANITY_API_VERSION ?? "2023-02-10",
+	token: process.env.SANITY_TOKEN,
+	perspective: "published",
+	useCdn: false,
+})
 
 export default class Server implements Party.Server {
 	constructor(readonly room: Party.Room) {}
