@@ -10,7 +10,7 @@ import { INITIAL_SLIDERS_ANSWERS } from "./constants"
 import { type SlidersAnswers } from "./types"
 
 export type UseMultiplayerSlidersArgs = {
-	participantId: string
+	participantId?: string
 	slug: string
 	groupSlug?: string
 } & MultiplayerArgs
@@ -54,6 +54,8 @@ export const useMultiplayerSliders = ({
 
 	const getSlider = () => {
 		const participantOrGroupId = groupSlug ?? participantId
+		if (!participantOrGroupId)
+			throw new Error("No valid group or participant ID was provided.")
 
 		state.participants[participantOrGroupId] ??= {}
 		const participant = state.participants[participantOrGroupId]

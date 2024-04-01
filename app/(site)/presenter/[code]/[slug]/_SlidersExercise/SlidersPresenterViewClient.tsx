@@ -19,12 +19,10 @@ import { SlidersKey } from "./SlidersKey"
 
 interface PresenterViewProps {
 	exercise: ST["exercise"]
-	participantId: string
 }
 
 export const SlidersPresenterViewClient = ({
 	exercise,
-	participantId,
 }: PresenterViewProps) => {
 	const [color, setColor] = React.useState("#fecb2f")
 	const [showImages, setShowImages] = React.useState(true)
@@ -47,24 +45,15 @@ export const SlidersPresenterViewClient = ({
 
 	const { snap } = useMultiplayerSliders({
 		exerciseId: exercise._id,
-		participantId,
 		slug: currentSliderSlug,
 	})
 
 	const participants = snap.participants
 
-	const allAnswers = Object.entries(participants).flatMap((participant) => {
-		const answers: Array<Answer & { slug?: string }> = []
-		let slidersAnswer: Answer & { slug?: string } = {}
-		Object.entries(participant[1]).map((answer) => {
-			slidersAnswer.today = answer[1].today
-			slidersAnswer.tomorrow = answer[1].tomorrow
-			slidersAnswer.slug = answer[0]
-			answers.push(slidersAnswer)
-			slidersAnswer = { today: 0, tomorrow: 0, slug: "" }
-		})
+	const allStepAnswers = Object.values(participants).map((answers) => {
+		const answer = answers[currentSliderSlug]
 
-		return answers
+		return { today: answer.today, tomorrow: answer.tomorrow }
 	})
 
 	const animatePoints = () => {
@@ -81,10 +70,6 @@ export const SlidersPresenterViewClient = ({
 	const slider = exercise.sliders[sliderIndex]
 	const isDisabledLeft = sliderIndex <= 0
 	const isDisabledRight = exercise.sliders.length <= sliderIndex + 1
-
-	const currentAnswers = allAnswers.filter(
-		(answer) => answer.slug === slider.slug.current,
-	)
 
 	const fakeData = [
 		{ today: 1, tomorrow: 6 },
@@ -146,6 +131,7 @@ export const SlidersPresenterViewClient = ({
 													/>
 												</div>
 											)}
+
 											{isFilled.image(slider.right_image) && (
 												<div className="w-full">
 													<Image
@@ -161,7 +147,7 @@ export const SlidersPresenterViewClient = ({
 									)}
 
 								<SlidersBars
-									answers={currentAnswers}
+									answers={allStepAnswers}
 									barColor={color}
 									showNumbers={showNumbers}
 									showImages={showImages}
