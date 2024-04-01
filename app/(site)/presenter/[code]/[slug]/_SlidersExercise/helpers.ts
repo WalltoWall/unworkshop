@@ -13,7 +13,7 @@ function sortByXValue(answers: Array<Answer>) {
 	const group5: Answer[] = []
 	const group6: Answer[] = []
 
-	answers.map((answer) => {
+	answers.forEach((answer) => {
 		if (answer.today === 1) {
 			group1.push(answer)
 		} else if (answer.today === 2) {
@@ -108,50 +108,34 @@ function getLeftValue(leftValue: number, isTomorrow?: boolean) {
 }
 
 export const getGraphValues = ({ answers }: GraphValuesProps) => {
-	const topValues = evenlyDistributeNumbers(14, 59, answers.length)
+	const sortedAnswersByXValue = sortByXValue(answers)
 
-	const graphAnswers: Array<QuadrantAnswer> = answers.map((answer, idx) => {
-		const topVal = topValues[idx]
+	const graphAnswers: Array<Array<QuadrantAnswer>> = []
 
-		return {
-			today: {
-				left: getLeftValue(answer.today!),
-				top: topVal,
-			},
-			tomorrow: {
-				left: getLeftValue(answer.tomorrow!, true),
-				top: topVal,
-			},
-		}
+	Object.entries(sortedAnswersByXValue).forEach((value) => {
+		if (value[1].length <= 0) return
+
+		const topValues = evenlyDistributeNumbers(14, 59, value[1].length)
+
+		graphAnswers.push(
+			value[1].flatMap((answer, idx) => {
+				const topVal = topValues[idx]
+
+				return {
+					today: {
+						left: getLeftValue(answer.today!),
+						top: topVal,
+					},
+					tomorrow: {
+						left: getLeftValue(answer.tomorrow!, true),
+						top: topVal,
+					},
+				}
+			}),
+		)
 	})
 
-	return graphAnswers
+	const flatArray = graphAnswers.reduce((acc, curr) => acc.concat(curr), [])
+
+	return flatArray
 }
-
-// const sortedAnswersByXValue = sortByXValue(answers)
-
-// 	const graphAnswers:
-// 		| QuadrantAnswer[]
-// 		| {
-// 				today: { left: number; top: number }
-// 				tomorrow: { left: number; top: number }
-// 		  }[][] = []
-
-// 	Object.entries(sortedAnswersByXValue).forEach((value) => {
-// 		graphAnswers.push(
-// 			value[1].map((answer, idx) => {
-// 				const topVal = topValues[idx]
-
-// 				return {
-// 					today: {
-// 						left: getLeftValue(answer.today!),
-// 						top: topVal,
-// 					},
-// 					tomorrow: {
-// 						left: getLeftValue(answer.tomorrow!, true),
-// 						top: topVal,
-// 					},
-// 				}
-// 			}),
-// 		)
-// 	})
