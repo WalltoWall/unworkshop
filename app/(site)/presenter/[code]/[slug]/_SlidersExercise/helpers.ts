@@ -5,6 +5,40 @@ type GraphValuesProps = {
 	answers: Array<Answer>
 }
 
+function sortByXValue(answers: Array<Answer>) {
+	const group1: Answer[] = []
+	const group2: Answer[] = []
+	const group3: Answer[] = []
+	const group4: Answer[] = []
+	const group5: Answer[] = []
+	const group6: Answer[] = []
+
+	answers.map((answer) => {
+		if (answer.today === 1) {
+			group1.push(answer)
+		} else if (answer.today === 2) {
+			group2.push(answer)
+		} else if (answer.today === 3) {
+			group3.push(answer)
+		} else if (answer.today === 4) {
+			group4.push(answer)
+		} else if (answer.today === 5) {
+			group5.push(answer)
+		} else {
+			group6.push(answer)
+		}
+	})
+
+	return {
+		group1,
+		group2,
+		group3,
+		group4,
+		group5,
+		group6,
+	}
+}
+
 function evenlyDistributeNumbers(start: number, end: number, count: number) {
 	if (count <= 0) {
 		console.error("Count must be greater than 0")
@@ -74,7 +108,7 @@ function getLeftValue(leftValue: number, isTomorrow?: boolean) {
 }
 
 export const getGraphValues = ({ answers }: GraphValuesProps) => {
-	const topValues = evenlyDistributeNumbers(15, 55, answers.length)
+	const topValues = evenlyDistributeNumbers(14, 59, answers.length)
 
 	const graphAnswers: Array<QuadrantAnswer> = answers.map((answer, idx) => {
 		const topVal = topValues[idx]
@@ -82,7 +116,7 @@ export const getGraphValues = ({ answers }: GraphValuesProps) => {
 		return {
 			today: {
 				left: getLeftValue(answer.today!),
-				top: idx * 2,
+				top: topVal,
 			},
 			tomorrow: {
 				left: getLeftValue(answer.tomorrow!, true),
@@ -93,3 +127,31 @@ export const getGraphValues = ({ answers }: GraphValuesProps) => {
 
 	return graphAnswers
 }
+
+// const sortedAnswersByXValue = sortByXValue(answers)
+
+// 	const graphAnswers:
+// 		| QuadrantAnswer[]
+// 		| {
+// 				today: { left: number; top: number }
+// 				tomorrow: { left: number; top: number }
+// 		  }[][] = []
+
+// 	Object.entries(sortedAnswersByXValue).forEach((value) => {
+// 		graphAnswers.push(
+// 			value[1].map((answer, idx) => {
+// 				const topVal = topValues[idx]
+
+// 				return {
+// 					today: {
+// 						left: getLeftValue(answer.today!),
+// 						top: topVal,
+// 					},
+// 					tomorrow: {
+// 						left: getLeftValue(answer.tomorrow!, true),
+// 						top: topVal,
+// 					},
+// 				}
+// 			}),
+// 		)
+// 	})

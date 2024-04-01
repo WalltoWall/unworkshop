@@ -105,10 +105,6 @@ export const SlidersPresenterViewClient = ({
 		{ today: 2, tomorrow: 2 },
 		{ today: 2, tomorrow: 3 },
 		{ today: 1, tomorrow: 4 },
-		{ today: 4, tomorrow: 5 },
-		{ today: 3, tomorrow: 4 },
-		{ today: 2, tomorrow: 5 },
-		{ today: 1, tomorrow: 6 },
 	]
 
 	return (
@@ -121,7 +117,7 @@ export const SlidersPresenterViewClient = ({
 					showToday={showToday}
 					showTomorrow={showTomorrow}
 					animatePoints={animatePoints}
-					answers={getGraphValues({ answers: fakeData })}
+					answers={getGraphValues({ answers: allAnswers })}
 					leftText={slider.left_value}
 					rightText={slider.right_value}
 					isDisabledLeft={isDisabledLeft}
@@ -242,11 +238,6 @@ export const SlidersPresenterViewClient = ({
 							/>
 						</>
 					)}
-					<SettingVisibility
-						label="Timeline Animation"
-						isVisible={showGraph}
-						toggleVisibility={() => setShowGraph((prev) => !prev)}
-					/>
 
 					{showGraph && (
 						<>
@@ -255,15 +246,13 @@ export const SlidersPresenterViewClient = ({
 								isVisible={showToday}
 								toggleVisibility={() => {
 									setShowToday((prev) => !prev)
-									setShowTomorrow(false)
 								}}
 							/>
 							<SettingVisibility
 								label="Show Tomorrow"
 								isVisible={showTomorrow}
 								toggleVisibility={() => {
-									setShowTomorrow(false)
-									setShowTomorrow(true)
+									setShowTomorrow((prev) => !prev)
 								}}
 							/>
 							<SettingVisibility
@@ -273,6 +262,13 @@ export const SlidersPresenterViewClient = ({
 							/>
 						</>
 					)}
+
+					<SettingVisibility
+						label="Timeline Animation"
+						isVisible={showGraph}
+						toggleVisibility={() => setShowGraph((prev) => !prev)}
+					/>
+
 					<Text size={12} className="block pt-2 text-white">
 						{showGraph ? "Dot Color" : "Bar Color"}
 					</Text>
