@@ -11,7 +11,7 @@
 		"start:next": "next start",
 		"start:partykit": "npx partykit dev",
 		"build": "next build",
-        "deploy:partykit": "npx partykit deploy --with-vars",
+		"deploy:partykit": "npx partykit deploy --with-vars",
 		"lint": "next lint"
 	},
 	"dependencies": {
@@ -27,6 +27,7 @@
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.0",
 		"embla-carousel-react": "^8.0.0-rc15",
+		"framer-motion": "^11.0.24",
 		"input-otp": "^1.2.3",
 		"just-throttle": "^4.2.0",
 		"lucide-react": "^0.363.0",

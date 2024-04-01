@@ -1,3 +1,5 @@
+import React from "react"
+import { motion } from "framer-motion"
 import { Button } from "@/components/Button"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
@@ -31,6 +33,8 @@ export const GraphView = ({
 	isDisabledLeft,
 	isDisabledRight,
 }: GraphViewProps) => {
+	const [animating, setAnimating] = React.useState(false)
+
 	return (
 		<div className="relative flex h-full grow flex-col">
 			<div className="flex justify-between">
@@ -57,7 +61,7 @@ export const GraphView = ({
 					</div>
 				</div>
 
-				<Button>Animate</Button>
+				<Button onClick={() => setAnimating((p) => !p)}>Animate</Button>
 			</div>
 
 			<div
@@ -66,23 +70,28 @@ export const GraphView = ({
 			>
 				{showToday &&
 					answers.map((answer, idx) => (
-						<div
+						<motion.div
 							key={idx}
-							className="h-5 w-5 rounded-full"
+							className="h-5 w-5 rounded-full border-[3px] bg-white"
+							layout
+							transition={{ duration: 2, bounce: 0.25 }}
+							animate={{ backgroundColor: animating ? color : "#fff" }}
 							style={{
-								background: color,
-								gridColumn: answer.today,
+								gridColumn: animating ? answer.tomorrow : answer.today,
 								gridRow: idx + 1,
+								borderColor: color,
 							}}
 						/>
 					))}
 
 				{showTomorrow &&
+					!animating &&
 					answers.map((answer, idx) => (
 						<div
 							key={idx}
-							className="h-5 w-5 rounded-full border-[3px] bg-white"
+							className="h-5 w-5 rounded-full border-[3px]"
 							style={{
+								backgroundColor: color,
 								borderColor: color,
 								gridColumn: answer.tomorrow,
 								gridRow: idx + 1,
