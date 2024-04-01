@@ -10,10 +10,8 @@ import { Text } from "@/components/Text"
 import { COLORS } from "@/lib/constants"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
 import type { ST } from "@/sanity/types.gen"
-import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 import { useMultiplayerSliders } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/use-multiplayer-sliders"
 import { GraphView } from "./GraphView"
-import { getGraphValues } from "./helpers"
 import { SlidersBars } from "./SlidersBars"
 import { SlidersKey } from "./SlidersKey"
 
@@ -31,7 +29,6 @@ export const SlidersPresenterViewClient = ({
 	const [showToday, setShowToday] = React.useState(true)
 	const [showTomorrow, setShowTomorrow] = React.useState(false)
 	const [showLines, setShowLines] = React.useState(false)
-	const [animating, setAnimating] = React.useState(false)
 	const [showTodayBar, setShowTodayBar] = React.useState(true)
 	const [showTomorrowBar, setShowTomorrowBar] = React.useState(true)
 	const [sliderIndex, setSliderIndex] = React.useState(0)
@@ -55,15 +52,6 @@ export const SlidersPresenterViewClient = ({
 
 		return { today: answer.today, tomorrow: answer.tomorrow }
 	})
-
-	const animatePoints = () => {
-		setAnimating(true)
-
-		setTimeout(() => {
-			setAnimating(false)
-		}, 4000)
-		setShowTomorrow(true)
-	}
 
 	if (!exercise.sliders) return
 
@@ -93,16 +81,14 @@ export const SlidersPresenterViewClient = ({
 	]
 
 	return (
-		<div>
+		<>
 			{showGraph ? (
 				<GraphView
-					animating={animating}
 					color={color}
 					showLines={showLines}
 					showToday={showToday}
 					showTomorrow={showTomorrow}
-					animatePoints={animatePoints}
-					answers={getGraphValues({ answers: fakeData })}
+					answers={fakeData}
 					leftText={slider.left_value}
 					rightText={slider.right_value}
 					isDisabledLeft={isDisabledLeft}
@@ -268,7 +254,7 @@ export const SlidersPresenterViewClient = ({
 					/>
 				</SettingsMenu>
 			</div>
-		</div>
+		</>
 	)
 }
 

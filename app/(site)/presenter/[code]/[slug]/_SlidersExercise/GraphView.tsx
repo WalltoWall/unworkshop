@@ -1,18 +1,13 @@
 import { Button } from "@/components/Button"
 import { Arrow } from "@/components/icons/Arrow"
-import { Spinner } from "@/components/Spinner"
 import { Text } from "@/components/Text"
-import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
-import { QuadrantAnswer } from "../_QuadrantsExercise/QuadrantAnswer"
 
 export interface GraphViewProps {
-	animating: boolean
 	color: string
 	showLines: boolean
 	showToday: boolean
 	showTomorrow: boolean
-	animatePoints: () => void
-	answers: Array<Answer>
+	answers: Array<{ today: number; tomorrow: number }>
 	leftText: string
 	rightText: string
 	setSliderIndex: React.Dispatch<React.SetStateAction<number>>
@@ -20,13 +15,15 @@ export interface GraphViewProps {
 	isDisabledRight: boolean
 }
 
+const Bar = (props: { color: string }) => (
+	<div className="h-20" style={{ backgroundColor: props.color }} />
+)
+
 export const GraphView = ({
-	animating,
 	color,
 	showLines,
 	showToday,
 	showTomorrow,
-	animatePoints,
 	answers,
 	leftText,
 	rightText,
@@ -35,46 +32,59 @@ export const GraphView = ({
 	isDisabledRight,
 }: GraphViewProps) => {
 	return (
-		<div className="relative min-h-[95svh]">
-			<div className="absolute -top-5 left-0 z-10 rounded-2xl bg-black px-5 py-4 text-white">
-				<div className="mb-2 flex items-center">
-					<span
-						className="block h-6 w-6 rounded-full border-[3px] bg-white"
-						style={{
-							borderColor: color,
-						}}
-					/>
-					<Text className="ml-2 uppercase text-24 font-heading capsize">
+		<div className="relative flex h-full grow flex-col">
+			<div className="flex justify-between">
+				{/* TODO: Share component with other "dot" view */}
+				<div className="rounded-2xl bg-black px-5 py-4 text-white">
+					<div className="mb-2 flex items-center">
 						<span
+							className="block h-6 w-6 rounded-full border-[3px] bg-white"
+							style={{ borderColor: color }}
+						/>
+						<Text className="ml-2 uppercase text-24 font-heading capsize">
+							<span style={{ color: color }}>Today</span>
+						</Text>
+					</div>
+
+					<div className="flex items-center">
+						<span
+							className="block h-6 w-6 rounded-full"
 							style={{
-								color: color,
+								backgroundColor: color,
 							}}
-						>
-							Today
-						</span>
-					</Text>
+						/>
+						<Text className="ml-2 uppercase text-24 font-heading capsize">
+							<span
+								style={{
+									color: color,
+								}}
+							>
+								Tomorrow
+							</span>
+						</Text>
+					</div>
 				</div>
 
-				<div className="flex items-center">
-					<span
-						className="block h-6 w-6 rounded-full"
-						style={{
-							backgroundColor: color,
-						}}
-					/>
-					<Text className="ml-2 uppercase text-24 font-heading capsize">
-						<span
-							style={{
-								color: color,
-							}}
-						>
-							Tomorrow
-						</span>
-					</Text>
-				</div>
+				<Button>Animate</Button>
 			</div>
 
-			<div className="absolute top-3/4 flex w-full justify-between">
+			<div className="mt-4 grid grow grid-cols-[repeat(6,20px)] gap-[calc((100%-120px)/5)]">
+				Canvas of dots in here
+			</div>
+
+			<div className="relative -mb-8 grid grid-cols-[repeat(6,20px)] gap-[calc((100%-120px)/5)]">
+				<Bar color={color} />
+				<Bar color={color} />
+				<Bar color={color} />
+				<Bar color={color} />
+				<Bar color={color} />
+				<Bar color={color} />
+			</div>
+
+			<div className="h-2 bg-black" />
+
+			{/* TODO: Share this footer section with other similar areas */}
+			<div className="mt-12 flex justify-between">
 				<Text className="ml-1 uppercase text-40 font-heading capsize">
 					{leftText}
 				</Text>
@@ -111,7 +121,8 @@ export const GraphView = ({
 				</Text>
 			</div>
 
-			<div className="absolute inset-x-0 top-2/3 h-2 -translate-y-2/3 bg-black" />
+			{/* Bars start */}
+			{/* <div className="absolute inset-x-0 top-2/3 h-2 -translate-y-2/3 bg-black" />
 			<div
 				className="absolute left-0 top-2/3 h-20 w-[20px] -translate-y-2/3"
 				style={{ backgroundColor: color }}
@@ -135,36 +146,10 @@ export const GraphView = ({
 			<div
 				className="absolute right-0 top-2/3 h-20 w-[20px] -translate-y-2/3"
 				style={{ backgroundColor: color }}
-			/>
+			/> */}
+			{/* Bars end */}
 
-			<Button
-				className="absolute -right-1 -top-5 z-10 cursor-pointer"
-				onClick={animatePoints}
-				disabled={animating}
-			>
-				{animating ? (
-					<>
-						<Spinner className="mt-[3px] w-[1.125rem]" />
-						Animating
-					</>
-				) : (
-					"Animate"
-				)}
-			</Button>
-			{answers.map((answer, idx) => (
-				<QuadrantAnswer
-					key={idx}
-					animating={animating}
-					color={color}
-					showLines={showLines}
-					showToday={showToday}
-					showTomorrow={showTomorrow}
-					answer={answer}
-					dotSize="w-5 h-5"
-					lineProps="left-[0.2rem] w-[calc(100%-1.7rem)] -top-[0.525rem]"
-					arrowHeadProps="-top-[1.2rem]"
-				/>
-			))}
+			{/* Animate button */}
 		</div>
 	)
 }

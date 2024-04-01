@@ -15,7 +15,7 @@ export const SlidersPresenterView = async ({
 	exercise,
 }: SlidersPresenterViewProps) => {
 	return (
-		<div className="px-8 pt-12">
+		<div className="flex h-full grow flex-col px-8 pb-20 pt-12">
 			<SlidersPresenterViewClient exercise={exercise} />
 		</div>
 	)
