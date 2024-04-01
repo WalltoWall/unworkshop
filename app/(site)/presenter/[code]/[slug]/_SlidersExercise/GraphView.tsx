@@ -49,18 +49,10 @@ export const GraphView = ({
 					<div className="flex items-center">
 						<span
 							className="block h-6 w-6 rounded-full"
-							style={{
-								backgroundColor: color,
-							}}
+							style={{ backgroundColor: color }}
 						/>
 						<Text className="ml-2 uppercase text-24 font-heading capsize">
-							<span
-								style={{
-									color: color,
-								}}
-							>
-								Tomorrow
-							</span>
+							<span style={{ color: color }}>Tomorrow</span>
 						</Text>
 					</div>
 				</div>
@@ -68,11 +60,38 @@ export const GraphView = ({
 				<Button>Animate</Button>
 			</div>
 
-			<div className="mt-4 grid grow grid-cols-[repeat(6,20px)] gap-[calc((100%-120px)/5)]">
-				Canvas of dots in here
+			<div
+				className="grid grow grid-cols-[repeat(6,20px)] content-between gap-x-[calc((100%-120px)/5)] py-4"
+				style={{ gridTemplateRows: `repeat(${answers.length}, 20px)` }}
+			>
+				{showToday &&
+					answers.map((answer, idx) => (
+						<div
+							key={idx}
+							className="h-5 w-5 rounded-full"
+							style={{
+								background: color,
+								gridColumn: answer.today,
+								gridRow: idx + 1,
+							}}
+						/>
+					))}
+
+				{showTomorrow &&
+					answers.map((answer, idx) => (
+						<div
+							key={idx}
+							className="h-5 w-5 rounded-full border-[3px] bg-white"
+							style={{
+								borderColor: color,
+								gridColumn: answer.tomorrow,
+								gridRow: idx + 1,
+							}}
+						/>
+					))}
 			</div>
 
-			<div className="relative -mb-8 grid grid-cols-[repeat(6,20px)] gap-[calc((100%-120px)/5)]">
+			<div className="relative -mb-8 grid grid-cols-[repeat(6,20px)] gap-x-[calc((100%-120px)/5)]">
 				<Bar color={color} />
 				<Bar color={color} />
 				<Bar color={color} />
@@ -120,36 +139,6 @@ export const GraphView = ({
 					{rightText}
 				</Text>
 			</div>
-
-			{/* Bars start */}
-			{/* <div className="absolute inset-x-0 top-2/3 h-2 -translate-y-2/3 bg-black" />
-			<div
-				className="absolute left-0 top-2/3 h-20 w-[20px] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute left-[20%] top-2/3 h-20 w-[20px] -translate-x-[20%] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute left-[40%] top-2/3 h-20 w-[20px] -translate-x-[40%] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute left-[60%] top-2/3 h-20 w-[20px] -translate-x-[60%] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute left-[80%] top-2/3 h-20 w-[20px] -translate-x-[80%] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute right-0 top-2/3 h-20 w-[20px] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/> */}
-			{/* Bars end */}
-
-			{/* Animate button */}
 		</div>
 	)
 }
