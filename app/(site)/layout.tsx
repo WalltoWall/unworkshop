@@ -49,7 +49,10 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 					FontSerif.variable,
 				)}
 			>
-				<div vaul-drawer-wrapper="" className="min-h-svh bg-white">
+				<div
+					vaul-drawer-wrapper=""
+					className="flex min-h-svh flex-col bg-white"
+				>
 					{children}
 				</div>
 

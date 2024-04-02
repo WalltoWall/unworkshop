@@ -1,18 +1,16 @@
+import { ArrowRight } from "lucide-react"
+import React from "react"
+import { AnimatePresence, motion } from "framer-motion"
 import { Button } from "@/components/Button"
 import { Arrow } from "@/components/icons/Arrow"
-import { Spinner } from "@/components/Spinner"
 import { Text } from "@/components/Text"
-import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
-import { QuadrantAnswer } from "../_QuadrantsExercise/QuadrantAnswer"
+
+const MotionButton = motion(Button)
 
 export interface GraphViewProps {
-	animating: boolean
 	color: string
 	showLines: boolean
-	showToday: boolean
-	showTomorrow: boolean
-	animatePoints: () => void
-	answers: Array<Answer>
+	answers: Array<{ today: number; tomorrow: number }>
 	leftText: string
 	rightText: string
 	setSliderIndex: React.Dispatch<React.SetStateAction<number>>
@@ -20,13 +18,58 @@ export interface GraphViewProps {
 	isDisabledRight: boolean
 }
 
+const Bar = (props: { color: string }) => (
+	<div className="h-20" style={{ backgroundColor: props.color }} />
+)
+
+const Line = (props: {
+	color: string
+	col: [start: number, end: number]
+	row: [start: number, end: number]
+}) => {
+	const duration = 1.5
+	const bounce = 0
+	const delay = 0.65
+
+	return (
+		<motion.svg
+			viewBox="0 0 100 100"
+			preserveAspectRatio="none"
+			className="h-full w-full"
+			initial={{ opacity: 1 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			style={{
+				gridColumnStart: props.col[0],
+				gridColumnEnd: props.col[1],
+				gridRowStart: props.row[0],
+				gridRowEnd: props.row[1],
+			}}
+		>
+			<motion.line
+				x1={0}
+				x2={100}
+				y1={50}
+				y2={50}
+				strokeWidth={20}
+				stroke={props.color}
+				initial={{ pathLength: 0 }}
+				animate={{
+					pathLength: 1,
+					transition: { type: "spring", duration, bounce, delay },
+				}}
+				exit={{
+					pathLength: 0,
+					transition: { type: "spring", duration, bounce },
+				}}
+			/>
+		</motion.svg>
+	)
+}
+
 export const GraphView = ({
-	animating,
 	color,
 	showLines,
-	showToday,
-	showTomorrow,
-	animatePoints,
 	answers,
 	leftText,
 	rightText,
@@ -34,47 +77,114 @@ export const GraphView = ({
 	isDisabledLeft,
 	isDisabledRight,
 }: GraphViewProps) => {
+	const [isTomorrow, setIsTomorrow] = React.useState(false)
+
 	return (
-		<div className="relative min-h-[95svh]">
-			<div className="absolute -top-5 left-0 z-10 rounded-2xl bg-black px-5 py-4 text-white">
-				<div className="mb-2 flex items-center">
-					<span
-						className="block h-6 w-6 rounded-full border-[3px] bg-white"
-						style={{
-							borderColor: color,
-						}}
-					/>
-					<Text className="ml-2 uppercase text-24 font-heading capsize">
+		<div className="relative flex h-full grow flex-col">
+			<div className="flex justify-between">
+				{/* TODO: Share component with other "dot" view */}
+				<div className="rounded-2xl bg-black px-5 py-4 text-white">
+					<div className="mb-2 flex items-center">
 						<span
-							style={{
-								color: color,
-							}}
-						>
-							Today
-						</span>
-					</Text>
+							className="block h-6 w-6 rounded-full border-[3px] bg-white"
+							style={{ borderColor: color }}
+						/>
+						<Text className="ml-2 uppercase text-24 font-heading capsize">
+							<span style={{ color: color }}>Today</span>
+						</Text>
+					</div>
+
+					<div className="flex items-center">
+						<span
+							className="block h-6 w-6 rounded-full"
+							style={{ backgroundColor: color }}
+						/>
+						<Text className="ml-2 uppercase text-24 font-heading capsize">
+							<span style={{ color: color }}>Tomorrow</span>
+						</Text>
+					</div>
 				</div>
 
-				<div className="flex items-center">
-					<span
-						className="block h-6 w-6 rounded-full"
-						style={{
-							backgroundColor: color,
-						}}
-					/>
-					<Text className="ml-2 uppercase text-24 font-heading capsize">
-						<span
-							style={{
-								color: color,
-							}}
+				<AnimatePresence initial={false}>
+					{!showLines && (
+						<MotionButton
+							exit={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							initial={{ opacity: 0 }}
+							onClick={() => setIsTomorrow((p) => !p)}
 						>
-							Tomorrow
-						</span>
-					</Text>
-				</div>
+							{isTomorrow ? "See Today" : "See Tomorrow"}
+							<ArrowRight className="mt-0.5 h-5 w-5" />
+						</MotionButton>
+					)}
+				</AnimatePresence>
 			</div>
 
-			<div className="absolute top-3/4 flex w-full justify-between">
+			<div
+				className="grid grow grid-cols-[repeat(6,20px)] content-between gap-x-[calc((100%-120px)/5)] py-4"
+				style={{ gridTemplateRows: `repeat(${answers.length}, 20px)` }}
+			>
+				<AnimatePresence>
+					{showLines &&
+						answers.map((answer, idx) => (
+							<Line
+								key={"line-" + idx}
+								color={color}
+								col={[answer.today, answer.tomorrow + 1]}
+								row={[idx + 1, idx + 1]}
+							/>
+						))}
+
+					{answers.map((answer, idx) => (
+						<motion.div
+							key={"dot-" + idx}
+							layout
+							layoutDependency={isTomorrow}
+							className="relative h-5 w-5 rounded-full border-[3px]"
+							initial={false}
+							transition={{ type: "spring", duration: 2, bounce: 0.05 }}
+							animate={{ backgroundColor: isTomorrow ? color : "#fff" }}
+							style={{
+								gridColumn: isTomorrow ? answer.tomorrow : answer.today,
+								gridRow: idx + 1,
+								borderColor: color,
+							}}
+						/>
+					))}
+
+					{showLines &&
+						answers.map((answer, idx) => (
+							<motion.div
+								key={"line-dot-" + idx}
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0, transition: { delay: 0.25 } }}
+								transition={{ duration: 0.25 }}
+								className="relative h-5 w-5 rounded-full border-[3px]"
+								style={{
+									backgroundColor: isTomorrow ? "#fff" : color,
+									gridColumn: isTomorrow ? answer.today : answer.tomorrow,
+									gridRow: idx + 1,
+									borderColor: color,
+								}}
+							/>
+						))}
+				</AnimatePresence>
+			</div>
+
+			<div className="relative -mb-8 grid grid-cols-[repeat(6,20px)] gap-x-[calc((100%-120px)/5)]">
+				<Bar color={color} />
+				<Bar color={color} />
+				<Bar color={color} />
+				<Bar color={color} />
+				<Bar color={color} />
+				<Bar color={color} />
+			</div>
+
+			<div className="h-2 bg-black" />
+
+			{/* TODO: Share this footer section with other similar areas */}
+			<div className="mt-12 flex justify-between">
 				<Text className="ml-1 uppercase text-40 font-heading capsize">
 					{leftText}
 				</Text>
@@ -110,61 +220,6 @@ export const GraphView = ({
 					{rightText}
 				</Text>
 			</div>
-
-			<div className="absolute inset-x-0 top-2/3 h-2 -translate-y-2/3 bg-black" />
-			<div
-				className="absolute left-0 top-2/3 h-20 w-[20px] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute left-[20%] top-2/3 h-20 w-[20px] -translate-x-[20%] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute left-[40%] top-2/3 h-20 w-[20px] -translate-x-[40%] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute left-[60%] top-2/3 h-20 w-[20px] -translate-x-[60%] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute left-[80%] top-2/3 h-20 w-[20px] -translate-x-[80%] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-			<div
-				className="absolute right-0 top-2/3 h-20 w-[20px] -translate-y-2/3"
-				style={{ backgroundColor: color }}
-			/>
-
-			<Button
-				className="absolute -right-1 -top-5 z-10 cursor-pointer"
-				onClick={animatePoints}
-				disabled={animating}
-			>
-				{animating ? (
-					<>
-						<Spinner className="mt-[3px] w-[1.125rem]" />
-						Animating
-					</>
-				) : (
-					"Animate"
-				)}
-			</Button>
-			{answers.map((answer, idx) => (
-				<QuadrantAnswer
-					key={idx}
-					animating={animating}
-					color={color}
-					showLines={showLines}
-					showToday={showToday}
-					showTomorrow={showTomorrow}
-					answer={answer}
-					dotSize="w-5 h-5"
-					lineProps="left-[0.2rem] w-[calc(100%-1.7rem)] -top-[0.525rem]"
-					arrowHeadProps="-top-[1.2rem]"
-				/>
-			))}
 		</div>
 	)
 }

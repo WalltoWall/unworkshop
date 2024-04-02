@@ -10,30 +10,23 @@ import { Text } from "@/components/Text"
 import { COLORS } from "@/lib/constants"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
 import type { ST } from "@/sanity/types.gen"
-import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 import { useMultiplayerSliders } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/use-multiplayer-sliders"
 import { GraphView } from "./GraphView"
-import { getGraphValues } from "./helpers"
 import { SlidersBars } from "./SlidersBars"
 import { SlidersKey } from "./SlidersKey"
 
 interface PresenterViewProps {
 	exercise: ST["exercise"]
-	participantId: string
 }
 
 export const SlidersPresenterViewClient = ({
 	exercise,
-	participantId,
 }: PresenterViewProps) => {
 	const [color, setColor] = React.useState("#fecb2f")
 	const [showImages, setShowImages] = React.useState(true)
 	const [showNumbers, setShowNumbers] = React.useState(true)
 	const [showGraph, setShowGraph] = React.useState(false)
-	const [showToday, setShowToday] = React.useState(true)
-	const [showTomorrow, setShowTomorrow] = React.useState(false)
 	const [showLines, setShowLines] = React.useState(false)
-	const [animating, setAnimating] = React.useState(false)
 	const [showTodayBar, setShowTodayBar] = React.useState(true)
 	const [showTomorrowBar, setShowTomorrowBar] = React.useState(true)
 	const [sliderIndex, setSliderIndex] = React.useState(0)
@@ -47,34 +40,16 @@ export const SlidersPresenterViewClient = ({
 
 	const { snap } = useMultiplayerSliders({
 		exerciseId: exercise._id,
-		participantId,
 		slug: currentSliderSlug,
 	})
 
 	const participants = snap.participants
 
-	const allAnswers = Object.entries(participants).flatMap((participant) => {
-		const answers: Array<Answer & { slug?: string }> = []
-		let slidersAnswer: Answer & { slug?: string } = {}
-		Object.entries(participant[1]).map((answer) => {
-			slidersAnswer.today = answer[1].today
-			slidersAnswer.tomorrow = answer[1].tomorrow
-			slidersAnswer.slug = answer[0]
-			answers.push(slidersAnswer)
-			slidersAnswer = { today: 0, tomorrow: 0, slug: "" }
-		})
+	const allStepAnswers = Object.values(participants).map((answers) => {
+		const answer = answers[currentSliderSlug]
 
-		return answers
+		return { today: answer.today, tomorrow: answer.tomorrow }
 	})
-
-	const animatePoints = () => {
-		setAnimating(true)
-
-		setTimeout(() => {
-			setAnimating(false)
-		}, 4000)
-		setShowTomorrow(true)
-	}
 
 	if (!exercise.sliders) return
 
@@ -82,42 +57,13 @@ export const SlidersPresenterViewClient = ({
 	const isDisabledLeft = sliderIndex <= 0
 	const isDisabledRight = exercise.sliders.length <= sliderIndex + 1
 
-	const currentAnswers = allAnswers.filter(
-		(answer) => answer.slug === slider.slug.current,
-	)
-
-	const fakeData = [
-		{ today: 1, tomorrow: 6 },
-		{ today: 2, tomorrow: 4 },
-		{ today: 3, tomorrow: 6 },
-		{ today: 3, tomorrow: 5 },
-		{ today: 2, tomorrow: 4 },
-		{ today: 1, tomorrow: 3 },
-		{ today: 1, tomorrow: 2 },
-		{ today: 5, tomorrow: 4 },
-		{ today: 4, tomorrow: 5 },
-		{ today: 3, tomorrow: 2 },
-		{ today: 2, tomorrow: 3 },
-		{ today: 1, tomorrow: 5 },
-		{ today: 1, tomorrow: 6 },
-		{ today: 1, tomorrow: 5 },
-		{ today: 3, tomorrow: 4 },
-		{ today: 2, tomorrow: 2 },
-		{ today: 2, tomorrow: 3 },
-		{ today: 1, tomorrow: 4 },
-	]
-
 	return (
-		<div>
+		<>
 			{showGraph ? (
 				<GraphView
-					animating={animating}
 					color={color}
 					showLines={showLines}
-					showToday={showToday}
-					showTomorrow={showTomorrow}
-					animatePoints={animatePoints}
-					answers={getGraphValues({ answers: allAnswers })}
+					answers={allStepAnswers}
 					leftText={slider.left_value}
 					rightText={slider.right_value}
 					isDisabledLeft={isDisabledLeft}
@@ -146,6 +92,7 @@ export const SlidersPresenterViewClient = ({
 													/>
 												</div>
 											)}
+
 											{isFilled.image(slider.right_image) && (
 												<div className="w-full">
 													<Image
@@ -161,7 +108,7 @@ export const SlidersPresenterViewClient = ({
 									)}
 
 								<SlidersBars
-									answers={currentAnswers}
+									answers={allStepAnswers}
 									barColor={color}
 									showNumbers={showNumbers}
 									showImages={showImages}
@@ -240,31 +187,15 @@ export const SlidersPresenterViewClient = ({
 					)}
 
 					{showGraph && (
-						<>
-							<SettingVisibility
-								label="Show Today"
-								isVisible={showToday}
-								toggleVisibility={() => {
-									setShowToday((prev) => !prev)
-								}}
-							/>
-							<SettingVisibility
-								label="Show Tomorrow"
-								isVisible={showTomorrow}
-								toggleVisibility={() => {
-									setShowTomorrow((prev) => !prev)
-								}}
-							/>
-							<SettingVisibility
-								label="Show Lines"
-								isVisible={showLines}
-								toggleVisibility={() => setShowLines((prev) => !prev)}
-							/>
-						</>
+						<SettingVisibility
+							label="Show Lines"
+							isVisible={showLines}
+							toggleVisibility={() => setShowLines((prev) => !prev)}
+						/>
 					)}
 
 					<SettingVisibility
-						label="Timeline Animation"
+						label="Show Dots View"
 						isVisible={showGraph}
 						toggleVisibility={() => setShowGraph((prev) => !prev)}
 					/>
@@ -282,7 +213,7 @@ export const SlidersPresenterViewClient = ({
 					/>
 				</SettingsMenu>
 			</div>
-		</div>
+		</>
 	)
 }
 

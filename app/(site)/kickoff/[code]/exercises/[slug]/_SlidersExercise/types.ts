@@ -2,8 +2,8 @@ import type { ST } from "@/sanity/types.gen"
 import type { Group } from "../groups/types"
 
 export type Answer = {
-	today?: number
-	tomorrow?: number
+	today: number
+	tomorrow: number
 	participantOrGroupId?: string
 }
 
