@@ -1,14 +1,15 @@
+import { ArrowRight } from "lucide-react"
 import React from "react"
-import { motion } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import { Button } from "@/components/Button"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
 
+const MotionButton = motion(Button)
+
 export interface GraphViewProps {
 	color: string
 	showLines: boolean
-	showToday: boolean
-	showTomorrow: boolean
 	answers: Array<{ today: number; tomorrow: number }>
 	leftText: string
 	rightText: string
@@ -21,11 +22,54 @@ const Bar = (props: { color: string }) => (
 	<div className="h-20" style={{ backgroundColor: props.color }} />
 )
 
+const Line = (props: {
+	color: string
+	col: [start: number, end: number]
+	row: [start: number, end: number]
+}) => {
+	const duration = 1.5
+	const bounce = 0
+	const delay = 0.65
+
+	return (
+		<motion.svg
+			viewBox="0 0 100 100"
+			preserveAspectRatio="none"
+			className="h-full w-full"
+			initial={{ opacity: 1 }}
+			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
+			style={{
+				gridColumnStart: props.col[0],
+				gridColumnEnd: props.col[1],
+				gridRowStart: props.row[0],
+				gridRowEnd: props.row[1],
+			}}
+		>
+			<motion.line
+				x1={0}
+				x2={100}
+				y1={50}
+				y2={50}
+				strokeWidth={20}
+				stroke={props.color}
+				initial={{ pathLength: 0 }}
+				animate={{
+					pathLength: 1,
+					transition: { type: "spring", duration, bounce, delay },
+				}}
+				exit={{
+					pathLength: 0,
+					transition: { type: "spring", duration, bounce },
+				}}
+			/>
+		</motion.svg>
+	)
+}
+
 export const GraphView = ({
 	color,
 	showLines,
-	showToday,
-	showTomorrow,
 	answers,
 	leftText,
 	rightText,
@@ -33,7 +77,7 @@ export const GraphView = ({
 	isDisabledLeft,
 	isDisabledRight,
 }: GraphViewProps) => {
-	const [animating, setAnimating] = React.useState(false)
+	const [isTomorrow, setIsTomorrow] = React.useState(false)
 
 	return (
 		<div className="relative flex h-full grow flex-col">
@@ -61,43 +105,71 @@ export const GraphView = ({
 					</div>
 				</div>
 
-				<Button onClick={() => setAnimating((p) => !p)}>Animate</Button>
+				<AnimatePresence initial={false}>
+					{!showLines && (
+						<MotionButton
+							exit={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							initial={{ opacity: 0 }}
+							onClick={() => setIsTomorrow((p) => !p)}
+						>
+							{isTomorrow ? "See Today" : "See Tomorrow"}
+							<ArrowRight className="mt-0.5 h-5 w-5" />
+						</MotionButton>
+					)}
+				</AnimatePresence>
 			</div>
 
 			<div
 				className="grid grow grid-cols-[repeat(6,20px)] content-between gap-x-[calc((100%-120px)/5)] py-4"
 				style={{ gridTemplateRows: `repeat(${answers.length}, 20px)` }}
 			>
-				{showToday &&
-					answers.map((answer, idx) => (
+				<AnimatePresence>
+					{showLines &&
+						answers.map((answer, idx) => (
+							<Line
+								key={"line-" + idx}
+								color={color}
+								col={[answer.today, answer.tomorrow + 1]}
+								row={[idx + 1, idx + 1]}
+							/>
+						))}
+
+					{answers.map((answer, idx) => (
 						<motion.div
-							key={idx}
-							className="h-5 w-5 rounded-full border-[3px] bg-white"
+							key={"dot-" + idx}
 							layout
-							transition={{ duration: 2, bounce: 0.25 }}
-							animate={{ backgroundColor: animating ? color : "#fff" }}
+							layoutDependency={isTomorrow}
+							className="relative h-5 w-5 rounded-full border-[3px]"
+							initial={false}
+							transition={{ type: "spring", duration: 2, bounce: 0.05 }}
+							animate={{ backgroundColor: isTomorrow ? color : "#fff" }}
 							style={{
-								gridColumn: animating ? answer.tomorrow : answer.today,
+								gridColumn: isTomorrow ? answer.tomorrow : answer.today,
 								gridRow: idx + 1,
 								borderColor: color,
 							}}
 						/>
 					))}
 
-				{showTomorrow &&
-					!animating &&
-					answers.map((answer, idx) => (
-						<div
-							key={idx}
-							className="h-5 w-5 rounded-full border-[3px]"
-							style={{
-								backgroundColor: color,
-								borderColor: color,
-								gridColumn: answer.tomorrow,
-								gridRow: idx + 1,
-							}}
-						/>
-					))}
+					{showLines &&
+						answers.map((answer, idx) => (
+							<motion.div
+								key={"line-dot-" + idx}
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0, transition: { delay: 0.25 } }}
+								transition={{ duration: 0.25 }}
+								className="relative h-5 w-5 rounded-full border-[3px]"
+								style={{
+									backgroundColor: isTomorrow ? "#fff" : color,
+									gridColumn: isTomorrow ? answer.today : answer.tomorrow,
+									gridRow: idx + 1,
+									borderColor: color,
+								}}
+							/>
+						))}
+				</AnimatePresence>
 			</div>
 
 			<div className="relative -mb-8 grid grid-cols-[repeat(6,20px)] gap-x-[calc((100%-120px)/5)]">
