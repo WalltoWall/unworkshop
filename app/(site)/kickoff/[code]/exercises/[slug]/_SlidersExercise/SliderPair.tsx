@@ -2,6 +2,7 @@ import React from "react"
 import Image from "next/image"
 import { cx } from "class-variance-authority"
 import clsx from "clsx"
+import { toast } from "sonner"
 import { Text } from "@/components/Text"
 import { altFor, isFilled, urlFor, type SanityImage } from "@/sanity/helpers"
 import { type SliderItem } from "./SlidersExercise"
@@ -47,6 +48,7 @@ interface SliderProps {
 	readOnly?: boolean
 	value: number
 	onChange?: React.ChangeEventHandler<HTMLInputElement>
+	onClick?: React.MouseEventHandler<HTMLInputElement>
 	leftImage?: SanityImage
 	rightImage?: SanityImage
 	className?: string
@@ -61,6 +63,7 @@ const Slider = ({
 	leftImage,
 	rightImage,
 	className,
+	onClick,
 }: SliderProps) => {
 	const leftToday = (value - 1) / (FULL_RANGE - 1)
 	const rightToday = 1 - leftToday
@@ -146,6 +149,7 @@ const Slider = ({
 				value={value}
 				readOnly={readOnly}
 				onChange={onChange}
+				onClick={onClick}
 			/>
 
 			<div className="mt-4 flex justify-between text-gray-50">
@@ -169,6 +173,15 @@ export const SliderPair = ({
 	actions,
 	readOnly = false,
 }: Props) => {
+	const onClick = () => {
+		if (readOnly) {
+			toast.warning("Contributors can't edit directly.", {
+				description: "Your team captain can edit responses.",
+				className: "items-start",
+			})
+		}
+	}
+
 	return (
 		<div className="flex flex-col gap-4">
 			<h3>{item.question_text}</h3>
@@ -181,6 +194,7 @@ export const SliderPair = ({
 				value={answer?.today || 3}
 				leftImage={item.left_image}
 				rightImage={item.right_image}
+				onClick={onClick}
 				onChange={(e) => {
 					if (readOnly) return
 
@@ -196,6 +210,7 @@ export const SliderPair = ({
 				value={answer?.tomorrow || 3}
 				leftImage={item.left_image}
 				rightImage={item.right_image}
+				onClick={onClick}
 				onChange={(e) => {
 					if (readOnly) return
 
