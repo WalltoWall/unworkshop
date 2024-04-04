@@ -16,16 +16,26 @@ const RangeInput = ({
 	...props
 }: React.ComponentPropsWithoutRef<"input">) => {
 	return (
-		<input
-			type="range"
-			className={cx(
-				className,
-				readOnly &&
-					"[&::-webkit-slider-thumb]:cursor-not-allowed [&::-webkit-slider-thumb]:bg-gray-82 [&::-webkit-slider-thumb]:bg-[url('/slider-arrows-read-only.svg')]",
-				"range-lg my-4 h-3 w-full cursor-pointer appearance-none rounded-[10px] bg-gray-75 focus-within:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-[32px] [&::-webkit-slider-thumb]:w-[32px] [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat [&::-webkit-slider-thumb]:shadow-md",
-			)}
-			{...props}
-		/>
+		<div className={cx("relative h-3 rounded-[10px] bg-gray-75", className)}>
+			<div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between px-1">
+				<div className="h-1.5 w-1.5 rounded-full bg-gray-50" />
+				<div className="h-1.5 w-1.5 rounded-full bg-gray-50" />
+				<div className="h-1.5 w-1.5 rounded-full bg-gray-50" />
+				<div className="h-1.5 w-1.5 rounded-full bg-gray-50" />
+				<div className="h-1.5 w-1.5 rounded-full bg-gray-50" />
+				<div className="h-1.5 w-1.5 rounded-full bg-gray-50" />
+			</div>
+
+			<input
+				type="range"
+				className={cx(
+					readOnly &&
+						"[&::-webkit-slider-thumb]:cursor-not-allowed [&::-webkit-slider-thumb]:bg-gray-82 [&::-webkit-slider-thumb]:bg-[url('/slider-arrows-read-only.svg')]",
+					"absolute inset-0 h-full w-full cursor-ew-resize appearance-none bg-transparent focus:outline-0 active:outline-0 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-black [&::-webkit-slider-thumb]:bg-[url('/slider-arrows.svg')] [&::-webkit-slider-thumb]:bg-center [&::-webkit-slider-thumb]:bg-no-repeat [&::-webkit-slider-thumb]:shadow-md",
+				)}
+				{...props}
+			/>
+		</div>
 	)
 }
 
@@ -61,7 +71,7 @@ const Slider = ({
 		<div className={cx("rounded-lg bg-gray-97 p-4", className)}>
 			<Text>{label}</Text>
 
-			<div className="relative my-3 flex h-32 justify-between overflow-hidden rounded-lg">
+			<div className="relative mt-3 flex h-32 justify-between overflow-hidden rounded-lg">
 				{isFilled.image(leftImage) && isFilled.image(rightImage) ? (
 					<>
 						<div className="h-32 w-1/2 bg-black">
@@ -128,6 +138,7 @@ const Slider = ({
 			</div>
 
 			<RangeInput
+				className="mt-6"
 				name="todayValue"
 				min={1}
 				max={FULL_RANGE}
@@ -136,7 +147,7 @@ const Slider = ({
 				onChange={onChange}
 			/>
 
-			<div className="mt-2 flex justify-between text-gray-50">
+			<div className="mt-4 flex justify-between text-gray-50">
 				<Text>{leftLabel}</Text>
 				<Text>{rightLabel}</Text>
 			</div>
