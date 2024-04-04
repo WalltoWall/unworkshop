@@ -1,4 +1,4 @@
-import { XCircleIcon } from "lucide-react"
+import { UndoIcon } from "lucide-react"
 import { cx } from "class-variance-authority"
 import { PencilCircle } from "@/components/icons/PencilCircle"
 import { Text } from "@/components/Text"
@@ -26,7 +26,7 @@ export const RoleHeader = ({
 
 			<button className="absolute right-4" onClick={onClearClick}>
 				<span className="sr-only">Clear role.</span>
-				<XCircleIcon className="w-4" />
+				<UndoIcon className="h-4 w-4" />
 			</button>
 		</div>
 	)
