@@ -1,5 +1,6 @@
-import { ArrowRight } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import React from "react"
+import { cx } from "class-variance-authority"
 import { AnimatePresence, motion } from "framer-motion"
 import { Button } from "@/components/Button"
 import { Arrow } from "@/components/icons/Arrow"
@@ -22,6 +23,12 @@ const Bar = (props: { color: string }) => (
 	<div className="h-20" style={{ backgroundColor: props.color }} />
 )
 
+const arrowCns = {
+	left: "left-[17px] top-[-2.5px] origin-right border-b-[12px] border-r-[12px] border-t-[12px] border-b-transparent border-t-transparent",
+	right:
+		"right-[17px] top-[-2.5px] origin-left border-b-[12px] border-l-[12px] border-t-[12px] border-b-transparent border-t-transparent",
+}
+
 const Line = (props: {
 	color: string
 	col: [start: number, end: number]
@@ -31,39 +38,76 @@ const Line = (props: {
 	const bounce = 0
 	const delay = 0.65
 
+	const colStart = Math.min(props.col[0], props.col[1])
+	const colEnd = Math.max(props.col[0], props.col[1])
+
+	const shouldShowArrow = colEnd !== colStart
+	const arrowDirection = props.col[0] < props.col[1] ? "right" : "left"
+
 	return (
-		<motion.svg
-			viewBox="0 0 100 100"
-			preserveAspectRatio="none"
-			className="h-full w-full"
+		<motion.div
+			className="relative h-full w-full"
 			initial={{ opacity: 1 }}
 			animate={{ opacity: 1 }}
 			exit={{ opacity: 0 }}
 			style={{
-				gridColumnStart: props.col[0],
-				gridColumnEnd: props.col[1],
+				gridColumnStart: colStart,
+				gridColumnEnd: colEnd + 1,
 				gridRowStart: props.row[0],
 				gridRowEnd: props.row[1],
 			}}
 		>
-			<motion.line
-				x1={0}
-				x2={100}
-				y1={50}
-				y2={50}
-				strokeWidth={20}
-				stroke={props.color}
-				initial={{ pathLength: 0 }}
-				animate={{
-					pathLength: 1,
-					transition: { type: "spring", duration, bounce, delay },
-				}}
-				exit={{
-					pathLength: 0,
-					transition: { type: "spring", duration, bounce },
-				}}
-			/>
-		</motion.svg>
+			<motion.svg
+				viewBox="0 0 100 100"
+				preserveAspectRatio="none"
+				className="h-full w-full"
+				style={{ rotate: arrowDirection === "left" ? 180 : 0 }}
+			>
+				<motion.line
+					x1={0}
+					x2={100}
+					y1={50}
+					y2={50}
+					strokeWidth={20}
+					stroke={props.color}
+					initial={{ pathLength: 0 }}
+					animate={{
+						pathLength: 1,
+						transition: { type: "spring", duration, bounce, delay },
+					}}
+					exit={{
+						pathLength: 0,
+						transition: { type: "spring", duration, bounce },
+					}}
+				/>
+			</motion.svg>
+
+			{shouldShowArrow && (
+				<motion.div
+					className={cx("absolute h-0 w-0", arrowCns[arrowDirection])}
+					initial={{ opacity: 0, scaleX: 0 }}
+					animate={{
+						opacity: 1,
+						scaleX: 1,
+						transition: {
+							type: "spring",
+							delay: duration,
+							bounce,
+							duration: 0.25,
+						},
+					}}
+					exit={{
+						opacity: 0,
+						scaleX: 0,
+						transition: { scaleX: { duration: 0 } },
+					}}
+					style={{
+						borderLeftColor: props.color,
+						borderRightColor: props.color,
+					}}
+				/>
+			)}
+		</motion.div>
 	)
 }
 
@@ -113,8 +157,17 @@ export const GraphView = ({
 							initial={{ opacity: 0 }}
 							onClick={() => setIsTomorrow((p) => !p)}
 						>
-							{isTomorrow ? "See Today" : "See Tomorrow"}
-							<ArrowRight className="mt-0.5 h-5 w-5" />
+							{isTomorrow ? (
+								<>
+									<ArrowLeft className="mt-0.5 h-5 w-5" />
+									See Today
+								</>
+							) : (
+								<>
+									See Tomorrow
+									<ArrowRight className="mt-0.5 h-5 w-5" />
+								</>
+							)}
 						</MotionButton>
 					)}
 				</AnimatePresence>
@@ -130,7 +183,7 @@ export const GraphView = ({
 							<Line
 								key={"line-" + idx}
 								color={color}
-								col={[answer.today, answer.tomorrow + 1]}
+								col={[answer.today, answer.tomorrow]}
 								row={[idx + 1, idx + 1]}
 							/>
 						))}
