@@ -1,6 +1,5 @@
 import React from "react"
 import { usePathname, useRouter } from "next/navigation"
-import clsx from "clsx"
 import { Text } from "@/components/Text"
 import { Checkmark } from "./icons/Checkmark"
 import { Spinner } from "./Spinner"
@@ -47,7 +46,7 @@ export const Steps = ({
 	}
 
 	return (
-		<div className={clsx("mt-6", className)}>
+		<div className={className}>
 			<div className="relative mx-auto h-8 w-8">
 				<div className="absolute right-full top-1/2 mr-2 flex -translate-y-1/2">
 					{Array.from({ length: steps - (steps - activeStep + 1) }).map(

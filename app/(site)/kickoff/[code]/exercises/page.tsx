@@ -2,8 +2,7 @@ import { redirect } from "next/navigation"
 import * as R from "remeda"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/types.gen"
-import type { ExerciseAnswers, GroupExercise } from "./[slug]/groups/types"
+import type { GroupExercise } from "./[slug]/groups/types"
 import { ExerciseCard } from "./ExerciseCard"
 
 const ExercisesPage = async (props: { params: { code: string } }) => {

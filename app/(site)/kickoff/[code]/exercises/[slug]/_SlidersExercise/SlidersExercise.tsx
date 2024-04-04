@@ -18,12 +18,10 @@ export const SlidersExercise = async ({ exercise, groupSlug }: Props) => {
 	const participant = await client.findParticipantOrThrow<SlidersParticipant>()
 
 	return (
-		<div className="mt-8">
-			<SlidersClient
-				exercise={exercise}
-				participant={participant}
-				groupSlug={groupSlug}
-			/>
-		</div>
+		<SlidersClient
+			exercise={exercise}
+			participant={participant}
+			groupSlug={groupSlug}
+		/>
 	)
 }

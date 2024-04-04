@@ -1,15 +1,16 @@
 "use client"
 
+import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
 import type { ST } from "@/sanity/types.gen"
-import { Slider } from "./Slider"
+import { SliderPair } from "./SliderPair"
 import type { SlidersExercise, SlidersParticipant } from "./types"
 import { useMultiplayerSliders } from "./use-multiplayer-sliders"
 
 export type SliderItem = NonNullable<ST["exercise"]["sliders"]>[number]
 
-type Props = {
+interface Props {
 	exercise: SlidersExercise
 	participant: SlidersParticipant
 	groupSlug?: string
@@ -36,27 +37,25 @@ export const SlidersClient = ({ exercise, participant, groupSlug }: Props) => {
 
 	const sliders = exercise.sliders
 	const answer = answers?.[exercise.sliders[stepIdx].slug.current]
+	const slider = sliders.at(stepIdx)
 
 	return (
-		<div className="mt-8">
-			{sliders?.map((slider, i) => (
-				<div key={i}>
-					{(step === i + 1 || step === sliders.length + 1) && (
-						<Slider
-							key={slider._key}
-							item={slider}
-							answer={answer}
-							actions={actions}
-							readOnly={role === "contributor"}
-						/>
-					)}
-				</div>
-			))}
+		<div className="mt-8 flex flex-[1_1_0] flex-col gap-6">
+			{slider && (
+				<SliderPair
+					key={slider._key}
+					item={slider}
+					answer={answer}
+					actions={actions}
+					readOnly={role === "contributor"}
+				/>
+			)}
 
 			<Steps
 				steps={exercise.sliders.length - 1}
 				activeStep={step}
 				onFinish={() => router.push(`/kickoff/${params.code}/exercises`)}
+				className="mt-auto"
 			/>
 		</div>
 	)
