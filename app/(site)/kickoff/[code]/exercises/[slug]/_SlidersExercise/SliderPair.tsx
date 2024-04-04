@@ -28,6 +28,7 @@ const RangeInput = ({
 
 			<input
 				type="range"
+				readOnly={readOnly}
 				className={cx(
 					readOnly &&
 						"[&::-webkit-slider-thumb]:cursor-not-allowed [&::-webkit-slider-thumb]:bg-gray-82 [&::-webkit-slider-thumb]:bg-[url('/slider-arrows-read-only.svg')]",
@@ -181,6 +182,8 @@ export const SliderPair = ({
 				leftImage={item.left_image}
 				rightImage={item.right_image}
 				onChange={(e) => {
+					if (readOnly) return
+
 					actions.setTodayValue({ today: parseInt(e.target.value) })
 				}}
 			/>
@@ -194,6 +197,8 @@ export const SliderPair = ({
 				leftImage={item.left_image}
 				rightImage={item.right_image}
 				onChange={(e) => {
+					if (readOnly) return
+
 					actions.setTomorrowValue({ tomorrow: parseInt(e.target.value) })
 				}}
 			/>
