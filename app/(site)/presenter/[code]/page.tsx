@@ -18,7 +18,7 @@ const PresenterKickOffPage = async (props: Props) => {
 		<>
 			<PresenterHeader
 				kickoffCode={props.params.code}
-				exercises={kickoff.exercises}
+				exercises={kickoff.exercises ?? []}
 			/>
 			<div className="space-y-4 px-7 py-8">
 				<Text style="heading" size={40}>
@@ -26,7 +26,7 @@ const PresenterKickOffPage = async (props: Props) => {
 				</Text>
 
 				<ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-					{kickoff.exercises.map((exercise) => (
+					{kickoff.exercises?.map((exercise) => (
 						<li key={exercise._id}>
 							<ExerciseCard
 								kickoffCode={kickoff.code.current}

@@ -125,6 +125,7 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 							key={col.id}
 							index={idx}
 							column={col}
+							columns={columns}
 							actions={actions}
 							multiplayer={multiplayer}
 						/>

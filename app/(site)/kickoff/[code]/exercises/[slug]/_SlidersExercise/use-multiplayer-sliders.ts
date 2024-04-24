@@ -60,7 +60,7 @@ export const useMultiplayerSliders = ({
 		state.participants[participantOrGroupId] ??= {}
 		const participant = state.participants[participantOrGroupId]
 
-		participant[slug] ??= {}
+		participant[slug] ??= { today: 3, tomorrow: 3 }
 		const step = participant[slug]
 
 		return step

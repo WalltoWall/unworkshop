@@ -20,6 +20,6 @@ export type SlidersAnswers = {
 	groups: Record<string, Group>
 }
 
-export type SlidersExercise = ST["exercise"] & {
+export type SlidersExercise = ST.Exercise & {
 	answers?: SlidersAnswers
 }

@@ -17,6 +17,6 @@ export type ExerciseAnswers = {
 	groups: Groups
 }
 
-export type GroupExercise = ST["exercise"] & {
+export type GroupExercise = ST.Exercise & {
 	answers?: ExerciseAnswers
 }

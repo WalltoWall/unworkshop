@@ -17,11 +17,13 @@ const PresenterExercisePage = async (props: Props) => {
 	const exercise = await client.findExerciseBySlug(props.params.slug)
 	if (!exercise) notFound()
 
+	const exercises = kickoff.exercises ?? []
+
 	return (
 		<>
 			<PresenterHeader
 				kickoffCode={props.params.code}
-				exercises={kickoff.exercises}
+				exercises={exercises}
 				exercise={exercise}
 			/>
 

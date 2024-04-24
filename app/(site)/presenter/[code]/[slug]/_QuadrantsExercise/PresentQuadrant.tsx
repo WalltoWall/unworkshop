@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { altFor, urlFor, type SanityImage } from "@/sanity/helpers"
+import { altFor, isFilled, urlFor, type SanityImage } from "@/sanity/helpers"
 import type * as ST from "@/sanity/types.gen"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
 import { QuadrantAnswer } from "./QuadrantAnswer"
@@ -48,22 +48,22 @@ export const PresentQuadrant = ({
 
 			<div className="relative grid h-full w-full grid-cols-2">
 				<div className="flex items-center justify-center border-b-4 border-r-4 border-black">
-					{showPhotos && quadrant.topLeftImage?.asset && (
+					{showPhotos && isFilled.image(quadrant.topLeftImage) && (
 						<QuadrantImage image={quadrant.topLeftImage} />
 					)}
 				</div>
 				<div className="flex items-center justify-center border-b-4 border-black">
-					{showPhotos && quadrant.topRightImage?.asset && (
+					{showPhotos && isFilled.image(quadrant.topRightImage) && (
 						<QuadrantImage image={quadrant.topRightImage} />
 					)}
 				</div>
 				<div className="flex items-center justify-center border-r-4 border-black">
-					{showPhotos && quadrant.bottomLeftImage?.asset && (
+					{showPhotos && isFilled.image(quadrant.bottomLeftImage) && (
 						<QuadrantImage image={quadrant.bottomLeftImage} />
 					)}
 				</div>
 				<div className="flex items-center justify-center">
-					{showPhotos && quadrant.bottomRightImage?.asset && (
+					{showPhotos && isFilled.image(quadrant.bottomRightImage) && (
 						<QuadrantImage image={quadrant.bottomRightImage} />
 					)}
 				</div>

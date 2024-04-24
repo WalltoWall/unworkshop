@@ -20,7 +20,7 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 			</Text>
 
 			<ul className="mt-6 grid gap-4">
-				{kickoff.exercises.map((exercise: GroupExercise) => {
+				{kickoff.exercises?.map((exercise: GroupExercise) => {
 					const groups = exercise.groups ?? []
 
 					const groupSlug = R.pipe(

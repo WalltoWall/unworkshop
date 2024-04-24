@@ -7,10 +7,10 @@ import { Arrow } from "@/components/icons/Arrow"
 import { BarChart } from "@/components/icons/BarChart"
 import { BlackXIcon } from "@/components/icons/BlackXIcon"
 import { Text } from "@/components/Text"
-import type { Columns } from "./BrainstormPresenterViewClient"
+import type { BrainstormColumn } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 
 interface PresentColumnProps {
-	columns: Columns
+	columns: BrainstormColumn[]
 	index: number
 }
 

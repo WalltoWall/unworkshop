@@ -14,12 +14,14 @@ import { PresentColumnModal } from "./PresentColumnModal"
 interface CardColumnProps {
 	actions: BrainstormActions
 	column: BrainstormColumn
+	columns: BrainstormColumn[]
 	index: number
 	multiplayer: MultiplayerData
 }
 
 export const CardColumn = ({
 	column,
+	columns,
 	index,
 	actions,
 	multiplayer,
@@ -76,7 +78,7 @@ export const CardColumn = ({
 				/>
 
 				<div className="flex items-center gap-3">
-					<PresentColumnModal columns={{}} index={index} />
+					<PresentColumnModal columns={columns} index={index} />
 
 					<button
 						onClick={() => actions.deleteColumn({ columnId: column.id })}

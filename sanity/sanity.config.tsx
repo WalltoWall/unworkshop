@@ -1,5 +1,5 @@
 import { visionTool } from "@sanity/vision"
-import { defineConfig, type InferSchemaValues } from "sanity"
+import { defineConfig } from "sanity"
 import { media, mediaAssetSource } from "sanity-plugin-media"
 import { structureTool } from "sanity/structure"
 import { Logo } from "@/components/Logo"
@@ -86,7 +86,5 @@ const config = defineConfig({
 
 	schema: { types: schemaTypes },
 })
-
-export type ST = InferSchemaValues<typeof config>
 
 export default config

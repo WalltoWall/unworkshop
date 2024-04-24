@@ -5,7 +5,7 @@ import { FormResponses } from "./FormResponses"
 
 type Props = {
 	exercise: ST.Exercise
-	kickoff: ST.Kickoff
+	kickoff: NonNullable<ST.KickoffQueryResult>
 }
 
 export const FormPresenterView = async (props: Props) => {

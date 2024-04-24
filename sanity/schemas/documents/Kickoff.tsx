@@ -40,10 +40,10 @@ export const Kickoff = defineType({
 					if (val?.current?.toLowerCase() !== val?.current)
 						return "Code must be lowercase."
 
-					if (val?.current.length !== 8)
+					if (val?.current && val.current.length !== 8)
 						return "Code must be 8 characters in length."
 
-					if (val.current.at(3) !== "-")
+					if (val?.current?.at(3) !== "-")
 						return "The 3rd character in a code must be a hyphen (-)."
 
 					return true
