@@ -9,7 +9,6 @@ export default {
 		"./components/**/*.{js,ts,jsx,tsx}",
 		"./app/**/*.{js,ts,jsx,tsx}",
 	],
-	experimental: { optimizeUniversalDefaults: true },
 	theme: {
 		fontFamily: {
 			sans: ["var(--sans)", "system-ui"],
