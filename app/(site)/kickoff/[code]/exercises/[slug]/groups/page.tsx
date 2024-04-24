@@ -3,7 +3,7 @@ import { client } from "@/sanity/client"
 import { InstructionsModal } from "../InstructionsModal"
 import { GroupSelector } from "./GroupSelector"
 
-type Props = {
+interface Props {
 	params: { code: string; slug: string }
 }
 
@@ -16,7 +16,6 @@ const GroupsPage = async (props: Props) => {
 	return (
 		<div className="h-full">
 			<InstructionsModal exerciseName={exercise.name} />
-
 			<GroupSelector groups={groups} />
 		</div>
 	)

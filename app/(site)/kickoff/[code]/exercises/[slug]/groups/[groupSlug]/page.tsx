@@ -5,10 +5,9 @@ import { BrainstormExercise } from "../../_BrainstormExercise/BrainstormExercise
 import { QuadrantsExercise } from "../../_QuadrantsExercise/QuadrantsExercise"
 import { SlidersExercise } from "../../_SlidersExercise/SlidersExercise"
 import { FormExercise } from "../../FormsExercise"
-import type { GroupParticipant } from "../types"
 
 const GroupExerciseSubmissionForm = dynamic(
-	() => import("./GroupExerciseSubmissionForm"),
+	() => import("../GroupExerciseSubmissionForm"),
 	{ ssr: false },
 )
 
@@ -19,17 +18,12 @@ type Props = {
 const GroupExercisePage = async (props: Props) => {
 	const [exercise, participant] = await Promise.all([
 		client.findExerciseBySlug(props.params.slug),
-		client.findParticipantOrThrow<GroupParticipant>(),
+		client.findParticipantOrThrow(),
 	])
 	if (!exercise) notFound()
 
 	return (
-		<GroupExerciseSubmissionForm
-			exercise={exercise}
-			participant={participant}
-			groupSlug={props.params.groupSlug}
-			kickoffCode={props.params.code}
-		>
+		<GroupExerciseSubmissionForm exercise={exercise} participant={participant}>
 			{exercise.type === "brainstorm" && (
 				<BrainstormExercise
 					exercise={exercise}
