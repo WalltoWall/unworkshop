@@ -1,10 +1,10 @@
 import React from "react"
-import Image from "next/image"
 import { cx } from "class-variance-authority"
 import clsx from "clsx"
 import { toast } from "sonner"
+import { SanityImage } from "@/components/SanityImage"
 import { Text } from "@/components/Text"
-import { altFor, isFilled, urlFor, type SanityImage } from "@/sanity/helpers"
+import { isFilled, type MaybeSanityImage } from "@/sanity/helpers"
 import { type SliderItem } from "./SlidersExercise"
 import type { Answer } from "./types"
 import type { SliderActions } from "./use-multiplayer-sliders"
@@ -49,8 +49,8 @@ interface SliderProps {
 	value: number
 	onChange?: React.ChangeEventHandler<HTMLInputElement>
 	onClick?: React.MouseEventHandler<HTMLInputElement>
-	leftImage?: SanityImage
-	rightImage?: SanityImage
+	leftImage?: MaybeSanityImage
+	rightImage?: MaybeSanityImage
 	className?: string
 }
 const Slider = ({
@@ -79,12 +79,10 @@ const Slider = ({
 				{isFilled.image(leftImage) && isFilled.image(rightImage) ? (
 					<>
 						<div className="h-32 w-1/2 bg-black">
-							<Image
-								src={urlFor(leftImage).url()!}
-								alt={altFor(leftImage)}
+							<SanityImage
+								image={leftImage}
 								className="h-full w-full object-cover object-center opacity-100 duration-300"
-								width={300}
-								height={300}
+								aspectRatio={1}
 								style={{
 									opacity: 1.1 - value / 10,
 									filter: `grayScale(${leftToday * 100 + "%"})`,
@@ -93,12 +91,10 @@ const Slider = ({
 						</div>
 
 						<div className="h-32 w-1/2 bg-black">
-							<Image
-								src={urlFor(rightImage).url()!}
-								alt={altFor(rightImage)}
+							<SanityImage
+								image={rightImage}
 								className="h-full w-full object-cover object-center opacity-100 duration-300"
-								width={300}
-								height={300}
+								aspectRatio={1}
 								style={{
 									opacity: 0.4 + value / 10,
 									filter: `grayScale(${rightToday * 100 + "%"})`,
