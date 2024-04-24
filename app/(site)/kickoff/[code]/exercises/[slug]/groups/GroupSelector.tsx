@@ -15,7 +15,7 @@ export const GroupSelector = ({ groups }: GroupSelectorProps) => {
 
 	return (
 		<div className="my-4">
-			<Text size={16}>Select your group</Text>
+			<Text size={16}>Tap on or select the group you are assigned to.</Text>
 
 			<div className="mt-7 flex flex-col gap-2">
 				{groups?.map((group) => (

@@ -15,10 +15,7 @@ const GroupsPage = async (props: Props) => {
 
 	return (
 		<div className="h-full">
-			<InstructionsModal
-				exerciseName={exercise.name}
-				instructions="Tap on or select the group you are assigned to."
-			/>
+			<InstructionsModal exerciseName={exercise.name} />
 
 			<GroupSelector groups={groups} />
 		</div>

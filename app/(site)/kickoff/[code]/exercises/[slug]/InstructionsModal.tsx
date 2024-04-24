@@ -8,7 +8,7 @@ import { Text } from "@/components/Text"
 
 interface InstructionsModalProps {
 	exerciseName: string
-	instructions: string
+	instructions?: string
 	className?: string
 }
 
@@ -17,8 +17,6 @@ export const InstructionsModal = ({
 	instructions,
 	className,
 }: InstructionsModalProps) => {
-	if (!instructions) return null
-
 	return (
 		<Drawer.Root shouldScaleBackground>
 			<div className={cx(className, "flex items-start gap-2")}>
@@ -26,10 +24,12 @@ export const InstructionsModal = ({
 					<h1>{exerciseName}</h1>
 				</Text>
 
-				<Drawer.Trigger>
-					<QuestionMark className="w-3" />
-					<span className="sr-only">Open instructions</span>
-				</Drawer.Trigger>
+				{instructions && (
+					<Drawer.Trigger>
+						<QuestionMark className="w-3" />
+						<span className="sr-only">Open instructions</span>
+					</Drawer.Trigger>
+				)}
 			</div>
 
 			<Drawer.Portal>
