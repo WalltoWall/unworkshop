@@ -14,7 +14,8 @@ void watch({
 			throttleOutput: { delay: 0 },
 
 			onChange: async ({ spawn }) => {
-				await spawn`npx ts-simplify ./sanity/config.tsx ./sanity/types.gen.ts -f`
+				await spawn`cd sanity && dotenvx run -f ../.env -- sanity schema extract --enforce-required-fields`
+				await spawn`cd sanity && sanity typegen generate`
 			},
 		},
 	],

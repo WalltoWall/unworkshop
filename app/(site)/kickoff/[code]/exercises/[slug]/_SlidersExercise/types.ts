@@ -1,4 +1,4 @@
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import type { Group } from "../groups/types"
 
 export type Answer = {
@@ -11,7 +11,7 @@ export type SliderAnswers = {
 	[slug: string]: Answer
 }
 
-export type SlidersParticipant = ST["participant"]
+export type SlidersParticipant = ST.Participant
 
 // each key in the participants object is a participant id which has an array of answers
 // where the index of the array represents the step and the answers at that step

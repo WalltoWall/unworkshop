@@ -9,14 +9,14 @@ import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
 import { Text } from "@/components/Text"
 import { COLORS } from "@/lib/constants"
 import { altFor, isFilled, urlFor } from "@/sanity/helpers"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { useMultiplayerSliders } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/use-multiplayer-sliders"
 import { GraphView } from "./GraphView"
 import { SlidersBars } from "./SlidersBars"
 import { SlidersKey } from "./SlidersKey"
 
 interface PresenterViewProps {
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 }
 
 export const SlidersPresenterViewClient = ({

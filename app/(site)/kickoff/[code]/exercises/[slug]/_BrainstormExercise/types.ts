@@ -1,4 +1,4 @@
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import type { Group } from "../groups/types"
 
 export type BrainstormCard = {
@@ -28,9 +28,9 @@ export type BrainstormAnswers = {
 	groups: Record<string, Group>
 }
 
-export type BrainstormParticipant = ST["participant"]
+export type BrainstormParticipant = ST.Participant
 
-export type BrainstormExercise = ST["exercise"] & {
+export type BrainstormExercise = ST.Exercise & {
 	answers?: BrainstormAnswers
 }
 

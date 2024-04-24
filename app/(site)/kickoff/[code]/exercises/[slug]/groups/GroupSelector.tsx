@@ -4,10 +4,10 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 
 interface GroupSelectorProps {
-	groups: ST["exercise"]["groups"]
+	groups: ST.Exercise["groups"]
 }
 
 export const GroupSelector = ({ groups }: GroupSelectorProps) => {

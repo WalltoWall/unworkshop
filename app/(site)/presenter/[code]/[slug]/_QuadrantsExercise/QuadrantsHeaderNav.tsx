@@ -1,9 +1,9 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { StepNavItem } from "../../../PresenterHeader"
 
 interface Props {
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 }
 
 export const QuadrantsHeaderNav = ({ exercise }: Props) => {

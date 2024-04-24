@@ -4,7 +4,7 @@ import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { z } from "zod"
 import { Steps } from "@/components/Steps"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
@@ -19,7 +19,7 @@ const StepParamSchema = z.coerce
 	.transform((val) => (val === 0 ? 1 : val))
 
 type Props = {
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 	participant: FormParticipant
 	groupSlug?: string
 }

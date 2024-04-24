@@ -27,11 +27,13 @@ export const env = createEnv({
 	 * replaced statically at build-time, such as NODE_ENV.
 	 */
 	shared: {
-		NODE_ENV: z.union([
-			z.literal("development"),
-			z.literal("production"),
-			z.literal("test"),
-		]),
+		NODE_ENV: z
+			.union([
+				z.literal("development"),
+				z.literal("production"),
+				z.literal("test"),
+			])
+			.default("development"),
 	},
 
 	/*

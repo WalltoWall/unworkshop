@@ -3,12 +3,12 @@
 import React from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { Steps } from "@/components/Steps"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { SliderPair } from "./SliderPair"
 import type { SlidersExercise, SlidersParticipant } from "./types"
 import { useMultiplayerSliders } from "./use-multiplayer-sliders"
 
-export type SliderItem = NonNullable<ST["exercise"]["sliders"]>[number]
+export type SliderItem = NonNullable<ST.Exercise["sliders"]>[number]
 
 interface Props {
 	exercise: SlidersExercise

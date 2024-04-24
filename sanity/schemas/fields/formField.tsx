@@ -1,5 +1,5 @@
 import { FormInput } from "lucide-react"
-import { defineArrayMember, defineField } from "@sanity-typed/types"
+import { defineArrayMember, defineField } from "sanity"
 
 export const formFieldMember = defineArrayMember({
 	type: "object",

@@ -1,9 +1,11 @@
 import { Studio } from "./Studio"
 
-const StudioPage = () => {
+export default function StudioPage() {
 	return <Studio />
 }
 
-export { metadata } from "next-sanity/studio/metadata"
-export { viewport } from "next-sanity/studio/viewport"
-export default StudioPage
+export { metadata, viewport } from "next-sanity/studio"
+
+export async function generateStaticParams() {
+	return [{ index: [""] }]
+}

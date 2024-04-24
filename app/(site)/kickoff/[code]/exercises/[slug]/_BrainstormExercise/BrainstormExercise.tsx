@@ -1,7 +1,7 @@
 import React from "react"
 import dynamic from "next/dynamic"
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import type { BrainstormParticipant } from "./types"
 
 const BrainstormClient = dynamic(() => import("./BrainstormClient"), {
@@ -9,7 +9,7 @@ const BrainstormClient = dynamic(() => import("./BrainstormClient"), {
 })
 
 export interface BrainstormExerciseProps {
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 	kickoffCode: string
 	groupSlug?: string
 }

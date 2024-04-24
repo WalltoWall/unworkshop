@@ -5,13 +5,13 @@ import * as R from "remeda"
 import snarkdown from "snarkdown"
 import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import type { FormParticipant } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
 import { useMultiplayerForm } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/use-multiplayer-form"
 import { ResponseCard } from "./ResponseCard"
 
 type Props = {
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 	participants: Record<string, FormParticipant>
 }
 

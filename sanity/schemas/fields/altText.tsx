@@ -1,4 +1,4 @@
-import { defineField } from "@sanity-typed/types"
+import { defineField } from "sanity"
 
 export const altText = defineField({
 	name: "alt",

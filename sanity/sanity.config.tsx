@@ -1,5 +1,5 @@
-import { defineConfig, type InferSchemaValues } from "@sanity-typed/types"
 import { visionTool } from "@sanity/vision"
+import { defineConfig, type InferSchemaValues } from "sanity"
 import { media, mediaAssetSource } from "sanity-plugin-media"
 import { structureTool } from "sanity/structure"
 import { Logo } from "@/components/Logo"

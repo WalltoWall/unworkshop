@@ -1,6 +1,6 @@
 import { RichText, type RichTextContent } from "@/components/RichText"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { type State } from "./QuadrantsClient"
 
 const serializers = {
@@ -11,9 +11,9 @@ const serializers = {
 
 type QuadrantInstructionsProps = {
 	state: State
-	todayInstructions?: ST["exercise"]["today_instructions"]
-	tomorrowInstructions?: ST["exercise"]["tomorrow_instructions"]
-	finalInstructions?: ST["exercise"]["finalize_instructions"]
+	todayInstructions?: ST.Exercise["today_instructions"]
+	tomorrowInstructions?: ST.Exercise["tomorrow_instructions"]
+	finalInstructions?: ST.Exercise["finalize_instructions"]
 }
 
 export const QuadrantInstructions = ({

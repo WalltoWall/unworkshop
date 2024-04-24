@@ -51,6 +51,7 @@ export function pluralize(
 	// Convert quantity expressions to [quantity, quantity string] tuples
 	exps.forEach((v, i) => {
 		if (typeof v === "number") {
+			//@ts-ignore
 			exps[i] = [v, v]
 		} else if (isArray(v)) {
 			if (typeof v[0] === "number") {
@@ -77,6 +78,7 @@ export function pluralize(
 		// Push current string, pluralizing if we have a valid quantity
 		if (qty) {
 			result.push(
+				//@ts-ignore
 				s.replace(/\[([^|]*)\|([^\]]*)\]/g, qty[0] == 1 ? "$1" : "$2"),
 			)
 		} else {
@@ -90,6 +92,7 @@ export function pluralize(
 
 		// Push quantity string
 		last = exps.shift()
+		//@ts-ignore
 		result.push(last === qty ? qty![1] : last)
 	}
 

@@ -1,7 +1,7 @@
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 
 type QuadrantAxesProps = {
-	item: NonNullable<ST["exercise"]["quadrants"]>[number]
+	item: NonNullable<ST.Exercise["quadrants"]>[number]
 }
 
 export const QuadrantAxes = ({ item }: QuadrantAxesProps) => (

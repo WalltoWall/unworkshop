@@ -4,21 +4,19 @@ import { groq } from "next-sanity"
 import { cookies } from "next/headers"
 import type { Reference } from "sanity"
 import { z } from "zod"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { PARTICIPANT_COOKIE } from "@/constants"
 import { sanity } from "./sanity-client"
 
 export const client = {
 	findKickoff: React.cache(async (code: string) => {
-		type KickoffWithExercises = Omit<ST["kickoff"], "exercises"> & {
-			exercises: Array<ST["exercise"]>
-		}
+		const kickoffQuery = groq`*[_type == "kickoff" && code.current == $code][0] {
+            ...,
+            exercises[]->
+        }`
 
-		const data = await sanity.fetch<KickoffWithExercises | null>(
-			groq`*[_type == "kickoff" && code.current == $code][0] {
-                ...,
-                exercises[]->
-            }`,
+		const data = await sanity.fetch<ST.KickoffQueryResult>(
+			kickoffQuery,
 			{ code: code.toLowerCase() },
 			{ cache: "no-store" },
 		)
@@ -27,9 +25,11 @@ export const client = {
 	}),
 
 	findParticipant: React.cache(
-		async <T extends ST["participant"] = ST["participant"]>(id: string) => {
+		async <T extends ST.Participant = ST.Participant>(id: string) => {
+			const participantQuery = groq`*[_type == "participant" && _id == $id][0]`
+
 			const data = await sanity.fetch<T | null>(
-				groq`*[_type == "participant" && _id == $id][0]`,
+				participantQuery,
 				{ id },
 				{ cache: "no-store" },
 			)
@@ -38,21 +38,17 @@ export const client = {
 		},
 	),
 
-	findParticipantViaCookie: React.cache(async <
-		T extends ST["participant"] = ST["participant"],
-	>() => {
+	findParticipantViaCookie: React.cache(async () => {
 		const id = cookies().get(PARTICIPANT_COOKIE)?.value
 		if (!id) return null
 
-		type WithKickoffCode = Omit<T, "kickoff"> & {
-			kickoff: { code: string }
-		}
+		const participantWithKickoffCodeQuery = groq`*[_type == "participant" && _id == $id][0] {
+            ...,
+            kickoff->{ "code": code.current }
+        }`
 
-		const data = await sanity.fetch<WithKickoffCode | null>(
-			groq`*[_type == "participant" && _id == $id][0] {
-                ...,
-                kickoff->{ "code": code.current }
-            }`,
+		const data = await sanity.fetch<ST.ParticipantWithKickoffCodeQueryResult>(
+			participantWithKickoffCodeQuery,
 			{ id },
 			{ cache: "no-store" },
 		)
@@ -61,7 +57,7 @@ export const client = {
 	}),
 
 	findParticipantOrThrow: React.cache(async <
-		T extends ST["participant"] = ST["participant"],
+		T extends ST.Participant = ST.Participant,
 	>() => {
 		const participantId = z
 			.string()
@@ -74,7 +70,7 @@ export const client = {
 	}),
 
 	// prettier-ignore
-	async findAllParticipantsInExercise<T extends ST["participant"] = ST["participant"]>(exerciseId: string) {
+	async findAllParticipantsInExercise<T extends ST.Participant = ST.Participant>(exerciseId: string) {
         const participants = await sanity.fetch<Array<T>>(
             groq`*[_type == "participant" && answers[$exerciseId] != null]{
                 ...,
@@ -88,11 +84,14 @@ export const client = {
     },
 
 	async findAllParticipantsInKickoff(kickoffId: string) {
-		const participants = await sanity.fetch<Array<ST["participant"]>>(
-			groq`*[_type == "participant" && kickoff._ref == $kickoffId]`,
-			{ kickoffId },
-			{ cache: "no-store" },
-		)
+		const participantsInKickoffQuery = groq`*[_type == "participant" && kickoff._ref == $kickoffId]`
+
+		const participants =
+			await sanity.fetch<ST.ParticipantsInKickoffQueryResult>(
+				participantsInKickoffQuery,
+				{ kickoffId },
+				{ cache: "no-store" },
+			)
 
 		return participants
 	},
@@ -109,11 +108,11 @@ export const client = {
 		kickoffId: string
 		recoveryCode: string
 	}) {
-		type Data = Pick<ST["participant"], "name" | "recovery_code" | "_type"> & {
+		type Data = Pick<ST.Participant, "name" | "recovery_code" | "_type"> & {
 			kickoff: Reference
 		}
 
-		const existing = await sanity.fetch<ST["participant"] | null>(
+		const existing = await sanity.fetch<ST.Participant | null>(
 			groq`*[_type == "participant" && recovery_code == $name && kickoff._ref == $kickoffId][0]`,
 			{ name: args.name, kickoffId: args.kickoffId },
 			{ cache: "no-store" },
@@ -138,18 +137,16 @@ export const client = {
 	},
 
 	async onboardParticipant(id: string) {
-		const data: Pick<ST["participant"], "onboarded"> = {
+		const data: Pick<ST.Participant, "onboarded"> = {
 			onboarded: true,
 		}
 
-		const res: ST["participant"] = await sanity.patch(id).set(data).commit()
+		const res: ST.Participant = await sanity.patch(id).set(data).commit()
 
 		return res
 	},
 
-	async findExerciseBySlug<T extends ST["exercise"] = ST["exercise"]>(
-		slug: string,
-	) {
+	async findExerciseBySlug<T extends ST.Exercise = ST.Exercise>(slug: string) {
 		const data = await sanity.fetch<T | null>(
 			groq`*[_type == "exercise" && slug.current == $slug][0]{
                     ...,

@@ -1,5 +1,5 @@
 import { User } from "lucide-react"
-import { defineField, defineType } from "@sanity-typed/types"
+import { defineField, defineType } from "sanity"
 import { uid } from "uid"
 
 export const Participant = defineType({

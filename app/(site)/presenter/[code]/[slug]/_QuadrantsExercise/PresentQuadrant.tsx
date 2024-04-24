@@ -1,11 +1,11 @@
 import Image from "next/image"
 import { altFor, urlFor, type SanityImage } from "@/sanity/helpers"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import type { Answer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
 import { QuadrantAnswer } from "./QuadrantAnswer"
 
 interface PresentQuadrantProps {
-	quadrant: NonNullable<ST["exercise"]["quadrants"]>[number]
+	quadrant: NonNullable<ST.Exercise["quadrants"]>[number]
 	answers: Answer[]
 	showToday: boolean
 	showTomorrow: boolean

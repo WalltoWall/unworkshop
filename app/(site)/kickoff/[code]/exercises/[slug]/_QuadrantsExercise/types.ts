@@ -1,4 +1,4 @@
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import type { Group } from "../groups/types"
 
 export type Answer = {
@@ -10,13 +10,13 @@ export type QuadrantAnswers = {
 	[slug: string]: Answer
 }
 
-export type QuadrantsParticipant = ST["participant"]
+export type QuadrantsParticipant = ST.Participant
 
 export type QuadrantsAnswers = {
 	participants: Record<string, QuadrantAnswers>
 	groups: Record<string, Group>
 }
 
-export type QuadrantsExercise = ST["exercise"] & {
+export type QuadrantsExercise = ST.Exercise & {
 	answers?: QuadrantsAnswers
 }

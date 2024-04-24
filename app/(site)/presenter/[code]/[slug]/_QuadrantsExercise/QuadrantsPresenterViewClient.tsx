@@ -9,12 +9,12 @@ import { Button } from "@/components/Button"
 import { SettingsMenu, SettingVisibility } from "@/components/SettingsMenu"
 import { Spinner } from "@/components/Spinner"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { useMultiplayerQuadrants } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/use-multiplayer-quadrants"
 import { PresentQuadrant } from "./PresentQuadrant"
 
 interface PresenterViewProps {
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 }
 
 const colors = [

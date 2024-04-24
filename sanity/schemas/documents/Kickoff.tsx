@@ -1,6 +1,5 @@
 import { Warehouse } from "lucide-react"
-import { defineArrayMember, defineField, defineType } from "@sanity-typed/types"
-import { type Slug } from "sanity"
+import { defineArrayMember, defineField, defineType, type Slug } from "sanity"
 
 export const Kickoff = defineType({
 	name: "kickoff",

@@ -1,7 +1,7 @@
 import React from "react"
 import dynamic from "next/dynamic"
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import type { QuadrantsParticipant } from "./types"
 
 const QuadrantsClient = dynamic(() => import("./QuadrantsClient"), {
@@ -9,7 +9,7 @@ const QuadrantsClient = dynamic(() => import("./QuadrantsClient"), {
 })
 
 export interface QuadrantsExerciseProps {
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 	groupSlug?: string
 	kickoffCode: string
 	keepStepperActive?: boolean

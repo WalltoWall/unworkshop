@@ -1,5 +1,5 @@
 import { unreachable } from "@/lib/unreachable"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { ListField } from "./ListField"
 import { NarrowField } from "./NarrowField"
 import { TaglineField } from "./TaglineField"
@@ -16,7 +16,7 @@ import { PositiveNumber } from "./validators"
 type Props = {
 	field: FormField
 	answer?: FormFieldAnswer
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 	stepIdx: number
 	fieldIdx: number
 	allAnswers?: FormStepAnswer[]

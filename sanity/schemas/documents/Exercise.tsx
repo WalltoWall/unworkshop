@@ -4,7 +4,7 @@ import {
 	ListOrdered,
 	RemoveFormatting,
 } from "lucide-react"
-import { defineArrayMember, defineField, defineType } from "@sanity-typed/types"
+import { defineArrayMember, defineField, defineType } from "sanity"
 import { pluralize } from "@/lib/pluralize"
 import { formFieldMember } from "@/sanity/schemas/fields/formField"
 import { altText } from "../fields/altText"

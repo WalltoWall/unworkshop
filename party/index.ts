@@ -4,7 +4,7 @@ import { proxy } from "valtio"
 import { bind } from "valtio-yjs"
 import { onConnect } from "y-partykit"
 import * as Y from "yjs"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { INITIAL_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
 import type { BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { INITIAL_QUADRANTS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/contants"
@@ -42,7 +42,7 @@ export default class Server implements Party.Server {
 
 				console.info("Loading exercise answers for id: " + exerciseId)
 
-				const doc = await sanity.fetch<ST["exercise"] | null>(
+				const doc = await sanity.fetch<ST.Exercise | null>(
 					'*[_type == "exercise" && _id == $id][0]',
 					{ id: exerciseId },
 				)

@@ -1,7 +1,7 @@
 import React from "react"
 import dynamic from "next/dynamic"
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 
 const QuadrantsPresenterViewClient = dynamic(
 	() => import("./QuadrantsPresenterViewClient"),
@@ -11,7 +11,7 @@ const QuadrantsPresenterViewClient = dynamic(
 )
 
 interface QuadrantsPresenterViewProps {
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 }
 
 export const QuadrantsPresenterView = async ({

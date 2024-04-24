@@ -1,5 +1,594 @@
-/* Types generated from './sanity/config.tsx' */
-  
-export declare const referenced: unique symbol;
-export declare const decorator: unique symbol;
-export type ST = { "sanity.fileAsset": { _type: 'sanity.fileAsset'; metadata: { [x: string]: unknown; }; url: string; path: string; assetId: string; extension: string; mimeType: string; sha1hash: string; size: number; originalFilename?: string | undefined; label?: string | undefined; title?: string | undefined; description?: string | undefined; creditLine?: string | undefined; source?: { id: string; name: string; url?: string | undefined; } | undefined; _id: string; _createdAt: string; _updatedAt: string; _rev: string; }; "sanity.imageAsset": { _type: 'sanity.imageAsset'; url: string; path: string; assetId: string; extension: string; mimeType: string; sha1hash: string; size: number; originalFilename?: string | undefined; label?: string | undefined; title?: string | undefined; description?: string | undefined; creditLine?: string | undefined; source?: { id: string; name: string; url?: string | undefined; } | undefined; _id: string; _createdAt: string; _updatedAt: string; _rev: string; metadata: { [x: string]: unknown; _type: 'sanity.imageMetadata'; dimensions: { _type: 'sanity.imageDimensions'; height: number; width: number; aspectRatio: number; }; palette?: { _type: 'sanity.imagePalette'; darkMuted?: { _type: 'sanity.imagePaletteSwatch'; background: string; foreground: string; population: number; title?: string | undefined; } | undefined; darkVibrant?: { _type: 'sanity.imagePaletteSwatch'; background: string; foreground: string; population: number; title?: string | undefined; } | undefined; dominant?: { _type: 'sanity.imagePaletteSwatch'; background: string; foreground: string; population: number; title?: string | undefined; } | undefined; lightMuted?: { _type: 'sanity.imagePaletteSwatch'; background: string; foreground: string; population: number; title?: string | undefined; } | undefined; lightVibrant?: { _type: 'sanity.imagePaletteSwatch'; background: string; foreground: string; population: number; title?: string | undefined; } | undefined; muted?: { _type: 'sanity.imagePaletteSwatch'; background: string; foreground: string; population: number; title?: string | undefined; } | undefined; vibrant?: { _type: 'sanity.imagePaletteSwatch'; background: string; foreground: string; population: number; title?: string | undefined; } | undefined; } | undefined; lqip?: string | undefined; blurHash?: string | undefined; hasAlpha: boolean; isOpaque: boolean; exif?: { [x: string]: unknown; _type: 'sanity.imageExifMetadata'; } | undefined; location?: { _type: 'geopoint'; lat: number; lng: number; alt?: number | undefined; } | undefined; }; }; kickoff: { title: string; code: { _type: 'slug'; current: string; }; _createdAt: string; _id: string; _rev: string; _updatedAt: string; exercises?: { _ref: string; _type: 'reference'; [referenced]: 'exercise'; _key: string; }[] | undefined; _type: 'kickoff'; }; exercise: { name: string; form?: { steps?: { fields?: { placeholder?: string | undefined; source?: { field: number; step: number; } | undefined; max?: number | undefined; min?: number | undefined; rows?: number | undefined; additionalText?: string | undefined; showAddButton?: boolean | undefined; addButtonText?: string | undefined; type: 'List' | 'Narrow' | 'Text' | 'Big Text' | 'Tagline'; prompt: string; _key: string; }[] | undefined; _type: 'step'; _key: string; }[] | undefined; } | undefined; type: 'form' | 'brainstorm' | 'sliders' | 'quadrants'; slug: { _type: 'slug'; current: string; }; groups?: { name: string; slug: { _type: 'slug'; current: string; }; _key: string; }[] | undefined; _createdAt: string; _id: string; _rev: string; _updatedAt: string; sliders?: { left_image?: { _type: 'image'; asset: { _ref: string; _type: 'reference'; [referenced]: 'sanity.imageAsset'; }; alt?: string | undefined; } | undefined; right_image?: { _type: 'image'; asset: { _ref: string; _type: 'reference'; [referenced]: 'sanity.imageAsset'; }; alt?: string | undefined; } | undefined; slug: { _type: 'slug'; current: string; }; question_text: string; today_text: string; tomorrow_text: string; left_value: string; right_value: string; _key: string; }[] | undefined; quadrants?: { topLeftImage?: { _type: 'image'; asset: { _ref: string; _type: 'reference'; [referenced]: 'sanity.imageAsset'; }; alt?: string | undefined; } | undefined; topRightImage?: { _type: 'image'; asset: { _ref: string; _type: 'reference'; [referenced]: 'sanity.imageAsset'; }; alt?: string | undefined; } | undefined; bottomLeftImage?: { _type: 'image'; asset: { _ref: string; _type: 'reference'; [referenced]: 'sanity.imageAsset'; }; alt?: string | undefined; } | undefined; bottomRightImage?: { _type: 'image'; asset: { _ref: string; _type: 'reference'; [referenced]: 'sanity.imageAsset'; }; alt?: string | undefined; } | undefined; name: string; slug: { _type: 'slug'; current: string; }; topValue: string; bottomValue: string; leftValue: string; rightValue: string; _key: string; }[] | undefined; instructions: string; steps?: { prompt?: string | undefined; helpText?: string | undefined; color?: 'green' | 'red' | 'yellow' | undefined; _key: string; }[] | undefined; today_instructions?: { _type: 'block'; children: { text: string; _type: 'span'; [decorator]: 'strong'; marks: string[]; _key: string; }[]; level?: number | undefined; listItem?: any; markDefs: never[]; style: any; _key: string; }[] | undefined; tomorrow_instructions?: { _type: 'block'; children: { text: string; _type: 'span'; [decorator]: 'strong'; marks: string[]; _key: string; }[]; level?: number | undefined; listItem?: any; markDefs: never[]; style: any; _key: string; }[] | undefined; finalize_instructions?: { _type: 'block'; children: { text: string; _type: 'span'; [decorator]: 'strong'; marks: string[]; _key: string; }[]; level?: number | undefined; listItem?: any; markDefs: never[]; style: any; _key: string; }[] | undefined; _type: 'exercise'; }; participant: { name: string; kickoff: { _ref: string; _strengthenOnPublish?: { type: string; weak?: boolean | undefined; template?: { id: string; params: { [x: string]: string | number | boolean; }; } | undefined; } | undefined; _weak?: true | undefined; _type: 'reference'; [referenced]: 'kickoff'; }; _createdAt: string; _id: string; _rev: string; _updatedAt: string; recovery_code?: string | undefined; onboarded: boolean; _type: 'participant'; }; };
+/**
+ * ---------------------------------------------------------------------------------
+ * This file has been generated by Sanity TypeGen.
+ * Command: `sanity typegen generate`
+ *
+ * Any modifications made directly to this file will be overwritten the next time
+ * the TypeScript definitions are generated. Please make changes to the Sanity
+ * schema definitions and/or GROQ queries if you need to update these types.
+ *
+ * For more information on how to use Sanity TypeGen, visit the official documentation:
+ * https://www.sanity.io/docs/sanity-typegen
+ * ---------------------------------------------------------------------------------
+ */
+
+// Source: schema.json
+export type SanityImagePaletteSwatch = {
+  _type: "sanity.imagePaletteSwatch";
+  background?: string;
+  foreground?: string;
+  population?: number;
+  title?: string;
+};
+
+export type SanityImagePalette = {
+  _type: "sanity.imagePalette";
+  darkMuted?: SanityImagePaletteSwatch;
+  lightVibrant?: SanityImagePaletteSwatch;
+  darkVibrant?: SanityImagePaletteSwatch;
+  vibrant?: SanityImagePaletteSwatch;
+  dominant?: SanityImagePaletteSwatch;
+  lightMuted?: SanityImagePaletteSwatch;
+  muted?: SanityImagePaletteSwatch;
+};
+
+export type SanityImageDimensions = {
+  _type: "sanity.imageDimensions";
+  height?: number;
+  width?: number;
+  aspectRatio?: number;
+};
+
+export type SanityFileAsset = {
+  _id: string;
+  _type: "sanity.fileAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  originalFilename?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  altText?: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
+  uploadId?: string;
+  path?: string;
+  url?: string;
+  source?: SanityAssetSourceData;
+};
+
+export type Geopoint = {
+  _type: "geopoint";
+  lat?: number;
+  lng?: number;
+  alt?: number;
+};
+
+export type Exercise = {
+  _id: string;
+  _type: "exercise";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name: string;
+  slug: Slug;
+  groups?: Array<{
+    name: string;
+    slug: Slug;
+    _key: string;
+  }>;
+  type: "brainstorm" | "sliders" | "quadrants" | "form";
+  instructions: string;
+  steps?: Array<{
+    prompt?: string;
+    helpText?: string;
+    color?: "green" | "red" | "yellow";
+    _key: string;
+  }>;
+  sliders?: Array<{
+    question_text: string;
+    today_text: string;
+    tomorrow_text: string;
+    slug: Slug;
+    left_value: string;
+    left_image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    };
+    right_value: string;
+    right_image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    };
+    _key: string;
+  }>;
+  today_instructions?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  tomorrow_instructions?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  finalize_instructions?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "normal";
+    listItem?: never;
+    markDefs?: null;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  quadrants?: Array<{
+    name: string;
+    slug: Slug;
+    topValue: string;
+    bottomValue: string;
+    leftValue: string;
+    rightValue: string;
+    topLeftImage?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    };
+    topRightImage?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    };
+    bottomLeftImage?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    };
+    bottomRightImage?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      alt?: string;
+      _type: "image";
+    };
+    _key: string;
+  }>;
+  form?: {
+    steps?: Array<{
+      fields?: Array<{
+        type: "List" | "Narrow" | "Text" | "Big Text" | "Tagline";
+        prompt: string;
+        additionalText?: string;
+        source?: {
+          step: number;
+          field: number;
+        };
+        placeholder?: string;
+        rows?: number;
+        showAddButton?: boolean;
+        addButtonText?: string;
+        min?: number;
+        max?: number;
+        _key: string;
+      }>;
+      _type: "step";
+      _key: string;
+    }>;
+  };
+};
+
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
+export type SanityImageAsset = {
+  _id: string;
+  _type: "sanity.imageAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  originalFilename?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  altText?: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
+  uploadId?: string;
+  path?: string;
+  url?: string;
+  metadata?: SanityImageMetadata;
+  source?: SanityAssetSourceData;
+};
+
+export type SanityAssetSourceData = {
+  _type: "sanity.assetSourceData";
+  name?: string;
+  id?: string;
+  url?: string;
+};
+
+export type SanityImageMetadata = {
+  _type: "sanity.imageMetadata";
+  location?: Geopoint;
+  dimensions?: SanityImageDimensions;
+  palette?: SanityImagePalette;
+  lqip?: string;
+  blurHash?: string;
+  hasAlpha?: boolean;
+  isOpaque?: boolean;
+};
+
+export type Participant = {
+  _id: string;
+  _type: "participant";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name: string;
+  recovery_code?: string;
+  kickoff: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "kickoff";
+  };
+  onboarded: boolean;
+};
+
+export type Kickoff = {
+  _id: string;
+  _type: "kickoff";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title: string;
+  code: Slug;
+  exercises?: Array<{
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    _key: string;
+    [internalGroqTypeReferenceTo]?: "exercise";
+  }>;
+};
+
+export type MediaTag = {
+  _id: string;
+  _type: "media.tag";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: Slug;
+};
+
+export type Slug = {
+  _type: "slug";
+  current: string;
+  source?: string;
+};
+export declare const internalGroqTypeReferenceTo: unique symbol;
+
+// Source: client.ts
+// Variable: kickoffQuery
+// Query: *[_type == "kickoff" && code.current == $code][0] {            ...,            exercises[]->        }
+export type KickoffQueryResult = {
+  _id: string;
+  _type: "kickoff";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title: string;
+  code: Slug;
+  exercises: Array<{
+    _id: string;
+    _type: "exercise";
+    _createdAt: string;
+    _updatedAt: string;
+    _rev: string;
+    name: string;
+    slug: Slug;
+    groups?: Array<{
+      name: string;
+      slug: Slug;
+      _key: string;
+    }>;
+    type: "brainstorm" | "form" | "quadrants" | "sliders";
+    instructions: string;
+    steps?: Array<{
+      prompt?: string;
+      helpText?: string;
+      color?: "green" | "red" | "yellow";
+      _key: string;
+    }>;
+    sliders?: Array<{
+      question_text: string;
+      today_text: string;
+      tomorrow_text: string;
+      slug: Slug;
+      left_value: string;
+      left_image?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
+      right_value: string;
+      right_image?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
+      _key: string;
+    }>;
+    today_instructions?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: never;
+      markDefs?: null;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    tomorrow_instructions?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: never;
+      markDefs?: null;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    finalize_instructions?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: never;
+      markDefs?: null;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    quadrants?: Array<{
+      name: string;
+      slug: Slug;
+      topValue: string;
+      bottomValue: string;
+      leftValue: string;
+      rightValue: string;
+      topLeftImage?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
+      topRightImage?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
+      bottomLeftImage?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
+      bottomRightImage?: {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        _type: "image";
+      };
+      _key: string;
+    }>;
+    form?: {
+      steps?: Array<{
+        fields?: Array<{
+          type: "Big Text" | "List" | "Narrow" | "Tagline" | "Text";
+          prompt: string;
+          additionalText?: string;
+          source?: {
+            step: number;
+            field: number;
+          };
+          placeholder?: string;
+          rows?: number;
+          showAddButton?: boolean;
+          addButtonText?: string;
+          min?: number;
+          max?: number;
+          _key: string;
+        }>;
+        _type: "step";
+        _key: string;
+      }>;
+    };
+  }> | null;
+} | null;
+// Variable: participantQuery
+// Query: *[_type == "participant" && _id == $id][0]
+export type ParticipantQueryResult = {
+  _id: string;
+  _type: "participant";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name: string;
+  recovery_code?: string;
+  kickoff: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "kickoff";
+  };
+  onboarded: boolean;
+} | null;
+// Variable: participantWithKickoffCodeQuery
+// Query: *[_type == "participant" && _id == $id][0] {            ...,            kickoff->{ "code": code.current }        }
+export type ParticipantWithKickoffCodeQueryResult = {
+  _id: string;
+  _type: "participant";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name: string;
+  recovery_code?: string;
+  kickoff: {
+    code: string;
+  };
+  onboarded: boolean;
+} | null;
+// Variable: participantsInKickoffQuery
+// Query: *[_type == "participant" && kickoff._ref == $kickoffId]
+export type ParticipantsInKickoffQueryResult = Array<{
+  _id: string;
+  _type: "participant";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name: string;
+  recovery_code?: string;
+  kickoff: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "kickoff";
+  };
+  onboarded: boolean;
+}>;
+

@@ -1,5 +1,5 @@
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
 import { Prompt } from "./Prompt"
@@ -9,7 +9,7 @@ import type { FormActions } from "./use-multiplayer-form"
 type Props = {
 	allAnswers?: FormStepAnswer[]
 	actions: FormActions
-	exercise: ST["exercise"]
+	exercise: ST.Exercise
 }
 
 export const Review = ({ allAnswers = [], exercise, actions }: Props) => {

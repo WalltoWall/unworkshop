@@ -1,11 +1,11 @@
 import { client } from "@/sanity/client"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import { type FormParticipant } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
 import { FormResponses } from "./FormResponses"
 
 type Props = {
-	exercise: ST["exercise"]
-	kickoff: ST["kickoff"]
+	exercise: ST.Exercise
+	kickoff: ST.Kickoff
 }
 
 export const FormPresenterView = async (props: Props) => {

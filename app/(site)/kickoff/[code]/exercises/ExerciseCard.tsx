@@ -3,7 +3,7 @@ import Link from "next/link"
 import { cx } from "class-variance-authority"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import brainstormIllustration from "@/assets/images/brainstorm-illustration.jpg"
 import formIllustration from "@/assets/images/form-illustration.png"
 import slidersIllustration from "@/assets/images/sliders-illustration.jpg"
@@ -39,7 +39,7 @@ type Props = {
 	kickoffCode: string | undefined
 	slug: string | undefined
 	name: string
-	type: ST["exercise"]["type"]
+	type: ST.Exercise["type"]
 	groups?: boolean
 	groupSlug?: string
 	presenter?: boolean

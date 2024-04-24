@@ -1,4 +1,4 @@
-import type { ST } from "@/sanity/types.gen"
+import type * as ST from "@/sanity/types.gen"
 import type { Group } from "../groups/types"
 import type { FormActions } from "./use-multiplayer-form"
 
@@ -34,19 +34,19 @@ export type FormFieldAnswer =
 export type FormStepAnswer = Array<FormFieldAnswer>
 
 export type FormStep = NonNullable<
-	NonNullable<ST["exercise"]["form"]>["steps"]
+	NonNullable<ST.Exercise["form"]>["steps"]
 >[number]
 
 export type FormField = NonNullable<FormStep["fields"]>[number]
 
-export type FormParticipant = ST["participant"]
+export type FormParticipant = ST.Participant
 
 export type FormAnswers = {
 	participants: Record<string, Array<FormStepAnswer>>
 	groups: Record<string, Group>
 }
 
-export type FormExercise = ST["exercise"] & {
+export type FormExercise = ST.Exercise & {
 	answers: FormAnswers
 }
 
