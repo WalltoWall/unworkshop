@@ -1,5 +1,8 @@
+import { ArrowBigLeftIcon, ArrowBigRightIcon } from "lucide-react"
 import React from "react"
 import { usePathname, useRouter } from "next/navigation"
+import { cx } from "class-variance-authority"
+import * as R from "remeda"
 import { Text } from "@/components/Text"
 import { Checkmark } from "./icons/Checkmark"
 import { Spinner } from "./Spinner"
@@ -8,8 +11,8 @@ interface Props {
 	disabled?: boolean
 	steps: number
 	activeStep: number
-	onFinish?: () => void
 	className?: string
+	onFinish?: () => void
 	onNextStep?: (nextStep: number) => void
 }
 
@@ -17,15 +20,13 @@ export const Steps = ({
 	disabled = false,
 	steps,
 	activeStep = 1,
-	onFinish,
 	className,
+	onFinish,
 	onNextStep,
 }: Props) => {
 	const router = useRouter()
 	const pathname = usePathname()
 	const [isPending, startTransition] = React.useTransition()
-
-	if (!steps) return null
 
 	const goToStep = (step: number) => {
 		startTransition(() => {
@@ -37,27 +38,40 @@ export const Steps = ({
 
 	const handleNext = () => {
 		if (activeStep - 1 === steps) {
-			startTransition(() => {
-				onFinish?.()
-			})
+			startTransition(() => onFinish?.())
 		} else {
 			goToStep(activeStep + 1)
 		}
 	}
 
 	return (
-		<div className={className}>
-			<div className="relative mx-auto h-8 w-8">
-				<div className="absolute right-full top-1/2 mr-2 flex -translate-y-1/2">
-					{Array.from({ length: steps - (steps - activeStep + 1) }).map(
-						(_, i) => (
+		<div className={cx(className, "flex items-center justify-between")}>
+			<button
+				className={cx(
+					activeStep <= 1 && "invisible",
+					"flex w-14 items-center gap-1.5",
+				)}
+				onClick={() => goToStep(activeStep - 1)}
+			>
+				<ArrowBigLeftIcon className="w-5 fill-black" />
+				<Text style="heading" size={20}>
+					Back
+				</Text>
+			</button>
+
+			<div className="relative">
+				<div className="absolute inset-y-0 right-full mr-2 flex items-center gap-2">
+					{R.range(0, activeStep - 1)
+						.reverse()
+						.map((i) => (
 							<button
 								key={i}
-								className="mx-1 h-3 w-3 rounded-full bg-black"
+								className="size-3 rounded-full bg-gray-75"
 								onClick={() => goToStep(i + 1)}
-							/>
-						),
-					)}
+							>
+								<div className="sr-only">Go to step {i + 1}</div>
+							</button>
+						))}
 				</div>
 
 				<button
@@ -70,33 +84,37 @@ export const Steps = ({
 					) : activeStep - 1 === steps ? (
 						<Checkmark />
 					) : (
-						<svg viewBox="0 0 7.412 11.996" className="ml-0.5 w-[9px]">
-							<path
-								fill="none"
-								fillRule="evenodd"
-								stroke="currentColor"
-								strokeLinecap="square"
-								strokeWidth="2"
-								d="m1.414 1.414 4.584 4.584-4.584 4.584"
-							/>
-						</svg>
+						<Text className="font-bold" size={16}>
+							{activeStep}
+						</Text>
 					)}
 				</button>
 
-				<div className="absolute left-full top-1/2 ml-2 flex -translate-y-1/2">
-					{Array.from({ length: steps - activeStep + 1 }).map((_, i) => (
-						<div key={i} className="mx-1 h-3 w-3 rounded-full bg-gray-75" />
+				<div className="absolute inset-y-0 left-full ml-2 flex items-center gap-2">
+					{R.range(activeStep, steps + 1).map((i) => (
+						<button
+							key={i}
+							className="size-3 rounded-full bg-gray-75"
+							onClick={() => goToStep(i + 1)}
+						>
+							<div className="sr-only">Go to step {i + 1}</div>
+						</button>
 					))}
 				</div>
 			</div>
 
-			<Text
-				style="heading"
-				size={16}
-				className="mt-3 whitespace-pre text-center font-bold uppercase"
+			<button
+				className={cx(
+					activeStep > steps && "invisible",
+					"flex w-14 items-center gap-1.5",
+				)}
+				onClick={() => goToStep(activeStep + 1)}
 			>
-				{activeStep - 1 === steps ? "Finish" : "Next Step"}
-			</Text>
+				<Text style="heading" size={20}>
+					Next
+				</Text>
+				<ArrowBigRightIcon className="w-5 fill-black" />
+			</button>
 		</div>
 	)
 }
