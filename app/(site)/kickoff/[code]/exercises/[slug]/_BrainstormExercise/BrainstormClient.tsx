@@ -29,8 +29,8 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 		exerciseId: exercise._id,
 		stepIdx,
 	})
-	const unsorted = snap.steps[stepIdx].unsorted
-	const columns = snap.steps[stepIdx].columns
+	const unsorted = snap.steps.at(stepIdx)?.unsorted ?? []
+	const columns = snap.steps.at(stepIdx)?.columns ?? []
 
 	const sorted = columns.flatMap((c) => c.cards)
 
