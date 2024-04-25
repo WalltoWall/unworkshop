@@ -1,6 +1,7 @@
 import React from "react"
 import clsx from "clsx"
 import { PlusIcon } from "@/components/icons/Plus"
+import { showContributorWarning } from "@/lib/show-contributor-warning"
 import type { BrainstormActions } from "./use-multiplayer-brainstorm"
 
 type Props = {
@@ -14,22 +15,30 @@ export const AddCardButton = ({
 	participantOrGroupId,
 	readOnly = false,
 }: Props) => {
+	function onClick() {
+		if (readOnly) {
+			showContributorWarning()
+
+			return
+		}
+
+		actions.addCard({
+			participantOrGroupId: participantOrGroupId,
+			response: "",
+		})
+	}
+
 	return (
 		<button
 			className={clsx(
-				"flex aspect-[163/187] select-none flex-col items-center justify-center gap-3 rounded-md transition focus:outline-none",
-				readOnly ? "cursor-not-allowed" : "hover:bg-gray-90 focus:bg-gray-90",
+				"flex aspect-square h-full w-full select-none flex-col items-center justify-center gap-3 rounded-md transition focus:outline-none",
+				readOnly
+					? "cursor-not-allowed bg-gray-90 text-gray-50 shadow-inner"
+					: "text-black hover:bg-gray-90 focus:bg-gray-90",
 			)}
-			onClick={() => {
-				if (readOnly) return
-				actions.addCard({
-					participantOrGroupId: participantOrGroupId,
-					response: "",
-				})
-			}}
-			disabled={readOnly}
+			onClick={onClick}
 		>
-			<PlusIcon className="h-7 w-7 text-black" />
+			<PlusIcon className="h-7 w-7" />
 
 			<span className="max-w-[5rem] text-14 leading-none font-sans">
 				Add another perception

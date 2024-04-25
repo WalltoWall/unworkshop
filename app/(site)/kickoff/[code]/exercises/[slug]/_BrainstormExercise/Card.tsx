@@ -1,6 +1,7 @@
 import React from "react"
 import clsx from "clsx"
 import { XCircleIcon } from "@/components/icons/XCircle"
+import { showContributorWarning } from "@/lib/show-contributor-warning"
 import type { BrainstormCard } from "./types"
 import type { BrainstormActions } from "./use-multiplayer-brainstorm"
 
@@ -17,8 +18,20 @@ export const Card = ({
 	actions,
 	readOnly = false,
 }: Props) => {
+	function onTextareaClick() {
+		if (!readOnly) return
+
+		showContributorWarning()
+	}
+
+	function onButtonClick() {
+		if (readOnly) return
+
+		actions.deleteCard({ cardId: card.id })
+	}
+
 	return (
-		<div className="relative aspect-[163/187]">
+		<div className="relative aspect-square h-full w-full">
 			<textarea
 				className={clsx(
 					colorClassNames,
@@ -28,23 +41,19 @@ export const Card = ({
 				value={card.response}
 				readOnly={readOnly}
 				name="response"
+				onClick={onTextareaClick}
 				onChange={(e) =>
 					actions.editCard({ cardId: card.id, response: e.target.value })
 				}
 			/>
 
-			<div className="absolute bottom-2 right-1.5 rounded-full">
-				<button
-					type="submit"
-					disabled={readOnly}
-					onClick={() => {
-						if (readOnly) return
-						actions.deleteCard({ cardId: card.id })
-					}}
-				>
-					<XCircleIcon className="h-6 w-6" />
-				</button>
-			</div>
+			{!readOnly && (
+				<div className="absolute bottom-2 right-1.5 rounded-full">
+					<button type="submit" disabled={readOnly} onClick={onButtonClick}>
+						<XCircleIcon className="h-6 w-6" />
+					</button>
+				</div>
+			)}
 		</div>
 	)
 }

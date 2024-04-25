@@ -29,7 +29,7 @@ export const CardScroller = ({
 	return (
 		<div
 			className={clsx(
-				"my-8 mb-auto grid min-h-0 flex-[1_1_0] grid-cols-2 content-start gap-2.5 overflow-y-auto py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:grid-cols-[163px_163px]",
+				"mb-auto mt-4 grid min-h-0 flex-[1_1_0] grid-cols-2 content-start gap-2.5 overflow-y-auto py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:auto-rows-[10.25rem] sm:grid-cols-2",
 			)}
 		>
 			<AddCardButton

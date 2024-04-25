@@ -1,9 +1,9 @@
 import React from "react"
 import { cx } from "class-variance-authority"
 import clsx from "clsx"
-import { toast } from "sonner"
 import { SanityImage } from "@/components/SanityImage"
 import { Text } from "@/components/Text"
+import { showContributorWarning } from "@/lib/show-contributor-warning"
 import { isFilled, type MaybeSanityImage } from "@/sanity/helpers"
 import { type SliderItem } from "./SlidersExercise"
 import type { Answer } from "./types"
@@ -169,13 +169,8 @@ export const SliderPair = ({
 	actions,
 	readOnly = false,
 }: Props) => {
-	const onClick = () => {
-		if (readOnly) {
-			toast.warning("Contributors can't edit directly.", {
-				description: "Your team captain can edit responses.",
-				className: "items-start",
-			})
-		}
+	function onClick() {
+		if (readOnly) showContributorWarning()
 	}
 
 	return (
