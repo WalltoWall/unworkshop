@@ -4,14 +4,13 @@ import { client } from "@/sanity/client"
 import { ExerciseCard } from "@/app/(site)/kickoff/[code]/exercises/ExerciseCard"
 import { PresenterHeader } from "../PresenterHeader"
 
-type Props = {
+interface Props {
 	params: { code: string }
 	searchParams: { [key: string]: string | string[] | undefined }
 }
 
 const PresenterKickOffPage = async (props: Props) => {
-	const kickoff = await client.findKickoffOrThrow(props.params.code)
-
+	const kickoff = await client.findKickoff(props.params.code)
 	if (!kickoff) notFound()
 
 	return (

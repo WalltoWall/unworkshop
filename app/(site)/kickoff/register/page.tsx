@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { unstable_noStore as noStore } from "next/cache"
 import { cookies } from "next/headers"
 import Image from "next/image"
@@ -104,7 +104,12 @@ const KickoffRegisterPage = async (props: Props) => {
 }
 
 export const metadata: Metadata = {
-	title: "Register - W|W Workshop",
+	title: "Register - UnWorkshop",
+}
+
+export const viewport: Viewport = {
+	colorScheme: "light",
+	themeColor: "#fff",
 }
 
 export default KickoffRegisterPage

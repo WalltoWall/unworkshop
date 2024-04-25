@@ -21,7 +21,7 @@ const CodeSchema = z
 	)
 
 export async function registerForKickoff(
-	prevState: { error: string },
+	_prevState: { error: string },
 	data: FormData,
 ) {
 	"use server"

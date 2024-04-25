@@ -29,11 +29,11 @@ export const RoleSelector = ({ participant, exercise }: Props) => {
 	const group = exercise.groups?.find(
 		(g) => g.slug.current === params.groupSlug,
 	)
-	const path = `kickoff/${params.code}/exercises/${params.slug}/groups`
+	const groupsHref = `/kickoff/${params.code}/exercises/${params.slug}/groups`
 
 	function onRoleCardClick(role: Role) {
 		actions.setRole({ role, slug: params.groupSlug })
-		router.push(`/${path}/${params.groupSlug}`)
+		router.push(`${groupsHref}/${params.groupSlug}`)
 	}
 
 	return (
@@ -47,7 +47,7 @@ export const RoleSelector = ({ participant, exercise }: Props) => {
 				<Text asChild size={16} className="mb-7">
 					<div>
 						What's your role? - <strong>{group?.name}</strong> -{" "}
-						<Link href={`/${path}/groups`} className="text-gray-19 underline">
+						<Link href={groupsHref} className="text-gray-19 underline">
 							(Wrong group?)
 						</Link>
 					</div>

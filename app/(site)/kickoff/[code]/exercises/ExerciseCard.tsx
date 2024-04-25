@@ -34,8 +34,7 @@ const variants = {
 	},
 }
 
-// TODO: Exercise status, e.g. "Start Exercise", "Completed" etc.
-type Props = {
+interface Props {
 	kickoffCode: string | undefined
 	slug: string | undefined
 	name: string
