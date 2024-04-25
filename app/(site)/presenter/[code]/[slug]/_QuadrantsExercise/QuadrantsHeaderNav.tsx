@@ -1,37 +1,37 @@
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import Link from "next/link"
+import { useParams, useSearchParams } from "next/navigation"
+import { cx } from "class-variance-authority"
 import type * as ST from "@/sanity/types.gen"
-import { StepNavItem } from "../../../PresenterHeader"
 
 interface Props {
 	exercise: ST.Exercise
 }
 
 export const QuadrantsHeaderNav = ({ exercise }: Props) => {
-	const router = useRouter()
-	const pathname = usePathname()
+	const params = useParams()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
 
-	const handleClick = (nextStep: number) => {
-		const params = new URLSearchParams({
-			step: nextStep.toString(),
-		})
+	if (!exercise.quadrants) return null
 
-		router.push(pathname + "?" + params.toString(), { scroll: false })
-	}
-
-	return exercise.quadrants!.length > 0 ? (
+	return (
 		<ul className="mt-6 flex flex-col gap-3">
-			{exercise.quadrants?.map((quadrant, index) => (
-				<li key={quadrant._key}>
-					<StepNavItem
-						onClick={() => handleClick(index + 1)}
-						active={index + 1 === step}
+			{exercise.quadrants?.map((q, idx) => (
+				<li key={q._key}>
+					<Link
+						href={{
+							href: `/presenter/${params.code}/${exercise.slug.current}`,
+							query: { step: idx + 1 },
+						}}
+						className={cx(
+							"mx-6 block uppercase transition-opacity text-24 leading-none font-heading capsize hover:opacity-100 focus:opacity-100",
+							idx + 1 === step ? "opacity-100" : "opacity-50",
+						)}
 					>
-						Step {index + 1}: {quadrant.name}
-					</StepNavItem>
+						Step {idx + 1}: {q.name}
+					</Link>
 				</li>
 			))}
 		</ul>
-	) : null
+	)
 }

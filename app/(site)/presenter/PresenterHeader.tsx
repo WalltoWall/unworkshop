@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { cx } from "class-variance-authority"
+import * as R from "remeda"
 import { Chevron } from "@/components/icons/Chevron"
 import { Hamburger } from "@/components/icons/Hamburger"
 import { Logo } from "@/components/Logo"
@@ -31,9 +32,9 @@ export const PresenterHeader = ({
 
 	const [isOpen, setIsOpen] = useState(false)
 
-	const changeStep = (event: React.ChangeEvent<HTMLSelectElement>) => {
+	const changeStep = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const params = new URLSearchParams({
-			step: event.target.value.toString(),
+			step: e.target.value.toString(),
 		})
 
 		router.push(pathname + "?" + params.toString(), { scroll: false })
@@ -61,7 +62,7 @@ export const PresenterHeader = ({
 						onChange={changeStep}
 						className="h-9 min-w-28 appearance-none rounded-lg border border-gray-58 bg-black pb-2 pl-2 pr-7 pt-1 uppercase text-white text-18 font-heading"
 					>
-						{[...Array(steps)].map((_, index) => (
+						{R.range(0, steps).map((_, index) => (
 							<option key={index} value={index + 1}>
 								Step {index + 1}
 							</option>
@@ -109,18 +110,3 @@ export const PresenterHeader = ({
 		</header>
 	)
 }
-
-type StepNavItemProps = React.ComponentPropsWithoutRef<"button"> & {
-	active: boolean
-}
-
-export const StepNavItem = ({ active = false, ...props }: StepNavItemProps) => (
-	<button
-		type="button"
-		className={cx(
-			"mx-6 block uppercase transition-opacity text-24 leading-none font-heading capsize hover:opacity-100 focus:opacity-100",
-			active ? "opacity-100" : "opacity-50",
-		)}
-		{...props}
-	/>
-)
