@@ -111,7 +111,7 @@ const Slider = ({
 							<p
 								className={clsx(
 									"uppercase transition-all font-heading",
-									value === 1 && "[writing-mode:vertical-lr]",
+									value === 1 && "rotate-[-90deg]",
 								)}
 								style={{ fontSize: leftFontSize }}
 							>
@@ -126,7 +126,7 @@ const Slider = ({
 							<p
 								className={clsx(
 									"w-full uppercase transition font-heading",
-									value === 6 && "[writing-mode:vertical-rl]",
+									value === 6 && "rotate-90",
 								)}
 								style={{ fontSize: rightFontSize }}
 							>
