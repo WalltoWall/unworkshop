@@ -4,8 +4,8 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 const button = cva(
 	[
-		"inline-flex justify-center items-center text-center gap-2.5",
-		"border border-solid leading-none disabled:cursor-not-allowed",
+		"inline-flex justify-center items-center text-center",
+		"border border-solid leading-[1.25] disabled:cursor-not-allowed",
 	],
 	{
 		variants: {
@@ -14,9 +14,9 @@ const button = cva(
 				black: "border-black text-white bg-black",
 			},
 			size: {
-				xs: "h-9 text-12 px-3",
-				sm: "h-8 text-16 px-5",
-				base: "h-11 text-24 px-5",
+				xs: "h-9 text-12 px-3 gap-1.5",
+				sm: "h-8 text-16 px-4 gap-1.5",
+				base: "h-11 text-24 px-5 gap-2.5",
 			},
 			outline: {
 				true: "bg-transparent",
