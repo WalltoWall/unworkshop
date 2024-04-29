@@ -56,7 +56,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 					{children}
 				</div>
 
-				<Toaster closeButton richColors />
+				<Toaster richColors />
 			</body>
 		</html>
 	)

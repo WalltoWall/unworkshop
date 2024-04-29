@@ -1,12 +1,14 @@
 "use client"
 
 import React from "react"
+import { ErrorBoundary } from "react-error-boundary"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { z } from "zod"
 import { Steps } from "@/components/Steps"
 import type * as ST from "@/sanity/types.gen"
 import { FieldContainer } from "./FieldContainer"
 import { FieldRenderer } from "./FieldRenderer"
+import { InvalidField } from "./InvalidField"
 import { Prompt } from "./Prompt"
 import { Review } from "./Review"
 import type { FormParticipant } from "./types"
@@ -59,47 +61,50 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 
 	return (
 		<div className="mt-3 flex flex-[1_1_0] flex-col justify-between">
-			{onReviewScreen && (
-				<Review allAnswers={answers} exercise={exercise} actions={actions} />
-			)}
+			<ErrorBoundary fallback={<InvalidField className="my-6" />}>
+				{onReviewScreen && (
+					<Review allAnswers={answers} exercise={exercise} actions={actions} />
+				)}
 
-			{!onReviewScreen && (
-				<div>
-					{stepData?.fields?.map((field, fieldIdx) => {
-						const fieldAnswer = stepAnswers?.at(fieldIdx)
+				{!onReviewScreen && (
+					<div>
+						{stepData?.fields?.map((field, fieldIdx) => {
+							const fieldAnswer = stepAnswers?.at(fieldIdx)
 
-						return (
-							<FieldContainer key={field._key}>
-								{field.type !== "Tagline" && (
-									<Prompt
-										className="mb-5"
-										num={fieldIdx + 1}
-										additionalText={field.additionalText}
-									>
-										{field.prompt}
-									</Prompt>
-								)}
+							return (
+								<FieldContainer key={field._key}>
+									{field.type !== "Tagline" && (
+										<Prompt
+											className="mb-5"
+											num={fieldIdx + 1}
+											additionalText={field.additionalText}
+										>
+											{field.prompt}
+										</Prompt>
+									)}
 
-								<FieldRenderer
-									exercise={exercise}
-									field={field}
-									stepIdx={stepIdx}
-									fieldIdx={fieldIdx}
-									allAnswers={answers}
-									answer={fieldAnswer}
-									actions={actions}
-									readOnly={role && role !== "captain"}
-								/>
-							</FieldContainer>
-						)
-					})}
-				</div>
-			)}
+									<FieldRenderer
+										exercise={exercise}
+										field={field}
+										stepIdx={stepIdx}
+										fieldIdx={fieldIdx}
+										allAnswers={answers}
+										answer={fieldAnswer}
+										actions={actions}
+										readOnly={role && role !== "captain"}
+									/>
+								</FieldContainer>
+							)
+						})}
+					</div>
+				)}
+			</ErrorBoundary>
 
 			<Steps
 				steps={exercise.form.steps.length}
 				activeStep={step}
 				onFinish={goBackToExerciseList}
+				className="mt-auto"
 			/>
 		</div>
 	)
