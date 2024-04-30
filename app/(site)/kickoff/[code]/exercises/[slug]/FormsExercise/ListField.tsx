@@ -1,7 +1,9 @@
 import React from "react"
+import * as R from "remeda"
 import { match } from "ts-pattern"
 import { Text } from "@/components/Text"
 import { AddButton } from "./AddButton"
+import { useRememberCursorPosition } from "./hooks"
 import type {
 	FieldProps,
 	FormField,
@@ -9,7 +11,7 @@ import type {
 	FormStepAnswer,
 	ListFieldAnswer,
 } from "./types"
-import { AnswersArray, PositiveNumber } from "./validators"
+import { AnswersArray, PositiveNumber, StringArray } from "./validators"
 
 const DEFAULT_INPUT_NAME = "answer"
 
@@ -30,6 +32,11 @@ const Input = ({
 	name = DEFAULT_INPUT_NAME,
 	readOnly = false,
 }: InputProps) => {
+	const { ref: rInput, onChange: wrappedOnChange } = useRememberCursorPosition({
+		onChange,
+		value,
+	})
+
 	return (
 		<li className="flex gap-2">
 			<div className="flex h-9 w-9 items-center justify-center rounded-[7px] bg-gray-90">
@@ -39,12 +46,13 @@ const Input = ({
 			</div>
 
 			<input
+				ref={rInput}
 				type="text"
 				placeholder={placeholder}
 				name={name}
 				className="h-9 grow rounded-lg border border-gray-90 px-2.5 text-black text-14 placeholder:text-gray-75"
 				value={value}
-				onChange={onChange}
+				onChange={wrappedOnChange}
 				readOnly={readOnly}
 			/>
 		</li>
@@ -70,7 +78,6 @@ const SourceListSection = (props: SourceListSectionProps) => {
 
 	const answerCount = props.answer?.responses.length ?? 0
 	const rows = Math.max(answerCount, initialRows)
-	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
 
 	return (
 		<div>
@@ -79,11 +86,11 @@ const SourceListSection = (props: SourceListSectionProps) => {
 			</Text>
 
 			<ul className="mt-4 flex flex-col gap-2">
-				{arr.map((number, idx) => {
+				{R.range(0, rows).map((idx) => {
 					return (
 						<Input
-							key={number}
-							number={number}
+							key={idx}
+							number={idx + 1}
 							placeholder={placeholder}
 							value={props.answer?.responses.at(idx)}
 							name={props.label}
@@ -184,13 +191,12 @@ const PlainListField = ({ answer, actions, ...props }: Props) => {
 	const resolvedAnswer = answer?.groups.at(0)
 	const answerCount = resolvedAnswer?.responses.length ?? 0
 	const rows = Math.max(answerCount, initialRows)
-	const arr = new Array(rows).fill(0).map((_, idx) => idx + 1)
 
 	const submitForm = () => {
 		if (!rForm.current || props.readOnly) return
 
 		const data = new FormData(rForm.current)
-		const answers = AnswersArray.parse(data.getAll(DEFAULT_INPUT_NAME))
+		const answers = StringArray.parse(data.getAll(DEFAULT_INPUT_NAME))
 
 		actions.submitFieldAnswer({
 			answer: { type: "List", groups: [{ responses: answers }] },
@@ -205,7 +211,7 @@ const PlainListField = ({ answer, actions, ...props }: Props) => {
 	}
 
 	const appendNewRow = () => {
-		const answers = AnswersArray.parse(resolvedAnswer?.responses ?? [""])
+		const answers = StringArray.parse(resolvedAnswer?.responses)
 
 		actions.submitFieldAnswer({
 			answer: { type: "List", groups: [{ responses: [...answers, ""] }] },
@@ -217,16 +223,18 @@ const PlainListField = ({ answer, actions, ...props }: Props) => {
 	return (
 		<form onSubmit={handleSubmit} ref={rForm}>
 			<ul className="flex flex-col gap-2">
-				{arr.map((number, idx) => (
-					<Input
-						key={number}
-						number={number}
-						placeholder={placeholder}
-						value={resolvedAnswer?.responses.at(idx) ?? ""}
-						onChange={submitForm}
-						readOnly={props.readOnly}
-					/>
-				))}
+				{R.range(0, rows).map((idx) => {
+					return (
+						<Input
+							key={idx}
+							number={idx + 1}
+							placeholder={placeholder}
+							value={resolvedAnswer?.responses.at(idx)}
+							onChange={submitForm}
+							readOnly={props.readOnly}
+						/>
+					)
+				})}
 			</ul>
 
 			{showAddButton && !props.readOnly && (
