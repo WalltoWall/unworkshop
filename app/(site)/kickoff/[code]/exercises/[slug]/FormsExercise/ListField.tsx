@@ -15,7 +15,7 @@ import { AnswersArray, PositiveNumber, StringArray } from "./validators"
 
 const DEFAULT_INPUT_NAME = "answer"
 
-type InputProps = {
+interface InputProps {
 	number: number
 	placeholder?: string
 	value?: string
@@ -86,19 +86,17 @@ const SourceListSection = (props: SourceListSectionProps) => {
 			</Text>
 
 			<ul className="mt-4 flex flex-col gap-2">
-				{R.range(0, rows).map((idx) => {
-					return (
-						<Input
-							key={idx}
-							number={idx + 1}
-							placeholder={placeholder}
-							value={props.answer?.responses.at(idx)}
-							name={props.label}
-							onChange={props.onInputChange}
-							readOnly={props.readOnly}
-						/>
-					)
-				})}
+				{R.range(0, rows).map((idx) => (
+					<Input
+						key={idx}
+						number={idx + 1}
+						placeholder={placeholder}
+						value={props.answer?.responses.at(idx)}
+						name={props.label}
+						onChange={props.onInputChange}
+						readOnly={props.readOnly}
+					/>
+				))}
 			</ul>
 
 			{showAddButton && (
@@ -223,18 +221,16 @@ const PlainListField = ({ answer, actions, ...props }: Props) => {
 	return (
 		<form onSubmit={handleSubmit} ref={rForm}>
 			<ul className="flex flex-col gap-2">
-				{R.range(0, rows).map((idx) => {
-					return (
-						<Input
-							key={idx}
-							number={idx + 1}
-							placeholder={placeholder}
-							value={resolvedAnswer?.responses.at(idx)}
-							onChange={submitForm}
-							readOnly={props.readOnly}
-						/>
-					)
-				})}
+				{R.range(0, rows).map((idx) => (
+					<Input
+						key={idx}
+						number={idx + 1}
+						placeholder={placeholder}
+						value={resolvedAnswer?.responses.at(idx)}
+						onChange={submitForm}
+						readOnly={props.readOnly}
+					/>
+				))}
 			</ul>
 
 			{showAddButton && !props.readOnly && (
@@ -249,13 +245,9 @@ const PlainListField = ({ answer, actions, ...props }: Props) => {
 }
 
 export const ListField = (props: Props) => {
-	return (
-		<>
-			{props.field.source?.field && props.field.source.step ? (
-				<SourceListField {...props} />
-			) : (
-				<PlainListField {...props} />
-			)}
-		</>
+	return props.field.source?.field && props.field.source.step ? (
+		<SourceListField {...props} />
+	) : (
+		<PlainListField {...props} />
 	)
 }
