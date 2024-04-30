@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import { Text } from "@/components/Text"
 import { pluralize } from "@/lib/pluralize"
 import type { FieldProps, FormFieldAnswer } from "./types"
-import { AnswersArray } from "./validators"
+import { StringArray } from "./validators"
 
 const INPUT_NAME = "answer"
 
@@ -31,7 +31,10 @@ export const NarrowField = ({ source, answer, actions, ...props }: Props) => {
 		if (!rForm.current || props.readOnly) return
 
 		const data = new FormData(rForm.current)
-		const answers = AnswersArray.parse(data.getAll(INPUT_NAME))
+
+		const answers = StringArray.transform((s) => s.filter(Boolean)).parse(
+			data.getAll(INPUT_NAME),
+		)
 
 		actions.submitFieldAnswer({
 			answer: { type: "Narrow", responses: answers },

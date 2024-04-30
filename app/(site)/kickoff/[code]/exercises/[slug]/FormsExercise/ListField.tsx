@@ -11,7 +11,7 @@ import type {
 	FormStepAnswer,
 	ListFieldAnswer,
 } from "./types"
-import { AnswersArray, PositiveNumber, StringArray } from "./validators"
+import { PositiveNumber, StringArray } from "./validators"
 
 const DEFAULT_INPUT_NAME = "answer"
 
@@ -144,7 +144,7 @@ const SourceListField = ({ answer, actions, ...props }: Props) => {
 				type: "List",
 				groups: labels.map((label) => ({
 					label,
-					responses: AnswersArray.parse(data.getAll(label)),
+					responses: StringArray.parse(data.getAll(label)),
 				})),
 			},
 			fieldIdx: props.fieldIdx,
