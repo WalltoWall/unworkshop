@@ -5,19 +5,19 @@ import { HighlightedResponses } from "./HighlightedResponses"
 import { Prompt } from "./Prompt"
 import { Textarea, textareaStyles } from "./Textarea"
 import type { FieldProps, FormFieldAnswer } from "./types"
-import { getOffLimitWords, sanitizeString } from "./utils"
+import { getBadWords, sanitizeString } from "./utils"
 
 const INPUT_NAME = "answer"
 
 interface HighlighterTextareaProps
 	extends Omit<React.ComponentPropsWithoutRef<"textarea">, "value"> {
 	value: string
-	offlimitWords?: string[]
+	badWords: Set<string>
 }
 
 const HighlighterTextarea = ({
 	className,
-	offlimitWords = [],
+	badWords,
 	...props
 }: HighlighterTextareaProps) => {
 	const words = props.value.split(" ")
@@ -32,15 +32,13 @@ const HighlighterTextarea = ({
 					"pointer-events-none absolute inset-0 whitespace-pre-wrap border-gray-90/0",
 				)}
 			>
-				{words.map((word, idx) => {
-					const cleanWord = sanitizeString(word)
-					const invalid =
-						cleanWord.length > 1 &&
-						offlimitWords.some((off) => cleanWord.includes(off))
+				{words.map((_word, idx) => {
+					const word = sanitizeString(_word)
+					const invalid = badWords.has(word)
 
 					return (
-						<span key={word + idx} className={clsx(invalid && "text-red-63")}>
-							{word + (idx === words.length - 1 ? "" : " ")}
+						<span key={_word + idx} className={clsx(invalid && "text-red-63")}>
+							{_word + (idx === words.length - 1 ? "" : " ")}
 						</span>
 					)
 				})}
@@ -54,12 +52,15 @@ type Props = FieldProps<{
 }>
 
 export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
-	if (source.type !== "List")
+	if (source.type !== "List") {
 		throw new Error(
 			"Tagline fields only support List field answers as a source.",
 		)
-	if (answer && answer.type !== "Tagline")
+	}
+
+	if (answer && answer.type !== "Tagline") {
 		throw new Error("Invalid answer data found.")
+	}
 
 	const answerOne = answer?.responses.at(0) ?? ""
 	const answerTwo = answer?.responses.at(1)
@@ -75,14 +76,14 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 		})
 	}
 
-	const sourceResponses = source.groups.at(0)?.responses ?? []
-	const offlimitWords = getOffLimitWords(sourceResponses)
+	const sourceResponses = source.groups.at(0)?.responses.filter(Boolean) ?? []
+	const badWords = getBadWords(sourceResponses)
 
 	const sharedInputProps = {
 		className: "mt-5",
 		name: INPUT_NAME,
 		readOnly: props.readOnly,
-		offlimitWords,
+		badWords,
 		placeholder: props.field.placeholder,
 	}
 
@@ -98,7 +99,7 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 
 			<HighlightedResponses
 				responses={sourceResponses}
-				answers={[answerOne, answerTwo ?? ""]}
+				answers={[answerOne, answerTwo]}
 				className="mt-5"
 			/>
 

@@ -2,9 +2,9 @@ import clsx from "clsx"
 import { Text, type TextVariants } from "@/components/Text"
 import { sanitizeString } from "./utils"
 
-type Props = {
+interface Props {
 	responses: string[]
-	answers: string[]
+	answers: Array<string | undefined>
 	className?: string
 	size?: TextVariants["size"]
 	validClassName?: string
@@ -13,7 +13,7 @@ type Props = {
 }
 
 export const HighlightedResponses = ({
-	answers,
+	answers: _answers,
 	responses,
 	className,
 	size = 12,
@@ -21,16 +21,18 @@ export const HighlightedResponses = ({
 	invalidClassName = "bg-red-57",
 	itemClassName,
 }: Props) => {
-	const cleanAnswers = answers
-		.flatMap((a) => a.split(" "))
-		.filter(Boolean)
-		.map(sanitizeString)
+	const answers = new Set(
+		_answers
+			.filter(Boolean)
+			.map(sanitizeString)
+			.flatMap((a) => a.split(" ")),
+	)
 
 	return (
 		<ul className={clsx(className, "flex flex-wrap gap-2")}>
 			{responses.map((resp) => {
-				const cleanResp = sanitizeString(resp)
-				const invalid = cleanAnswers.some((a) => cleanResp === a)
+				const badWords = sanitizeString(resp).split(" ")
+				const invalid = badWords.some((bWord) => answers.has(bWord))
 
 				return (
 					<Text
