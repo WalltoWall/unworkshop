@@ -46,7 +46,7 @@ const Input = ({
 			</div>
 
 			<input
-				ref={rInput}
+				ref={rInput as React.RefObject<HTMLInputElement>}
 				type="text"
 				placeholder={placeholder}
 				name={name}
