@@ -64,9 +64,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 
 export const metadata: Metadata = {
 	title: "UnWorkshop",
-
-	// TODO: Need real copy.
-	description: "Lorem ipsum sit dolor",
+	description: "Look in. Stand out.",
 }
 
 export default RootLayout
