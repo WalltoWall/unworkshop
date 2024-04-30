@@ -3,6 +3,7 @@ import Local from "next/font/local"
 import { cx } from "class-variance-authority"
 import { Toaster } from "sonner"
 import "./globals.css"
+import { env } from "@/env"
 
 // This is required to change the type of `useSnapshot` from Readonly<T> -> <T>.
 declare module "valtio" {
@@ -65,6 +66,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 export const metadata: Metadata = {
 	title: "UnWorkshop",
 	description: "Look in. Stand out.",
+	metadataBase: new URL(env.NEXT_PUBLIC_ROOT_URL),
 }
 
 export default RootLayout
