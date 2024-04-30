@@ -61,17 +61,15 @@ export const Steps = ({
 
 			<div className="relative">
 				<div className="absolute inset-y-0 right-full mr-2 flex items-center gap-2">
-					{R.range(0, activeStep - 1)
-						.reverse()
-						.map((i) => (
-							<button
-								key={i}
-								className="size-3 rounded-full bg-gray-75"
-								onClick={() => goToStep(i + 1)}
-							>
-								<div className="sr-only">Go to step {i + 1}</div>
-							</button>
-						))}
+					{R.range(0, activeStep - 1).map((i) => (
+						<button
+							key={i}
+							className="size-3 rounded-full bg-gray-75"
+							onClick={() => goToStep(i + 1)}
+						>
+							<div className="sr-only">Go to step {i + 1}</div>
+						</button>
+					))}
 				</div>
 
 				<button
