@@ -72,7 +72,10 @@ export const NarrowField = ({ source, answer, actions, ...props }: Props) => {
 								</Text>
 							</div>
 
-							<Text className="text-gray-50" size={16}>
+							<Text
+								className="text-gray-50 group-has-[:checked]:text-black"
+								size={16}
+							>
 								{response}
 							</Text>
 
