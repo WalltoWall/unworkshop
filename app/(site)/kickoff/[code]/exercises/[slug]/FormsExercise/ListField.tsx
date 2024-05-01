@@ -114,8 +114,9 @@ type Props = FieldProps<{
 }>
 
 const SourceListField = ({ answer, actions, ...props }: Props) => {
-	if (answer && answer.type !== "List")
+	if (answer && answer.type !== "List") {
 		throw new Error("Invalid answer data found.")
+	}
 
 	const rForm = React.useRef<HTMLFormElement>(null)
 
@@ -125,8 +126,9 @@ const SourceListField = ({ answer, actions, ...props }: Props) => {
 	const sourceAnswer = props.allAnswers?.at(stepSrc - 1)?.at(fieldSrc - 1)
 	const sourceField = props.allSteps?.at(stepSrc - 1)?.fields?.at(fieldSrc - 1)
 
-	if (!sourceAnswer || !sourceField)
+	if (!sourceAnswer || !sourceField) {
 		throw new Error("No valid source found. Check field or step config.")
+	}
 
 	const labels = match(sourceAnswer)
 		.with({ type: "Narrow" }, (sa) => sa.responses)
@@ -159,23 +161,51 @@ const SourceListField = ({ answer, actions, ...props }: Props) => {
 
 	return (
 		<form ref={rForm} className="space-y-6" onSubmit={handleSubmit}>
-			{labels.map((label) => (
-				<SourceListSection
-					key={label}
-					label={label}
-					field={props.field}
-					answer={answer?.groups.find((a) => a.label === label)}
-					onInputChange={submitForm}
-					readOnly={props.readOnly}
-				/>
-			))}
+			{labels.map((label, idx) => {
+				const sectionAnswer = answer?.groups.find((a) => a.label === label)
+
+				const appendNewRow = () => {
+					if (!rForm.current || props.readOnly) return
+
+					const data = new FormData(rForm.current)
+					const sectionResponses = sectionAnswer?.responses ?? []
+
+					const groups = labels.map((label) => ({
+						label,
+						responses: StringArray.parse(data.getAll(label)),
+					}))
+					groups.splice(idx, 0, { responses: [...sectionResponses, ""], label })
+
+					actions.submitFieldAnswer({
+						answer: {
+							type: "List",
+							groups,
+						},
+						fieldIdx: props.fieldIdx,
+						stepIdx: props.stepIdx,
+					})
+				}
+
+				return (
+					<SourceListSection
+						key={label}
+						label={label}
+						field={props.field}
+						answer={sectionAnswer}
+						onInputChange={submitForm}
+						readOnly={props.readOnly}
+						appendNewRow={appendNewRow}
+					/>
+				)
+			})}
 		</form>
 	)
 }
 
 const PlainListField = ({ answer, actions, ...props }: Props) => {
-	if (answer && answer.type !== "List")
+	if (answer && answer.type !== "List") {
 		throw new Error("Invalid answer data found.")
+	}
 
 	const rForm = React.useRef<React.ElementRef<"form">>(null)
 

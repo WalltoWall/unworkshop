@@ -20,7 +20,7 @@ const StepParamSchema = z.coerce
 	.default(1)
 	.transform((val) => (val === 0 ? 1 : val))
 
-type Props = {
+interface Props {
 	exercise: ST.Exercise
 	participant: FormParticipant
 	groupSlug?: string
