@@ -7,6 +7,11 @@
 	"theme_color": "#fff",
 	"icons": [
 		{
+			"src": "/splash.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
+		{
 			"src": "/icon.svg",
 			"sizes": "any"
 		}
