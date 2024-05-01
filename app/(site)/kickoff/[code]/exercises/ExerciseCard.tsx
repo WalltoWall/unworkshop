@@ -4,35 +4,7 @@ import { cx } from "class-variance-authority"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
 import type * as ST from "@/sanity/types.gen"
-import brainstormIllustration from "@/assets/images/brainstorm-illustration.jpg"
-import formIllustration from "@/assets/images/form-illustration.png"
-import slidersIllustration from "@/assets/images/sliders-illustration.jpg"
-
-const variants = {
-	brainstorm: {
-		gradientClassName: "from-[#4BEEE1] to-[#E477D1]",
-		imageSrc: brainstormIllustration,
-		imageClassName:
-			"-translate-y-[3%] translate-x-[28%] -rotate-[17deg] mix-blend-multiply h-[128%]",
-	},
-	sliders: {
-		gradientClassName: "from-[#E561D0] to-[#EA892C]",
-		imageSrc: slidersIllustration,
-		imageClassName:
-			"mix-blend-multiply h-[175%] translate-x-[27%] -translate-y-[3%]",
-	},
-	// TODO: Get Illustration and style it.
-	quadrants: {
-		gradientClassName: "from-[#4BEEE1] to-[#90E477]",
-		imageSrc: formIllustration,
-		imageClassName: "h-[170%] translate-x-[37%] -translate-y-[16%]",
-	},
-	form: {
-		gradientClassName: "from-[#FA927F] to-[#D7F082]",
-		imageSrc: formIllustration,
-		imageClassName: "h-[170%] translate-x-[37%] -translate-y-[16%]",
-	},
-}
+import { CardVariantSequence } from "./card-variants"
 
 interface Props {
 	kickoffCode: string | undefined
@@ -44,8 +16,15 @@ interface Props {
 	presenter?: boolean
 }
 
+const sequence = new CardVariantSequence([
+	"form",
+	"sliders",
+	"quadrants",
+	"brainstorm",
+])
+
 export const ExerciseCard = (props: Props) => {
-	const variant = variants[props.type]
+	const variant = sequence.nextVariant()
 
 	let href = `/kickoff/${props.kickoffCode}/exercises/${props.slug}`
 
@@ -62,6 +41,7 @@ export const ExerciseCard = (props: Props) => {
 				"relative grid aspect-[289/160] grid-cols-[4fr,6fr] overflow-hidden rounded-lg bg-gradient-to-r",
 				variant.gradientClassName,
 			)}
+			suppressHydrationWarning
 		>
 			<div className="self-end pb-4 pl-3">
 				<Text style="heading" size={24}>
@@ -81,6 +61,7 @@ export const ExerciseCard = (props: Props) => {
 				src={variant.imageSrc}
 				alt=""
 				placeholder="blur"
+				suppressHydrationWarning
 				className={cx(
 					"absolute right-0 top-0 object-contain",
 					variant.imageClassName,
