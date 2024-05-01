@@ -53,7 +53,7 @@ export const Steps = ({
 				)}
 				onClick={() => goToStep(activeStep - 1)}
 			>
-				<ArrowBigRightIcon className="w-5 shrink-0 fill-black" />
+				<ArrowBigLeftIcon className="w-5 shrink-0 fill-black" />
 				<Text style="heading" size={20}>
 					Back
 				</Text>

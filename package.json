@@ -11,7 +11,7 @@
 		"start:next": "next start",
 		"start:partykit": "partykit dev",
 		"build": "next build",
-		"deploy:partykit": "NEXT_PUBLIC_SANITY_DATASET=production && partykit deploy --with-vars",
+		"deploy:partykit": "partykit deploy --with-vars",
 		"lint": "next lint"
 	},
 	"dependencies": {
