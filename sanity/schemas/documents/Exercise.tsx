@@ -95,7 +95,6 @@ export const Exercise = defineType({
 			description:
 				"Instructions associated with the specific exercise. To be seen when user clicks on the question mark near the title.",
 			type: "text",
-			validation: (Rule) => Rule.required(),
 		}),
 
 		// Brainstorm fields.

@@ -61,7 +61,7 @@ export const FieldRenderer = ({
 		case "List": {
 			return (
 				<ListField
-					key={field._key}
+					key={field.prompt}
 					allAnswers={allAnswers}
 					allSteps={exercise.form?.steps}
 					{...sharedProps}
@@ -72,7 +72,7 @@ export const FieldRenderer = ({
 		case "Narrow":
 			return (
 				<NarrowField
-					key={field._key}
+					key={field.prompt}
 					source={getFieldSource()}
 					{...sharedProps}
 				/>
@@ -80,12 +80,12 @@ export const FieldRenderer = ({
 
 		case "Text":
 		case "Big Text":
-			return <TextField key={field._key} {...sharedProps} />
+			return <TextField key={field.prompt} {...sharedProps} />
 
 		case "Tagline":
 			return (
 				<TaglineField
-					key={field._key}
+					key={field.prompt}
 					source={getFieldSource()}
 					{...sharedProps}
 				/>

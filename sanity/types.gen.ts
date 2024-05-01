@@ -82,7 +82,7 @@ export type Exercise = {
     _key: string;
   }>;
   type: "brainstorm" | "sliders" | "quadrants" | "form";
-  instructions: string;
+  instructions?: string;
   steps?: Array<{
     prompt?: string;
     helpText?: string;
@@ -380,7 +380,7 @@ export type KickoffQueryResult = {
       _key: string;
     }>;
     type: "brainstorm" | "form" | "quadrants" | "sliders";
-    instructions: string;
+    instructions?: string;
     steps?: Array<{
       prompt?: string;
       helpText?: string;

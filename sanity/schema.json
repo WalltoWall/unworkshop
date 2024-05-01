@@ -443,7 +443,7 @@
         "value": {
           "type": "string"
         },
-        "optional": false
+        "optional": true
       },
       "steps": {
         "type": "objectAttribute",
