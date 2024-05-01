@@ -17,7 +17,7 @@ export const RoleHeader = ({
 	return (
 		<div
 			className={cx(
-				"relative flex items-center justify-center gap-1 bg-gray-50 p-4 text-white",
+				"relative flex items-center justify-center gap-1 bg-gray-50 py-4 pl-4 pr-10 text-white",
 				className,
 			)}
 		>

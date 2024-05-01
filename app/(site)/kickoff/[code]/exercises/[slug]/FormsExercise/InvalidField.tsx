@@ -29,7 +29,8 @@ export const InvalidField = (props: { className?: string }) => {
 				</div>
 
 				<Text size={14}>
-					You may have navigated ahead of your group captain.
+					You may have navigated ahead of your group captain, or something just
+					went wrong.
 				</Text>
 			</div>
 
