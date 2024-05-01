@@ -31,7 +31,7 @@ export const Steps = ({
 	const goToStep = (step: number) => {
 		startTransition(() => {
 			const params = new URLSearchParams({ step: step.toString() })
-			router.push(pathname + "?" + params.toString(), { scroll: false })
+			router.push(pathname + "?" + params.toString())
 			onNextStep?.(step)
 		})
 	}

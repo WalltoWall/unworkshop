@@ -82,7 +82,7 @@ export const QuadrantsPresenterViewClient = ({
 		})
 
 		startTransition(() => {
-			router.push(pathname + "?" + params.toString(), { scroll: false })
+			router.push(pathname + "?" + params.toString())
 		})
 	}
 
@@ -91,7 +91,7 @@ export const QuadrantsPresenterViewClient = ({
 			step: (step + 1).toString(),
 		})
 
-		router.push(pathname + "?" + params.toString(), { scroll: false })
+		router.push(pathname + "?" + params.toString())
 	}
 
 	const animatePoints = () => {

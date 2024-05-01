@@ -37,7 +37,7 @@ export const PresenterHeader = ({
 			step: e.target.value.toString(),
 		})
 
-		router.push(pathname + "?" + params.toString(), { scroll: false })
+		router.push(pathname + "?" + params.toString())
 	}
 
 	return (
