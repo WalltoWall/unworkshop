@@ -18,7 +18,7 @@ export const LightLayout = (props: {
 
 	return (
 		<>
-			<div className="mx-auto flex min-h-svh w-full max-w-[32rem] flex-col bg-white px-7 pb-5 text-black">
+			<div className="mx-auto flex min-h-svh w-full max-w-[32rem] flex-col bg-white px-7 pb-12 text-black">
 				<header
 					className="flex items-center justify-between gap-2 pb-6 pt-[18px] data-[theme=dark]:bg-black data-[theme=light]:bg-white"
 					data-theme="light"

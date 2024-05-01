@@ -57,7 +57,7 @@ const KickoffRegisterPage = async (props: Props) => {
 		<LightLayout withHeaderBackButton mainClassName="justify-between">
 			<div className="space-y-3">
 				<Text style="heading" size={64} className="!normal-case">
-					Hey, {kickoff.title}.
+					{kickoff.greeting}
 				</Text>
 
 				<div className="flex w-full flex-wrap items-center">

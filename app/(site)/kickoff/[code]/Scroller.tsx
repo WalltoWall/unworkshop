@@ -14,10 +14,6 @@ const slides = [
 	"2. Be Honest",
 	"3. Be Thoughtful",
 	"4. Be Creative",
-	<>
-		5. Stay Muted
-		<br /> When not speaking
-	</>,
 ]
 
 export const Scroller = () => {
@@ -28,7 +24,7 @@ export const Scroller = () => {
 			<div className="grid grow snap-y snap-mandatory auto-rows-[100%] overflow-auto overscroll-contain scrollbar-hide">
 				{slides.map((slide, idx) => (
 					<div key={idx} className="flex snap-start flex-col justify-center">
-						<Text style="heading" size={24}>
+						<Text style="heading" size={32}>
 							{slide}
 						</Text>
 					</div>

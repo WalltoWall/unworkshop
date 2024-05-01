@@ -328,6 +328,7 @@ export type Kickoff = {
   _rev: string;
   title: string;
   code: Slug;
+  greeting: string;
   exercises?: Array<{
     _ref: string;
     _type: "reference";
@@ -364,6 +365,7 @@ export type KickoffQueryResult = {
   _rev: string;
   title: string;
   code: Slug;
+  greeting: string;
   exercises: Array<{
     _id: string;
     _type: "exercise";

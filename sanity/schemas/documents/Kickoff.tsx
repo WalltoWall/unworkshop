@@ -51,6 +51,14 @@ export const Kickoff = defineType({
 			],
 		}),
 		defineField({
+			name: "greeting",
+			title: "Greeting",
+			description:
+				'The gretting shown to attendees when they register. Should be a short phrase like: "Good morning!"',
+			type: "string",
+			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
 			name: "exercises",
 			title: "Exercises",
 			description: "The list of exercises.",

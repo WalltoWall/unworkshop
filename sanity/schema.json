@@ -2053,6 +2053,13 @@
         },
         "optional": false
       },
+      "greeting": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": false
+      },
       "exercises": {
         "type": "objectAttribute",
         "value": {

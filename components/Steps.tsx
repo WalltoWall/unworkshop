@@ -49,11 +49,11 @@ export const Steps = ({
 			<button
 				className={cx(
 					activeStep <= 1 && "invisible",
-					"flex w-14 items-center gap-1.5",
+					"flex w-20 items-center gap-1.5",
 				)}
 				onClick={() => goToStep(activeStep - 1)}
 			>
-				<ArrowBigLeftIcon className="w-5 fill-black" />
+				<ArrowBigRightIcon className="w-5 shrink-0 fill-black" />
 				<Text style="heading" size={20}>
 					Back
 				</Text>
@@ -78,7 +78,7 @@ export const Steps = ({
 					disabled={disabled}
 				>
 					{isPending ? (
-						<Spinner className="text-white" />
+						<Spinner className="size-4 text-white" />
 					) : activeStep - 1 === steps ? (
 						<Checkmark />
 					) : (
@@ -102,16 +102,13 @@ export const Steps = ({
 			</div>
 
 			<button
-				className={cx(
-					activeStep > steps && "invisible",
-					"flex w-14 items-center gap-1.5",
-				)}
-				onClick={() => goToStep(activeStep + 1)}
+				className={cx("flex w-20 items-center justify-end gap-1.5")}
+				onClick={handleNext}
 			>
 				<Text style="heading" size={20}>
-					Next
+					{activeStep > steps ? "Finish" : "Next"}
 				</Text>
-				<ArrowBigRightIcon className="w-5 fill-black" />
+				<ArrowBigRightIcon className="w-5 shrink-0 fill-black" />
 			</button>
 		</div>
 	)
