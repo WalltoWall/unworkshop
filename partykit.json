@@ -1,6 +1,6 @@
 {
-  "$schema": "https://www.partykit.io/schema.json",
-  "name": "optimistic-party",
-  "main": "party/index.ts",
-  "compatibilityDate": "2024-01-24"
+	"$schema": "https://www.partykit.io/schema.json",
+	"name": "unworkshop",
+	"main": "party/index.ts",
+	"compatibilityDate": "2024-01-24"
 }
