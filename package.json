@@ -5,13 +5,13 @@
 	"scripts": {
 		"dev": "concurrently -p \"{name}:\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm:dev:*\"",
 		"dev:next": "next dev --turbo",
-		"dev:partykit": "npx partykit dev",
+		"dev:partykit": "partykit dev",
 		"dev:codegen": "turbowatch ./sanity/codegen.ts",
 		"start": "concurrently -p \"{name}:\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm:start:*\"",
 		"start:next": "next start",
-		"start:partykit": "npx partykit dev",
+		"start:partykit": "partykit dev",
 		"build": "next build",
-		"deploy:partykit": "npx partykit deploy --with-vars",
+		"deploy:partykit": "NEXT_PUBLIC_SANITY_DATASET=production && partykit deploy --with-vars",
 		"lint": "next lint"
 	},
 	"dependencies": {
