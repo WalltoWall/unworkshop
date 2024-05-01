@@ -1511,6 +1511,27 @@
                                 "type": "number"
                               },
                               "optional": true
+                            },
+                            "color": {
+                              "type": "objectAttribute",
+                              "value": {
+                                "type": "union",
+                                "of": [
+                                  {
+                                    "type": "string",
+                                    "value": "red"
+                                  },
+                                  {
+                                    "type": "string",
+                                    "value": "green"
+                                  },
+                                  {
+                                    "type": "string",
+                                    "value": "yellow"
+                                  }
+                                ]
+                              },
+                              "optional": true
                             }
                           },
                           "rest": {

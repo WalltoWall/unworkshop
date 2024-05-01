@@ -13,11 +13,13 @@ interface HighlighterTextareaProps
 	extends Omit<React.ComponentPropsWithoutRef<"textarea">, "value"> {
 	value: string
 	badWords: Set<string>
+	invalidClassName?: string
 }
 
 const HighlighterTextarea = ({
 	className,
 	badWords,
+	invalidClassName = "text-red-63",
 	...props
 }: HighlighterTextareaProps) => {
 	const words = props.value.split(" ")
@@ -37,7 +39,10 @@ const HighlighterTextarea = ({
 					const invalid = badWords.has(word)
 
 					return (
-						<span key={_word + idx} className={clsx(invalid && "text-red-63")}>
+						<span
+							key={_word + idx}
+							className={clsx(invalid && invalidClassName)}
+						>
 							{_word + (idx === words.length - 1 ? "" : " ")}
 						</span>
 					)
@@ -45,6 +50,23 @@ const HighlighterTextarea = ({
 			</div>
 		</div>
 	)
+}
+
+type VariantOption = NonNullable<FieldProps["field"]["color"]>
+type Variant = { invalidTextCn: string; invalidBgCn: string }
+const variants: Record<VariantOption, Variant> = {
+	red: {
+		invalidTextCn: "text-red-63",
+		invalidBgCn: "bg-red-57",
+	},
+	green: {
+		invalidTextCn: "text-green-52",
+		invalidBgCn: "bg-green-52",
+	},
+	yellow: {
+		invalidTextCn: "text-yellow-52",
+		invalidBgCn: "bg-yellow-52",
+	},
 }
 
 type Props = FieldProps<{
@@ -61,6 +83,8 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 	if (answer && answer.type !== "Tagline") {
 		throw new Error("Invalid answer data found.")
 	}
+
+	const variant = variants[props.field.color ?? "red"]
 
 	const answerOne = answer?.responses.at(0) ?? ""
 	const answerTwo = answer?.responses.at(1)
@@ -100,6 +124,7 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 			<HighlightedResponses
 				responses={sourceResponses}
 				answers={[answerOne, answerTwo]}
+				invalidClassName={variant.invalidBgCn}
 				className="mt-5"
 			/>
 
@@ -114,6 +139,7 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 			<HighlighterTextarea
 				value={answerOne}
 				onChange={(e) => handleChange(e.currentTarget.value, answerTwo)}
+				invalidClassName={variant.invalidTextCn}
 				{...sharedInputProps}
 			/>
 
@@ -130,6 +156,7 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 				<HighlighterTextarea
 					value={answerTwo}
 					onChange={(e) => handleChange(answerOne, e.currentTarget.value)}
+					invalidClassName={variant.invalidTextCn}
 					{...sharedInputProps}
 				/>
 			)}

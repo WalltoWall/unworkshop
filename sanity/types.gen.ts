@@ -237,6 +237,7 @@ export type Exercise = {
         addButtonText?: string;
         min?: number;
         max?: number;
+        color?: "red" | "green" | "yellow";
         _key: string;
       }>;
       _type: "step";
@@ -532,6 +533,7 @@ export type KickoffQueryResult = {
           addButtonText?: string;
           min?: number;
           max?: number;
+          color?: "green" | "red" | "yellow";
           _key: string;
         }>;
         _type: "step";

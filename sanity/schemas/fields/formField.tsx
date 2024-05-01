@@ -125,5 +125,22 @@ export const formFieldMember = defineArrayMember({
 			hidden: ({ parent }) => parent?.type !== "Narrow",
 			validation: (rule) => rule.positive(),
 		}),
+
+		// Tagline fields.
+		defineField({
+			name: "color",
+			title: "Color",
+			description: "Select the color scheme for this tagline.",
+			type: "string",
+			initialValue: "red",
+			hidden: ({ parent }) => parent?.type !== "Tagline",
+			options: {
+				list: [
+					{ title: "Red", value: "red" },
+					{ title: "Green", value: "green" },
+					{ title: "Yellow", value: "yellow" },
+				],
+			},
+		}),
 	],
 })

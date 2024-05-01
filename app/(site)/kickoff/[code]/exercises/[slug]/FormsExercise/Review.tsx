@@ -28,10 +28,7 @@ export const Review = ({ allAnswers = [], exercise, actions }: Props) => {
 			{steps.map((step, stepIdx) =>
 				step.fields?.map((field, fieldIdx) => {
 					const stepAnswer = allAnswers.at(stepIdx)
-					if (!stepAnswer)
-						throw new Error("No answer foudn for step: " + stepIdx + 1)
-
-					const fieldAnswer = stepAnswer.at(fieldIdx)
+					const fieldAnswer = stepAnswer?.at(fieldIdx)
 
 					return (
 						<FieldContainer key={field._key}>
