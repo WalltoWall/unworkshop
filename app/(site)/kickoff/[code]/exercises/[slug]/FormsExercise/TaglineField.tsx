@@ -5,7 +5,7 @@ import { HighlightedResponses } from "./HighlightedResponses"
 import { Prompt } from "./Prompt"
 import { Textarea, textareaStyles } from "./Textarea"
 import type { FieldProps, FormFieldAnswer } from "./types"
-import { getBadWords, sanitizeString } from "./utils"
+import { getBadWords, getTaglineVariant, sanitizeString } from "./utils"
 
 const INPUT_NAME = "answer"
 
@@ -52,23 +52,6 @@ const HighlighterTextarea = ({
 	)
 }
 
-type VariantOption = NonNullable<FieldProps["field"]["color"]>
-type Variant = { invalidTextCn: string; invalidBgCn: string }
-const variants: Record<VariantOption, Variant> = {
-	red: {
-		invalidTextCn: "text-red-63",
-		invalidBgCn: "bg-red-57",
-	},
-	green: {
-		invalidTextCn: "text-green-52",
-		invalidBgCn: "bg-green-52",
-	},
-	yellow: {
-		invalidTextCn: "text-yellow-52",
-		invalidBgCn: "bg-yellow-52",
-	},
-}
-
 type Props = FieldProps<{
 	source: FormFieldAnswer
 }>
@@ -84,7 +67,7 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 		throw new Error("Invalid answer data found.")
 	}
 
-	const variant = variants[props.field.color ?? "red"]
+	const variant = getTaglineVariant(props.field.color ?? "red")
 
 	const answerOne = answer?.responses.at(0) ?? ""
 	const answerTwo = answer?.responses.at(1)

@@ -1,26 +1,25 @@
 import Link from "next/link"
 import { useParams, useSearchParams } from "next/navigation"
 import { cx } from "class-variance-authority"
-import type * as ST from "@/sanity/types.gen"
+import * as R from "remeda"
 
 interface Props {
-	exercise: ST.Exercise
+	steps: number
+	slug: string
 }
 
-export const QuadrantsHeaderNav = ({ exercise }: Props) => {
+export const ExerciseWithStepsNav = ({ steps, slug }: Props) => {
 	const params = useParams()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
 
-	if (!exercise.quadrants) return null
-
 	return (
 		<ul className="mt-6 flex flex-col gap-3">
-			{exercise.quadrants?.map((q, idx) => (
-				<li key={q._key}>
+			{R.range(0, steps).map((idx) => (
+				<li key={idx}>
 					<Link
 						href={{
-							href: `/presenter/${params.code}/${exercise.slug.current}`,
+							href: `/presenter/${params.code}/${slug}`,
 							query: { step: idx + 1 },
 						}}
 						className={cx(
@@ -28,7 +27,7 @@ export const QuadrantsHeaderNav = ({ exercise }: Props) => {
 							idx + 1 === step ? "opacity-100" : "opacity-50",
 						)}
 					>
-						Step {idx + 1}: {q.name}
+						Step {idx + 1}
 					</Link>
 				</li>
 			))}

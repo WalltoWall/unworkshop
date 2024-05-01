@@ -2,6 +2,7 @@ import React from "react"
 import { Text } from "@/components/Text"
 import { HighlightedResponses } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/HighlightedResponses"
 import type { TaglineFieldAnswer } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
+import { getTaglineVariant } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/utils"
 import type { ResponseCardProps } from "./ResponseCard"
 import { ResponseDialog } from "./ResponseDialog"
 import { Slider } from "./Slider"
@@ -27,6 +28,7 @@ export const TaglineResponseCard = ({
 		throw new Error("Invalid resolved tagline source answer.")
 	}
 
+	const variant = getTaglineVariant(field.color ?? "red")
 	const displayName = settings.names ? name : `Participant ${participantNumber}`
 
 	return (
@@ -42,6 +44,7 @@ export const TaglineResponseCard = ({
 						size={14}
 						className="mt-5"
 						validClassName="bg-black text-white"
+						invalidClassName={variant.invalidBgCn}
 					/>
 
 					<ul className="mt-6 space-y-8">
@@ -62,6 +65,7 @@ export const TaglineResponseCard = ({
 					className="w-full max-w-[40.625rem] items-center justify-center gap-3"
 					validClassName="bg-black text-white"
 					itemClassName="p-4 rounded-xl"
+					invalidClassName={variant.invalidBgCn}
 				/>
 
 				<Slider.Container>

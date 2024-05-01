@@ -18,6 +18,7 @@ const PresenterPage = () => {
 	return (
 		<React.Suspense>
 			<PresenterHeader />
+
 			<div className="space-y-4 px-7 py-8 text-center">
 				<Text style="heading" size={24}>
 					Enter your group code

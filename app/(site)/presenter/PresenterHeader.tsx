@@ -1,16 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import React from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { cx } from "class-variance-authority"
 import * as R from "remeda"
+import { match } from "ts-pattern"
 import { Chevron } from "@/components/icons/Chevron"
 import { Hamburger } from "@/components/icons/Hamburger"
 import { Logo } from "@/components/Logo"
 import { Text } from "@/components/Text"
 import type * as ST from "@/sanity/types.gen"
-import { QuadrantsHeaderNav } from "./[code]/[slug]/_QuadrantsExercise/QuadrantsHeaderNav"
+import { ExerciseWithStepsNav } from "./[code]/[slug]/_QuadrantsExercise/QuadrantsHeaderNav"
 
 interface PresenterHeaderProp {
 	kickoffCode?: string
@@ -23,14 +24,16 @@ export const PresenterHeader = ({
 	exercises,
 	exercise,
 }: PresenterHeaderProp) => {
+	const [isOpen, setIsOpen] = React.useState(false)
 	const router = useRouter()
 	const pathname = usePathname()
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
 
-	const steps = exercise?.quadrants ? exercise.quadrants.length : null
-
-	const [isOpen, setIsOpen] = useState(false)
+	const steps = match(exercise?.type)
+		.with("quadrants", () => exercise?.quadrants?.length ?? 1)
+		.with("brainstorm", () => exercise?.steps?.length ?? 1)
+		.otherwise(() => null)
 
 	const changeStep = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const params = new URLSearchParams({
@@ -39,6 +42,9 @@ export const PresenterHeader = ({
 
 		router.push(pathname + "?" + params.toString())
 	}
+
+	// Close on page change.
+	React.useEffect(() => setIsOpen(false), [pathname, searchParams])
 
 	return (
 		<header className="relative z-50 flex h-[5.5rem] items-center bg-black px-8 py-[1.125rem]">
@@ -97,9 +103,20 @@ export const PresenterHeader = ({
 											{e.name}
 										</Link>
 
-										{e.type === "quadrants" && (
-											<QuadrantsHeaderNav exercise={e} />
-										)}
+										{match(e.type)
+											.with("quadrants", () => (
+												<ExerciseWithStepsNav
+													steps={e.quadrants?.length ?? 1}
+													slug={e.slug.current}
+												/>
+											))
+											.with("brainstorm", () => (
+												<ExerciseWithStepsNav
+													steps={e.steps?.length ?? 1}
+													slug={e.slug.current}
+												/>
+											))
+											.otherwise(() => null)}
 									</li>
 								)
 							})}
