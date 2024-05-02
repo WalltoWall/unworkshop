@@ -30,14 +30,14 @@ export const HighlightedResponses = ({
 
 	return (
 		<ul className={clsx(className, "flex flex-wrap gap-2")}>
-			{responses.map((resp) => {
+			{responses.map((resp, idx) => {
 				const badWords = sanitizeString(resp).split(" ")
 				const invalid = badWords.some((bWord) => answers.has(bWord))
 
 				return (
 					<Text
 						asChild
-						key={resp}
+						key={idx}
 						size={size}
 						style="copy"
 						className={clsx(

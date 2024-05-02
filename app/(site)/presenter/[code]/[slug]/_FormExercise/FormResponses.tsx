@@ -42,15 +42,11 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 
 			return {
 				answers,
-				name: participant.name,
-				id: participant._id,
+				name: participant?.name,
+				id: participant?._id,
 			}
 		},
 	)
-
-	// console.log(participantAnswers)
-
-	// return null
 
 	return (
 		<>
@@ -94,7 +90,7 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 													key={pOrG.answer.type + idx}
 													answer={pOrG.answer}
 													allParticipantAnswers={
-														participantOrGroupAnswers[pOrG.id].answers
+														participantOrGroupAnswers[pOrG.id]?.answers
 													}
 													name={pOrG.name}
 													field={field}

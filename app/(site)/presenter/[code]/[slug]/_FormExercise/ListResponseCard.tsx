@@ -30,7 +30,7 @@ export const ListResponseCard = ({
 					)}
 
 					<HighlightedResponses
-						responses={g.responses}
+						responses={g.responses.filter(Boolean)}
 						answers={[]}
 						size={14}
 						validClassName="bg-black text-white"

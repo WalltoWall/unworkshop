@@ -21,15 +21,18 @@ export const TaglineResponseCard = ({
 	}
 
 	const sourceAnswer = allParticipantAnswers
-		.at(field.source.step - 1)
+		?.at(field.source.step - 1)
 		?.at(field.source.field - 1)
 
-	if (!sourceAnswer || sourceAnswer.type !== "List") {
+	if (sourceAnswer?.type !== "List") {
 		throw new Error("Invalid resolved tagline source answer.")
 	}
 
 	const variant = getTaglineVariant(field.color ?? "red")
 	const displayName = settings.names ? name : `Participant ${participantNumber}`
+
+	const words = sourceAnswer.groups.at(0)?.responses.filter(Boolean) ?? []
+	const answers = answer.responses.filter(Boolean)
 
 	return (
 		<ResponseDialog
@@ -39,17 +42,17 @@ export const TaglineResponseCard = ({
 			trigger={
 				<>
 					<HighlightedResponses
-						responses={sourceAnswer.groups.at(0)?.responses ?? []}
-						answers={answer.responses}
+						responses={words}
+						answers={answers}
 						size={14}
 						className="mt-5"
 						validClassName="bg-black text-white"
 						invalidClassName={variant.invalidBgCn}
 					/>
 
-					<ul className="mt-6 space-y-8">
-						{answer.responses.map((resp) => (
-							<Text key={resp} asChild size={18}>
+					<ul className="mt-6 flex flex-col gap-8">
+						{answers.map((resp, idx) => (
+							<Text key={idx} asChild size={18}>
 								<li>{resp}</li>
 							</Text>
 						))}
@@ -59,8 +62,8 @@ export const TaglineResponseCard = ({
 		>
 			<div className="flex h-full flex-col items-center justify-between gap-12">
 				<HighlightedResponses
-					responses={sourceAnswer.groups.at(0)?.responses ?? []}
-					answers={answer.responses}
+					responses={words}
+					answers={answers}
 					size={16}
 					className="w-full max-w-[40.625rem] items-center justify-center gap-3"
 					validClassName="bg-black text-white"
@@ -69,8 +72,8 @@ export const TaglineResponseCard = ({
 				/>
 
 				<Slider.Container>
-					{answer.responses.map((resp) => (
-						<Slider.Slide key={resp}>
+					{answers.map((resp, idx) => (
+						<Slider.Slide key={idx}>
 							<Text
 								size={40}
 								className="mx-auto w-full max-w-[46rem] text-center"

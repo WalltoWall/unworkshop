@@ -15,7 +15,7 @@ import { TextResponseCard } from "./TextResponseCard"
 
 export type ResponseCardProps<T extends FormFieldAnswer = FormFieldAnswer> = {
 	answer: T
-	allParticipantAnswers: FormStepAnswer[]
+	allParticipantAnswers?: FormStepAnswer[]
 	name: string
 	field: FormField
 	settings: FormPresenterViewSettings

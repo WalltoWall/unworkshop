@@ -57,6 +57,8 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 		? snap.groups?.[groupSlug]?.[participant._id]
 		: undefined
 
+	const groupCount = exercise.groups?.length ?? 0
+
 	if (!multiplayer.provider.synced) return null
 
 	return (
@@ -93,7 +95,7 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 										allAnswers={answers}
 										answer={fieldAnswer}
 										actions={actions}
-										readOnly={role !== "captain"}
+										readOnly={groupCount > 0 && role !== "captain"}
 									/>
 								</FieldContainer>
 							)

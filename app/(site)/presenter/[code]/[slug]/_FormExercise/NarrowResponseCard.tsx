@@ -18,7 +18,7 @@ export const NarrowResponseCard = ({
 	const sourceStep = field.source?.step ?? Infinity
 	const sourceField = field.source?.step ?? Infinity
 
-	const sourceAnswer = allParticipantAnswers.at(sourceStep)?.at(sourceField)
+	const sourceAnswer = allParticipantAnswers?.at(sourceStep)?.at(sourceField)
 
 	if (sourceAnswer && sourceAnswer.type !== "List") {
 		throw new Error(
