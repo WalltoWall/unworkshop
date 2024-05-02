@@ -11,7 +11,7 @@ import {
 import { toast } from "sonner"
 import { Chevron } from "../../components/icons/Chevron"
 import { Spinner } from "../../components/Spinner"
-import { registerForKickoff } from "./actions"
+import { checkCodeAction } from "./actions"
 
 const Slot = (props: SlotProps) => {
 	return (
@@ -46,7 +46,7 @@ const FakeDash = () => {
 	)
 }
 
-const RegisterInput = () => {
+const CodeInput = () => {
 	const [showSubmit, setShowSubmit] = React.useState(false)
 	const status = useFormStatus()
 
@@ -60,6 +60,7 @@ const RegisterInput = () => {
 				inputMode="text"
 				pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
 				containerClassName="group flex items-center"
+				className="text-16"
 				onChange={(value) => {
 					setShowSubmit(value.length === 7)
 				}}
@@ -97,8 +98,8 @@ const RegisterInput = () => {
 	)
 }
 
-export const RegisterForm = () => {
-	const [state, action] = useFormState(registerForKickoff, { error: "" })
+export const CodeForm = () => {
+	const [state, action] = useFormState(checkCodeAction, { error: "" })
 
 	React.useEffect(() => {
 		if (!state.error) return
@@ -108,7 +109,7 @@ export const RegisterForm = () => {
 
 	return (
 		<form className="flex flex-col space-y-1.5" action={action}>
-			<RegisterInput />
+			<CodeInput />
 		</form>
 	)
 }

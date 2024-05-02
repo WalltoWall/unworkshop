@@ -48,6 +48,7 @@ const KickoffRegisterPage = async (props: Props) => {
 			name: PARTICIPANT_COOKIE,
 			value: participant._id,
 			httpOnly: true,
+			maxAge: 604800, // 7 days
 		})
 
 		redirect(`/kickoff/${code}`)

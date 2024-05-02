@@ -4,8 +4,11 @@ import { usePathname, useRouter } from "next/navigation"
 import { cx } from "class-variance-authority"
 import * as R from "remeda"
 import { Text } from "@/components/Text"
+import { takeLast } from "@/lib/take-last"
 import { Checkmark } from "./icons/Checkmark"
 import { Spinner } from "./Spinner"
+
+const MAX_PAGINATION_DOTS = 3
 
 interface Props {
 	disabled?: boolean
@@ -61,15 +64,19 @@ export const Steps = ({
 
 			<div className="relative">
 				<div className="absolute inset-y-0 right-full mr-2 flex items-center gap-2">
-					{R.range(0, activeStep - 1).map((i) => (
-						<button
-							key={i}
-							className="size-3 rounded-full bg-gray-75"
-							onClick={() => goToStep(i + 1)}
-						>
-							<div className="sr-only">Go to step {i + 1}</div>
-						</button>
-					))}
+					{R.pipe(
+						R.range(0, activeStep - 1),
+						takeLast(MAX_PAGINATION_DOTS),
+						R.map((i) => (
+							<button
+								key={i}
+								className="size-3 rounded-full bg-gray-75"
+								onClick={() => goToStep(i + 1)}
+							>
+								<div className="sr-only">Go to step {i + 1}</div>
+							</button>
+						)),
+					)}
 				</div>
 
 				<button
@@ -89,15 +96,19 @@ export const Steps = ({
 				</button>
 
 				<div className="absolute inset-y-0 left-full ml-2 flex items-center gap-2">
-					{R.range(activeStep, steps + 1).map((i) => (
-						<button
-							key={i}
-							className="size-3 rounded-full bg-gray-75"
-							onClick={() => goToStep(i + 1)}
-						>
-							<div className="sr-only">Go to step {i + 1}</div>
-						</button>
-					))}
+					{R.pipe(
+						R.range(activeStep, steps + 1),
+						R.take(MAX_PAGINATION_DOTS),
+						R.map((i) => (
+							<button
+								key={i}
+								className="size-3 rounded-full bg-gray-75"
+								onClick={() => goToStep(i + 1)}
+							>
+								<div className="sr-only">Go to step {i + 1}</div>
+							</button>
+						)),
+					)}
 				</div>
 			</div>
 

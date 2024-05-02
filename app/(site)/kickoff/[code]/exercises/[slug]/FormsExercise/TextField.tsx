@@ -8,8 +8,9 @@ type Props = FieldProps
 const DEFAULT_INPUT_NAME = "answer"
 
 export const TextField = ({ answer, actions, ...props }: Props) => {
-	if (answer && answer.type !== "Text")
+	if (answer && answer.type !== "Text") {
 		throw new Error("Invalid answer data found.")
+	}
 
 	const onChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -35,7 +36,7 @@ export const TextField = ({ answer, actions, ...props }: Props) => {
 				.with("Text", () => (
 					<input
 						type="text"
-						className="h-9 w-full rounded-lg border border-gray-90 px-4 py-2.5 text-14 leading-copyMega"
+						className="h-9 w-full rounded-lg border border-gray-90 px-4 py-2.5 text-16 leading-copyMega"
 						{...sharedProps}
 					/>
 				))

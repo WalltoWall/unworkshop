@@ -76,7 +76,9 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 									{field.type !== "Tagline" && (
 										<Prompt
 											className="mb-5"
-											num={fieldIdx + 1}
+											num={
+												stepData.fields!.length > 1 ? fieldIdx + 1 : undefined
+											}
 											additionalText={field.additionalText}
 										>
 											{field.prompt}
@@ -91,7 +93,7 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 										allAnswers={answers}
 										answer={fieldAnswer}
 										actions={actions}
-										readOnly={role && role !== "captain"}
+										readOnly={role !== "captain"}
 									/>
 								</FieldContainer>
 							)

@@ -20,13 +20,14 @@ const CodeSchema = z
 		{ message: "Kickoff does not exist." },
 	)
 
-export async function registerForKickoff(
+export async function checkCodeAction(
 	_prevState: { error: string },
 	data: FormData,
 ) {
 	"use server"
 
 	const result = await CodeSchema.safeParseAsync(data.get("code"))
+
 	if (!result.success) {
 		const msg = result.error.format()._errors.join(";")
 

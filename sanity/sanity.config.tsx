@@ -12,6 +12,9 @@ const config = defineConfig({
 	subtitle: "Welcome back to the ShopShop CMS.",
 	basePath: "/admin",
 
+	document: { comments: { enabled: false } },
+	scheduledPublishing: { enabled: false },
+
 	logo: () => <Logo style={{ width: "2.1875rem" }} />,
 	icon: () => <Logo />,
 
