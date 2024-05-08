@@ -50,14 +50,16 @@ const StepNavigation = ({ steps, slug, step }: StepNavigationProps) => {
 }
 
 interface PresenterHeaderProp {
-	kickoffCode?: string
+	kickoff: ST.KickoffQueryResult
 	exercises: Array<ST.Exercise>
 }
 
 export const PresenterHeader = ({
-	kickoffCode,
+	kickoff,
 	exercises,
 }: PresenterHeaderProp) => {
+	const code = kickoff?.code.current
+
 	const [isOpen, setIsOpen] = React.useState(false)
 
 	const router = useRouter()
@@ -87,16 +89,13 @@ export const PresenterHeader = ({
 	React.useEffect(() => setIsOpen(false), [pathname, searchParams])
 
 	return (
-		<header className="relative z-50 flex h-[5.5rem] items-center bg-black px-8 py-[1.125rem]">
-			<Link href={`/presenter/${kickoffCode}`}>
+		<header className="relative z-50 flex h-[5.5rem] items-center gap-5 bg-black px-8 py-[1.125rem]">
+			<Link href={`/presenter/${code}`}>
 				<Logo className="h-[3.25rem] w-[3.25rem] text-white" />
 			</Link>
 
-			<Text
-				size={48}
-				className="ml-10 font-bold uppercase text-white font-heading"
-			>
-				{exercise ? exercise.name : "Presenter"}
+			<Text size={48} className="font-bold uppercase text-white font-heading">
+				{exercise ? exercise.name : `${kickoff?.title} Presenter`}
 			</Text>
 
 			{steps && (
@@ -136,7 +135,7 @@ export const PresenterHeader = ({
 												"relative inline-block pb-1 uppercase underline-offset-8 text-48 font-heading capsize hover:underline",
 												exercise?._id === e._id && "underline",
 											)}
-											href={`/presenter/${kickoffCode}/${e.slug.current}`}
+											href={`/presenter/${code}/${e.slug.current}`}
 										>
 											{e.name}
 										</Link>

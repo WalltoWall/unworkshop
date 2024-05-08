@@ -12,7 +12,7 @@ const PresenterKickoffLayout = async (props: Props) => {
 
 	return (
 		<div className="flex h-svh flex-col">
-			<PresenterHeader kickoffCode={props.params.code} exercises={exercises} />
+			<PresenterHeader kickoff={kickoff} exercises={exercises} />
 
 			<main id="main" className="grow p-8">
 				{props.children}

@@ -72,7 +72,7 @@ export default class UnworkshopServer implements Party.Server {
 			case "brainstorm":
 				return { type: "brainstorm", step: 1 }
 			case "quadrants":
-				return { type: "quadrants", step: 1 }
+				return { type: "quadrants", step: 1, data: {} }
 			case "sliders":
 				return { type: "sliders", step: 1, data: {} }
 

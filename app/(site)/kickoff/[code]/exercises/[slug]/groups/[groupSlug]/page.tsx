@@ -3,6 +3,7 @@ import { InstructionsModal } from "@/components/InstructionsModal"
 import { assertOnboarded } from "@/lib/assert-onboarded"
 import { client } from "@/sanity/client"
 import { FormExercise } from "@/exercises/form/ui"
+import { QuadrantsExercise } from "@/exercises/quadrants/ui"
 import { SlidersExercise } from "@/exercises/sliders/ui"
 import { RoleHeader } from "@/groups/ui/RoleHeader"
 
@@ -47,6 +48,14 @@ const GroupExercisePage = async (props: Props) => {
 
 			{exercise.type === "sliders" && (
 				<SlidersExercise
+					exercise={exercise}
+					groupSlug={props.params.groupSlug}
+					participant={participant}
+				/>
+			)}
+
+			{exercise.type === "quadrants" && (
+				<QuadrantsExercise
 					exercise={exercise}
 					groupSlug={props.params.groupSlug}
 					participant={participant}
