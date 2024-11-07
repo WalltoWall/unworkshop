@@ -278,8 +278,42 @@ export default class UnworkshopServer implements Party.Server {
 				break
 			}
 
+			case "update-dot": {
+				if (this.answer.type !== "quadrants") {
+					this.sendAndThrow("Expected a quadrants answer!", conn)
+				}
+
+				// Initialize the list of quadrants.
+				this.answer.data[msg.id] ??= []
+				const quadrants = this.answer.data[msg.id]!
+
+				// Initialize an answer for this step.
+				quadrants[msg.stepIdx] ??= {}
+				const stepAnswer = quadrants[msg.stepIdx]!
+
+				if (msg.dotType === "today") {
+					if (!stepAnswer.today) {
+						stepAnswer.today ??= { top: msg.top, left: msg.left }
+					} else {
+						stepAnswer.today.top = msg.top
+						stepAnswer.today.left = msg.left
+					}
+				} else {
+					if (!stepAnswer.tomorrow) {
+						stepAnswer.tomorrow ??= { top: msg.top, left: msg.left }
+					} else {
+						stepAnswer.tomorrow.top = msg.top
+						stepAnswer.tomorrow.left = msg.left
+					}
+				}
+
+				this.broadcastAnswers()
+
+				break
+			}
+
 			default:
-				// @ts-expect-error - This should error if all cases are being handled.
+				// @ts-expect-error - This should error if there is a missing case.
 				this.sendAndThrow("Unimplemented message type: " + msg.type, conn)
 		}
 

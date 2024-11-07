@@ -2,6 +2,7 @@ import { z } from "zod"
 import type { BrainstormAnswer } from "@/exercises/brainstorm/types"
 import * as FormMessages from "@/exercises/form/messages"
 import type { FormAnswer } from "@/exercises/form/types"
+import * as QuadrantsMessages from "@/exercises/quadrants/messages"
 import type { QuadrantsAnswer } from "@/exercises/quadrants/types"
 import * as SharedMessages from "@/exercises/shared-messages"
 import * as SlidersMessages from "@/exercises/sliders/messages"
@@ -39,6 +40,9 @@ export const PartyIncomingMessage = z.discriminatedUnion("type", [
 
 	// Sliders Messages
 	SlidersMessages.UpdateSlider,
+
+	// Quadrants Messages
+	QuadrantsMessages.UpdateDot,
 ])
 export type PartyIncomingMessage = z.infer<typeof PartyIncomingMessage>
 

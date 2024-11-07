@@ -14,3 +14,8 @@ export type QuadrantStepAnswer = {
 export type QuadrantDotPlacement = { top: number; left: number }
 
 export type QuadrantStep = NonNullable<ST.Exercise["quadrants"]>[number]
+
+export type QuadrantStepState =
+	| "today_pending"
+	| "tomorrow_pending"
+	| "complete"

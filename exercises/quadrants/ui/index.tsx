@@ -2,16 +2,15 @@
 
 import React from "react"
 import { useParams, useRouter } from "next/navigation"
-import { match } from "ts-pattern"
+import { match, P } from "ts-pattern"
 import { FinalizeBanner } from "@/components/FinalizeBanner"
 import { Steps } from "@/components/Steps"
 import type * as ST from "@/sanity/types.gen"
 import { useGroupContext } from "@/groups/group-context"
+import type { QuadrantStepState } from "../types"
 import { assertQuadrantsAnswer } from "../utils"
 import { InstructionsBanner } from "./InstructionsBanner"
 import { Quadrant } from "./Quadrant"
-
-type StepState = "today_pending" | "tomorrow_pending" | "complete"
 
 interface Props {
 	exercise: ST.Exercise
@@ -24,10 +23,9 @@ export const QuadrantsExercise = ({
 	participant,
 	groupSlug,
 }: Props) => {
-	const [state, setState] = React.useState<StepState>("today_pending")
 	const params = useParams()
 	const router = useRouter()
-	const { answer, actions, role } = useGroupContext()
+	const { answer, role } = useGroupContext()
 	assertQuadrantsAnswer(answer)
 
 	if (
@@ -39,7 +37,7 @@ export const QuadrantsExercise = ({
 		throw new Error("Invalid exercise found. Check quadrants configuration!")
 	}
 
-	// const isGroupExercise = Boolean(exercise.groups && exercise.groups.length > 0)
+	const isGroupExercise = Boolean(exercise.groups && exercise.groups.length > 0)
 
 	const step = answer.step
 	const stepIdx = step - 1
@@ -50,14 +48,22 @@ export const QuadrantsExercise = ({
 	const allAnswers = answer.data[id] ?? []
 
 	const quadrant = allQuadrants.at(stepIdx)
-	// const stepAnswer = allAnswers.at(stepIdx)
+	const stepAnswer = allAnswers.at(stepIdx)
+
+	if (!quadrant) return null
+
+	const state = match(stepAnswer)
+		.with({ today: P.any, tomorrow: P.any }, () => "complete")
+		.with(
+			{ today: P.any, tomorrow: P.optional(P.any) },
+			() => "tomorrow_pending",
+		)
+		.otherwise(() => "today_pending") as QuadrantStepState
 
 	const onReviewScreen = stepIdx === allQuadrants.length
 
 	const goBackToExerciseList = () =>
 		router.push(`/kickoff/${params.code}/exercises`)
-
-	if (!quadrant) return null
 
 	return (
 		<div className="mt-6 flex flex-[1_1_0] flex-col gap-6">
@@ -68,29 +74,27 @@ export const QuadrantsExercise = ({
 			)}
 
 			{!onReviewScreen && (
-				<div className="flex flex-col items-center">
-					{match(state)
-						.with("today_pending", () => (
-							<InstructionsBanner
-								dotVariant="unfilled"
-								value={exercise.today_instructions!}
-							/>
-						))
-						.with("tomorrow_pending", () => (
-							<InstructionsBanner
-								dotVariant="filled"
-								value={exercise.tomorrow_instructions!}
-							/>
-						))
-						.with("complete", () => (
-							<InstructionsBanner
-								dotVariant="filled"
-								value={exercise.finalize_instructions!}
-							/>
-						))
-						.exhaustive()}
+				<div className="flex flex-col items-center gap-8">
+					<InstructionsBanner
+						dotVariant={match(state)
+							.with("today_pending", () => "unfilled" as const)
+							.otherwise(() => "filled")}
+						value={match(state)
+							.with("today_pending", () => exercise.today_instructions!)
+							.with("tomorrow_pending", () => exercise.tomorrow_instructions!)
+							.with("complete", () => exercise.finalize_instructions!)
+							.exhaustive()}
+					/>
 
-					<Quadrant quadrant={quadrant} className="self-stretch" />
+					<Quadrant
+						quadrant={quadrant}
+						className="self-stretch"
+						readOnly={isGroupExercise && role !== "captain"}
+						state={state}
+						stepAnswer={stepAnswer}
+						stepIdx={stepIdx}
+						id={id}
+					/>
 				</div>
 			)}
 
