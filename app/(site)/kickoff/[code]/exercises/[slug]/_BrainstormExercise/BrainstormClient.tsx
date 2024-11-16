@@ -37,7 +37,7 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 	const cards = R.pipe(
 		unsorted.concat(sorted),
 		R.sortBy([(c) => c.createdAt, "desc"]),
-		R.filter((c) => c.participantOrGroupId === groupSlug ?? participant._id),
+		R.filter((c) => c.participantOrGroupId === (groupSlug ?? participant._id)),
 	)
 
 	const role = groupSlug && snap.groups?.[groupSlug]?.[participant._id]
