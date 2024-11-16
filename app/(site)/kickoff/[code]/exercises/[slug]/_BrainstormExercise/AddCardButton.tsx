@@ -16,14 +16,11 @@ export const AddCardButton = ({
 	readOnly = false,
 }: Props) => {
 	function onClick() {
-		console.log("here")
 		if (readOnly) {
 			showContributorWarning()
 
 			return
 		}
-
-		console.log(participantOrGroupId)
 
 		actions.addCard({
 			participantOrGroupId: participantOrGroupId,
