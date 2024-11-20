@@ -59,7 +59,7 @@ export const RoleSelector = ({ participant, exercise }: Props) => {
 						onClick={onRoleCardClick}
 						img={contibutorIllustration}
 						name="Contributor"
-						instructions="I’ll add in my two-cents."
+						instructions="I’ll just read along."
 					/>
 					<RoleCard
 						role="captain"
