@@ -119,3 +119,4 @@ export const Card = React.forwardRef<HTMLDivElement, Props>(
 		)
 	},
 )
+Card.displayName = "Card"
