@@ -25,7 +25,7 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 	const stepIdx = step - 1
 	const stepData = exercise.steps.at(stepIdx)
 
-	const { snap, actions } = useMultiplayerBrainstorm({
+	const { snap, actions, multiplayer } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
 	})
@@ -63,6 +63,7 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 				participantOrGroupId={groupSlug ?? participant._id}
 				readOnly={role === "contributor"}
 				placeholder={stepData?.placeholder}
+				synced={multiplayer.provider.synced}
 			/>
 
 			<Steps
