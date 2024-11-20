@@ -153,6 +153,16 @@ export const Exercise = defineType({
 
 		// Slider fields.
 		defineField({
+			name: "removeSlidersVisual",
+			title: "Remove Visuals?",
+			type: "boolean",
+			initialValue: false,
+			description:
+				"If checked, sliders will no longer show their visual element such as the big typography or images.",
+			hidden: ({ document }) => document?.type !== "sliders",
+			options: { layout: "checkbox" },
+		}),
+		defineField({
 			name: "sliders",
 			title: "Sliders",
 			description: "The left and right values for this exercise.",

@@ -503,6 +503,13 @@
         },
         "optional": true
       },
+      "removeSlidersVisual": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "boolean"
+        },
+        "optional": true
+      },
       "sliders": {
         "type": "objectAttribute",
         "value": {

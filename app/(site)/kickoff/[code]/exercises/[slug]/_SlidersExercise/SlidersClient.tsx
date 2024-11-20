@@ -48,6 +48,7 @@ export const SlidersClient = ({ exercise, participant, groupSlug }: Props) => {
 					answer={answer}
 					actions={actions}
 					readOnly={role ? role !== "captain" : false}
+					removeVisuals={exercise.removeSlidersVisual}
 				/>
 			)}
 

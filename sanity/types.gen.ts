@@ -89,6 +89,7 @@ export type Exercise = {
 		color?: "green" | "red" | "yellow"
 		_key: string
 	}>
+	removeSlidersVisual?: boolean
 	sliders?: Array<{
 		question_text: string
 		today_text: string
@@ -388,6 +389,7 @@ export type KickoffQueryResult = {
 			color?: "green" | "red" | "yellow"
 			_key: string
 		}>
+		removeSlidersVisual?: boolean
 		sliders?: Array<{
 			question_text: string
 			today_text: string

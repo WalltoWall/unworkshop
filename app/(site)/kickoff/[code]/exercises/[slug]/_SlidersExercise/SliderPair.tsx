@@ -52,6 +52,7 @@ interface SliderProps {
 	leftImage?: MaybeSanityImage
 	rightImage?: MaybeSanityImage
 	className?: string
+	removeVisuals: boolean
 }
 const Slider = ({
 	label,
@@ -64,6 +65,7 @@ const Slider = ({
 	rightImage,
 	className,
 	onClick,
+	removeVisuals,
 }: SliderProps) => {
 	const leftToday = (value - 1) / (FULL_RANGE - 1)
 	const rightToday = 1 - leftToday
@@ -75,67 +77,69 @@ const Slider = ({
 		<div className={cx("rounded-lg bg-gray-97 p-4", className)}>
 			<Text>{label}</Text>
 
-			<div className="relative mt-3 flex h-32 justify-between overflow-hidden rounded-lg">
-				{isFilled.image(leftImage) && isFilled.image(rightImage) ? (
-					<>
-						<div className="h-32 w-1/2 bg-black">
-							<SanityImage
-								image={leftImage}
-								className="h-full w-full object-cover object-center opacity-100 duration-300"
-								aspectRatio={1}
-								style={{
-									opacity: 1.1 - value / 10,
-									filter: `grayScale(${leftToday * 100 + "%"})`,
-								}}
-							/>
-						</div>
+			{!removeVisuals && (
+				<div className="relative mt-3 flex h-32 justify-between overflow-hidden rounded-lg">
+					{isFilled.image(leftImage) && isFilled.image(rightImage) ? (
+						<>
+							<div className="h-32 w-1/2 bg-black">
+								<SanityImage
+									image={leftImage}
+									className="h-full w-full object-cover object-center opacity-100 duration-300"
+									aspectRatio={1}
+									style={{
+										opacity: 1.1 - value / 10,
+										filter: `grayScale(${leftToday * 100 + "%"})`,
+									}}
+								/>
+							</div>
 
-						<div className="h-32 w-1/2 bg-black">
-							<SanityImage
-								image={rightImage}
-								className="h-full w-full object-cover object-center opacity-100 duration-300"
-								aspectRatio={1}
-								style={{
-									opacity: 0.4 + value / 10,
-									filter: `grayScale(${rightToday * 100 + "%"})`,
-								}}
-							/>
-						</div>
-					</>
-				) : (
-					<>
-						<div
-							className="flex h-full min-w-min items-center justify-center bg-pink-85 px-2 text-center transition-[width]"
-							style={{ width: leftToday * 100 + "%" }}
-						>
-							<p
-								className={clsx(
-									"uppercase transition-all font-heading",
-									value === 1 && "rotate-[-90deg]",
-								)}
-								style={{ fontSize: leftFontSize }}
+							<div className="h-32 w-1/2 bg-black">
+								<SanityImage
+									image={rightImage}
+									className="h-full w-full object-cover object-center opacity-100 duration-300"
+									aspectRatio={1}
+									style={{
+										opacity: 0.4 + value / 10,
+										filter: `grayScale(${rightToday * 100 + "%"})`,
+									}}
+								/>
+							</div>
+						</>
+					) : (
+						<>
+							<div
+								className="flex h-full min-w-min items-center justify-center bg-pink-85 px-2 text-center transition-[width]"
+								style={{ width: leftToday * 100 + "%" }}
 							>
-								{rightLabel}
-							</p>
-						</div>
+								<p
+									className={clsx(
+										"uppercase transition-all font-heading",
+										value === 1 && "rotate-[-90deg]",
+									)}
+									style={{ fontSize: leftFontSize }}
+								>
+									{rightLabel}
+								</p>
+							</div>
 
-						<div
-							className="flex h-full min-w-min items-center justify-center bg-green-78 px-2 text-center transition-[width]"
-							style={{ width: rightToday * 100 + "%" }}
-						>
-							<p
-								className={clsx(
-									"w-full uppercase transition font-heading",
-									value === 6 && "rotate-90",
-								)}
-								style={{ fontSize: rightFontSize }}
+							<div
+								className="flex h-full min-w-min items-center justify-center bg-green-78 px-2 text-center transition-[width]"
+								style={{ width: rightToday * 100 + "%" }}
 							>
-								{leftLabel}
-							</p>
-						</div>
-					</>
-				)}
-			</div>
+								<p
+									className={clsx(
+										"w-full uppercase transition font-heading",
+										value === 6 && "rotate-90",
+									)}
+									style={{ fontSize: rightFontSize }}
+								>
+									{leftLabel}
+								</p>
+							</div>
+						</>
+					)}
+				</div>
+			)}
 
 			<RangeInput
 				className="mt-6"
@@ -161,6 +165,7 @@ interface Props {
 	answer: Answer | undefined
 	actions: SliderActions
 	readOnly?: boolean
+	removeVisuals?: boolean
 }
 
 export const SliderPair = ({
@@ -168,6 +173,7 @@ export const SliderPair = ({
 	answer,
 	actions,
 	readOnly = false,
+	removeVisuals = false,
 }: Props) => {
 	function onClick() {
 		if (readOnly) showContributorWarning()
@@ -186,6 +192,7 @@ export const SliderPair = ({
 				leftImage={item.left_image}
 				rightImage={item.right_image}
 				onClick={onClick}
+				removeVisuals={removeVisuals}
 				onChange={(e) => {
 					if (readOnly) return
 
@@ -201,6 +208,7 @@ export const SliderPair = ({
 				value={answer?.tomorrow || 3}
 				leftImage={item.left_image}
 				rightImage={item.right_image}
+				removeVisuals={removeVisuals}
 				onClick={onClick}
 				onChange={(e) => {
 					if (readOnly) return
