@@ -132,6 +132,13 @@ export const Exercise = defineType({
 							initialValue: "Single or short word responses are preferred.",
 						}),
 						defineField({
+							name: "placeholder",
+							title: "Placeholder",
+							description: "Placeholder text shown in each sticky note.",
+							type: "string",
+							initialValue: "Type something here to add your perception",
+						}),
+						defineField({
 							name: "color",
 							title: "Color",
 							type: "string",

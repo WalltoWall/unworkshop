@@ -1,6 +1,6 @@
 import React from "react"
 import clsx from "clsx"
-import { AddCardButton } from "./AddCardButton"
+import { AnimatePresence } from "framer-motion"
 import { Card } from "./Card"
 import type { BrainstormCard, Color } from "./types"
 import type { BrainstormActions } from "./use-multiplayer-brainstorm"
@@ -17,6 +17,7 @@ type Props = {
 	actions: BrainstormActions
 	participantOrGroupId: string
 	readOnly?: boolean
+	placeholder?: string
 }
 
 export const CardScroller = ({
@@ -25,28 +26,30 @@ export const CardScroller = ({
 	actions,
 	participantOrGroupId,
 	readOnly = false,
+	placeholder,
 }: Props) => {
-	return (
-		<div
-			className={clsx(
-				"mb-auto mt-4 grid min-h-0 flex-[1_1_0] grid-cols-2 content-start gap-2.5 overflow-y-auto py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:auto-rows-[10.25rem] sm:grid-cols-2",
-			)}
-		>
-			<AddCardButton
-				actions={actions}
-				participantOrGroupId={participantOrGroupId}
-				readOnly={readOnly}
-			/>
+	React.useEffect(() => {
+		if (cards.length > 0 || readOnly) return
 
-			{cards.map((card) => (
-				<Card
-					key={card.id}
-					card={card}
-					colorClassNames={colors[color]}
-					actions={actions}
-					readOnly={readOnly}
-				/>
-			))}
+		actions.addCard({ response: "", participantOrGroupId })
+	}, [participantOrGroupId, readOnly, cards.length])
+
+	return (
+		<div className="mb-auto mt-4 grid min-h-0 flex-[1_1_0] grid-cols-2 content-start gap-2.5 overflow-y-auto py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:auto-rows-[10.25rem] sm:grid-cols-2">
+			<AnimatePresence mode="popLayout">
+				{cards.map((card) => (
+					<Card
+						key={card.id}
+						card={card}
+						colorClassNames={colors[color]}
+						actions={actions}
+						readOnly={readOnly}
+						participantOrGroupId={participantOrGroupId}
+						allowDelete={cards.length > 1}
+						placeholder={placeholder}
+					/>
+				))}
+			</AnimatePresence>
 		</div>
 	)
 }

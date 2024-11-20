@@ -466,6 +466,13 @@
                 },
                 "optional": true
               },
+              "placeholder": {
+                "type": "objectAttribute",
+                "value": {
+                  "type": "string"
+                },
+                "optional": true
+              },
               "color": {
                 "type": "objectAttribute",
                 "value": {

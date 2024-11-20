@@ -86,6 +86,7 @@ export type Exercise = {
 	steps?: Array<{
 		prompt?: string
 		helpText?: string
+		placeholder?: string
 		color?: "green" | "red" | "yellow"
 		_key: string
 	}>
@@ -386,6 +387,7 @@ export type KickoffQueryResult = {
 		steps?: Array<{
 			prompt?: string
 			helpText?: string
+			placeholder?: string
 			color?: "green" | "red" | "yellow"
 			_key: string
 		}>

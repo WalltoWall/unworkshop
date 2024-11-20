@@ -9,7 +9,7 @@ import {
 import { SORTING_COLUMN_ID } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/constants"
 import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_ANSWERS } from "./constants"
-import { type BrainstormAnswers } from "./types"
+import { type BrainstormAnswers, type BrainstormCard } from "./types"
 
 export type UseMultiplayerBrainstormArgs = {
 	stepIdx: number
@@ -64,6 +64,21 @@ export const useMultiplayerBrainstorm = ({
 				id: uid(),
 				response: args.response,
 				createdAt: Math.floor(new Date().getTime() / 1000),
+				participantOrGroupId: args.participantOrGroupId,
+			})
+		},
+
+		spliceAddCard: (args: {
+			response: string
+			participantOrGroupId: string
+			clickedCard: BrainstormCard
+		}) => {
+			const step = getStep()
+
+			step.unsorted.push({
+				id: uid(),
+				response: args.response,
+				createdAt: args.clickedCard.createdAt + 1,
 				participantOrGroupId: args.participantOrGroupId,
 			})
 		},

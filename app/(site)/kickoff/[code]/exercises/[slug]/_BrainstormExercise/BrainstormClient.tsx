@@ -62,6 +62,7 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 				actions={actions}
 				participantOrGroupId={groupSlug ?? participant._id}
 				readOnly={role === "contributor"}
+				placeholder={stepData?.placeholder}
 			/>
 
 			<Steps
