@@ -112,7 +112,6 @@ export const SlidersPresenterViewClient = ({
 									answers={allStepAnswers}
 									barColor={color}
 									showNumbers={showNumbers}
-									showImages={showImages}
 									showToday={showTodayBar}
 									showTomorrow={showTomorrowBar}
 								/>
