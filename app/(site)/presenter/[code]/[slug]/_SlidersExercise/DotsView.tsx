@@ -11,18 +11,6 @@ import { Button } from "@/components/Button"
 import { Text } from "@/components/Text"
 import { SliderPresenterSteps } from "./SliderPresenterSteps"
 
-export interface GraphViewProps {
-	color: string
-	showLines: boolean
-	answers: Array<{ today: number; tomorrow: number }>
-	leftText: string
-	rightText: string
-	step: number
-	setStep: (num: number) => void
-	isDisabledLeft: boolean
-	isDisabledRight: boolean
-}
-
 const Bar = (props: { color: string }) => (
 	<div className="h-20" style={{ backgroundColor: props.color }} />
 )
@@ -115,6 +103,17 @@ const Line = (props: {
 	)
 }
 
+export interface DotsViewProps {
+	color: string
+	answers: Array<{ today: number; tomorrow: number }>
+	leftText: string
+	rightText: string
+	step: number
+	setStep: (num: number) => void
+	isDisabledLeft: boolean
+	isDisabledRight: boolean
+}
+
 export const DotsView = ({
 	color,
 	answers,
@@ -124,7 +123,7 @@ export const DotsView = ({
 	setStep,
 	isDisabledLeft,
 	isDisabledRight,
-}: GraphViewProps) => {
+}: DotsViewProps) => {
 	const [isTomorrow, setIsTomorrow] = React.useState(false)
 	const [showLines, setShowLines] = React.useState(false)
 
