@@ -1,13 +1,15 @@
-import { ArrowLeft, ArrowRight } from "lucide-react"
+import {
+	CalendarIcon,
+	CalendarPlusIcon,
+	CircleOffIcon,
+	MoveRightIcon,
+} from "lucide-react"
 import React from "react"
 import { cx } from "class-variance-authority"
 import { AnimatePresence, motion } from "framer-motion"
 import { Button } from "@/components/Button"
-import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
 import { SliderPresenterSteps } from "./SliderPresenterSteps"
-
-const MotionButton = motion(Button)
 
 export interface GraphViewProps {
 	color: string
@@ -115,7 +117,6 @@ const Line = (props: {
 
 export const DotsView = ({
 	color,
-	showLines,
 	answers,
 	leftText,
 	rightText,
@@ -125,10 +126,11 @@ export const DotsView = ({
 	isDisabledRight,
 }: GraphViewProps) => {
 	const [isTomorrow, setIsTomorrow] = React.useState(false)
+	const [showLines, setShowLines] = React.useState(false)
 
 	return (
 		<div className="relative flex h-full grow flex-col">
-			<div className="flex justify-between">
+			<div className="flex items-start justify-between">
 				{/* TODO: Share component with other "dot" view */}
 				<div className="rounded-2xl bg-black px-5 py-4 ">
 					<div className="mb-2 flex items-center">
@@ -152,28 +154,38 @@ export const DotsView = ({
 					</div>
 				</div>
 
-				<AnimatePresence initial={false}>
-					{!showLines && (
-						<MotionButton
-							exit={{ opacity: 0 }}
-							animate={{ opacity: 1 }}
-							initial={{ opacity: 0 }}
-							onClick={() => setIsTomorrow((p) => !p)}
-						>
-							{isTomorrow ? (
-								<>
-									<ArrowLeft className="mt-0.5 h-5 w-5" />
-									See Today
-								</>
-							) : (
-								<>
-									See Tomorrow
-									<ArrowRight className="mt-0.5 h-5 w-5" />
-								</>
-							)}
-						</MotionButton>
-					)}
-				</AnimatePresence>
+				<div className="flex flex-col gap-2">
+					<Button
+						onClick={() => setIsTomorrow((p) => !p)}
+						disabled={showLines}
+						className={cx(showLines ? "opacity-0" : "opacity-100", "min-w-52")}
+					>
+						{isTomorrow ? (
+							<>
+								See Today
+								<CalendarIcon className="mt-0.5 size-5" />
+							</>
+						) : (
+							<>
+								See Tomorrow
+								<CalendarPlusIcon className="mt-0.5 size-5" />
+							</>
+						)}
+					</Button>
+					<Button onClick={() => setShowLines((l) => !l)} className="min-w-52">
+						{showLines ? (
+							<>
+								Hide Lines
+								<CircleOffIcon className="mt-0.5 size-5" />
+							</>
+						) : (
+							<>
+								Show Lines
+								<MoveRightIcon className="mt-0.5 size-5" />
+							</>
+						)}
+					</Button>
+				</div>
 			</div>
 
 			<div

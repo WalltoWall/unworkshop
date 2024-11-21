@@ -4,14 +4,15 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 const button = cva(
 	[
-		"inline-flex justify-center items-center text-center",
+		"inline-flex justify-center items-center text-center transition ease-out duration-200",
 		"border border-solid leading-[1.25] disabled:cursor-not-allowed",
 	],
 	{
 		variants: {
 			color: {
 				gray: "border-gray-75 text-black bg-gray-75",
-				black: "border-black text-white bg-black",
+				black:
+					"border-black text-white bg-black hover:bg-gray-12 hover:border-gray-12",
 			},
 			size: {
 				xs: "h-9 text-12 px-3 gap-1.5",

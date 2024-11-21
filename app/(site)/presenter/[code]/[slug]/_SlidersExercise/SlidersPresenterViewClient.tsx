@@ -26,7 +26,6 @@ export const SlidersPresenterViewClient = ({
 	const [showImages, setShowImages] = React.useState(true)
 	const [showNumbers, setShowNumbers] = React.useState(true)
 	const [showDots, setShowDots] = React.useState(false)
-	const [showLines, setShowLines] = React.useState(false)
 	const [showTodayBar, setShowTodayBar] = React.useState(true)
 	const [showTomorrowBar, setShowTomorrowBar] = React.useState(true)
 
@@ -45,11 +44,15 @@ export const SlidersPresenterViewClient = ({
 
 	const participants = snap.participants
 
-	const allStepAnswers = Object.values(participants).map((answers) => {
-		const answer = answers[currentSliderSlug]
+	const allStepAnswers = Object.values(participants)
+		.map((answers) => {
+			const answer = answers[currentSliderSlug]
 
-		return { today: answer.today, tomorrow: answer.tomorrow }
-	})
+			return { today: answer?.today, tomorrow: answer?.tomorrow }
+		})
+		.filter(
+			(a) => typeof a.today === "number" && typeof a.tomorrow === "number",
+		)
 
 	if (!exercise.sliders) return
 
@@ -67,7 +70,6 @@ export const SlidersPresenterViewClient = ({
 			{showDots ? (
 				<DotsView
 					color={color}
-					showLines={showLines}
 					answers={allStepAnswers}
 					leftText={slider.left_value}
 					rightText={slider.right_value}
@@ -153,14 +155,6 @@ export const SlidersPresenterViewClient = ({
 							toggleVisibility={() => setShowTomorrowBar((prev) => !prev)}
 						/>
 					</>
-				)}
-
-				{showDots && (
-					<SettingVisibility
-						label="Show Lines"
-						isVisible={showLines}
-						toggleVisibility={() => setShowLines((prev) => !prev)}
-					/>
 				)}
 
 				<SettingVisibility
