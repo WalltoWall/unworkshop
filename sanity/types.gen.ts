@@ -232,6 +232,7 @@ export type Exercise = {
 				source?: {
 					step: number
 					field: number
+					answer?: number
 				}
 				placeholder?: string
 				rows?: number
@@ -534,6 +535,7 @@ export type KickoffQueryResult = {
 					source?: {
 						step: number
 						field: number
+						answer?: number
 					}
 					placeholder?: string
 					rows?: number

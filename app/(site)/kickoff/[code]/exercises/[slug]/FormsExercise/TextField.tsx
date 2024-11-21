@@ -1,15 +1,35 @@
 import React from "react"
 import { match } from "ts-pattern"
+import { Text } from "@/components/Text"
 import { Textarea } from "./Textarea"
-import type { FieldProps } from "./types"
+import type { FieldProps, FormFieldAnswer } from "./types"
 
-type Props = FieldProps
+type Props = FieldProps<{
+	source?: FormFieldAnswer
+}>
 
 const DEFAULT_INPUT_NAME = "answer"
 
-export const TextField = ({ answer, actions, ...props }: Props) => {
+export const TextField = ({
+	answer,
+	actions,
+	source,
+	field,
+	...props
+}: Props) => {
 	if (answer && answer.type !== "Text") {
 		throw new Error("Invalid answer data found.")
+	}
+
+	if (source && source.type !== "Narrow") {
+		throw new Error(
+			"Invalid source for Text field found. Must be a 'Narrow' source.",
+		)
+	}
+
+	let label: string | undefined
+	if (field.source?.answer && field.source.answer > 0) {
+		label = source?.responses.at(field.source.answer - 1)
 	}
 
 	const onChange = (
@@ -24,7 +44,7 @@ export const TextField = ({ answer, actions, ...props }: Props) => {
 
 	const sharedProps = {
 		name: DEFAULT_INPUT_NAME,
-		placeholder: props.field.placeholder,
+		placeholder: field.placeholder,
 		onChange,
 		value: answer?.response,
 		readOnly: props.readOnly,
@@ -32,7 +52,13 @@ export const TextField = ({ answer, actions, ...props }: Props) => {
 
 	return (
 		<div>
-			{match(props.field.type)
+			{label && (
+				<Text style="heading" size={24} className="mb-3 uppercase">
+					{label}
+				</Text>
+			)}
+
+			{match(field.type)
 				.with("Text", () => (
 					<input
 						type="text"

@@ -49,23 +49,28 @@ export const formFieldMember = defineArrayMember({
 				"Designate this field to prompt its inputs based on the answer of another step and field.",
 			type: "object",
 			options: { collapsed: true, collapsible: true },
-			hidden: ({ parent }) =>
-				!["List", "Narrow", "Tagline"].includes(parent?.type),
 			fields: [
 				defineField({
 					name: "step",
 					title: "Step",
-					description: "Specify the step to seed narrowing choices from.",
+					description: "Specify the step to pull from.",
 					type: "number",
 					validation: (rule) => rule.required().positive(),
 				}),
 				defineField({
 					name: "field",
 					title: "Field",
-					description:
-						"Specify the field of the specified step to seed narrowing choices from.",
+					description: "Specify the field of the step to pull from.",
 					type: "number",
 					validation: (rule) => rule.required().positive(),
+				}),
+				defineField({
+					name: "answer",
+					title: "Answer",
+					description:
+						'Specify the answer to pull. Only applicable when sourcing from "Narrow" fields into "Text" or "Big Text" fields.',
+					type: "number",
+					validation: (rule) => rule.positive(),
 				}),
 			],
 		}),

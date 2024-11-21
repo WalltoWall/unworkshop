@@ -1479,6 +1479,13 @@
                                       "type": "number"
                                     },
                                     "optional": false
+                                  },
+                                  "answer": {
+                                    "type": "objectAttribute",
+                                    "value": {
+                                      "type": "number"
+                                    },
+                                    "optional": true
                                   }
                                 }
                               },

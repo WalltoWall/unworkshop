@@ -51,8 +51,15 @@ export const FieldRenderer = ({
 		const sourceStepAnswer = allAnswers?.at(stepSrc - 1)
 		const source = sourceStepAnswer?.at(fieldSrc - 1)
 
+		return source
+	}
+
+	function getRequiredFieldSource() {
+		const source = getFieldSource()
 		if (!source)
-			throw new Error("No valid source found. Check field or step config.")
+			throw new Error(
+				`No valid source found. Required for: ${field.type}: ${field.prompt}`,
+			)
 
 		return source
 	}
@@ -73,20 +80,26 @@ export const FieldRenderer = ({
 			return (
 				<NarrowField
 					key={field.prompt}
-					source={getFieldSource()}
+					source={getRequiredFieldSource()}
 					{...sharedProps}
 				/>
 			)
 
 		case "Text":
 		case "Big Text":
-			return <TextField key={field.prompt} {...sharedProps} />
+			return (
+				<TextField
+					key={field.prompt}
+					source={getFieldSource()}
+					{...sharedProps}
+				/>
+			)
 
 		case "Tagline":
 			return (
 				<TaglineField
 					key={field.prompt}
-					source={getFieldSource()}
+					source={getRequiredFieldSource()}
 					{...sharedProps}
 				/>
 			)
