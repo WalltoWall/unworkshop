@@ -116,6 +116,12 @@ export const PresenterHeader = ({
 													slug={e.slug.current}
 												/>
 											))
+											.with("sliders", () => (
+												<ExerciseWithStepsNav
+													steps={e.sliders?.length ?? 1}
+													slug={e.slug.current}
+												/>
+											))
 											.otherwise(() => null)}
 									</li>
 								)

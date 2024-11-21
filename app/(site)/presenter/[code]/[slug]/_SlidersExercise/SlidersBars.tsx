@@ -25,13 +25,7 @@ export const SlidersBars = ({
 	const fakeArray = Array(6).fill("")
 
 	return (
-		<div
-			className="left-0 right-0 top-0 flex w-full min-w-0 items-end justify-between px-4 pt-10"
-			style={{
-				position: showImages ? "absolute" : "static",
-				height: showImages ? "calc(45vh - 0.666rem)" : "100%",
-			}}
-		>
+		<div className="flex h-full grow items-end justify-between px-4 pt-10">
 			{fakeArray.map((_val, idx) => {
 				today = 0
 				tomorrow = 0

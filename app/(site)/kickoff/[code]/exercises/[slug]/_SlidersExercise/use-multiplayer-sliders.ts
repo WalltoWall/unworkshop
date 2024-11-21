@@ -81,6 +81,12 @@ export const useMultiplayerSliders = ({
 			let answers = null
 			let role = null
 
+			console.log({
+				participantId,
+				groupSlug,
+				state,
+			})
+
 			if (participantId) {
 				const participantOrGroupId = groupSlug ?? participantId
 

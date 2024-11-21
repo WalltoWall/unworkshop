@@ -4,14 +4,12 @@ import React from "react"
 import { Text } from "@/components/Text"
 
 interface SlidersKeyProps {
-	barColor: string
+	color: string
 }
 
-export const SlidersKey = ({ barColor }: SlidersKeyProps) => {
-	const [color] = React.useState(barColor)
-
+export const SlidersKey = ({ color }: SlidersKeyProps) => {
 	return (
-		<div className="mb-8 inline-block rounded-2xl bg-black px-5 py-4 text-white">
+		<div className="rounded-2xl bg-black px-5 py-4">
 			<div className="mb-2 flex items-center">
 				<span
 					className="block h-6 w-6"

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Button } from "@/components/Button"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
+import { SliderPresenterSteps } from "./SliderPresenterSteps"
 
 const MotionButton = motion(Button)
 
@@ -14,7 +15,8 @@ export interface GraphViewProps {
 	answers: Array<{ today: number; tomorrow: number }>
 	leftText: string
 	rightText: string
-	setSliderIndex: React.Dispatch<React.SetStateAction<number>>
+	step: number
+	setStep: (num: number) => void
 	isDisabledLeft: boolean
 	isDisabledRight: boolean
 }
@@ -111,13 +113,14 @@ const Line = (props: {
 	)
 }
 
-export const GraphView = ({
+export const DotsView = ({
 	color,
 	showLines,
 	answers,
 	leftText,
 	rightText,
-	setSliderIndex,
+	step,
+	setStep,
 	isDisabledLeft,
 	isDisabledRight,
 }: GraphViewProps) => {
@@ -127,7 +130,7 @@ export const GraphView = ({
 		<div className="relative flex h-full grow flex-col">
 			<div className="flex justify-between">
 				{/* TODO: Share component with other "dot" view */}
-				<div className="rounded-2xl bg-black px-5 py-4 text-white">
+				<div className="rounded-2xl bg-black px-5 py-4 ">
 					<div className="mb-2 flex items-center">
 						<span
 							className="block h-6 w-6 rounded-full border-[3px] bg-white"
@@ -236,43 +239,14 @@ export const GraphView = ({
 
 			<div className="h-2 bg-black" />
 
-			{/* TODO: Share this footer section with other similar areas */}
-			<div className="mt-12 flex justify-between">
-				<Text className="ml-1 uppercase text-40 font-heading capsize">
-					{leftText}
-				</Text>
-
-				<div className="flex items-center justify-center gap-5">
-					<button
-						onClick={() => {
-							if (isDisabledLeft) return
-
-							setSliderIndex((idx) => idx - 1)
-						}}
-						disabled={isDisabledLeft}
-						className="disabled:opacity-50"
-					>
-						<span className="sr-only">Previous Slider</span>
-						<Arrow className="w-7 text-gray-50" />
-					</button>
-
-					<button
-						onClick={() => {
-							if (isDisabledRight) return
-
-							setSliderIndex((idx) => idx + 1)
-						}}
-						disabled={isDisabledRight}
-						className="disabled:opacity-50"
-					>
-						<span className="sr-only">Next Slider</span>
-						<Arrow className="w-7 rotate-180 text-gray-50" />
-					</button>
-				</div>
-				<Text className="ml-1 uppercase text-40 font-heading capsize">
-					{rightText}
-				</Text>
-			</div>
+			<SliderPresenterSteps
+				step={step}
+				setStep={setStep}
+				isDisabledLeft={isDisabledLeft}
+				isDisabledRight={isDisabledRight}
+				leftText={leftText}
+				rightText={rightText}
+			/>
 		</div>
 	)
 }
