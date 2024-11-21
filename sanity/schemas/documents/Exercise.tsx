@@ -43,6 +43,23 @@ export const Exercise = defineType({
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
+			name: "illustration",
+			title: "Illustration",
+			type: "string",
+			initialValue: "speechBubbles",
+			options: {
+				list: [
+					{ title: "Speech Bubbles", value: "speechBubbles" },
+					{ title: "Rolling Boards", value: "rollingBoards" },
+					{ title: "Clocks & Hands", value: "clocksAndHands" },
+					{ title: "See Saw", value: "seeSaw" },
+					{ title: "Us vs. Them", value: "usVsThem" },
+					{ title: "Target Audience (A)", value: "targetAudienceA" },
+					{ title: "Target Audience (B)", value: "targetAudienceB" },
+				],
+			},
+		}),
+		defineField({
 			name: "groups",
 			title: "Groups",
 			description: "If provided, turns this exercise into a group exercise.",
