@@ -126,16 +126,18 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 				{...sharedInputProps}
 			/>
 
-			{typeof answerTwo === "undefined" && !props.readOnly && (
-				<AddButton
-					className="mt-2.5"
-					onClick={() => handleChange(answerOne, "")}
-				>
-					Add another response
-				</AddButton>
-			)}
+			{typeof answerTwo === "undefined" &&
+				!props.readOnly &&
+				props.field.allowMultiple && (
+					<AddButton
+						className="mt-2.5"
+						onClick={() => handleChange(answerOne, "")}
+					>
+						Add another response
+					</AddButton>
+				)}
 
-			{typeof answerTwo !== "undefined" && (
+			{typeof answerTwo !== "undefined" && props.field.allowMultiple && (
 				<HighlighterTextarea
 					value={answerTwo}
 					onChange={(e) => handleChange(answerOne, e.currentTarget.value)}

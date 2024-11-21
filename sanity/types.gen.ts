@@ -240,6 +240,7 @@ export type Exercise = {
 				min?: number
 				max?: number
 				color?: "red" | "green" | "yellow"
+				allowMultiple?: boolean
 				_key: string
 			}>
 			_type: "step"
@@ -541,6 +542,7 @@ export type KickoffQueryResult = {
 					min?: number
 					max?: number
 					color?: "green" | "red" | "yellow"
+					allowMultiple?: boolean
 					_key: string
 				}>
 				_type: "step"

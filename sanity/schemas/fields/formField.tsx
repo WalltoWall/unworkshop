@@ -142,5 +142,14 @@ export const formFieldMember = defineArrayMember({
 				],
 			},
 		}),
+		defineField({
+			name: "allowMultiple",
+			title: "Allow Multiple Responses?",
+			description: "If checked, participants can add an additional response.",
+			type: "boolean",
+			initialValue: true,
+			hidden: ({ parent }) => parent?.type !== "Tagline",
+			options: { layout: "checkbox" },
+		}),
 	],
 })
