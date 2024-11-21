@@ -100,6 +100,8 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 	// the CMS to be a rich text field.
 	const prompt = `Your brand in ${sourceResponses.length.toString()} words.`
 
+	const allowMultiple = props.field.allowMultiple ?? true
+
 	return (
 		<div>
 			<Prompt num={props.fieldIdx + 1}>{prompt}</Prompt>
@@ -126,18 +128,16 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 				{...sharedInputProps}
 			/>
 
-			{typeof answerTwo === "undefined" &&
-				!props.readOnly &&
-				props.field.allowMultiple && (
-					<AddButton
-						className="mt-2.5"
-						onClick={() => handleChange(answerOne, "")}
-					>
-						Add another response
-					</AddButton>
-				)}
+			{typeof answerTwo === "undefined" && !props.readOnly && allowMultiple && (
+				<AddButton
+					className="mt-2.5"
+					onClick={() => handleChange(answerOne, "")}
+				>
+					Add another response
+				</AddButton>
+			)}
 
-			{typeof answerTwo !== "undefined" && props.field.allowMultiple && (
+			{typeof answerTwo !== "undefined" && allowMultiple && (
 				<HighlighterTextarea
 					value={answerTwo}
 					onChange={(e) => handleChange(answerOne, e.currentTarget.value)}
