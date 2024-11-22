@@ -11,7 +11,11 @@ export type CardGradientData = (typeof cardGradients)[CardGradient]
 export class CardGradientSequence {
 	idx = 0
 
-	constructor(public sequence: CardGradient[]) {}
+	constructor(
+		public sequence: CardGradient[] = Object.keys(
+			cardGradients,
+		) as CardGradient[],
+	) {}
 
 	next() {
 		const color = this.sequence[this.idx % this.sequence.length]

@@ -13,12 +13,7 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 		client.findKickoffOrThrow(props.params.code),
 	])
 
-	const gradientSequence = new CardGradientSequence([
-		"orangeToGreen",
-		"purpleToOrange",
-		"tealToGreen",
-		"blueToPurple",
-	])
+	const gradientSequence = new CardGradientSequence()
 	const illustrationSequence = new CardIllustrationSequence()
 
 	if (!participant.onboarded) redirect(`/kickoff/${props.params.code}`)

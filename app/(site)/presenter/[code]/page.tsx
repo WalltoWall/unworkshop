@@ -2,6 +2,11 @@ import { notFound } from "next/navigation"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import { ExerciseCard } from "@/app/(site)/kickoff/[code]/exercises/ExerciseCard"
+import { CardGradientSequence } from "../../kickoff/[code]/exercises/card-gradients"
+import {
+	CardIllustrationSequence,
+	illustrations,
+} from "../../kickoff/[code]/exercises/card-illustrations"
 import { PresenterHeader } from "../PresenterHeader"
 
 interface Props {
@@ -12,6 +17,9 @@ interface Props {
 const PresenterKickOffPage = async (props: Props) => {
 	const kickoff = await client.findKickoff(props.params.code)
 	if (!kickoff) notFound()
+
+	const gradientSequence = new CardGradientSequence()
+	const illustrationSequence = new CardIllustrationSequence()
 
 	return (
 		<>
@@ -33,6 +41,12 @@ const PresenterKickOffPage = async (props: Props) => {
 								slug={exercise.slug.current}
 								type={exercise.type}
 								presenter
+								gradient={gradientSequence.nextClassName()}
+								illustration={
+									exercise.illustration
+										? illustrations[exercise.illustration]
+										: illustrationSequence.nextVariant()
+								}
 							/>
 						</li>
 					))}
