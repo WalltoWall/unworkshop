@@ -76,6 +76,14 @@ export type Exercise = {
 	_rev: string
 	name: string
 	slug: Slug
+	illustration?:
+		| "speechBubbles"
+		| "rollingBoards"
+		| "clocksAndHands"
+		| "seeSaw"
+		| "usVsThem"
+		| "targetAudienceA"
+		| "targetAudienceB"
 	groups?: Array<{
 		name: string
 		slug: Slug
@@ -379,6 +387,14 @@ export type KickoffQueryResult = {
 		_rev: string
 		name: string
 		slug: Slug
+		illustration?:
+			| "clocksAndHands"
+			| "rollingBoards"
+			| "seeSaw"
+			| "speechBubbles"
+			| "targetAudienceA"
+			| "targetAudienceB"
+			| "usVsThem"
 		groups?: Array<{
 			name: string
 			slug: Slug

@@ -3,6 +3,8 @@ import * as R from "remeda"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import type { GroupExercise } from "./[slug]/groups/types"
+import { CardGradientSequence } from "./card-gradients"
+import { CardIllustrationSequence, illustrations } from "./card-illustrations"
 import { ExerciseCard } from "./ExerciseCard"
 
 const ExercisesPage = async (props: { params: { code: string } }) => {
@@ -10,6 +12,14 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 		client.findParticipantOrThrow(),
 		client.findKickoffOrThrow(props.params.code),
 	])
+
+	const gradientSequence = new CardGradientSequence([
+		"orangeToGreen",
+		"purpleToOrange",
+		"tealToGreen",
+		"blueToPurple",
+	])
+	const illustrationSequence = new CardIllustrationSequence()
 
 	if (!participant.onboarded) redirect(`/kickoff/${props.params.code}`)
 
@@ -42,6 +52,12 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 								type={exercise.type}
 								groups={groups.length > 0}
 								groupSlug={groupSlug}
+								gradient={gradientSequence.nextClassName()}
+								illustration={
+									exercise.illustration
+										? illustrations[exercise.illustration]
+										: illustrationSequence.nextVariant()
+								}
 							/>
 						</li>
 					)

@@ -375,6 +375,43 @@
         },
         "optional": false
       },
+      "illustration": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "speechBubbles"
+            },
+            {
+              "type": "string",
+              "value": "rollingBoards"
+            },
+            {
+              "type": "string",
+              "value": "clocksAndHands"
+            },
+            {
+              "type": "string",
+              "value": "seeSaw"
+            },
+            {
+              "type": "string",
+              "value": "usVsThem"
+            },
+            {
+              "type": "string",
+              "value": "targetAudienceA"
+            },
+            {
+              "type": "string",
+              "value": "targetAudienceB"
+            }
+          ]
+        },
+        "optional": true
+      },
       "groups": {
         "type": "objectAttribute",
         "value": {
