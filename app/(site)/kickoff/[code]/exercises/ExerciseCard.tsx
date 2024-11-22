@@ -4,7 +4,8 @@ import { cx } from "class-variance-authority"
 import { Arrow } from "@/components/icons/Arrow"
 import { Text } from "@/components/Text"
 import type * as ST from "@/sanity/types.gen"
-import { CardVariantSequence } from "./card-variants"
+import { type CardGradientData } from "./card-gradients"
+import { type CardIllustrationData } from "./card-illustrations"
 
 interface Props {
 	kickoffCode: string | undefined
@@ -14,18 +15,11 @@ interface Props {
 	groups?: boolean
 	groupSlug?: string
 	presenter?: boolean
+	gradient: CardGradientData
+	illustration: CardIllustrationData
 }
 
-const sequence = new CardVariantSequence([
-	"form",
-	"sliders",
-	"quadrants",
-	"brainstorm",
-])
-
 export const ExerciseCard = (props: Props) => {
-	const variant = sequence.nextVariant()
-
 	let href = `/kickoff/${props.kickoffCode}/exercises/${props.slug}`
 
 	if (props.presenter) {
@@ -39,7 +33,7 @@ export const ExerciseCard = (props: Props) => {
 			href={href}
 			className={cx(
 				"relative grid aspect-[289/160] grid-cols-[4fr,6fr] overflow-hidden rounded-lg bg-gradient-to-r",
-				variant.gradientClassName,
+				props.gradient,
 			)}
 			suppressHydrationWarning
 		>
@@ -58,13 +52,13 @@ export const ExerciseCard = (props: Props) => {
 			</div>
 
 			<Image
-				src={variant.imageSrc}
+				src={props.illustration.imageSrc}
 				alt=""
 				placeholder="blur"
 				suppressHydrationWarning
 				className={cx(
 					"absolute right-0 top-0 object-contain",
-					variant.imageClassName,
+					props.illustration.imageClassName,
 				)}
 			/>
 		</Link>

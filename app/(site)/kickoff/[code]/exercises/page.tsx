@@ -3,7 +3,22 @@ import * as R from "remeda"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import type { GroupExercise } from "./[slug]/groups/types"
+import { CardGradientSequence } from "./card-gradients"
+import { CardIllustrationSequence } from "./card-illustrations"
 import { ExerciseCard } from "./ExerciseCard"
+
+const gradientSequence = new CardGradientSequence([
+	"orangeToGreen",
+	"purpleToOrange",
+	"tealToGreen",
+	"blueToPurple",
+])
+const illustrationSequence = new CardIllustrationSequence([
+	"form",
+	"sliders",
+	"quadrants",
+	"brainstorm",
+])
 
 const ExercisesPage = async (props: { params: { code: string } }) => {
 	const [participant, kickoff] = await Promise.all([
@@ -42,6 +57,8 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 								type={exercise.type}
 								groups={groups.length > 0}
 								groupSlug={groupSlug}
+								gradient={gradientSequence.nextClassName()}
+								illustration={illustrationSequence.nextVariant()}
 							/>
 						</li>
 					)

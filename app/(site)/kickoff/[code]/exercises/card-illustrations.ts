@@ -1,38 +1,45 @@
+import type { StaticImageData } from "next/image"
 import brainstormIllustration from "@/assets/images/brainstorm-illustration.jpg"
 import formIllustration from "@/assets/images/form-illustration.png"
+import seesawIllustration from "@/assets/images/seesaw-illustration.png"
 import slidersIllustration from "@/assets/images/sliders-illustration.jpg"
+import targetAudienceA from "@/assets/images/target-audience-a-illustration.png"
+import targetAudienceB from "@/assets/images/target-audience-b-illustration.png"
+import usVsThem from "@/assets/images/us-vs-them-illustration.png"
 
-const VARIANTS = {
+// type CardIllustrationData = {
+// 	src: StaticImageData
+// 	className: string
+// }
+
+const illustrations = {
 	brainstorm: {
-		gradientClassName: "from-[#4BEEE1] to-[#E477D1]",
 		imageSrc: brainstormIllustration,
 		imageClassName:
 			"-translate-y-[3%] translate-x-[28%] -rotate-[17deg] mix-blend-multiply h-[128%]",
 	},
 	sliders: {
-		gradientClassName: "from-[#E561D0] to-[#EA892C]",
 		imageSrc: slidersIllustration,
 		imageClassName:
 			"mix-blend-multiply h-[175%] translate-x-[27%] -translate-y-[3%]",
 	},
 	quadrants: {
-		gradientClassName: "from-[#4BEEE1] to-[#90E477]",
 		imageSrc: formIllustration,
 		imageClassName: "h-[170%] translate-x-[37%] -translate-y-[16%]",
 	},
 	form: {
-		gradientClassName: "from-[#FA927F] to-[#D7F082]",
 		imageSrc: formIllustration,
 		imageClassName: "h-[170%] translate-x-[37%] -translate-y-[16%]",
 	},
 }
 
-export type CardVariant = keyof typeof VARIANTS
+export type CardIllustration = keyof typeof illustrations
+export type CardIllustrationData = (typeof illustrations)[CardIllustration]
 
-export class CardVariantSequence {
+export class CardIllustrationSequence {
 	idx = 0
 
-	constructor(public sequence: CardVariant[]) {}
+	constructor(public sequence: CardIllustration[]) {}
 
 	next() {
 		const color = this.sequence[this.idx % this.sequence.length]
@@ -44,6 +51,6 @@ export class CardVariantSequence {
 	nextVariant() {
 		const color = this.next()
 
-		return VARIANTS[color]
+		return illustrations[color]
 	}
 }
