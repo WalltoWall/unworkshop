@@ -52,13 +52,12 @@ export const ExerciseCard = (props: Props) => {
 			</div>
 
 			<Image
-				src={props.illustration.imageSrc}
+				src={props.illustration.src}
 				alt=""
-				placeholder="blur"
 				suppressHydrationWarning
 				className={cx(
 					"absolute right-0 top-0 object-contain",
-					props.illustration.imageClassName,
+					props.illustration.className,
 				)}
 			/>
 		</Link>

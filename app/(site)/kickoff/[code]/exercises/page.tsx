@@ -4,27 +4,22 @@ import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import type { GroupExercise } from "./[slug]/groups/types"
 import { CardGradientSequence } from "./card-gradients"
-import { CardIllustrationSequence } from "./card-illustrations"
+import { CardIllustrationSequence, illustrations } from "./card-illustrations"
 import { ExerciseCard } from "./ExerciseCard"
-
-const gradientSequence = new CardGradientSequence([
-	"orangeToGreen",
-	"purpleToOrange",
-	"tealToGreen",
-	"blueToPurple",
-])
-const illustrationSequence = new CardIllustrationSequence([
-	"form",
-	"sliders",
-	"quadrants",
-	"brainstorm",
-])
 
 const ExercisesPage = async (props: { params: { code: string } }) => {
 	const [participant, kickoff] = await Promise.all([
 		client.findParticipantOrThrow(),
 		client.findKickoffOrThrow(props.params.code),
 	])
+
+	const gradientSequence = new CardGradientSequence([
+		"orangeToGreen",
+		"purpleToOrange",
+		"tealToGreen",
+		"blueToPurple",
+	])
+	const illustrationSequence = new CardIllustrationSequence()
 
 	if (!participant.onboarded) redirect(`/kickoff/${props.params.code}`)
 
@@ -58,7 +53,11 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 								groups={groups.length > 0}
 								groupSlug={groupSlug}
 								gradient={gradientSequence.nextClassName()}
-								illustration={illustrationSequence.nextVariant()}
+								illustration={
+									exercise.illustration
+										? illustrations[exercise.illustration]
+										: illustrationSequence.nextVariant()
+								}
 							/>
 						</li>
 					)
