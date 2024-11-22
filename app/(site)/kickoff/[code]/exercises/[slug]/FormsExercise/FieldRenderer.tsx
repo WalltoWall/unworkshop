@@ -86,14 +86,18 @@ export const FieldRenderer = ({
 			)
 
 		case "Text":
-		case "Big Text":
+		case "Big Text": {
+			const hasSource =
+				field.source?.step && field.source.field && field.source.answer
+
 			return (
 				<TextField
 					key={field.prompt}
-					source={getFieldSource()}
+					source={hasSource ? getFieldSource() : undefined}
 					{...sharedProps}
 				/>
 			)
+		}
 
 		case "Tagline":
 			return (
