@@ -28,6 +28,7 @@ interface Props {
 
 export const Form = ({ exercise, participant, groupSlug }: Props) => {
 	const participantOrGroupId = groupSlug ?? participant._id
+	const isGroupExercise = Boolean(groupSlug)
 
 	const searchParams = useSearchParams()
 	const router = useRouter()
@@ -63,7 +64,15 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 
 	return (
 		<div className="mt-3 flex flex-[1_1_0] flex-col justify-between">
-			<ErrorBoundary fallback={<InvalidField className="my-6" />}>
+			<ErrorBoundary
+				fallback={
+					<InvalidField className="my-6">
+						{isGroupExercise
+							? "You may have navigated ahead of your group captain, or something just went wrong."
+							: "You may have navigated ahead without completing a previous step, or something just went wrong."}
+					</InvalidField>
+				}
+			>
 				{onReviewScreen && (
 					<Review allAnswers={answers} exercise={exercise} actions={actions} />
 				)}
