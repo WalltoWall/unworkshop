@@ -1,7 +1,5 @@
 import { createClient } from "@sanity/client"
 import type * as Party from "partykit/server"
-import { proxy } from "valtio"
-import { bind } from "valtio-yjs"
 import { onConnect } from "y-partykit"
 import * as Y from "yjs"
 import type * as ST from "@/sanity/types.gen"

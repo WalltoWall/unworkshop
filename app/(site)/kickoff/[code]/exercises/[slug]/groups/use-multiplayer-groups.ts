@@ -1,7 +1,5 @@
 import React from "react"
 import * as R from "remeda"
-import { proxy, useSnapshot } from "valtio"
-import { bind } from "valtio-yjs"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,

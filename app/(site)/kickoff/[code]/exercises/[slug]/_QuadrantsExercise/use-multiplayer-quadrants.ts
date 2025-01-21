@@ -1,6 +1,4 @@
 import React from "react"
-import { proxy, useSnapshot } from "valtio"
-import { bind } from "valtio-yjs"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,

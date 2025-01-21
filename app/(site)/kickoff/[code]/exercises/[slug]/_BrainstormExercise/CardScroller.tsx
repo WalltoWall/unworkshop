@@ -1,6 +1,6 @@
+import { AnimatePresence } from "motion/react"
 import React from "react"
 import clsx from "clsx"
-import { AnimatePresence } from "framer-motion"
 import { Card } from "./Card"
 import type { BrainstormCard, Color } from "./types"
 import type { BrainstormActions } from "./use-multiplayer-brainstorm"

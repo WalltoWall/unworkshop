@@ -1,7 +1,5 @@
 import React from "react"
 import { uid } from "uid"
-import { proxy, useSnapshot } from "valtio"
-import { bind } from "valtio-yjs"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,
@@ -155,9 +153,6 @@ export const useMultiplayerBrainstorm = ({
 
 			step.unsorted.push(...column.cards)
 
-			// see: https://github.com/valtiojs/valtio-yjs/issues/28
-			await Promise.resolve()
-
 			step.columns.splice(columnIdx, 1)
 		},
 
@@ -179,9 +174,6 @@ export const useMultiplayerBrainstorm = ({
 			if (!fromCards || !toCards) return
 
 			const [card] = fromCards.splice(args.from.idx, 1)
-
-			// see: https://github.com/valtiojs/valtio-yjs/issues/28
-			await Promise.resolve()
 
 			toCards.splice(args.to.idx, 0, card)
 		},
