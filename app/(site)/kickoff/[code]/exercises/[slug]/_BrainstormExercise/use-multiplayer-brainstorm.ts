@@ -125,6 +125,11 @@ export const useMultiplayerBrainstorm = ({
 		},
 
 		deleteColumn: async (args: { columnId: string }) => {
+			const res = confirm(
+				"Are you sure you want to delete this column? This will move all cards back into the sorter.",
+			)
+			if (!res) return
+
 			const step = getStep()
 
 			const columnIdx = step.columns.findIndex(
@@ -132,11 +137,10 @@ export const useMultiplayerBrainstorm = ({
 			)
 			if (columnIdx < 0) return
 
-			const column = step.columns.at(columnIdx)
+			const column = R.clone(step.columns.at(columnIdx))
 			if (!column) return
 
 			step.unsorted.push(...column.cards)
-
 			step.columns.splice(columnIdx, 1)
 		},
 
