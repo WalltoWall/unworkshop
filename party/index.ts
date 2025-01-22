@@ -5,12 +5,24 @@ import * as R from "remeda"
 import { onConnect } from "y-partykit"
 import * as Y from "yjs"
 import { INITIAL_BRAINSTORM_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
-import type { BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
+import type {
+	BrainstormAnswers,
+	BrainstormExercise,
+} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { INITIAL_QUADRANTS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/contants"
-import type { QuadrantsExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
+import type {
+	QuadrantsAnswers,
+	QuadrantsExercise,
+} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
 import { INITIAL_SLIDERS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/constants"
-import type { SlidersExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
-import type { FormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
+import type {
+	SlidersAnswers,
+	SlidersExercise,
+} from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
+import type {
+	FormAnswers,
+	FormExercise,
+} from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
 import { INITIAL_FORM_ANSWERS } from "@/app/(site)/presenter/[code]/[slug]/_FormExercise/constants"
 
 const sanity = createClient({
@@ -45,7 +57,7 @@ export default class Server implements Party.Server {
 		return exerciseId
 	}
 
-	onConnect(conn: Party.Connection, _ctx: Party.ConnectionContext) {
+	onConnect(conn: Party.Connection) {
 		return onConnect(conn, this.room, {
 			persist: false,
 			load: async () => {
@@ -68,14 +80,19 @@ export default class Server implements Party.Server {
 
 						const store = syncedStore(INITIAL_BRAINSTORM_ANSWERS, yDoc)
 
-						if (exercise.answers.groups) {
-							R.forEachObj(exercise.answers.groups, (g, gId) => {
+						const answers: BrainstormAnswers =
+							typeof exercise.answers === "string"
+								? JSON.parse(exercise.answers)
+								: exercise.answers
+
+						if (answers.groups) {
+							R.forEachObj(answers.groups, (g, gId) => {
 								store.groups[gId] = g
 							})
 						}
 
-						if (exercise.answers.steps) {
-							exercise.answers.steps.forEach((s) => store.steps.push(s))
+						if (answers.steps) {
+							answers.steps.forEach((s) => store.steps.push(s))
 						}
 
 						return yDoc
@@ -86,10 +103,15 @@ export default class Server implements Party.Server {
 						if (!exercise.answers) return yDoc
 
 						const store = syncedStore(INITIAL_SLIDERS_ANSWERS, yDoc)
-						R.forEachObj(exercise.answers.groups, (g, gId) => {
+						const answers: SlidersAnswers =
+							typeof exercise.answers === "string"
+								? JSON.parse(exercise.answers)
+								: exercise.answers
+
+						R.forEachObj(answers.groups, (g, gId) => {
 							store.groups[gId] = g
 						})
-						R.forEachObj(exercise.answers.participants, (p, pId) => {
+						R.forEachObj(answers.participants, (p, pId) => {
 							store.participants[pId] = p
 						})
 
@@ -101,13 +123,18 @@ export default class Server implements Party.Server {
 						if (!exercise.answers) return yDoc
 
 						const store = syncedStore(INITIAL_QUADRANTS_ANSWERS, yDoc)
-						if (exercise.answers.groups) {
-							R.forEachObj(exercise.answers.groups, (g, gId) => {
+						const answers: QuadrantsAnswers =
+							typeof exercise.answers === "string"
+								? JSON.parse(exercise.answers)
+								: exercise.answers
+
+						if (answers.groups) {
+							R.forEachObj(answers.groups, (g, gId) => {
 								store.groups[gId] = g
 							})
 						}
-						if (exercise.answers.participants) {
-							R.forEachObj(exercise.answers.participants, (p, pId) => {
+						if (answers.participants) {
+							R.forEachObj(answers.participants, (p, pId) => {
 								store.participants[pId] = p
 							})
 						}
@@ -120,14 +147,18 @@ export default class Server implements Party.Server {
 						if (!exercise.answers) return yDoc
 
 						const store = syncedStore(INITIAL_FORM_ANSWERS, yDoc)
+						const answers: FormAnswers =
+							typeof exercise.answers === "string"
+								? JSON.parse(exercise.answers)
+								: exercise.answers
 
-						if (exercise.answers.groups) {
-							R.forEachObj(exercise.answers.groups, (g, gId) => {
+						if (answers.groups) {
+							R.forEachObj(answers.groups, (g, gId) => {
 								store.groups[gId] = g
 							})
 						}
-						if (exercise.answers.participants) {
-							R.forEachObj(exercise.answers.participants, (p, pId) => {
+						if (answers.participants) {
+							R.forEachObj(answers.participants, (p, pId) => {
 								store.participants[pId] = p
 							})
 						}
@@ -190,7 +221,7 @@ export default class Server implements Party.Server {
 
 					await sanity
 						.patch(exerciseId)
-						.set({ answers })
+						.set({ answers: JSON.stringify(answers) })
 						.commit()
 						.catch(() => null)
 				},

@@ -1,4 +1,3 @@
-import { visionTool } from "@sanity/vision"
 import { defineConfig } from "sanity"
 import { media, mediaAssetSource } from "sanity-plugin-media"
 import { structureTool } from "sanity/structure"
@@ -87,7 +86,6 @@ const config = defineConfig({
 			},
 		}),
 		media(),
-		visionTool(),
 	],
 
 	schema: { types: schemaTypes },
