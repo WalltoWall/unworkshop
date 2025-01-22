@@ -61,7 +61,7 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 							{step.fields?.map((field, fieldIdx) => {
 								const participantOrGroup = R.values(participantOrGroupAnswers)
 									.map((pa) => ({
-										answer: pa.answers.at(stepIdx)?.at(fieldIdx)!,
+										answer: pa.answers.at(stepIdx)?.at(fieldIdx),
 										name: pa.name,
 										allAnswers: pa.answers,
 										id: pa.id,
@@ -87,8 +87,8 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 										<div className="mt-7 flex flex-wrap gap-3">
 											{participantOrGroup?.map((pOrG, idx) => (
 												<ResponseCard
-													key={pOrG.answer.type + idx}
-													answer={pOrG.answer}
+													key={pOrG.answer!.type + idx}
+													answer={pOrG.answer!}
 													allParticipantAnswers={
 														participantOrGroupAnswers[pOrG.id]?.answers
 													}

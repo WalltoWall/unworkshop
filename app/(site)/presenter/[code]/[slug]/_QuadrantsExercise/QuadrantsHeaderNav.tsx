@@ -13,8 +13,6 @@ export const ExerciseWithStepsNav = ({ steps, slug }: Props) => {
 	const searchParams = useSearchParams()
 	const step = parseInt(searchParams?.get("step") ?? "1")
 
-	console.log(slug, params.code)
-
 	return (
 		<ul className="mt-6 flex flex-col gap-3">
 			{R.range(0, steps).map((idx) => (
