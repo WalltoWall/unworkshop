@@ -23,10 +23,7 @@ export const useMultiplayer = (args: MultiplayerArgs) => {
 		options: { disableBc: env.NODE_ENV !== "production" },
 	})
 
-	const awareness = provider.awareness
-	const doc = provider.doc
-
-	const users = useUsers(awareness)
+	const users = useUsers(provider.awareness)
 
 	const signalIntent = React.useCallback(
 		(intent: string) => {
@@ -49,8 +46,8 @@ export const useMultiplayer = (args: MultiplayerArgs) => {
 	return {
 		users: users as Map<number, MultiplayerUser>,
 		provider,
-		awareness,
-		doc,
+		awareness: provider.awareness,
+		doc: provider.doc,
 		signalIntent,
 		clearIntent,
 	}

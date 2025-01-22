@@ -22,12 +22,12 @@ export const GroupExerciseSubmissionForm = ({
 }: Props) => {
 	const params = useGroupParams()
 	const router = useRouter()
-	const { snap, actions } = useMultiplayerGroups({
+	const { state, actions } = useMultiplayerGroups({
 		exerciseId: exercise._id,
 		participantId: participant._id,
 	})
 
-	const groupParticipants: Group | undefined = snap.groups?.[params.groupSlug]
+	const groupParticipants: Group | undefined = state.groups?.[params.groupSlug]
 	const role: Role | undefined = groupParticipants?.[participant._id]
 	const group = exercise.groups?.find(
 		(g) => g.slug.current === params.groupSlug,
@@ -70,5 +70,3 @@ export const GroupExerciseSubmissionForm = ({
 		</div>
 	)
 }
-
-export default GroupExerciseSubmissionForm

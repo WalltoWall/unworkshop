@@ -14,7 +14,11 @@ type Props = {
 	groupSlug?: string
 }
 
-const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
+export const BrainstormClient = ({
+	exercise,
+	participant,
+	groupSlug,
+}: Props) => {
 	if (!exercise.steps) throw new Error("Invalid brainstorm Exercise steps.")
 
 	const router = useRouter()
@@ -74,5 +78,3 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 		</div>
 	)
 }
-
-export default BrainstormClient

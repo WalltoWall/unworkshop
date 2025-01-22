@@ -147,5 +147,3 @@ export const QuadrantsClient = ({
 		</>
 	)
 }
-
-export default QuadrantsClient

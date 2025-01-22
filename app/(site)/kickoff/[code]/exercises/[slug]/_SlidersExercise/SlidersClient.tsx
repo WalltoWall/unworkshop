@@ -61,5 +61,3 @@ export const SlidersClient = ({ exercise, participant, groupSlug }: Props) => {
 		</div>
 	)
 }
-
-export default SlidersClient
