@@ -1,6 +1,6 @@
+import { motion } from "motion/react"
 import React from "react"
 import clsx from "clsx"
-import { motion } from "framer-motion"
 import { showContributorWarning } from "@/lib/show-contributor-warning"
 import type { BrainstormCard } from "./types"
 import type { BrainstormActions } from "./use-multiplayer-brainstorm"

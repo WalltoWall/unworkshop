@@ -43,7 +43,7 @@ export const NarrowField = ({ source, answer, actions, ...props }: Props) => {
 		})
 	}
 
-	const handleChange: React.MouseEventHandler<HTMLInputElement> = (e) => {
+	const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
 		if (!rForm.current || props.readOnly) return e.preventDefault()
 
 		const data = new FormData(rForm.current)
@@ -87,8 +87,8 @@ export const NarrowField = ({ source, answer, actions, ...props }: Props) => {
 								name={INPUT_NAME}
 								value={response}
 								className="appearance-none outline-none"
-								onClick={handleChange}
-								checked={answer?.responses.includes(response)}
+								onChange={handleChange}
+								checked={answer?.responses.includes(response) ?? false}
 								readOnly={props.readOnly}
 							/>
 

@@ -1,6 +1,6 @@
+import { AnimatePresence } from "motion/react"
 import React from "react"
 import clsx from "clsx"
-import { AnimatePresence } from "framer-motion"
 import { Card } from "./Card"
 import type { BrainstormCard, Color } from "./types"
 import type { BrainstormActions } from "./use-multiplayer-brainstorm"
@@ -31,12 +31,10 @@ export const CardScroller = ({
 	synced = false,
 }: Props) => {
 	React.useEffect(() => {
-		console.info({ cards: cards.length, readOnly, synced })
-
 		if (cards.length > 0 || readOnly || !synced) return
 
 		actions.addCard({ response: "", participantOrGroupId })
-	}, [participantOrGroupId, readOnly, cards.length, synced])
+	}, [participantOrGroupId, readOnly, cards.length, synced, actions])
 
 	return (
 		<div className="mb-auto mt-4 grid min-h-0 flex-[1_1_0] grid-cols-2 content-start gap-2.5 overflow-y-auto py-4 scrollbar-hide scroll-shadow scroll-shadow-4 sm:auto-rows-[10.25rem] sm:grid-cols-2">

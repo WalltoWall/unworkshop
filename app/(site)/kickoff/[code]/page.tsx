@@ -7,14 +7,13 @@ import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
 import { Scroller } from "./Scroller"
 
-type Props = {
-	params: { code: string }
-	searchParams: { [key: string]: string | string[] | undefined }
-}
+type Params = { code: string }
+type Props = { params: Promise<Params> }
 
 const KickoffPage = async (props: Props) => {
+	const params = await props.params
 	const participant = await client.findParticipantOrThrow()
-	if (participant.onboarded) redirect(`/kickoff/${props.params.code}/exercises`)
+	if (participant.onboarded) redirect(`/kickoff/${params.code}/exercises`)
 
 	async function onboard() {
 		"use server"
@@ -22,7 +21,7 @@ const KickoffPage = async (props: Props) => {
 		noStore()
 
 		await client.onboardParticipant(participant._id)
-		redirect(`/kickoff/${props.params.code}/exercises`)
+		redirect(`/kickoff/${params.code}/exercises`)
 	}
 
 	return (
@@ -43,9 +42,7 @@ const KickoffPage = async (props: Props) => {
 					className="mt-4 block text-gray-50 underline"
 					asChild
 				>
-					<Link href={`/kickoff/register?code=${props.params.code}`}>
-						Not you?
-					</Link>
+					<Link href={`/kickoff/register?code=${params.code}`}>Not you?</Link>
 				</Text>
 			</div>
 
@@ -60,8 +57,10 @@ const KickoffPage = async (props: Props) => {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
+	const params = await props.params
+
 	return {
-		title: `${props.params.code} - W|W Workshop`,
+		title: `${params.code} - W|W Workshop`,
 	}
 }
 

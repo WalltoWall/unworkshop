@@ -17,16 +17,14 @@ export type MultiplayerUser = {
 export type MultiplayerData = ReturnType<typeof useMultiplayer>
 
 export const useMultiplayer = (args: MultiplayerArgs) => {
+	const [synced, setSynced] = React.useState(false)
 	const provider = useYPartyKit({
 		host: env.NEXT_PUBLIC_PARTYKIT_HOST,
 		room: `exercise::${args.exerciseId}`,
 		options: { disableBc: env.NODE_ENV !== "production" },
 	})
 
-	const awareness = provider.awareness
-	const doc = provider.doc
-
-	const users = useUsers(awareness)
+	const users = useUsers(provider.awareness)
 
 	const signalIntent = React.useCallback(
 		(intent: string) => {
@@ -46,12 +44,20 @@ export const useMultiplayer = (args: MultiplayerArgs) => {
 		provider.awareness.setLocalStateField("color", randomColor)
 	}, [provider.awareness])
 
+	React.useEffect(() => {
+		const onSync = (status: boolean) => setSynced(status)
+		provider.on("sync", onSync)
+
+		return () => provider.off("sync", onSync)
+	}, [provider])
+
 	return {
 		users: users as Map<number, MultiplayerUser>,
 		provider,
-		awareness,
-		doc,
+		awareness: provider.awareness,
+		doc: provider.doc,
 		signalIntent,
 		clearIntent,
+		synced,
 	}
 }

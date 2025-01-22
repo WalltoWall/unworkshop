@@ -47,7 +47,7 @@ export const QuadrantsClient = ({
 	const currentQuadrantIdx = Math.ceil(step / 2) - 1
 	const currentQuadrant = exercise.quadrants.at(currentQuadrantIdx)
 
-	const { actions } = useMultiplayerQuadrants({
+	const { actions, multiplayer } = useMultiplayerQuadrants({
 		exerciseId: exercise._id,
 		participantId: participant._id,
 		groupSlug: groupSlug,
@@ -93,6 +93,8 @@ export const QuadrantsClient = ({
 				break
 		}
 	}
+
+	if (!multiplayer.synced) return null
 
 	return (
 		<>
@@ -147,5 +149,3 @@ export const QuadrantsClient = ({
 		</>
 	)
 }
-
-export default QuadrantsClient

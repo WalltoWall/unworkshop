@@ -22,16 +22,18 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const stepIdx = step - 1
 
-	const { actions, multiplayer, snap } = useMultiplayerBrainstorm({
+	const { actions, multiplayer, state } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
 	})
 
-	const stepData = snap.steps.at(stepIdx)
+	const stepData = state.steps.at(stepIdx)
 	if (!stepData) return null
 
 	const columns = stepData.columns
 	const unsorted = stepData.unsorted
+
+	if (!multiplayer.synced) return null
 
 	return (
 		<DragDropContext
@@ -147,5 +149,3 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 		</DragDropContext>
 	)
 }
-
-export default BrainstormPresenterViewClient

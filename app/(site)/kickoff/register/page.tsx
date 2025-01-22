@@ -14,15 +14,19 @@ import registerIllustration from "@/assets/images/register-illustration.jpg"
 import { PARTICIPANT_COOKIE } from "@/constants"
 import { RegisterInput } from "./RegisterInput"
 
+type Params = { code: string }
+type SearchParams = { [key: string]: string | string[] | undefined }
+
 type Props = {
-	params: { code: string }
-	searchParams: { [key: string]: string | string[] | undefined }
+	params: Promise<Params>
+	searchParams: Promise<SearchParams>
 }
 
 const Form = zfd.formData({ name: zfd.text() })
 
 const KickoffRegisterPage = async (props: Props) => {
-	const code = z.string().parse(props.searchParams.code)
+	const searchParams = await props.searchParams
+	const code = z.string().parse(searchParams.code)
 	const [kickoff, participant] = await Promise.all([
 		client.findKickoff(code),
 		client.findParticipantViaCookie(),
@@ -36,6 +40,7 @@ const KickoffRegisterPage = async (props: Props) => {
 		"use server"
 
 		noStore()
+		const cookiesStore = await cookies()
 
 		const form = Form.parse(data)
 		const participant = await client.registerParticipant({
@@ -44,7 +49,7 @@ const KickoffRegisterPage = async (props: Props) => {
 			recoveryCode: uid(),
 		})
 
-		cookies().set({
+		cookiesStore.set({
 			name: PARTICIPANT_COOKIE,
 			value: participant._id,
 			httpOnly: true,

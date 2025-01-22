@@ -1,10 +1,9 @@
 import { useParams } from "next/navigation"
-import { z } from "zod"
 
-const ParamsSchema = z.object({
-	code: z.string(),
-	slug: z.string(),
-	groupSlug: z.string(),
-})
+type GroupParams = {
+	code: string
+	slug: string
+	groupSlug: string
+}
 
-export const useGroupParams = () => ParamsSchema.parse(useParams())
+export const useGroupParams = () => useParams<GroupParams>()

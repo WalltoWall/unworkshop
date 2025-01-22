@@ -33,7 +33,7 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const params = useParams()
-	const { actions, snap, multiplayer } = useMultiplayerForm({
+	const { actions, state, multiplayer } = useMultiplayerForm({
 		exerciseId: exercise._id,
 		participantOrGroupId,
 	})
@@ -46,7 +46,7 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 
 	const stepData = exercise.form.steps.at(stepIdx)
 
-	const answers = snap.participants[participantOrGroupId] ?? []
+	const answers = state.participants[participantOrGroupId] ?? []
 	const stepAnswers = answers.at(stepIdx)
 
 	const onReviewScreen = !stepData && stepIdx === exercise.form.steps.length
@@ -55,12 +55,12 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 		router.push(`/kickoff/${params.code}/exercises`)
 
 	const role = groupSlug
-		? snap.groups?.[groupSlug]?.[participant._id]
+		? state.groups?.[groupSlug]?.[participant._id]
 		: undefined
 
 	const groupCount = exercise.groups?.length ?? 0
 
-	if (!multiplayer.provider.synced) return null
+	if (!multiplayer.synced) return null
 
 	return (
 		<div className="mt-3 flex flex-[1_1_0] flex-col justify-between">

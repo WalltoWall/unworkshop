@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { useFormState, useFormStatus } from "react-dom"
+import { useFormStatus } from "react-dom"
 import clsx from "clsx"
 import {
 	OTPInput,
@@ -99,7 +99,7 @@ const CodeInput = () => {
 }
 
 export const CodeForm = () => {
-	const [state, action] = useFormState(checkCodeAction, { error: "" })
+	const [state, action] = React.useActionState(checkCodeAction, { error: "" })
 
 	React.useEffect(() => {
 		if (!state.error) return

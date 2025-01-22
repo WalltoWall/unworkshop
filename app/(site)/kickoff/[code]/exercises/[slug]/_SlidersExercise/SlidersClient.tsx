@@ -26,18 +26,22 @@ export const SlidersClient = ({ exercise, participant, groupSlug }: Props) => {
 	const step = parseInt(searchParams?.get("step") ?? "1")
 	const stepIdx = step - 1
 
-	const { actions } = useMultiplayerSliders({
+	const { actions, multiplayer, state } = useMultiplayerSliders({
 		exerciseId: exercise._id,
 		participantId: participant._id,
 		slug: exercise.sliders[stepIdx].slug.current,
 		groupSlug,
 	})
 
-	const { answers, role } = actions.getAnswers()
+	const participantOrGroupId = groupSlug ?? participant._id
+	const answers = state.participants[participantOrGroupId]
+	const role = groupSlug ? state.groups?.[groupSlug]?.[participant._id] : null
 
 	const sliders = exercise.sliders
 	const answer = answers?.[exercise.sliders[stepIdx].slug.current]
 	const slider = sliders.at(stepIdx)
+
+	if (!multiplayer.synced) return null
 
 	return (
 		<div className="mt-8 flex flex-[1_1_0] flex-col gap-6">
@@ -61,5 +65,3 @@ export const SlidersClient = ({ exercise, participant, groupSlug }: Props) => {
 		</div>
 	)
 }
-
-export default SlidersClient

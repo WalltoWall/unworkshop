@@ -18,10 +18,7 @@ export const ExerciseWithStepsNav = ({ steps, slug }: Props) => {
 			{R.range(0, steps).map((idx) => (
 				<li key={idx}>
 					<Link
-						href={{
-							href: `/presenter/${params.code}/${slug}`,
-							query: { step: idx + 1 },
-						}}
+						href={`/presenter/${params.code}/${slug}?step=${idx + 1}`}
 						className={cx(
 							"mx-6 block uppercase transition-opacity text-24 leading-none font-heading capsize hover:opacity-100 focus:opacity-100",
 							idx + 1 === step ? "opacity-100" : "opacity-50",

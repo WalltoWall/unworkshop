@@ -35,7 +35,7 @@ export const PresentColumnModal = ({ columns, index }: PresentColumnProps) => {
 				<Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-black/50" />
 
 				<Dialog.Content className="data-[state=open]:animate-contentShow fixed left-1/2 top-1/2 max-h-[688px] w-full max-w-[1072px] -translate-x-1/2 -translate-y-1/2 focus:outline-none">
-					<div className=" rounded-3xl bg-white p-10">
+					<div className="rounded-3xl bg-white p-10">
 						<div className="flex items-center justify-between">
 							<Dialog.Title className="flex items-center gap-2">
 								<div
@@ -76,7 +76,7 @@ export const PresentColumnModal = ({ columns, index }: PresentColumnProps) => {
 							disabled={isDisabledLeft}
 							className={clsx(isDisabledLeft && "opacity-50")}
 						>
-							<Arrow className="w-6  text-white" />
+							<Arrow className="w-6 text-white" />
 						</button>
 						<button
 							onClick={() => {

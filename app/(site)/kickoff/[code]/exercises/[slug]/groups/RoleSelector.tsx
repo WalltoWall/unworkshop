@@ -73,5 +73,3 @@ export const RoleSelector = ({ participant, exercise }: Props) => {
 		</div>
 	)
 }
-
-export default RoleSelector

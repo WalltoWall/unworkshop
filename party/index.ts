@@ -1,11 +1,10 @@
 import { createClient } from "@sanity/client"
+import syncedStore from "@syncedstore/core"
 import type * as Party from "partykit/server"
-import { proxy } from "valtio"
-import { bind } from "valtio-yjs"
+import * as R from "remeda"
 import { onConnect } from "y-partykit"
 import * as Y from "yjs"
-import type * as ST from "@/sanity/types.gen"
-import { INITIAL_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
+import { INITIAL_BRAINSTORM_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
 import type { BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { INITIAL_QUADRANTS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/contants"
 import type { QuadrantsExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
@@ -13,7 +12,6 @@ import { INITIAL_SLIDERS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[
 import type { SlidersExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_SlidersExercise/types"
 import type { FormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/FormsExercise/types"
 import { INITIAL_FORM_ANSWERS } from "@/app/(site)/presenter/[code]/[slug]/_FormExercise/constants"
-import { ANSWERS_KEY } from "@/constants"
 
 const sanity = createClient({
 	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -23,6 +21,20 @@ const sanity = createClient({
 	perspective: "published",
 	useCdn: false,
 })
+
+type Result =
+	| BrainstormExercise
+	| FormExercise
+	| QuadrantsExercise
+	| SlidersExercise
+	| null
+
+async function getExercise(id: string) {
+	const query = '*[_type == "exercise" && _id == $id][0]'
+	const params = { id }
+
+	return await sanity.fetch<Result>(query, params)
+}
 
 export default class Server implements Party.Server {
 	constructor(readonly room: Party.Room) {}
@@ -42,109 +54,83 @@ export default class Server implements Party.Server {
 
 				console.info("Loading exercise answers for id: " + exerciseId)
 
-				const doc = await sanity.fetch<ST.Exercise | null>(
-					'*[_type == "exercise" && _id == $id][0]',
-					{ id: exerciseId },
-				)
+				const doc = await getExercise(exerciseId)
 				if (!doc) {
 					console.info("No exercise found for id: " + exerciseId)
 
 					return yDoc
 				}
 
-				const yMap = yDoc.getMap(ANSWERS_KEY)
-
-				switch (doc?.type) {
+				switch (doc.type) {
 					case "brainstorm": {
-						console.info("Found brainstorm exercise.")
-
 						const exercise = doc as BrainstormExercise
+						if (!exercise.answers) return yDoc
 
-						let initialState: BrainstormExercise["answers"]
-						if (!exercise.answers) {
-							console.info("No existing answers found. Creating initial data.")
+						const store = syncedStore(INITIAL_BRAINSTORM_ANSWERS, yDoc)
 
-							initialState = INITIAL_ANSWERS
-						} else {
-							console.info("Existing answers found. Persisting data.")
-
-							initialState = exercise.answers
+						if (exercise.answers.groups) {
+							R.forEachObj(exercise.answers.groups, (g, gId) => {
+								store.groups[gId] = g
+							})
 						}
 
-						const state = proxy(initialState)
-						bind(state, yMap)
+						if (exercise.answers.steps) {
+							exercise.answers.steps.forEach((s) => store.steps.push(s))
+						}
 
 						return yDoc
 					}
 
 					case "sliders": {
-						console.info("Found sliders exercise.")
-
 						const exercise = doc as SlidersExercise
+						if (!exercise.answers) return yDoc
 
-						let initialState: SlidersExercise["answers"]
-
-						if (!exercise.answers) {
-							console.info(
-								"No existing answers found. Creating initial sliders data.",
-							)
-
-							initialState = INITIAL_SLIDERS_ANSWERS
-						} else {
-							console.info("Found existing sliders answers. Persisting data.")
-
-							initialState = exercise.answers
-						}
-
-						const state = proxy(initialState)
-						bind(state, yMap)
+						const store = syncedStore(INITIAL_SLIDERS_ANSWERS, yDoc)
+						R.forEachObj(exercise.answers.groups, (g, gId) => {
+							store.groups[gId] = g
+						})
+						R.forEachObj(exercise.answers.participants, (p, pId) => {
+							store.participants[pId] = p
+						})
 
 						return yDoc
 					}
 
 					case "quadrants": {
-						console.info("Found quadrants exercise.")
-
 						const exercise = doc as QuadrantsExercise
+						if (!exercise.answers) return yDoc
 
-						let initialState: QuadrantsExercise["answers"]
-
-						if (!exercise.answers) {
-							console.info(
-								"No existing answers found. Creating initial quadrants data.",
-							)
-
-							initialState = INITIAL_QUADRANTS_ANSWERS
-						} else {
-							console.info("Found existing quadrants answers. Persisting data.")
-
-							initialState = exercise.answers
+						const store = syncedStore(INITIAL_QUADRANTS_ANSWERS, yDoc)
+						if (exercise.answers.groups) {
+							R.forEachObj(exercise.answers.groups, (g, gId) => {
+								store.groups[gId] = g
+							})
 						}
-
-						const state = proxy(initialState)
-						bind(state, yMap)
+						if (exercise.answers.participants) {
+							R.forEachObj(exercise.answers.participants, (p, pId) => {
+								store.participants[pId] = p
+							})
+						}
 
 						return yDoc
 					}
 
 					case "form": {
-						console.info("Found form exercise.")
-
 						const exercise = doc as FormExercise
+						if (!exercise.answers) return yDoc
 
-						let initialState: FormExercise["answers"]
-						if (!exercise.answers) {
-							console.info("No existing answers found. Creating initial data.")
+						const store = syncedStore(INITIAL_FORM_ANSWERS, yDoc)
 
-							initialState = INITIAL_FORM_ANSWERS
-						} else {
-							console.info("Existing answers found. Persisting data.")
-
-							initialState = exercise.answers
+						if (exercise.answers.groups) {
+							R.forEachObj(exercise.answers.groups, (g, gId) => {
+								store.groups[gId] = g
+							})
 						}
-
-						const state = proxy(initialState)
-						bind(state, yMap)
+						if (exercise.answers.participants) {
+							R.forEachObj(exercise.answers.participants, (p, pId) => {
+								store.participants[pId] = p
+							})
+						}
 
 						return yDoc
 					}
@@ -152,26 +138,61 @@ export default class Server implements Party.Server {
 					default:
 						return yDoc
 				}
+
+				console.info("Loaded exercise answers for id: " + exerciseId)
 			},
 
 			callback: {
 				handler: async (yDoc) => {
-					const yMap = yDoc.getMap(ANSWERS_KEY)
 					const exerciseId = this.exerciseId
 
-					const answers = yMap.toJSON()
+					const doc = await getExercise(exerciseId)
+					let answers: any = {}
 
-					console.info("Saving exercise...")
+					switch (doc?.type) {
+						case "form": {
+							const a: Partial<FormExercise["answers"]> = {}
+							a.participants = yDoc.get("participants", Y.Map).toJSON()
+							a.groups = yDoc.get("groups", Y.Map).toJSON()
+
+							answers = a
+
+							break
+						}
+						case "sliders": {
+							const a: Partial<SlidersExercise["answers"]> = {}
+							a.participants = yDoc.get("participants", Y.Map).toJSON()
+							a.groups = yDoc.get("groups", Y.Map).toJSON()
+
+							answers = a
+
+							break
+						}
+						case "quadrants": {
+							const a: Partial<QuadrantsExercise["answers"]> = {}
+							a.participants = yDoc.get("participants", Y.Map).toJSON()
+							a.groups = yDoc.get("groups", Y.Map).toJSON()
+
+							answers = a
+
+							break
+						}
+						case "brainstorm": {
+							const a: Partial<BrainstormExercise["answers"]> = {}
+							a.steps = yDoc.get("steps", Y.Array).toJSON()
+							a.groups = yDoc.get("groups", Y.Map).toJSON()
+
+							answers = a
+
+							break
+						}
+					}
 
 					await sanity
 						.patch(exerciseId)
 						.set({ answers })
 						.commit()
-						.catch((err) =>
-							console.error(`Saving document ${exerciseId} failed: `, err),
-						)
-
-					console.info("Saved exercise: " + exerciseId)
+						.catch(() => null)
 				},
 
 				// only save after every 5 seconds (default)

@@ -37,12 +37,12 @@ export const SlidersPresenterViewClient = ({
 	const currentSliderSlug = exercise.sliders?.[stepIdx].slug.current
 	if (!currentSliderSlug) throw new Error("Error: No slug for current slider")
 
-	const { snap } = useMultiplayerSliders({
+	const { state } = useMultiplayerSliders({
 		exerciseId: exercise._id,
 		slug: currentSliderSlug,
 	})
 
-	const participants = snap.participants
+	const participants = state.participants
 
 	const allStepAnswers = Object.values(participants)
 		.map((answers) => {

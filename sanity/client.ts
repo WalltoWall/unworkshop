@@ -11,9 +11,9 @@ import { sanity } from "./sanity-client"
 export const client = {
 	findKickoff: React.cache(async (code: string) => {
 		const kickoffQuery = groq`*[_type == "kickoff" && code.current == $code][0] {
-            ...,
-            exercises[]->
-        }`
+			...,
+			exercises[]->
+		}`
 
 		const data = await sanity.fetch<ST.KickoffQueryResult>(
 			kickoffQuery,
@@ -39,13 +39,14 @@ export const client = {
 	),
 
 	findParticipantViaCookie: React.cache(async () => {
-		const id = cookies().get(PARTICIPANT_COOKIE)?.value
+		const cookiesStore = await cookies()
+		const id = cookiesStore.get(PARTICIPANT_COOKIE)?.value
 		if (!id) return null
 
 		const participantWithKickoffCodeQuery = groq`*[_type == "participant" && _id == $id][0] {
-            ...,
-            kickoff->{ "code": code.current }
-        }`
+			...,
+			kickoff->{ "code": code.current }
+		}`
 
 		const data = await sanity.fetch<ST.ParticipantWithKickoffCodeQueryResult>(
 			participantWithKickoffCodeQuery,
@@ -59,9 +60,10 @@ export const client = {
 	findParticipantOrThrow: React.cache(async <
 		T extends ST.Participant = ST.Participant,
 	>() => {
+		const cookiesStore = await cookies()
 		const participantId = z
 			.string()
-			.parse(cookies().get(PARTICIPANT_COOKIE)?.value)
+			.parse(cookiesStore.get(PARTICIPANT_COOKIE)?.value)
 
 		const participant = await client.findParticipant<T>(participantId)
 		if (!participant) throw new Error("No onboarded participant found.")
@@ -148,9 +150,7 @@ export const client = {
 
 	async findExerciseBySlug<T extends ST.Exercise = ST.Exercise>(slug: string) {
 		const data = await sanity.fetch<T | null>(
-			groq`*[_type == "exercise" && slug.current == $slug][0]{
-                    ...,
-                }`,
+			groq`*[_type == "exercise" && slug.current == $slug][0]{ ..., }`,
 			{ slug },
 			{ cache: "no-store" },
 		)

@@ -14,7 +14,11 @@ type Props = {
 	groupSlug?: string
 }
 
-const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
+export const BrainstormClient = ({
+	exercise,
+	participant,
+	groupSlug,
+}: Props) => {
 	if (!exercise.steps) throw new Error("Invalid brainstorm Exercise steps.")
 
 	const router = useRouter()
@@ -25,12 +29,12 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 	const stepIdx = step - 1
 	const stepData = exercise.steps.at(stepIdx)
 
-	const { snap, actions, multiplayer } = useMultiplayerBrainstorm({
+	const { state, actions, multiplayer } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
 	})
-	const unsorted = snap.steps.at(stepIdx)?.unsorted ?? []
-	const columns = snap.steps.at(stepIdx)?.columns ?? []
+	const unsorted = state.steps.at(stepIdx)?.unsorted ?? []
+	const columns = state.steps.at(stepIdx)?.columns ?? []
 
 	const sorted = columns.flatMap((c) => c.cards)
 
@@ -40,7 +44,9 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 		R.filter((c) => c.participantOrGroupId === (groupSlug ?? participant._id)),
 	)
 
-	const role = groupSlug && snap.groups?.[groupSlug]?.[participant._id]
+	const role = groupSlug && state.groups?.[groupSlug]?.[participant._id]
+
+	if (!multiplayer.synced) return null
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
@@ -63,7 +69,7 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 				participantOrGroupId={groupSlug ?? participant._id}
 				readOnly={role === "contributor"}
 				placeholder={stepData?.placeholder}
-				synced={multiplayer.provider.synced}
+				synced={multiplayer.synced}
 			/>
 
 			<Steps
@@ -74,5 +80,3 @@ const BrainstormClient = ({ exercise, participant, groupSlug }: Props) => {
 		</div>
 	)
 }
-
-export default BrainstormClient

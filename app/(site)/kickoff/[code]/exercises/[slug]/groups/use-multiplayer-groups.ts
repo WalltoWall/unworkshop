@@ -1,18 +1,18 @@
+import { useSyncedStore } from "@syncedstore/react"
 import React from "react"
+import { syncedStore } from "@syncedstore/core"
 import * as R from "remeda"
-import { proxy, useSnapshot } from "valtio"
-import { bind } from "valtio-yjs"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,
 } from "@/components/Multiplayer/use-multiplayer"
-import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_GROUP_ANSWERS } from "./constants"
 import type { ExerciseAnswers, Role } from "./types"
 
 export type UseMultiplayerGroupsArgs = {
 	participantId?: string
 } & MultiplayerArgs
+
 export type QuadrantsActions = ReturnType<
 	typeof useMultiplayerGroups
 >["actions"]
@@ -24,39 +24,16 @@ export const useMultiplayerGroups = ({
 	...args
 }: UseMultiplayerGroupsArgs) => {
 	const multiplayer = useMultiplayer(args)
-	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
-	const state = React.useRef(
-		proxy<ExerciseAnswers>(INITIAL_GROUP_ANSWERS),
-	).current
-	const snap = useSnapshot(state)
-
-	React.useEffect(() => {
-		let unbind: (() => void) | undefined = undefined
-
-		// This function runs once we know a connection has been made to our
-		// backend and we've checked that data exists in Sanity.
-		const onSync = (isSynced: boolean) => {
-			if (isSynced) {
-				const initialState = yMap.toJSON() as ExerciseAnswers
-				state.participants = initialState.participants
-				state.groups = initialState.groups
-
-				unbind = bind(state, yMap)
-			}
-		}
-		multiplayer.provider.on("sync", onSync)
-
-		return () => {
-			unbind?.()
-			multiplayer.provider.off("sync", onSync)
-		}
-	}, [multiplayer.provider, state, yMap])
+	const store = React.useMemo(
+		() => syncedStore(INITIAL_GROUP_ANSWERS, multiplayer.doc),
+		[multiplayer.doc],
+	)
+	const state = useSyncedStore(store) as ExerciseAnswers
 
 	const actions = {
 		setRole: (args: { slug: string; role: Role }) => {
 			if (!participantId) return
 
-			state.groups ??= {}
 			state.groups[args.slug] ??= {}
 
 			// Remove this participant from all other groups first. Ensures
@@ -75,13 +52,12 @@ export const useMultiplayerGroups = ({
 		replaceCaptain: (args: { slug: string }) => {
 			if (!participantId) return
 
-			state.groups ??= {}
 			state.groups[args.slug] ??= {}
 
 			const group = state.groups[args.slug]
 			const captain = R.pipe(
 				R.entries(group),
-				R.find(([_id, role]) => role === "captain"),
+				R.find(([, role]) => role === "captain"),
 			)
 
 			const captainId = captain?.[0]
@@ -93,5 +69,5 @@ export const useMultiplayerGroups = ({
 		},
 	}
 
-	return { snap, actions, multiplayer }
+	return { state, actions, multiplayer }
 }

@@ -51,7 +51,7 @@ const Input = ({
 				placeholder={placeholder}
 				name={name}
 				className="h-9 grow rounded-lg border border-gray-90 px-2.5 text-black text-16 placeholder:text-gray-75"
-				value={value}
+				value={value ?? ""}
 				onChange={wrappedOnChange}
 				readOnly={readOnly}
 			/>
