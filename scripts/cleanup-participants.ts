@@ -4,7 +4,7 @@ const KICKOFF_ID = ""
 
 const client = createClient({
 	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-	dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
+	dataset: "production",
 	token: process.env.SANITY_TOKEN,
 	apiVersion: "2024-11-21",
 	perspective: "published",
