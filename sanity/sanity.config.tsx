@@ -12,8 +12,9 @@ const config = defineConfig({
 	subtitle: "Welcome back to the UnWorkshop CMS.",
 	basePath: "/admin",
 
-	document: { comments: { enabled: false } },
+	tasks: { enabled: false },
 	scheduledPublishing: { enabled: false },
+	document: { comments: { enabled: false } },
 
 	logo: () => <Logo style={{ width: "2.1875rem" }} />,
 	icon: () => <Logo />,
@@ -55,6 +56,7 @@ const config = defineConfig({
 		file: {
 			assetSources: (assetSources) =>
 				assetSources.filter(
+					//@ts-expect-error - mismatching asset types
 					(assetSource) => ![mediaAssetSource].includes(assetSource),
 				),
 		},
@@ -63,6 +65,7 @@ const config = defineConfig({
 		image: {
 			assetSources: (assetSources) =>
 				assetSources.filter((assetSource) =>
+					//@ts-expect-error - mismatching asset types
 					[mediaAssetSource].includes(assetSource),
 				),
 		},
