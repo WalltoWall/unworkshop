@@ -46,7 +46,7 @@ export const BrainstormClient = ({
 
 	const role = groupSlug && state.groups?.[groupSlug]?.[participant._id]
 
-	if (!multiplayer.provider.synced) return null
+	if (!multiplayer.synced) return null
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
@@ -69,7 +69,7 @@ export const BrainstormClient = ({
 				participantOrGroupId={groupSlug ?? participant._id}
 				readOnly={role === "contributor"}
 				placeholder={stepData?.placeholder}
-				synced={multiplayer.provider.synced}
+				synced={multiplayer.synced}
 			/>
 
 			<Steps

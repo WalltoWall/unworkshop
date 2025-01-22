@@ -53,22 +53,6 @@ export const useMultiplayerSliders = ({
 
 			step.tomorrow = args.tomorrow
 		},
-		getAnswers: () => {
-			let answers = null
-			let role = null
-
-			if (participantId) {
-				const participantOrGroupId = groupSlug ?? participantId
-
-				answers = state.participants[participantOrGroupId]
-
-				if (groupSlug) {
-					role = state.groups?.[groupSlug]?.[participantId]
-				}
-			}
-
-			return { answers, role }
-		},
 	}
 
 	return { state, actions, multiplayer }

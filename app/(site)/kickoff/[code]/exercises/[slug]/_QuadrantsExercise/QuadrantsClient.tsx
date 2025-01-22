@@ -94,7 +94,7 @@ export const QuadrantsClient = ({
 		}
 	}
 
-	if (!multiplayer.provider.synced) return null
+	if (!multiplayer.synced) return null
 
 	return (
 		<>

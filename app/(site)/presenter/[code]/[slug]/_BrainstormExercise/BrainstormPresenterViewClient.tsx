@@ -33,7 +33,7 @@ export const BrainstormPresenterViewClient = ({ exercise }: Props) => {
 	const columns = stepData.columns
 	const unsorted = stepData.unsorted
 
-	if (!multiplayer.provider.synced) return null
+	if (!multiplayer.synced) return null
 
 	return (
 		<DragDropContext

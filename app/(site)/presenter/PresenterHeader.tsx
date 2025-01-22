@@ -90,42 +90,40 @@ export const PresenterHeader = ({
 						)}
 					>
 						<ul className="flex flex-col gap-10">
-							{exercises.map((e) => {
-								return (
-									<li key={e._id}>
-										<Link
-											className={cx(
-												"relative inline-block pb-1 uppercase underline-offset-8 text-48 font-heading capsize hover:underline",
-												exercise?._id === e._id && "underline",
-											)}
-											href={`/presenter/${kickoffCode}/${e.slug.current}`}
-										>
-											{e.name}
-										</Link>
+							{exercises.map((e) => (
+								<li key={e._id}>
+									<Link
+										className={cx(
+											"relative inline-block pb-1 uppercase underline-offset-8 text-48 font-heading capsize hover:underline",
+											exercise?._id === e._id && "underline",
+										)}
+										href={`/presenter/${kickoffCode}/${e.slug.current}`}
+									>
+										{e.name}
+									</Link>
 
-										{match(e.type)
-											.with("quadrants", () => (
-												<ExerciseWithStepsNav
-													steps={e.quadrants?.length ?? 1}
-													slug={e.slug.current}
-												/>
-											))
-											.with("brainstorm", () => (
-												<ExerciseWithStepsNav
-													steps={e.steps?.length ?? 1}
-													slug={e.slug.current}
-												/>
-											))
-											.with("sliders", () => (
-												<ExerciseWithStepsNav
-													steps={e.sliders?.length ?? 1}
-													slug={e.slug.current}
-												/>
-											))
-											.otherwise(() => null)}
-									</li>
-								)
-							})}
+									{match(e.type)
+										.with("quadrants", () => (
+											<ExerciseWithStepsNav
+												steps={e.quadrants?.length ?? 1}
+												slug={e.slug.current}
+											/>
+										))
+										.with("brainstorm", () => (
+											<ExerciseWithStepsNav
+												steps={e.steps?.length ?? 1}
+												slug={e.slug.current}
+											/>
+										))
+										.with("sliders", () => (
+											<ExerciseWithStepsNav
+												steps={e.sliders?.length ?? 1}
+												slug={e.slug.current}
+											/>
+										))
+										.otherwise(() => null)}
+								</li>
+							))}
 						</ul>
 					</nav>
 				</>

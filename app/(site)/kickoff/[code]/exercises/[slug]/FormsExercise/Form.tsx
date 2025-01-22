@@ -60,7 +60,7 @@ export const Form = ({ exercise, participant, groupSlug }: Props) => {
 
 	const groupCount = exercise.groups?.length ?? 0
 
-	if (!multiplayer.provider.synced) return null
+	if (!multiplayer.synced) return null
 
 	return (
 		<div className="mt-3 flex flex-[1_1_0] flex-col justify-between">
