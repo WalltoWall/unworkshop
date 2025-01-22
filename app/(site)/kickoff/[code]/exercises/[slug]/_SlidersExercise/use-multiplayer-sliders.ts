@@ -1,9 +1,10 @@
+import { useSyncedStore } from "@syncedstore/react"
 import React from "react"
+import { syncedStore } from "@syncedstore/core"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,
 } from "@/components/Multiplayer/use-multiplayer"
-import { ANSWERS_KEY } from "@/constants"
 import { INITIAL_SLIDERS_ANSWERS } from "./constants"
 import { type SlidersAnswers } from "./types"
 
@@ -21,34 +22,11 @@ export const useMultiplayerSliders = ({
 	...args
 }: UseMultiplayerSlidersArgs) => {
 	const multiplayer = useMultiplayer(args)
-	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
-	const state = React.useRef(
-		proxy<SlidersAnswers>(INITIAL_SLIDERS_ANSWERS),
-	).current
-	const snap = useSnapshot(state)
-
-	// Kinda janky, but this is required to ensure data is persisted initially.
-	React.useEffect(() => {
-		let unbind: (() => void) | undefined = undefined
-
-		// This function runs once we know a connection has been made to our
-		// backend and we've checked that data exists in Sanity.
-		const onSync = (isSynced: boolean) => {
-			if (isSynced) {
-				const initialState = yMap.toJSON() as SlidersAnswers
-				state.participants = initialState.participants
-				state.groups = initialState.groups
-
-				unbind = bind(state, yMap)
-			}
-		}
-		multiplayer.provider.on("sync", onSync)
-
-		return () => {
-			unbind?.()
-			multiplayer.provider.off("sync", onSync)
-		}
-	}, [multiplayer.provider, state, yMap])
+	const store = React.useMemo(
+		() => syncedStore(INITIAL_SLIDERS_ANSWERS, multiplayer.doc),
+		[multiplayer.doc],
+	)
+	const state = useSyncedStore(store) as SlidersAnswers
 
 	const getSlider = () => {
 		const participantOrGroupId = groupSlug ?? participantId
@@ -79,12 +57,6 @@ export const useMultiplayerSliders = ({
 			let answers = null
 			let role = null
 
-			console.log({
-				participantId,
-				groupSlug,
-				state,
-			})
-
 			if (participantId) {
 				const participantOrGroupId = groupSlug ?? participantId
 
@@ -99,5 +71,5 @@ export const useMultiplayerSliders = ({
 		},
 	}
 
-	return { snap, actions, multiplayer }
+	return { state, actions, multiplayer }
 }

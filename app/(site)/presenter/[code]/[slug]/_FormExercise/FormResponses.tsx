@@ -24,10 +24,10 @@ export const FormResponses = ({ exercise, participants }: Props) => {
 	const [settings, setSettings] = React.useState<FormPresenterViewSettings>({
 		names: groups.length > 1,
 	})
-	const { snap } = useMultiplayerForm({ exerciseId: exercise._id })
+	const { state } = useMultiplayerForm({ exerciseId: exercise._id })
 
 	const participantOrGroupAnswers = R.mapValues(
-		snap.participants,
+		state.participants,
 		(answers, id) => {
 			const participant: FormParticipant | undefined = participants[id]
 			const group = exercise.groups?.find((group) => group.slug.current === id)

@@ -1,6 +1,6 @@
 import { useSyncedStore } from "@syncedstore/react"
 import React from "react"
-import syncedStore from "@syncedstore/core"
+import { syncedStore } from "@syncedstore/core"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,

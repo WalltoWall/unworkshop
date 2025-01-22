@@ -1,12 +1,14 @@
+import { useSyncedStore } from "@syncedstore/react"
 import React from "react"
+import { syncedStore } from "@syncedstore/core"
+import * as R from "remeda"
 import { uid } from "uid"
 import {
 	useMultiplayer,
 	type MultiplayerArgs,
 } from "@/components/Multiplayer/use-multiplayer"
 import { SORTING_COLUMN_ID } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/constants"
-import { ANSWERS_KEY } from "@/constants"
-import { INITIAL_ANSWERS } from "./constants"
+import { INITIAL_BRAINSTORM_ANSWERS } from "./constants"
 import { type BrainstormAnswers, type BrainstormCard } from "./types"
 
 export type UseMultiplayerBrainstormArgs = {
@@ -21,34 +23,16 @@ export const useMultiplayerBrainstorm = ({
 	...args
 }: UseMultiplayerBrainstormArgs) => {
 	const multiplayer = useMultiplayer(args)
-	const yMap = React.useRef(multiplayer.doc.getMap(ANSWERS_KEY)).current
-	const state = React.useRef(proxy<BrainstormAnswers>(INITIAL_ANSWERS)).current
-	const snap = useSnapshot(state)
-
-	// Kinda janky, but this is required to ensure data is persisted initially.
-	React.useEffect(() => {
-		let unbind: (() => void) | undefined = undefined
-
-		// This function runs once we know a connection has been made to our
-		// backend and we've checked that data exists in Sanity.
-		const onSync = (isSynced: boolean) => {
-			if (isSynced) {
-				const initialState = yMap.toJSON() as BrainstormAnswers
-				state.steps = initialState.steps
-
-				unbind = bind(state, yMap)
-			}
-		}
-		multiplayer.provider.on("sync", onSync)
-
-		return () => {
-			unbind?.()
-			multiplayer.provider.off("sync", onSync)
-		}
-	}, [multiplayer.provider, state, yMap])
+	const store = React.useMemo(
+		() => syncedStore(INITIAL_BRAINSTORM_ANSWERS, multiplayer.doc),
+		[multiplayer.doc],
+	)
+	const state = useSyncedStore(store) as BrainstormAnswers
 
 	const getStep = () => {
-		state.steps[stepIdx] ??= { columns: [], unsorted: [] }
+		if (!state.steps[stepIdx]) {
+			state.steps.splice(stepIdx, 0, { columns: [], unsorted: [] })
+		}
 		const step = state.steps[stepIdx]
 
 		return step
@@ -173,11 +157,16 @@ export const useMultiplayerBrainstorm = ({
 
 			if (!fromCards || !toCards) return
 
-			const [card] = fromCards.splice(args.from.idx, 1)
+			// Snapshot the card before removing it. We can't use the return value
+			// from 'splice' since the reactive proxy sets it to be 'undefined' when
+			// it is removed.
+			const card = R.clone(fromCards.at(args.from.idx))
+			fromCards.splice(args.from.idx, 1)
 
-			toCards.splice(args.to.idx, 0, card)
+			// Add the card to our drag destination.
+			if (card) toCards.splice(args.to.idx, 0, card)
 		},
 	}
 
-	return { snap, actions, multiplayer }
+	return { state, actions, multiplayer }
 }

@@ -31,8 +31,6 @@ export const CardScroller = ({
 	synced = false,
 }: Props) => {
 	React.useEffect(() => {
-		console.info({ cards: cards.length, readOnly, synced })
-
 		if (cards.length > 0 || readOnly || !synced) return
 
 		actions.addCard({ response: "", participantOrGroupId })

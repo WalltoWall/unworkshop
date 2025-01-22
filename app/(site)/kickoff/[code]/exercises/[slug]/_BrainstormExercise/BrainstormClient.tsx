@@ -29,12 +29,12 @@ export const BrainstormClient = ({
 	const stepIdx = step - 1
 	const stepData = exercise.steps.at(stepIdx)
 
-	const { snap, actions, multiplayer } = useMultiplayerBrainstorm({
+	const { state, actions, multiplayer } = useMultiplayerBrainstorm({
 		exerciseId: exercise._id,
 		stepIdx,
 	})
-	const unsorted = snap.steps.at(stepIdx)?.unsorted ?? []
-	const columns = snap.steps.at(stepIdx)?.columns ?? []
+	const unsorted = state.steps.at(stepIdx)?.unsorted ?? []
+	const columns = state.steps.at(stepIdx)?.columns ?? []
 
 	const sorted = columns.flatMap((c) => c.cards)
 
@@ -44,7 +44,9 @@ export const BrainstormClient = ({
 		R.filter((c) => c.participantOrGroupId === (groupSlug ?? participant._id)),
 	)
 
-	const role = groupSlug && snap.groups?.[groupSlug]?.[participant._id]
+	const role = groupSlug && state.groups?.[groupSlug]?.[participant._id]
+
+	if (!multiplayer.provider.synced) return null
 
 	return (
 		<div className="flex flex-[1_1_0] flex-col">
