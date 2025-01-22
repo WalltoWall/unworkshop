@@ -4,7 +4,7 @@ import type * as Party from "partykit/server"
 import * as R from "remeda"
 import { onConnect } from "y-partykit"
 import * as Y from "yjs"
-import { INITIAL_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
+import { INITIAL_BRAINSTORM_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/constants"
 import type { BrainstormExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
 import { INITIAL_QUADRANTS_ANSWERS } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/contants"
 import type { QuadrantsExercise } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_QuadrantsExercise/types"
@@ -66,11 +66,17 @@ export default class Server implements Party.Server {
 						const exercise = doc as BrainstormExercise
 						if (!exercise.answers) return yDoc
 
-						const store = syncedStore(INITIAL_ANSWERS, yDoc)
-						R.forEachObj(exercise.answers.groups, (g, gId) => {
-							store.groups[gId] = g
-						})
-						exercise.answers.steps.forEach((s) => store.steps.push(s))
+						const store = syncedStore(INITIAL_BRAINSTORM_ANSWERS, yDoc)
+
+						if (exercise.answers.groups) {
+							R.forEachObj(exercise.answers.groups, (g, gId) => {
+								store.groups[gId] = g
+							})
+						}
+
+						if (exercise.answers.steps) {
+							exercise.answers.steps.forEach((s) => store.steps.push(s))
+						}
 
 						return yDoc
 					}
@@ -95,12 +101,16 @@ export default class Server implements Party.Server {
 						if (!exercise.answers) return yDoc
 
 						const store = syncedStore(INITIAL_QUADRANTS_ANSWERS, yDoc)
-						R.forEachObj(exercise.answers.groups, (g, gId) => {
-							store.groups[gId] = g
-						})
-						R.forEachObj(exercise.answers.participants, (p, pId) => {
-							store.participants[pId] = p
-						})
+						if (exercise.answers.groups) {
+							R.forEachObj(exercise.answers.groups, (g, gId) => {
+								store.groups[gId] = g
+							})
+						}
+						if (exercise.answers.participants) {
+							R.forEachObj(exercise.answers.participants, (p, pId) => {
+								store.participants[pId] = p
+							})
+						}
 
 						return yDoc
 					}
@@ -111,12 +121,16 @@ export default class Server implements Party.Server {
 
 						const store = syncedStore(INITIAL_FORM_ANSWERS, yDoc)
 
-						R.forEachObj(exercise.answers.groups, (g, gId) => {
-							store.groups[gId] = g
-						})
-						R.forEachObj(exercise.answers.participants, (p, pId) => {
-							store.participants[pId] = p
-						})
+						if (exercise.answers.groups) {
+							R.forEachObj(exercise.answers.groups, (g, gId) => {
+								store.groups[gId] = g
+							})
+						}
+						if (exercise.answers.participants) {
+							R.forEachObj(exercise.answers.participants, (p, pId) => {
+								store.participants[pId] = p
+							})
+						}
 
 						return yDoc
 					}
@@ -159,12 +173,16 @@ export default class Server implements Party.Server {
 							a.participants = yDoc.get("participants", Y.Map).toJSON()
 							a.groups = yDoc.get("groups", Y.Map).toJSON()
 
+							answers = a
+
 							break
 						}
 						case "brainstorm": {
 							const a: Partial<BrainstormExercise["answers"]> = {}
 							a.steps = yDoc.get("steps", Y.Array).toJSON()
 							a.groups = yDoc.get("groups", Y.Map).toJSON()
+
+							answers = a
 
 							break
 						}

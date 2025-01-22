@@ -1,6 +1,6 @@
 import { createClient } from "next-sanity"
 
-const KICKOFF_ID = "e657101e-d3a1-49f1-baf7-742ec19950b5"
+const KICKOFF_ID = ""
 
 const client = createClient({
 	projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
