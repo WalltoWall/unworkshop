@@ -7,16 +7,22 @@ import { CardGradientSequence } from "./card-gradients"
 import { CardIllustrationSequence, illustrations } from "./card-illustrations"
 import { ExerciseCard } from "./ExerciseCard"
 
-const ExercisesPage = async (props: { params: { code: string } }) => {
+type Params = { code: string }
+type Props = {
+	params: Promise<Params>
+}
+
+const ExercisesPage = async (props: Props) => {
+	const params = await props.params
 	const [participant, kickoff] = await Promise.all([
 		client.findParticipantOrThrow(),
-		client.findKickoffOrThrow(props.params.code),
+		client.findKickoffOrThrow(params.code),
 	])
 
 	const gradientSequence = new CardGradientSequence()
 	const illustrationSequence = new CardIllustrationSequence()
 
-	if (!participant.onboarded) redirect(`/kickoff/${props.params.code}`)
+	if (!participant.onboarded) redirect(`/kickoff/${params.code}`)
 
 	return (
 		<div>
@@ -29,9 +35,9 @@ const ExercisesPage = async (props: { params: { code: string } }) => {
 					const groups = exercise.groups ?? []
 
 					const groupSlug = R.pipe(
-						R.entries(exercise.answers?.groups ?? {}),
+						R.values(exercise.answers?.groups ?? {}),
 						R.find(
-							([_gSlug, group]) =>
+							(group) =>
 								group[participant._id] === "captain" ||
 								group[participant._id] === "contributor",
 						),

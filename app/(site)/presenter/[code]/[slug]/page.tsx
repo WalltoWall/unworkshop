@@ -6,15 +6,17 @@ import { FormPresenterView } from "./_FormExercise/"
 import { QuadrantsPresenterView } from "./_QuadrantsExercise/QuadrantsPresenterView"
 import { SlidersPresenterView } from "./_SlidersExercise/SlidersPresenterView"
 
+type Params = Promise<{ code: string; slug: string }>
 type Props = {
-	params: { code: string; slug: string }
+	params: Params
 }
 
 const PresenterExercisePage = async (props: Props) => {
-	const kickoff = await client.findKickoffOrThrow(props.params.code)
+	const params = await props.params
+	const kickoff = await client.findKickoffOrThrow(params.code)
 	if (!kickoff) notFound()
 
-	const exercise = await client.findExerciseBySlug(props.params.slug)
+	const exercise = await client.findExerciseBySlug(params.slug)
 	if (!exercise) notFound()
 
 	const exercises = kickoff.exercises ?? []
@@ -22,7 +24,7 @@ const PresenterExercisePage = async (props: Props) => {
 	return (
 		<>
 			<PresenterHeader
-				kickoffCode={props.params.code}
+				kickoffCode={params.code}
 				exercises={exercises}
 				exercise={exercise}
 			/>

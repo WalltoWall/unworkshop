@@ -9,13 +9,12 @@ import {
 } from "../../kickoff/[code]/exercises/card-illustrations"
 import { PresenterHeader } from "../PresenterHeader"
 
-interface Props {
-	params: { code: string }
-	searchParams: { [key: string]: string | string[] | undefined }
-}
+type Params = { code: string }
+type Props = { params: Promise<Params> }
 
 const PresenterKickOffPage = async (props: Props) => {
-	const kickoff = await client.findKickoff(props.params.code)
+	const params = await props.params
+	const kickoff = await client.findKickoff(params.code)
 	if (!kickoff) notFound()
 
 	const gradientSequence = new CardGradientSequence()
@@ -24,7 +23,7 @@ const PresenterKickOffPage = async (props: Props) => {
 	return (
 		<>
 			<PresenterHeader
-				kickoffCode={props.params.code}
+				kickoffCode={params.code}
 				exercises={kickoff.exercises ?? []}
 			/>
 			<div className="space-y-4 px-7 py-8">

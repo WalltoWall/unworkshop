@@ -3,12 +3,12 @@ import { client } from "@/sanity/client"
 import { InstructionsModal } from "../InstructionsModal"
 import { GroupSelector } from "./GroupSelector"
 
-interface Props {
-	params: { code: string; slug: string }
-}
+type Params = Promise<{ code: string; slug: string }>
+type Props = { params: Params }
 
 const GroupsPage = async (props: Props) => {
-	const exercise = await client.findExerciseBySlug(props.params.slug)
+	const params = await props.params
+	const exercise = await client.findExerciseBySlug(params.slug)
 	if (!exercise) notFound()
 
 	const groups = exercise.groups ?? []

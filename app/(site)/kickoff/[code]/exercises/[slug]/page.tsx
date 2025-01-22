@@ -6,18 +6,18 @@ import { SlidersExercise } from "./_SlidersExercise/SlidersExercise"
 import { FormExercise } from "./FormsExercise"
 import { InstructionsModal } from "./InstructionsModal"
 
+type Params = { code: string; slug: string }
 type Props = {
-	params: { code: string; slug: string }
+	params: Promise<Params>
 }
 
 const ExercisePage = async (props: Props) => {
-	const exercise = await client.findExerciseBySlug(props.params.slug)
+	const params = await props.params
+	const exercise = await client.findExerciseBySlug(params.slug)
 
 	if (!exercise) notFound()
 	if (exercise.groups && exercise.groups.length >= 1) {
-		redirect(
-			`/kickoff/${props.params.code}/exercises/${props.params.slug}/groups`,
-		)
+		redirect(`/kickoff/${params.code}/exercises/${params.slug}/groups`)
 	}
 
 	return (
@@ -28,17 +28,11 @@ const ExercisePage = async (props: Props) => {
 			/>
 
 			{exercise.type === "brainstorm" && (
-				<BrainstormExercise
-					exercise={exercise}
-					kickoffCode={props.params.code}
-				/>
+				<BrainstormExercise exercise={exercise} kickoffCode={params.code} />
 			)}
 			{exercise.type === "sliders" && <SlidersExercise exercise={exercise} />}
 			{exercise.type === "quadrants" && (
-				<QuadrantsExercise
-					exercise={exercise}
-					kickoffCode={props.params.code}
-				/>
+				<QuadrantsExercise exercise={exercise} kickoffCode={params.code} />
 			)}
 			{exercise.type === "form" && <FormExercise exercise={exercise} />}
 		</div>

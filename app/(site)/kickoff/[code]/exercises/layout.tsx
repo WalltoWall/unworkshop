@@ -5,17 +5,23 @@ import { client } from "@/sanity/client"
 import { PARTICIPANT_COOKIE } from "@/constants"
 import { ParticipantModal } from "./ParticipantModal"
 
-const ExercisesLayout = async (props: {
+type Params = { code: string }
+type Props = {
 	children: React.ReactNode
-	params: { code: string }
-}) => {
+	params: Promise<Params>
+}
+
+const ExercisesLayout = async (props: Props) => {
 	const participant = await client.findParticipantOrThrow()
+	const params = await props.params
 
 	async function removeParticipantCookie() {
 		"use server"
 
-		cookies().delete(PARTICIPANT_COOKIE)
-		redirect("/kickoff/register?code=" + props.params.code)
+		const cookiesStore = await cookies()
+
+		cookiesStore.delete(PARTICIPANT_COOKIE)
+		redirect("/kickoff/register?code=" + params.code)
 	}
 
 	return (
@@ -26,7 +32,7 @@ const ExercisesLayout = async (props: {
 					participantName={participant.name}
 					heading="Not You?"
 					message="Press the confirm button to re-register under a new name."
-					code={props.params.code}
+					code={params.code}
 					onConfirmAction={removeParticipantCookie}
 				/>
 			}
