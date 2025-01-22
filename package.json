@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "concurrently -p \"{name}:\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm:dev:*\"",
-		"dev:next": "next dev",
+		"dev:next": "next dev --turbo",
 		"dev:partykit": "partykit dev",
 		"start": "concurrently -p \"{name}:\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm:start:*\"",
 		"start:next": "next start",
