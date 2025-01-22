@@ -49,7 +49,7 @@ export const useMultiplayer = (args: MultiplayerArgs) => {
 		provider.on("sync", onSync)
 
 		return () => provider.off("sync", onSync)
-	}, [])
+	}, [provider])
 
 	return {
 		users: users as Map<number, MultiplayerUser>,
