@@ -387,7 +387,7 @@ export type AllSanitySchemaTypes =
 export declare const internalGroqTypeReferenceTo: unique symbol
 // Source: client.ts
 // Variable: kickoffQuery
-// Query: *[_type == "kickoff" && code.current == $code][0] {            ...,            exercises[]->        }
+// Query: *[_type == "kickoff" && code.current == $code][0] {			...,			exercises[]->		}
 export type KickoffQueryResult = {
 	_id: string
 	_type: "kickoff"
@@ -606,7 +606,7 @@ export type ParticipantQueryResult = {
 	onboarded: boolean
 } | null
 // Variable: participantWithKickoffCodeQuery
-// Query: *[_type == "participant" && _id == $id][0] {            ...,            kickoff->{ "code": code.current }        }
+// Query: *[_type == "participant" && _id == $id][0] {			...,			kickoff->{ "code": code.current }		}
 export type ParticipantWithKickoffCodeQueryResult = {
 	_id: string
 	_type: "participant"
@@ -641,9 +641,9 @@ export type ParticipantsInKickoffQueryResult = Array<{
 
 declare module "@sanity/client" {
 	interface SanityQueries {
-		'*[_type == "kickoff" && code.current == $code][0] {\n            ...,\n            exercises[]->\n        }': KickoffQueryResult
+		'*[_type == "kickoff" && code.current == $code][0] {\n\t\t\t...,\n\t\t\texercises[]->\n\t\t}': KickoffQueryResult
 		'*[_type == "participant" && _id == $id][0]': ParticipantQueryResult
-		'*[_type == "participant" && _id == $id][0] {\n            ...,\n            kickoff->{ "code": code.current }\n        }': ParticipantWithKickoffCodeQueryResult
+		'*[_type == "participant" && _id == $id][0] {\n\t\t\t...,\n\t\t\tkickoff->{ "code": code.current }\n\t\t}': ParticipantWithKickoffCodeQueryResult
 		'*[_type == "participant" && kickoff._ref == $kickoffId]': ParticipantsInKickoffQueryResult
 	}
 }

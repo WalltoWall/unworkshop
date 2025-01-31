@@ -34,5 +34,5 @@ export async function checkCodeAction(
 		return { error: msg }
 	}
 
-	redirect(`/kickoff/${result.data}`)
+	redirect(`/kickoff/${result.data}/exercises`)
 }

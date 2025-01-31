@@ -33,7 +33,7 @@ const KickoffRegisterPage = async (props: Props) => {
 	])
 
 	if (!kickoff) notFound()
-	if (participant && participant.onboarded && participant.kickoff.code === code)
+	if (participant && participant.kickoff.code === code)
 		redirect(`/kickoff/${code}/exercises`)
 
 	async function register(data: FormData) {
@@ -56,7 +56,7 @@ const KickoffRegisterPage = async (props: Props) => {
 			maxAge: 604800, // 7 days
 		})
 
-		redirect(`/kickoff/${code}`)
+		redirect(`/kickoff/${code}/exercises`)
 	}
 
 	return (

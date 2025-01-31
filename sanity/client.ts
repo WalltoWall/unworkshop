@@ -66,7 +66,7 @@ export const client = {
 			.parse(cookiesStore.get(PARTICIPANT_COOKIE)?.value)
 
 		const participant = await client.findParticipant<T>(participantId)
-		if (!participant) throw new Error("No onboarded participant found.")
+		if (!participant) throw new Error("No participant found.")
 
 		return participant
 	}),
@@ -134,16 +134,6 @@ export const client = {
 		}
 
 		const res = await sanity.create(data)
-
-		return res
-	},
-
-	async onboardParticipant(id: string) {
-		const data: Pick<ST.Participant, "onboarded"> = {
-			onboarded: true,
-		}
-
-		const res: ST.Participant = await sanity.patch(id).set(data).commit()
 
 		return res
 	},

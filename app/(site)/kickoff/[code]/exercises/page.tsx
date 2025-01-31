@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation"
 import * as R from "remeda"
 import { Text } from "@/components/Text"
 import { client } from "@/sanity/client"
@@ -21,8 +20,6 @@ const ExercisesPage = async (props: Props) => {
 
 	const gradientSequence = new CardGradientSequence()
 	const illustrationSequence = new CardIllustrationSequence()
-
-	if (!participant.onboarded) redirect(`/kickoff/${params.code}`)
 
 	return (
 		<div>

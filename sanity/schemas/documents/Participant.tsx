@@ -1,6 +1,5 @@
 import { User } from "lucide-react"
 import { defineField, defineType } from "sanity"
-import { uid } from "uid"
 
 export const Participant = defineType({
 	type: "document",
@@ -49,6 +48,11 @@ export const Participant = defineType({
 			title: "Onboarded?",
 			description:
 				"Has this participant seen the on-boarding process previously.",
+			deprecated: {
+				reason:
+					"After running a few workshops, the onboarding flow ultimately ended up feeling like a speedbump and headache for end-users.",
+			},
+			readOnly: true,
 			type: "boolean",
 			initialValue: false,
 			validation: (Rule) => Rule.required(),
