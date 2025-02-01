@@ -4,19 +4,18 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 const button = cva(
 	[
-		"inline-flex justify-center items-center text-center transition ease-out duration-200",
-		"border border-solid leading-[1.25] disabled:cursor-not-allowed",
+		"inline-flex justify-center items-center text-center transition border border-solid leading-[1.25] disabled:cursor-not-allowed",
 	],
 	{
 		variants: {
 			color: {
-				gray: "border-gray-75 text-black bg-gray-75",
-				black: "border-black text-white bg-black",
+				gray: "border-gray-700 text-black bg-gray-700",
+				black: "border-black text-white bg-black hover:bg-zinc-800",
 			},
 			size: {
-				xs: "h-9 text-12 px-3 gap-1.5",
-				sm: "h-8 text-16 px-4 gap-1.5",
-				base: "h-11 text-24 px-5 gap-2.5",
+				xs: "h-9 text-[12px] px-3 gap-1.5",
+				sm: "h-8 text-[16px] px-4 gap-1.5",
+				base: "h-11 text-[24px] px-5 gap-2.5 pb-px",
 			},
 			outline: {
 				true: "bg-transparent",
@@ -64,8 +63,8 @@ const button = cva(
 	},
 )
 
-type PlainButtonProps = React.ComponentPropsWithoutRef<"button">
-type PlainAnchorProps = Omit<React.ComponentPropsWithRef<"a">, "href"> &
+type PlainButtonProps = React.ComponentProps<"button">
+type PlainAnchorProps = Omit<React.ComponentProps<"a">, "href"> &
 	Pick<LinkProps, "href">
 type ButtonVariants = VariantProps<typeof button>
 
@@ -87,58 +86,49 @@ export type ButtonProps = (PlainButtonProps | PlainAnchorProps) & ButtonVariants
  * <Button onClick={submitForm}>Submit</Button>
  * ```
  */
-export const Button = React.forwardRef<
-	HTMLButtonElement | HTMLAnchorElement,
-	ButtonProps
->(
-	(
-		{
-			children,
-			className,
-			color,
-			size,
-			outline,
-			uppercase,
-			inactive,
-			rounded,
-			fontFamily,
-			...props
-		},
-		ref,
-	) => {
-		className = button({
-			className,
-			color,
-			size,
-			outline,
-			inactive,
-			uppercase,
-			rounded,
-			fontFamily,
-		})
+export const Button = ({
+	children,
+	className,
+	color,
+	size,
+	outline,
+	uppercase,
+	inactive,
+	rounded,
+	fontFamily,
+	ref,
+	...props
+}: ButtonProps) => {
+	className = button({
+		className,
+		color,
+		size,
+		outline,
+		inactive,
+		uppercase,
+		rounded,
+		fontFamily,
+	})
 
-		if ("href" in props && props.href) {
-			return (
-				<Link
-					className={className}
-					ref={ref as React.ForwardedRef<HTMLAnchorElement>}
-					{...props}
-				>
-					{children}
-				</Link>
-			)
-		}
-
+	if ("href" in props && props.href) {
 		return (
-			<button
-				ref={ref as React.ForwardedRef<HTMLButtonElement>}
+			<Link
 				className={className}
-				{...(props as PlainButtonProps)}
+				ref={ref as React.Ref<HTMLAnchorElement>}
+				{...props}
 			>
 				{children}
-			</button>
+			</Link>
 		)
-	},
-)
+	}
 
-Button.displayName = "Button"
+	return (
+		<button
+			ref={ref as React.Ref<HTMLButtonElement>}
+			className={className}
+			{...(props as PlainButtonProps)}
+		>
+			{children}
+		</button>
+	)
+}

@@ -1,5 +1,6 @@
 "use client"
 
+import { ChevronRightIcon } from "lucide-react"
 import React from "react"
 import { useRouter } from "next/navigation"
 import clsx from "clsx"
@@ -10,15 +11,14 @@ import {
 } from "input-otp"
 import { toast } from "sonner"
 import { z } from "zod"
-import { Chevron } from "../../components/icons/Chevron"
 
 const Slot = (props: SlotProps) => {
 	return (
 		<div
 			className={clsx(
-				"border-green-40 relative flex h-[4.5rem] w-10 items-center justify-center rounded-lg border",
+				"relative flex h-[4.5rem] w-10 items-center justify-center rounded-lg border border-emerald-600",
 				props.char &&
-					"bg-green-40 font-heading text-[48px] font-extrabold text-black uppercase",
+					"bg-brand font-heading text-[48px] font-extrabold text-black uppercase",
 			)}
 		>
 			{props.char !== null && <div>{props.char}</div>}
@@ -30,7 +30,7 @@ const Slot = (props: SlotProps) => {
 const FakeCaret = () => {
 	return (
 		<div className="animate-caret-blink pointer-events-none absolute inset-0 flex items-center justify-center">
-			<div className="bg-green-40 h-8 w-px" />
+			<div className="bg-brand h-8 w-px" />
 		</div>
 	)
 }
@@ -79,10 +79,10 @@ const CodeInput = () => {
 			/>
 			{showSubmit && (
 				<button
-					className="bg-green-40 absolute -right-5 -bottom-5 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-black"
+					className="bg-brand absolute -right-5 -bottom-5 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-black"
 					type="submit"
 				>
-					<Chevron className="w-1.5 rotate-180 text-black" />
+					<ChevronRightIcon className="size-4 text-black" strokeWidth={3} />
 				</button>
 			)}
 		</div>

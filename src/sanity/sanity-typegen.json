@@ -2,5 +2,5 @@
 	"path": "'./**/*.{ts,tsx,js,jsx}'",
 	"schema": "./schema.json",
 	"generates": "./types.gen.ts",
-	"overloadClientMethods": false
+	"overloadClientMethods": true
 }

@@ -58,6 +58,7 @@ export const Exercise = defineType({
 					{ title: "Target Audience (B)", value: "targetAudienceB" },
 				],
 			},
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: "groups",

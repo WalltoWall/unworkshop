@@ -1,5 +1,4 @@
 import type { StaticImageData } from "next/image"
-import type { Exercise } from "@/sanity/types.gen"
 import brainstormIllustration from "@/assets/images/brainstorm-illustration.jpg"
 import formIllustration from "@/assets/images/form-illustration.png"
 import seesawIllustration from "@/assets/images/seesaw-illustration.png"
@@ -7,6 +6,7 @@ import slidersIllustration from "@/assets/images/sliders-illustration.jpg"
 import targetAudienceA from "@/assets/images/target-audience-a-illustration.png"
 import targetAudienceB from "@/assets/images/target-audience-b-illlustration.png"
 import usVsThem from "@/assets/images/us-vs-them-illustration.png"
+import type { Exercise } from "@/sanity/types.gen"
 
 export type CardIllustrationData = {
 	src: StaticImageData

@@ -1,6 +1,6 @@
 import type { Viewport } from "next"
 import { DarkLayout } from "@/components/dark-layout"
-import { UnworkshopTitle } from "@/components/UnworkshopTitle"
+import { UnworkshopTitle } from "@/components/unworkshop-title"
 import { text } from "@/styles/text"
 import { CodeForm } from "./CodeForm"
 

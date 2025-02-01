@@ -1,8 +1,8 @@
 export const cardGradients = {
-	orangeToGreen: "from-[#4BEEE1] to-[#E477D1]",
-	purpleToOrange: "from-[#E561D0] to-[#EA892C]",
-	tealToGreen: "from-[#4BEEE1] to-[#90E477]",
-	blueToPurple: "from-[#FA927F] to-[#D7F082]",
+	orangeToGreen: "bg-linear-to-r from-orange-300 to-emerald-300",
+	purpleToOrange: "bg-linear-to-r from-purple-400 to-orange-400",
+	tealToGreen: "bg-linear-to-r from-teal-200 to-green-400",
+	blueToPurple: "bg-linear-to-r from-sky-300 to-fuchsia-400",
 }
 
 export type CardGradient = keyof typeof cardGradients
@@ -18,7 +18,7 @@ export class CardGradientSequence {
 	) {}
 
 	next() {
-		const color = this.sequence[this.idx % this.sequence.length]
+		const color = this.sequence[this.idx % this.sequence.length]!
 		this.idx++
 
 		return color

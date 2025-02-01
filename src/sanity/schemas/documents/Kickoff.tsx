@@ -63,12 +63,11 @@ export const Kickoff = defineType({
 			title: "Exercises",
 			description: "The list of exercises.",
 			type: "array",
+			initialValue: [],
 			of: [
-				defineArrayMember({
-					type: "reference",
-					to: [{ type: "exercise" as const }],
-				}),
+				defineArrayMember({ type: "reference", to: [{ type: "exercise" }] }),
 			],
+			validation: (R) => R.required(),
 		}),
 	],
 })
