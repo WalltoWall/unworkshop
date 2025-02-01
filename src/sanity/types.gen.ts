@@ -332,7 +332,6 @@ export type Participant = {
 		_weak?: boolean
 		[internalGroqTypeReferenceTo]?: "kickoff"
 	}
-	onboarded: boolean
 }
 
 export type Kickoff = {
@@ -603,7 +602,6 @@ export type ParticipantQueryResult = {
 		_weak?: boolean
 		[internalGroqTypeReferenceTo]?: "kickoff"
 	}
-	onboarded: boolean
 } | null
 // Variable: participantWithKickoffCodeQuery
 // Query: *[_type == "participant" && _id == $id][0] {			...,			kickoff->{ "code": code.current }		}
@@ -618,7 +616,6 @@ export type ParticipantWithKickoffCodeQueryResult = {
 	kickoff: {
 		code: string
 	}
-	onboarded: boolean
 } | null
 // Variable: participantsInKickoffQuery
 // Query: *[_type == "participant" && kickoff._ref == $kickoffId]
@@ -636,7 +633,6 @@ export type ParticipantsInKickoffQueryResult = Array<{
 		_weak?: boolean
 		[internalGroqTypeReferenceTo]?: "kickoff"
 	}
-	onboarded: boolean
 }>
 
 declare module "@sanity/client" {

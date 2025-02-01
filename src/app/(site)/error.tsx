@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from "@/components/Button"
+import { DarkLayout } from "@/components/dark-layout"
 import { Text } from "@/components/Text"
-import { DarkLayout } from "@/components/DarkLayout"
 
 const Error = (props: { error: Error; reset: () => void }) => {
 	return (

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/Button"
-import { DarkLayout } from "@/components/DarkLayout"
+import { DarkLayout } from "@/components/dark-layout"
 import { Text } from "@/components/Text"
 
 const NotFound = () => {

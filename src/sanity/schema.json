@@ -2058,13 +2058,6 @@
           "dereferencesTo": "kickoff"
         },
         "optional": false
-      },
-      "onboarded": {
-        "type": "objectAttribute",
-        "value": {
-          "type": "boolean"
-        },
-        "optional": false
       }
     }
   },

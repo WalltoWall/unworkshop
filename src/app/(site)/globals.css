@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+@theme {
+	--color-*: initial;
+
+	--color-black: #000;
+	--color-white: #fff;
+	--color-transparent: #fff0;
+
+	--color-gray-97: #f7f7f7;
+	--color-gray-90: #e5e5e5;
+	--color-gray-82: #cdd6d4;
+	--color-gray-75: #bfbfbf;
+	--color-gray-50: #7f7f7f;
+	--color-gray-58: #8ca09c;
+	--color-gray-38: #5a6c69;
+	--color-gray-19: #2c3533;
+	--color-gray-12: #202020;
+
+	--color-red-76: #ff9488;
+	--color-red-70: #ff7566;
+	--color-red-63: #ff5745;
+	--color-red-57: #e8503f;
+	--color-red-46: #ba4033;
+
+	--color-orange-73: #ff9e77;
+	--color-orange-66: #ff8655;
+	--color-orange-63: #ff7a45;
+	--color-orange-57: #e86f3f;
+	--color-orange-52: #d16439;
+
+	--color-yellow-77: #ffee8b;
+	--color-yellow-70: #ffe96a;
+	--color-yellow-64: #ffe54a;
+	--color-yellow-59: #fecb2f;
+	--color-yellow-58: #e8d144;
+	--color-yellow-52: #d1bc3d;
+
+	--color-green-78: #96fad1;
+	--color-green-65: #57f7b6;
+	--color-green-52: #19f49b;
+	--color-green-48: #17de8d;
+	--color-green-38: #13b271;
+	--color-green-40: #00cc82;
+
+	--color-indigo-82: #a6afff;
+	--color-indigo-73: #7987ff;
+	--color-indigo-68: #5c6dff;
+	--color-indigo-55: #4c5ad1;
+	--color-indigo-49: #4350ba;
+
+	--color-violet-80: #d7a0fa;
+	--color-violet-70: #c371f8;
+	--color-violet-64: #b652f7;
+	--color-violet-58: #a64be1;
+	--color-violet-47: #853cb4;
+
+	--color-pink-85: #ffb7f1;
+	--color-pink-80: #fab99e;
+	--color-pink-78: #ff93ea;
+	--color-pink-74: #ff7be6;
+	--color-pink-67: #e870d2;
+	--color-pink-63: #e165bd;
+
+	--font-sans: "FontSans", "FontSans Fallback";
+	--font-serif: "FontSerif", "FontSerif Fallback";
+	--font-heading: "FontHeading", "FontHeading Fallback";
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	--animate-fadeIn: fadeIn 300ms linear;
+
+	@keyframes fadeOut {
+		from {
+			opacity: 1;
+		}
+		to {
+			opacity: 0;
+		}
+	}
+	--animate-fadeIn: fadeOut 300ms linear;
+
+	@keyframes caret-blink {
+		0%,
+		70%,
+		100% {
+			opacity: 1;
+		}
+		20%,
+		50% {
+			opacity: 0;
+		}
+	}
+	--animate-caret-blink: caret-blink 1.2s ease-out infinite;
+}
+
+@utility scroll-shadow {
+	mask-image: linear-gradient(
+		#000,
+		#000,
+		transparent 0,
+		#000 var(--scroll-shadow-size),
+		#000 calc(100% - var(--scroll-shadow-size)),
+		transparent
+	);
+}
+
+@utility scroll-shadow-x {
+	mask-image: linear-gradient(
+		to right,
+		#000,
+		#000,
+		transparent 0,
+		#000 var(--scroll-shadow-size),
+		#000 calc(100% - var(--scroll-shadow-size)),
+		transparent
+	);
+}
+
+@utility scroll-shadow-* {
+	--scroll-shadow-size: --value(--spacing);
+	--scroll-shadow-size: --value([integer]);
+}
+
+@utility scrollbar-hide {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+@layer base {
+	html {
+		text-rendering: optimizeLegibility;
+	}
+
+	/** Prevent flash of highlighted color on interactable element press. */
+	a,
+	input,
+	button {
+		-webkit-tap-highlight-color: #0000;
+	}
+
+	/** Interactable elements have a consistent outline style. */
+	a:focus-visible,
+	button:focus-visible,
+	input:focus-visible,
+	textarea:focus-visible,
+	select:focus-visible {
+		outline-width: 2px;
+		outline-style: solid;
+		outline-offset: 2px;
+	}
+
+	/* Prevent chrome autofill from changing input styles. */
+	input:-webkit-autofill,
+	input:-webkit-autofill:hover,
+	input:-webkit-autofill:focus,
+	input:-webkit-autofill:active {
+		transition:
+			background-color 5000000s linear 0s,
+			color 5000000s linear 0s;
+	}
+}

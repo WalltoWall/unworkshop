@@ -13,11 +13,7 @@
 		"react",
 		"next",
 		"<THIRD_PARTY_MODULES>",
-		"^@/components/(.*)$",
-		"^@/lib/(.*)$",
-		"^@/sanity/(.*)$",
 		"^@/(.*)$",
 		"^[./]"
-	],
-	"importOrderTypeScriptVersion": "5.0.0"
+	]
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { useFormStatus } from "react-dom"
+import { useRouter } from "next/navigation"
 import clsx from "clsx"
 import {
 	OTPInput,
@@ -9,19 +9,16 @@ import {
 	type SlotProps,
 } from "input-otp"
 import { toast } from "sonner"
+import { z } from "zod"
 import { Chevron } from "../../components/icons/Chevron"
-import { Spinner } from "../../components/Spinner"
-import { checkCodeAction } from "./actions"
 
 const Slot = (props: SlotProps) => {
 	return (
 		<div
 			className={clsx(
-				"relative h-[4.5rem] w-10",
-				"flex items-center justify-center rounded-lg",
-				"border border-green-40",
+				"border-green-40 relative flex h-[4.5rem] w-10 items-center justify-center rounded-lg border",
 				props.char &&
-					"bg-green-40 font-extrabold uppercase text-black text-48 font-heading",
+					"bg-green-40 font-heading text-[48px] font-extrabold text-black uppercase",
 			)}
 		>
 			{props.char !== null && <div>{props.char}</div>}
@@ -32,8 +29,8 @@ const Slot = (props: SlotProps) => {
 
 const FakeCaret = () => {
 	return (
-		<div className="pointer-events-none absolute inset-0 flex animate-caret-blink items-center justify-center">
-			<div className="h-8 w-px bg-green-40" />
+		<div className="animate-caret-blink pointer-events-none absolute inset-0 flex items-center justify-center">
+			<div className="bg-green-40 h-8 w-px" />
 		</div>
 	)
 }
@@ -48,7 +45,6 @@ const FakeDash = () => {
 
 const CodeInput = () => {
 	const [showSubmit, setShowSubmit] = React.useState(false)
-	const status = useFormStatus()
 
 	return (
 		<div className="relative">
@@ -57,13 +53,12 @@ const CodeInput = () => {
 				required
 				autoFocus
 				name="code"
+				spellCheck={false}
 				inputMode="text"
 				pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
 				containerClassName="group flex items-center"
 				className="text-16"
-				onChange={(value) => {
-					setShowSubmit(value.length === 7)
-				}}
+				onChange={(value) => setShowSubmit(value.length === 7)}
 				render={({ slots }) => (
 					<>
 						<div className="flex gap-1">
@@ -84,31 +79,40 @@ const CodeInput = () => {
 			/>
 			{showSubmit && (
 				<button
-					className="absolute -bottom-5 -right-5 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-black bg-green-40"
+					className="bg-green-40 absolute -right-5 -bottom-5 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-black"
 					type="submit"
 				>
-					{status.pending ? (
-						<Spinner className="w-3 text-black" />
-					) : (
-						<Chevron className="w-1.5 rotate-180 text-black" />
-					)}
+					<Chevron className="w-1.5 rotate-180 text-black" />
 				</button>
 			)}
 		</div>
 	)
 }
 
-export const CodeForm = () => {
-	const [state, action] = React.useActionState(checkCodeAction, { error: "" })
+const CodeSchema = z
+	.string()
+	.length(7, "Code must be 7 characters in length.")
+	.transform((val) => {
+		const code = val.toLowerCase()
 
-	React.useEffect(() => {
-		if (!state.error) return
-
-		toast.error(state.error)
+		return code.slice(0, 3) + "-" + code.slice(3)
 	})
 
+export const CodeForm = () => {
+	const router = useRouter()
+
+	function action(data: FormData) {
+		const res = CodeSchema.safeParse(data.get("code"))
+		if (!res.success) {
+			toast.error("Invalid code.")
+			return
+		}
+
+		router.push(`/kickoff/${res.data}`)
+	}
+
 	return (
-		<form className="flex flex-col space-y-1.5" action={action}>
+		<form action={action}>
 			<CodeInput />
 		</form>
 	)

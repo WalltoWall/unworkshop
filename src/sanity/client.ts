@@ -1,15 +1,34 @@
-import "server-only"
 import React from "react"
 import { groq } from "next-sanity"
 import { cookies } from "next/headers"
 import type { Reference } from "sanity"
 import { z } from "zod"
-import type * as ST from "@/sanity/types.gen"
 import { PARTICIPANT_COOKIE } from "@/constants"
+import type * as ST from "@/sanity/types.gen"
+import { q } from "./groqd"
 import { sanity } from "./sanity-client"
 
 export const client = {
 	findKickoff: React.cache(async (code: string) => {
+		const query = q.star
+			.parameters<{ code: string }>()
+			.filterByType("kickoff")
+			.filterBy("code.current == $code")
+			.project((sub) => ({
+				title: q.string(),
+				code: q.slug("code"),
+				exercises: sub
+					.field("exercises[]")
+					.deref()
+					.project((sub) => ({
+						name: q.string(),
+						slug: q.slug("slug"),
+						illustration: q.default(q.string(), "speechBubbles"),
+						groups: sub.field("groups"),
+					})),
+			}))
+			.slice(0)
+
 		const kickoffQuery = groq`*[_type == "kickoff" && code.current == $code][0] {
 			...,
 			exercises[]->

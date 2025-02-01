@@ -57,6 +57,10 @@ export default class Server implements Party.Server {
 		return exerciseId
 	}
 
+	onRequest(_req: Party.Request): Response | Promise<Response> {
+		return new Response("Hello!")
+	}
+
 	onConnect(conn: Party.Connection) {
 		return onConnect(conn, this.room, {
 			persist: false,
