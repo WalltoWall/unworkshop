@@ -46,26 +46,3 @@ export const illustrations: Record<CardIllustration, CardIllustrationData> = {
 		className: "h-[120%] translate-x-[30%]",
 	},
 }
-
-export class CardIllustrationSequence {
-	idx = 0
-
-	constructor(
-		public sequence: CardIllustration[] = Object.keys(
-			illustrations,
-		) as CardIllustration[],
-	) {}
-
-	next() {
-		const color = this.sequence[this.idx % this.sequence.length]
-		this.idx++
-
-		return color
-	}
-
-	nextVariant() {
-		const color = this.next()
-
-		return illustrations[color]
-	}
-}

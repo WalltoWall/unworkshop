@@ -1,6 +1,7 @@
 import "./globals.css"
 import type { Metadata } from "next"
 import Local from "next/font/local"
+import { NuqsAdapter } from "nuqs/adapters/next/app"
 import { cx } from "class-variance-authority"
 import { env } from "@/env"
 import { Toaster } from "./toaster"
@@ -47,9 +48,10 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 					FontSerif.variable,
 				)}
 			>
-				{children}
-
-				<Toaster />
+				<NuqsAdapter>
+					{children}
+					<Toaster />
+				</NuqsAdapter>
 			</body>
 		</html>
 	)

@@ -42,6 +42,22 @@ export type SanityImageDimensions = {
 	aspectRatio?: number
 }
 
+export type SanityImageHotspot = {
+	_type: "sanity.imageHotspot"
+	x?: number
+	y?: number
+	height?: number
+	width?: number
+}
+
+export type SanityImageCrop = {
+	_type: "sanity.imageCrop"
+	top?: number
+	bottom?: number
+	left?: number
+	right?: number
+}
+
 export type SanityFileAsset = {
 	_id: string
 	_type: "sanity.fileAsset"
@@ -62,219 +78,6 @@ export type SanityFileAsset = {
 	path?: string
 	url?: string
 	source?: SanityAssetSourceData
-}
-
-export type Geopoint = {
-	_type: "geopoint"
-	lat?: number
-	lng?: number
-	alt?: number
-}
-
-export type Exercise = {
-	_id: string
-	_type: "exercise"
-	_createdAt: string
-	_updatedAt: string
-	_rev: string
-	name: string
-	slug: Slug
-	illustration:
-		| "speechBubbles"
-		| "rollingBoards"
-		| "clocksAndHands"
-		| "seeSaw"
-		| "usVsThem"
-		| "targetAudienceA"
-		| "targetAudienceB"
-	groups?: Array<{
-		name: string
-		slug: Slug
-		_key: string
-	}>
-	type: "brainstorm" | "sliders" | "quadrants" | "form"
-	instructions?: string
-	steps?: Array<{
-		prompt?: string
-		helpText?: string
-		placeholder?: string
-		color?: "green" | "red" | "yellow"
-		_key: string
-	}>
-	removeSlidersVisual?: boolean
-	sliders?: Array<{
-		question_text: string
-		today_text: string
-		tomorrow_text: string
-		slug: Slug
-		left_value: string
-		left_image?: {
-			asset?: {
-				_ref: string
-				_type: "reference"
-				_weak?: boolean
-				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
-			}
-			hotspot?: SanityImageHotspot
-			crop?: SanityImageCrop
-			alt?: string
-			_type: "image"
-		}
-		right_value: string
-		right_image?: {
-			asset?: {
-				_ref: string
-				_type: "reference"
-				_weak?: boolean
-				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
-			}
-			hotspot?: SanityImageHotspot
-			crop?: SanityImageCrop
-			alt?: string
-			_type: "image"
-		}
-		_key: string
-	}>
-	today_instructions?: Array<{
-		children?: Array<{
-			marks?: Array<string>
-			text?: string
-			_type: "span"
-			_key: string
-		}>
-		style?: "normal"
-		listItem?: never
-		markDefs?: null
-		level?: number
-		_type: "block"
-		_key: string
-	}>
-	tomorrow_instructions?: Array<{
-		children?: Array<{
-			marks?: Array<string>
-			text?: string
-			_type: "span"
-			_key: string
-		}>
-		style?: "normal"
-		listItem?: never
-		markDefs?: null
-		level?: number
-		_type: "block"
-		_key: string
-	}>
-	finalize_instructions?: Array<{
-		children?: Array<{
-			marks?: Array<string>
-			text?: string
-			_type: "span"
-			_key: string
-		}>
-		style?: "normal"
-		listItem?: never
-		markDefs?: null
-		level?: number
-		_type: "block"
-		_key: string
-	}>
-	quadrants?: Array<{
-		name: string
-		slug: Slug
-		topValue: string
-		bottomValue: string
-		leftValue: string
-		rightValue: string
-		topLeftImage?: {
-			asset?: {
-				_ref: string
-				_type: "reference"
-				_weak?: boolean
-				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
-			}
-			hotspot?: SanityImageHotspot
-			crop?: SanityImageCrop
-			alt?: string
-			_type: "image"
-		}
-		topRightImage?: {
-			asset?: {
-				_ref: string
-				_type: "reference"
-				_weak?: boolean
-				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
-			}
-			hotspot?: SanityImageHotspot
-			crop?: SanityImageCrop
-			alt?: string
-			_type: "image"
-		}
-		bottomLeftImage?: {
-			asset?: {
-				_ref: string
-				_type: "reference"
-				_weak?: boolean
-				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
-			}
-			hotspot?: SanityImageHotspot
-			crop?: SanityImageCrop
-			alt?: string
-			_type: "image"
-		}
-		bottomRightImage?: {
-			asset?: {
-				_ref: string
-				_type: "reference"
-				_weak?: boolean
-				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
-			}
-			hotspot?: SanityImageHotspot
-			crop?: SanityImageCrop
-			alt?: string
-			_type: "image"
-		}
-		_key: string
-	}>
-	form?: {
-		steps?: Array<{
-			fields?: Array<{
-				type: "List" | "Narrow" | "Text" | "Big Text" | "Tagline"
-				prompt: string
-				additionalText?: string
-				source?: {
-					step: number
-					field: number
-					answer?: number
-				}
-				placeholder?: string
-				rows?: number
-				showAddButton?: boolean
-				addButtonText?: string
-				min?: number
-				max?: number
-				color?: "red" | "green" | "yellow"
-				allowMultiple?: boolean
-				_key: string
-			}>
-			_type: "step"
-			_key: string
-		}>
-	}
-}
-
-export type SanityImageCrop = {
-	_type: "sanity.imageCrop"
-	top?: number
-	bottom?: number
-	left?: number
-	right?: number
-}
-
-export type SanityImageHotspot = {
-	_type: "sanity.imageHotspot"
-	x?: number
-	y?: number
-	height?: number
-	width?: number
 }
 
 export type SanityImageAsset = {
@@ -300,13 +103,6 @@ export type SanityImageAsset = {
 	source?: SanityAssetSourceData
 }
 
-export type SanityAssetSourceData = {
-	_type: "sanity.assetSourceData"
-	name?: string
-	id?: string
-	url?: string
-}
-
 export type SanityImageMetadata = {
 	_type: "sanity.imageMetadata"
 	location?: Geopoint
@@ -318,20 +114,78 @@ export type SanityImageMetadata = {
 	isOpaque?: boolean
 }
 
-export type Participant = {
-	_id: string
-	_type: "participant"
-	_createdAt: string
-	_updatedAt: string
-	_rev: string
+export type Geopoint = {
+	_type: "geopoint"
+	lat?: number
+	lng?: number
+	alt?: number
+}
+
+export type SanityAssetSourceData = {
+	_type: "sanity.assetSourceData"
+	name?: string
+	id?: string
+	url?: string
+}
+
+export type Sliders = {
+	_type: "sliders"
 	name: string
-	recovery_code?: string
-	kickoff: {
-		_ref: string
-		_type: "reference"
-		_weak?: boolean
-		[internalGroqTypeReferenceTo]?: "kickoff"
-	}
+	illustration:
+		| "speechBubbles"
+		| "rollingBoards"
+		| "clocksAndHands"
+		| "seeSaw"
+		| "usVsThem"
+		| "targetAudienceA"
+		| "targetAudienceB"
+	groups?: Array<string>
+	steps: Array<{
+		prompt: Array<{
+			children?: Array<{
+				marks?: Array<string>
+				text?: string
+				_type: "span"
+				_key: string
+			}>
+			style?: "normal"
+			listItem?: never
+			markDefs?: Array<{
+				href?: string
+				_type: "link"
+				_key: string
+			}>
+			level?: number
+			_type: "block"
+			_key: string
+		}>
+		sliders: Array<{
+			prompt: Array<{
+				children?: Array<{
+					marks?: Array<string>
+					text?: string
+					_type: "span"
+					_key: string
+				}>
+				style?: "normal"
+				listItem?: never
+				markDefs?: Array<{
+					href?: string
+					_type: "link"
+					_key: string
+				}>
+				level?: number
+				_type: "block"
+				_key: string
+			}>
+			left: string
+			right: string
+			_type: "slider"
+			_key: string
+		}>
+		_type: "step"
+		_key: string
+	}>
 }
 
 export type Kickoff = {
@@ -343,13 +197,11 @@ export type Kickoff = {
 	title: string
 	code: Slug
 	greeting: string
-	exercises: Array<{
-		_ref: string
-		_type: "reference"
-		_weak?: boolean
-		_key: string
-		[internalGroqTypeReferenceTo]?: "exercise"
-	}>
+	exercises: Array<
+		{
+			_key: string
+		} & Sliders
+	>
 }
 
 export type MediaTag = {
@@ -371,29 +223,27 @@ export type AllSanitySchemaTypes =
 	| SanityImagePaletteSwatch
 	| SanityImagePalette
 	| SanityImageDimensions
-	| SanityFileAsset
-	| Geopoint
-	| Exercise
-	| SanityImageCrop
 	| SanityImageHotspot
+	| SanityImageCrop
+	| SanityFileAsset
 	| SanityImageAsset
-	| SanityAssetSourceData
 	| SanityImageMetadata
-	| Participant
+	| Geopoint
+	| SanityAssetSourceData
+	| Sliders
 	| Kickoff
 	| MediaTag
 	| Slug
 export declare const internalGroqTypeReferenceTo: unique symbol
 // Source: client.ts
 // Variable: kickoffQ
-// Query: *[_type == "kickoff" && code.current == $code][0] {			title,			"code": code.current,			greeting,			exercises[]->{ name, "slug": slug.current, illustration, groups }		}
+// Query: *[_type == "kickoff" && code.current == $code][0] {			title,			"code": code.current,			greeting,			exercises[] { name, illustration, groups }		}
 export type KickoffQResult = {
 	title: string
 	code: string
 	greeting: string
 	exercises: Array<{
 		name: string
-		slug: string
 		illustration:
 			| "clocksAndHands"
 			| "rollingBoards"
@@ -402,16 +252,66 @@ export type KickoffQResult = {
 			| "targetAudienceA"
 			| "targetAudienceB"
 			| "usVsThem"
-		groups: Array<{
-			name: string
-			slug: Slug
-			_key: string
-		}> | null
+		groups: Array<string> | null
 	}>
 } | null
+// Variable: exerciseQ
+// Query: *[_type == "kickoff" && code.current == $code][0].exercises[] {			name,			groups,			"type": _type,			_type == 'sliders' => { steps }		}
+export type ExerciseQResult = Array<{
+	name: string
+	groups: Array<string> | null
+	type: "sliders"
+	steps: Array<{
+		prompt: Array<{
+			children?: Array<{
+				marks?: Array<string>
+				text?: string
+				_type: "span"
+				_key: string
+			}>
+			style?: "normal"
+			listItem?: never
+			markDefs?: Array<{
+				href?: string
+				_type: "link"
+				_key: string
+			}>
+			level?: number
+			_type: "block"
+			_key: string
+		}>
+		sliders: Array<{
+			prompt: Array<{
+				children?: Array<{
+					marks?: Array<string>
+					text?: string
+					_type: "span"
+					_key: string
+				}>
+				style?: "normal"
+				listItem?: never
+				markDefs?: Array<{
+					href?: string
+					_type: "link"
+					_key: string
+				}>
+				level?: number
+				_type: "block"
+				_key: string
+			}>
+			left: string
+			right: string
+			_type: "slider"
+			_key: string
+		}>
+		_type: "step"
+		_key: string
+	}>
+}> | null
 
 declare module "@sanity/client" {
 	interface SanityQueries {
-		'*[_type == "kickoff" && code.current == $code][0] {\n\t\t\ttitle,\n\t\t\t"code": code.current,\n\t\t\tgreeting,\n\t\t\texercises[]->{ name, "slug": slug.current, illustration, groups }\n\t\t}': KickoffQResult
+		'\n\t\t*[_type == "kickoff" && code.current == $code][0] {\n\t\t\ttitle,\n\t\t\t"code": code.current,\n\t\t\tgreeting,\n\t\t\texercises[] { name, illustration, groups }\n\t\t}': KickoffQResult
+		'\n\t\t*[_type == "kickoff" && code.current == $code][0].exercises[] {\n\t\t\tname,\n\t\t\tgroups,\n\t\t\t"type": _type,\n\n\t\t\t_type == \'sliders\' => { steps }\n\t\t}': ExerciseQResult
 	}
 }

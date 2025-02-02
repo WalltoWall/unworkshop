@@ -1,5 +1,4 @@
-import { Exercise } from "./documents/Exercise"
-import { Kickoff } from "./documents/Kickoff"
-import { Participant } from "./documents/Participant"
+import { sliders } from "@/sliders/schema"
+import { kickoff } from "./kickoff"
 
-export const schemaTypes = [Kickoff, Participant, Exercise]
+export const schemaTypes = [kickoff, sliders]

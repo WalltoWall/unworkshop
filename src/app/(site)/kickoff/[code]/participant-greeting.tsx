@@ -18,7 +18,7 @@ export const ParticipantGreeting = () => {
 
 	React.useEffect(() => router.prefetch(kickoffHref), [router, kickoffHref])
 
-	if (!participant || onRegisterPage) return null
+	if (onRegisterPage) return null
 
 	function askToRegister() {
 		Modal.open({
@@ -36,7 +36,7 @@ export const ParticipantGreeting = () => {
 		<div className={text({ class: "mr-auto ml-4", style: "copy", size: 16 })}>
 			<span>Hi, </span>
 			<button onClick={askToRegister} className="underline">
-				{participant.name}
+				{participant?.name}
 			</button>
 		</div>
 	)

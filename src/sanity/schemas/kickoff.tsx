@@ -1,7 +1,7 @@
 import { Warehouse } from "lucide-react"
 import { defineArrayMember, defineField, defineType, type Slug } from "sanity"
 
-export const Kickoff = defineType({
+export const kickoff = defineType({
 	name: "kickoff",
 	title: "Kickoff",
 	type: "document",
@@ -61,12 +61,10 @@ export const Kickoff = defineType({
 		defineField({
 			name: "exercises",
 			title: "Exercises",
-			description: "The list of exercises.",
+			description: "The list of exercises for this kickoff.",
 			type: "array",
 			initialValue: [],
-			of: [
-				defineArrayMember({ type: "reference", to: [{ type: "exercise" }] }),
-			],
+			of: [defineArrayMember({ type: "sliders" })],
 			validation: (R) => R.required(),
 		}),
 	],

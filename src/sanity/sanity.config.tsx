@@ -1,9 +1,10 @@
+import { visionTool } from "@sanity/vision"
 import { defineConfig } from "sanity"
 import { media, mediaAssetSource } from "sanity-plugin-media"
 import { structureTool } from "sanity/structure"
 import { Logo } from "@/components/Logo"
-import { schemaTypes } from "@/sanity/schemas"
 import { env } from "@/env"
+import { schemaTypes } from "@/sanity/schemas"
 
 const config = defineConfig({
 	name: "default",
@@ -86,6 +87,7 @@ const config = defineConfig({
 			},
 		}),
 		media(),
+		visionTool(),
 	],
 
 	schema: { types: schemaTypes },

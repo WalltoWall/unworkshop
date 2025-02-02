@@ -3,8 +3,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { cx } from "class-variance-authority"
 import { Text } from "@/components/Text"
-import { type CardGradientData } from "./card-gradients"
-import { type CardIllustrationData } from "./card-illustrations"
+import { type CardGradientData } from "../app/(site)/kickoff/[code]/exercises/card-gradients"
+import { type CardIllustrationData } from "../app/(site)/kickoff/[code]/exercises/card-illustrations"
 
 interface Props {
 	name: string
@@ -18,10 +18,11 @@ export const ExerciseCard = (props: Props) => {
 		<Link
 			href={props.href}
 			className={cx(
-				"relative grid aspect-[289/160] grid-cols-[4fr,6fr] overflow-hidden rounded-lg bg-gradient-to-r",
+				"group/card relative grid aspect-[289/160] grid-cols-[4fr,6fr] overflow-hidden rounded-lg bg-gradient-to-r transition hover:brightness-105",
 				props.gradient,
 			)}
 			suppressHydrationWarning
+			prefetch
 		>
 			<div className="self-end pb-4 pl-3">
 				<Text style="heading" size={24}>
@@ -33,14 +34,13 @@ export const ExerciseCard = (props: Props) => {
 						Start Exercise
 					</Text>
 
-					<ArrowRightIcon className="size-3.5" />
+					<ArrowRightIcon className="mb-px size-3.5 transition ease-out group-hover/card:translate-x-1" />
 				</div>
 			</div>
 
 			<Image
 				src={props.illustration.src}
 				alt=""
-				suppressHydrationWarning
 				className={cx(
 					"absolute top-0 right-0 object-contain",
 					props.illustration.className,

@@ -7,7 +7,7 @@
 		"start": "next start",
 		"build": "next build",
 		"lint": "next lint",
-		"codegen": "tsx --env-file=.env ./src/sanity/codegen.ts"
+		"codegen": "bun run --env-file=.env ./src/sanity/codegen.ts"
 	},
 	"dependencies": {
 		"@nanostores/persistent": "^0.10.2",
@@ -16,6 +16,7 @@
 		"@radix-ui/react-dialog": "^1.1.5",
 		"@radix-ui/react-popover": "^1.1.5",
 		"@radix-ui/react-slot": "^1.1.1",
+		"@sanity/vision": "^3.72.1",
 		"@t3-oss/env-nextjs": "^0.12.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
@@ -28,6 +29,7 @@
 		"nanostores": "^0.11.3",
 		"next": "^15.1.6",
 		"next-sanity": "^9.8.40",
+		"nuqs": "^2.3.2",
 		"perfect-cursors": "^1.0.5",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
@@ -54,7 +56,6 @@
 		"prettier": "^3.4.2",
 		"prettier-plugin-tailwindcss": "^0.6.10",
 		"tailwindcss": "^4.0.2",
-		"tsx": "^4.19.2",
 		"typescript": "^5.7.3",
 		"zx": "^8.3.0"
 	}

@@ -1,3 +1,4 @@
+import React from "react"
 import type { Viewport } from "next"
 import Link from "next/link"
 import { ClientOnly } from "@/components/client-only"
@@ -16,7 +17,7 @@ export default async function KickoffLayout(props: Props) {
 
 	return (
 		<>
-			<div className="mx-auto flex min-h-svh w-full max-w-[32rem] flex-col px-7 pb-16 text-black lg:pb-4.5">
+			<div className="mx-auto flex min-h-svh w-full max-w-[32rem] flex-col px-7 pb-16 text-black lg:pb-8">
 				<header className="flex items-center justify-between gap-2 pt-4.5 pb-6">
 					<Link href={`/kickoff/${params.code}`}>
 						<Logo className="w-[46px]" />
@@ -32,9 +33,7 @@ export default async function KickoffLayout(props: Props) {
 				</main>
 			</div>
 
-			<ClientOnly>
-				<Modal.Component />
-			</ClientOnly>
+			<Modal.Component />
 		</>
 	)
 }
