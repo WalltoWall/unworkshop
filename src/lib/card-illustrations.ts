@@ -6,13 +6,13 @@ import slidersIllustration from "@/assets/images/sliders-illustration.jpg"
 import targetAudienceA from "@/assets/images/target-audience-a-illustration.png"
 import targetAudienceB from "@/assets/images/target-audience-b-illlustration.png"
 import usVsThem from "@/assets/images/us-vs-them-illustration.png"
-import type { Exercise } from "@/sanity/types.gen"
+import type { Sliders } from "@/sanity/types.gen"
 
 export type CardIllustrationData = {
 	src: StaticImageData
 	className: string
 }
-export type CardIllustration = NonNullable<Exercise["illustration"]>
+export type CardIllustration = NonNullable<Sliders["illustration"]>
 
 export const illustrations: Record<CardIllustration, CardIllustrationData> = {
 	speechBubbles: {

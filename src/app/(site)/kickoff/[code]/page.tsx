@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation"
 import { ExerciseCard } from "@/components/exercise-card"
 import { Text } from "@/components/Text"
+import { CardGradientSequence } from "@/lib/card-gradients"
+import { illustrations } from "@/lib/card-illustrations"
 import { slugify } from "@/lib/slugify"
 import { Api } from "@/sanity/client"
-import { CardGradientSequence } from "./exercises/card-gradients"
-import { illustrations } from "./exercises/card-illustrations"
 
 type Params = { code: string }
 type Props = { params: Promise<Params> }

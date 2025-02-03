@@ -45,7 +45,6 @@ export const RangeSlider = (props: Props) => {
 	return (
 		<div className={cx("rounded-lg bg-neutral-100 p-4", props.className)}>
 			<PortableText value={props.prompt} />
-
 			<RangeInput className="mt-8" defaultValue={3} />
 
 			<div className="mt-3 flex justify-between text-neutral-600">

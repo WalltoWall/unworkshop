@@ -3,8 +3,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { cx } from "class-variance-authority"
 import { Text } from "@/components/Text"
-import { type CardGradientData } from "../app/(site)/kickoff/[code]/exercises/card-gradients"
-import { type CardIllustrationData } from "../app/(site)/kickoff/[code]/exercises/card-illustrations"
+import { type CardGradientData } from "@/lib/card-gradients"
+import { type CardIllustrationData } from "@/lib/card-illustrations"
 
 interface Props {
 	name: string
