@@ -1,37 +1,74 @@
 "use client"
 
+import { useSyncedStore } from "@syncedstore/react"
 import { toPlainText } from "next-sanity"
+import { useParams } from "next/navigation"
+import { z } from "zod"
 import { PortableText } from "@/components/portable-text"
+import { slugify } from "@/lib/slugify"
+import { useMultiplayer } from "@/lib/use-multiplayer"
 import { useStep } from "@/lib/use-step"
 import { Participant } from "@/participant"
 import type * as ST from "@/sanity/types.gen"
 import { RangeSlider } from "./range-slider"
+import type { SlidersAnswers } from "./types"
 
-type Props = {
-	steps: ST.Sliders["steps"]
-}
+type Params = { code: string; slug: string; group?: string }
+type Props = { steps: ST.Sliders["steps"] }
 
 export const SlidersComponent = (props: Props) => {
-	const participant = Participant.useInfo()
+	const participant = Participant.useInfoOrThrow()
+	const params = useParams<Params>()
 	const [step] = useStep()
 
-	const data = props.steps.at(step - 1)
-	if (!data) throw new Error("Something went wrong.")
+	const id = params.group ?? participant.id
+	const multiplayer = useMultiplayer<SlidersAnswers>({
+		slug: params.slug,
+		code: params.code,
+		id,
+	})
+	const state = useSyncedStore(multiplayer.store)
+
+	const stepData = props.steps.at(step - 1)
+
+	if (!stepData) throw new Error("Something went wrong.")
+	if (!multiplayer.synced) return null
+
+	const prompt = slugify(toPlainText(stepData.prompt))
+
+	function onRangeChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const val = e.currentTarget.valueAsNumber
+		state.answers[id] ??= {}
+		state.answers[id][prompt] ??= { first: 1 }
+
+		const name = NameSchema.parse(e.currentTarget.name)
+
+		state.answers[id][prompt][name] = val
+	}
 
 	return (
 		<div className="space-y-3">
-			<PortableText value={data.prompt} />
+			<PortableText value={stepData.prompt} />
 
 			<div className="flex flex-col gap-4">
-				{data.sliders.map((s) => (
+				{stepData.sliders.map((s, idx) => (
 					<RangeSlider
 						key={toPlainText(s.prompt) + s.left + s.right}
 						left={s.left}
 						right={s.right}
 						prompt={s.prompt}
+						name={idx === 0 ? "first" : "second"}
+						value={
+							(idx === 0
+								? state.answers[id]?.[prompt]?.first
+								: state.answers[id]?.[prompt]?.second) ?? 1
+						}
+						onChange={onRangeChange}
 					/>
 				))}
 			</div>
 		</div>
 	)
 }
+
+const NameSchema = z.union([z.literal("first"), z.literal("second")])

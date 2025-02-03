@@ -37,6 +37,13 @@ export function useInfo({ withRedirect = true }: Args = DEFAULT_ARGS) {
 	return p
 }
 
+export function useInfoOrThrow() {
+	const participant = useInfo()
+	if (!participant) throw new Error("No participant found, but is required.")
+
+	return participant
+}
+
 export function create(name: string) {
 	$participant.set({ name, id: nanoid(6) })
 }

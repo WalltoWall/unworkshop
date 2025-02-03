@@ -16,7 +16,7 @@ export const env = createEnv({
 	client: {
 		NEXT_PUBLIC_ROOT_URL: z.string().url().default("http://localhost:3000"),
 		NEXT_PUBLIC_SANITY_PROJECT_ID: z.string(),
-		NEXT_PUBLIC_SANITY_DATASET: z.string().default("development"),
+		NEXT_PUBLIC_SANITY_DATASET: z.string(),
 		NEXT_PUBLIC_SANITY_API_VERSION: z.string().default("2023-02-10"),
 		NEXT_PUBLIC_PARTYKIT_HOST: z.string().default("localhost:1999"),
 	},

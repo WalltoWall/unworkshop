@@ -1,6 +1,7 @@
 import React from "react"
 import { notFound } from "next/navigation"
 import { match } from "ts-pattern"
+import { ClientOnly } from "@/components/client-only"
 import { Steps } from "@/components/Steps"
 import { Api } from "@/sanity/client"
 import { SlidersComponent } from "@/sliders/component"
@@ -24,11 +25,13 @@ export default async function ExercisePage(props: Props) {
 
 			<React.Suspense>
 				<div className="grow">
-					{match(exercise)
-						.with({ type: "sliders" }, (e) => (
-							<SlidersComponent steps={e.steps} />
-						))
-						.otherwise(() => null)}
+					<ClientOnly>
+						{match(exercise)
+							.with({ type: "sliders" }, (e) => (
+								<SlidersComponent steps={e.steps} />
+							))
+							.otherwise(() => null)}
+					</ClientOnly>
 				</div>
 
 				<Steps steps={numSteps} />
