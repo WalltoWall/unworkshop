@@ -1,0 +1,24 @@
+.input {
+	&::-webkit-slider-thumb {
+		height: 2rem;
+		width: 2rem;
+		appearance: none;
+		border-radius: 50%;
+		background-color: var(--color-black);
+		background-image: url("/slider-arrows.svg");
+		background-position: center;
+		background-repeat: no-repeat;
+
+		&:hover {
+			background-color: var(--color-neutral-700);
+		}
+	}
+
+	&[readonly] {
+		&::-webkit-slider-thumb {
+			background-color: var(--color-red-500);
+			cursor: not-allowed;
+			background-image: url("/slider-arrows-read-only.svg");
+		}
+	}
+}

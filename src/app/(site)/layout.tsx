@@ -43,6 +43,7 @@ const RootLayout = ({ children }: RootLayoutProps) => {
 
 			<body
 				className={cx(
+					"antialiased",
 					FontSans.variable,
 					FontHeading.variable,
 					FontSerif.variable,
