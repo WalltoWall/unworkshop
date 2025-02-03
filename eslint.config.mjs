@@ -18,6 +18,7 @@ const eslintConfig = [
 			"@typescript-eslint/no-explicit-any": "off",
 			"@typescript-eslint/ban-ts-comment": "off",
 			"@typescript-eslint/no-namespace": "off",
+			"@typescript-eslint/triple-slash-reference": "off",
 			"@typescript-eslint/no-unused-vars": [
 				"error",
 				{

@@ -37,3 +37,10 @@ next-env.d.ts
 
 # partykit dev
 .partykit
+
+# sst
+.sst
+
+
+# open-next
+.open-next

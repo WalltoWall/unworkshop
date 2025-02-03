@@ -1,0 +1,5 @@
+{
+	"name": "unworkshop",
+	"main": "./src/party/index.ts",
+	"compatibilityDate": "2025-02-03"
+}
