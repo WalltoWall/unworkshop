@@ -40,6 +40,7 @@ export const ExerciseCard = (props: Props) => {
 
 			<Image
 				src={props.illustration.src}
+				priority
 				alt=""
 				className={cx(
 					"absolute top-0 right-0 object-contain",

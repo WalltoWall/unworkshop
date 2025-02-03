@@ -17,8 +17,15 @@ const $participant = persistentAtom<Info | null>(KEY, null, {
 		}
 	},
 })
-const Info = z.object({ name: z.string(), id: z.string() })
-export type Info = { name: string; id: string }
+const Info = z.object({
+	name: z.string(),
+	id: z.string(),
+	role: z
+		.union([z.literal("captain"), z.literal("contributor")])
+		.nullable()
+		.default(null),
+})
+export type Info = z.infer<typeof Info>
 
 type Args = { withRedirect?: boolean }
 const DEFAULT_ARGS: Args = { withRedirect: true }
@@ -45,7 +52,14 @@ export function useInfoOrThrow() {
 }
 
 export function create(name: string) {
-	$participant.set({ name, id: nanoid(6) })
+	$participant.set({ name, id: nanoid(6), role: null })
+}
+
+export function setRole(role: Info["role"]) {
+	const p = $participant.get()
+	if (!p) throw new Error("No valid participant found.")
+
+	$participant.set({ ...p, role })
 }
 
 export function clear() {

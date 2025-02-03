@@ -2,7 +2,7 @@ import type { Viewport } from "next"
 import { DarkLayout } from "@/components/dark-layout"
 import { UnworkshopTitle } from "@/components/unworkshop-title"
 import { text } from "@/styles/text"
-import { CodeForm } from "./CodeForm"
+import { CodeForm } from "./code-form"
 
 export default function Home() {
 	return (
@@ -21,6 +21,8 @@ export default function Home() {
 		</DarkLayout>
 	)
 }
+
+export const metadata = { title: "UnWorkshop" }
 
 export const viewport: Viewport = {
 	colorScheme: "dark",

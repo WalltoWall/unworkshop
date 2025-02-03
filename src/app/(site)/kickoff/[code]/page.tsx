@@ -27,7 +27,7 @@ export default async function KickoffPage(props: Props) {
 					const hasGroups = e.groups && e.groups.length > 0
 					const slug = slugify(e.name)
 					const href = hasGroups
-						? `/kickoff/${params.code}/groups/${slug}`
+						? `/kickoff/${params.code}/${slug}/groups`
 						: `/kickoff/${params.code}/${slug}`
 
 					return (

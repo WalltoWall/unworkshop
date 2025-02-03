@@ -16,7 +16,7 @@
 
 	&[readonly] {
 		&::-webkit-slider-thumb {
-			background-color: var(--color-red-500);
+			background-color: var(--color-white);
 			cursor: not-allowed;
 			background-image: url("/slider-arrows-read-only.svg");
 		}
