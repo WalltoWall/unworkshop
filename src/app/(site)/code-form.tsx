@@ -98,7 +98,11 @@ const CodeSchema = z
 		return code.slice(0, 3) + "-" + code.slice(3)
 	})
 
-export const CodeForm = () => {
+type Props = {
+	type: "kickoff" | "presenter"
+}
+
+export const CodeForm = (props: Props) => {
 	const router = useRouter()
 
 	function action(data: FormData) {
@@ -108,7 +112,7 @@ export const CodeForm = () => {
 			return
 		}
 
-		router.push(`/kickoff/${res.data}`)
+		router.push(`/${props.type}/${res.data}`)
 	}
 
 	return (

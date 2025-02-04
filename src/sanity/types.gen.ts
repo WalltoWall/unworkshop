@@ -237,7 +237,7 @@ export type AllSanitySchemaTypes =
 export declare const internalGroqTypeReferenceTo: unique symbol
 // Source: client.ts
 // Variable: kickoffQ
-// Query: *[_type == "kickoff" && code.current == $code][0] {			title,			"code": code.current,			greeting,			exercises[] { name, illustration, groups }		}
+// Query: *[_type == "kickoff" && code.current == $code][0] {			title,			"code": code.current,			greeting,			exercises[] { 				name, 				illustration, 				groups, 				"type": _type, 				_type == 'sliders' => { "steps": count(steps) }			}		}
 export type KickoffQResult = {
 	title: string
 	code: string
@@ -253,6 +253,8 @@ export type KickoffQResult = {
 			| "targetAudienceB"
 			| "usVsThem"
 		groups: Array<string> | null
+		type: "sliders"
+		steps: number
 	}>
 } | null
 // Variable: exerciseQ
@@ -311,7 +313,7 @@ export type ExerciseQResult = Array<{
 
 declare module "@sanity/client" {
 	interface SanityQueries {
-		'\n\t\t*[_type == "kickoff" && code.current == $code][0] {\n\t\t\ttitle,\n\t\t\t"code": code.current,\n\t\t\tgreeting,\n\t\t\texercises[] { name, illustration, groups }\n\t\t}': KickoffQResult
+		'\n\t\t*[_type == "kickoff" && code.current == $code][0] {\n\t\t\ttitle,\n\t\t\t"code": code.current,\n\t\t\tgreeting,\n\t\t\texercises[] { \n\t\t\t\tname, \n\t\t\t\tillustration, \n\t\t\t\tgroups, \n\t\t\t\t"type": _type, \n\n\t\t\t\t_type == \'sliders\' => { "steps": count(steps) }\n\t\t\t}\n\t\t}': KickoffQResult
 		'\n\t\t*[_type == "kickoff" && code.current == $code][0].exercises[] {\n\t\t\tname,\n\t\t\tgroups,\n\t\t\t"type": _type,\n\n\t\t\t_type == \'sliders\' => { steps }\n\t\t}': ExerciseQResult
 	}
 }

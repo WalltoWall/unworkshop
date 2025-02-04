@@ -1,46 +1,23 @@
 import React from "react"
-import { redirect } from "next/navigation"
-import { zfd } from "zod-form-data"
-import { Button } from "@/components/Button"
-import { Text } from "@/components/Text"
-import { PresenterHeader } from "./PresenterHeader"
+import { DarkLayout } from "@/components/dark-layout"
+import { UnworkshopTitle } from "@/components/unworkshop-title"
+import { text } from "@/styles/text"
+import { CodeForm } from "../code-form"
 
-const FormSchema = zfd.formData({ code: zfd.text() })
-
-async function navigateToWorkshop(data: FormData) {
-	"use server"
-
-	const form = FormSchema.parse(data)
-	redirect(`/presenter/${form.code}`)
-}
-
-const PresenterPage = () => {
+export default function PresenterHome() {
 	return (
-		<React.Suspense>
-			<PresenterHeader />
+		<DarkLayout>
+			<UnworkshopTitle className="mx-auto w-[15.625rem]" />
 
-			<div className="space-y-4 px-7 py-8 text-center">
-				<Text style="heading" size={24}>
-					Enter your group code
-				</Text>
-
-				<form
-					className="mx-auto flex max-w-lg flex-col space-y-1.5"
-					action={navigateToWorkshop}
+			<div className="space-y-4 px-4 pt-8 pb-10 text-center">
+				<h1
+					className={text({ style: "heading", size: 24, class: "text-center" })}
 				>
-					<input
-						type="text"
-						name="code"
-						className="w-full rounded-2xl bg-gray-75 px-4 pb-2 text-center align-middle uppercase text-black text-56 leading-none font-heading placeholder:text-gray-38"
-						placeholder="WTW-1234"
-						required
-					/>
+					Presenter
+				</h1>
 
-					<Button color="black">Continue</Button>
-				</form>
+				<CodeForm type="presenter" />
 			</div>
-		</React.Suspense>
+		</DarkLayout>
 	)
 }
-
-export default PresenterPage

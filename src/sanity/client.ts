@@ -9,7 +9,14 @@ export namespace Api {
 			title,
 			"code": code.current,
 			greeting,
-			exercises[] { name, illustration, groups }
+			exercises[] { 
+				name, 
+				illustration, 
+				groups, 
+				"type": _type, 
+
+				_type == 'sliders' => { "steps": count(steps) }
+			}
 		}`)
 
 	export const getKickoff = React.cache((code: string) => {

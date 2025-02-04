@@ -16,7 +16,7 @@ export default function Home() {
 					Enter your group code
 				</h1>
 
-				<CodeForm />
+				<CodeForm type="kickoff" />
 			</div>
 		</DarkLayout>
 	)
