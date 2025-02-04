@@ -1,17 +1,19 @@
 import * as Popover from "@radix-ui/react-popover"
-import { Eye } from "./icons/Eye"
-import { EyeSlash } from "./icons/EyeSlash"
-import { Gear } from "./icons/Gear"
+import { CogIcon, EyeIcon, EyeOffIcon } from "lucide-react"
+import { cx } from "class-variance-authority"
 
-interface Props {
+type RootProps = {
 	children: React.ReactNode
+	className?: string
 }
-
-export const SettingsMenu = ({ children }: Props) => (
+const Root = (props: RootProps) => (
 	<Popover.Root>
-		<Popover.Trigger className="ease fixed bottom-7 right-7 h-10 w-10 p-[0.125rem] transition duration-200 hover:opacity-75">
+		<Popover.Trigger className={cx(props.className, "group")}>
 			<span className="sr-only">Open Settings Menu</span>
-			<Gear />
+			<CogIcon
+				className="size-10 text-black transition group-hover:text-neutral-700"
+				strokeWidth={3}
+			/>
 		</Popover.Trigger>
 
 		<Popover.Portal>
@@ -20,36 +22,39 @@ export const SettingsMenu = ({ children }: Props) => (
 				align="end"
 				alignOffset={30}
 				sideOffset={-4}
-				className="z-20 grid min-w-[9rem] gap-4 rounded-2xl bg-black px-5 py-4 text-white"
+				className="min-w-36 gap-4 rounded-2xl bg-black px-5 py-4 text-white"
 			>
-				{children}
+				{props.children}
 			</Popover.Content>
 		</Popover.Portal>
 	</Popover.Root>
 )
+Root.displayName = "Settings.Root"
 
-interface SettingsVisibilityProps {
-	label: string
-	isVisible: boolean
-	toggleVisibility: () => void
+type ToggleProps = {
+	children: string
+	checked: boolean
+	onCheckedChanged: (checked: boolean) => void
 }
 
-export const SettingVisibility = ({
-	label,
-	isVisible,
-	toggleVisibility,
-}: SettingsVisibilityProps) => {
+const Toggle = (props: ToggleProps) => {
 	return (
 		<button
-			className="grid grid-cols-[auto_1fr] items-center gap-2 text-left transition-opacity hover:opacity-75"
-			onClick={toggleVisibility}
+			className="grid grid-cols-[auto_1fr] items-center gap-2 text-left transition-opacity hover:text-neutral-300"
+			onClick={() => props.onCheckedChanged(!props.checked)}
 		>
-			{isVisible ? (
-				<Eye className="h-auto w-[1.125rem]" />
+			{props.checked ? (
+				<EyeIcon className="size-5" />
 			) : (
-				<EyeSlash className="h-auto w-[1.125rem]" />
+				<EyeOffIcon className="size-5" />
 			)}
-			<span className="text-12 capsize">{label}</span>
+
+			<span className="text-[12px] leading-none">{props.children}</span>
 		</button>
 	)
+}
+
+export const Settings = {
+	Root,
+	Toggle,
 }

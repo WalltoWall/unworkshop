@@ -3,6 +3,7 @@ import { onConnect, unstable_getYDoc, type YPartyKitOptions } from "y-partykit"
 
 const OPTIONS: YPartyKitOptions = {
 	persist: { mode: "snapshot" },
+	gc: false,
 	callback: {
 		async handler(_yDoc) {
 			// called every few seconds after edits

@@ -11,6 +11,7 @@ interface Props {
 	gradient: CardGradientData
 	illustration: CardIllustrationData
 	href: string
+	label?: string
 }
 
 export const ExerciseCard = (props: Props) => {
@@ -31,7 +32,7 @@ export const ExerciseCard = (props: Props) => {
 
 				<div className="mt-1 flex items-end gap-1">
 					<Text style="copy" size={16}>
-						Start Exercise
+						{props.label ?? "Start Exercise"}
 					</Text>
 
 					<ArrowRightIcon className="mb-px size-3.5 transition ease-out group-hover/card:translate-x-1" />

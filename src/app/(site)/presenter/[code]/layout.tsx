@@ -14,8 +14,8 @@ export default async function PresenterLayout(props: Props) {
 	if (!kickoff) notFound()
 
 	return (
-		<div className="flex flex-col">
-			<header className="flex items-center justify-between gap-5 bg-black px-7 py-4.5 text-white">
+		<div className="flex h-svh flex-col">
+			<header className="flex items-center justify-between gap-5 bg-black px-5 py-4.5 text-white">
 				<Link className="flex gap-5" href={`/presenter/${params.code}`}>
 					<Logo className="size-13 text-white" />
 
@@ -27,7 +27,7 @@ export default async function PresenterLayout(props: Props) {
 				<NavSheet exercises={kickoff.exercises} />
 			</header>
 
-			<main className="grow">{props.children}</main>
+			<main className="flex grow flex-col">{props.children}</main>
 		</div>
 	)
 }

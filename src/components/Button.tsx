@@ -9,12 +9,13 @@ const button = cva(
 	{
 		variants: {
 			color: {
-				gray: "border-gray-700 text-black bg-gray-700",
+				gray: "border-neutral-700 text-black bg-neutral-700",
 				black: "border-black text-white bg-black hover:bg-neutral-800",
 			},
 			size: {
 				xs: "h-9 text-[12px] px-3 gap-1.5",
 				sm: "h-8 text-[16px] px-4 gap-1.5",
+				md: "h-10 text-[21px] px-4 gap-2 pb-px",
 				base: "h-11 text-[24px] px-5 gap-2.5 pb-px",
 			},
 			outline: {
@@ -47,7 +48,7 @@ const button = cva(
 			{
 				outline: true,
 				color: "gray",
-				className: "text-gray-75",
+				className: "text-neutral-300",
 			},
 			{
 				outline: true,

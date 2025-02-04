@@ -2,6 +2,7 @@
 
 @theme {
 	--color-brand: oklch(74.48% 0.1727 158.48);
+	--color-presenter: var(--color-presenter);
 
 	--font-sans: "FontSans", "FontSans Fallback";
 	--font-serif: "FontSerif", "FontSerif Fallback";

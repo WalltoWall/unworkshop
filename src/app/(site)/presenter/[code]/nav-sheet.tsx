@@ -131,7 +131,7 @@ export const NavSheet = (props: Props) => {
 								animate={{ x: "0%" }}
 								transition={{ type: "spring", bounce: 0, duration: 0.4 }}
 							>
-								<D.Close className="absolute top-9 right-7" asChild>
+								<D.Close className="absolute top-9 right-5" asChild>
 									<Hamburger open={open} />
 								</D.Close>
 

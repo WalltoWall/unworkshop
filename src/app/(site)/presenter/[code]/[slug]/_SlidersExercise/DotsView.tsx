@@ -131,13 +131,13 @@ export const DotsView = ({
 		<div className="relative flex h-full grow flex-col">
 			<div className="flex items-start justify-between">
 				{/* TODO: Share component with other "dot" view */}
-				<div className="rounded-2xl bg-black px-5 py-4 ">
+				<div className="rounded-2xl bg-black px-5 py-4">
 					<div className="mb-2 flex items-center">
 						<span
 							className="block h-6 w-6 rounded-full border-[3px] bg-white"
 							style={{ borderColor: color }}
 						/>
-						<Text className="ml-2 uppercase text-24 font-heading capsize">
+						<Text className="text-24 font-heading capsize ml-2 uppercase">
 							<span style={{ color: color }}>Today</span>
 						</Text>
 					</div>
@@ -147,7 +147,7 @@ export const DotsView = ({
 							className="block h-6 w-6 rounded-full"
 							style={{ backgroundColor: color }}
 						/>
-						<Text className="ml-2 uppercase text-24 font-heading capsize">
+						<Text className="text-24 font-heading capsize ml-2 uppercase">
 							<span style={{ color: color }}>Tomorrow</span>
 						</Text>
 					</div>
