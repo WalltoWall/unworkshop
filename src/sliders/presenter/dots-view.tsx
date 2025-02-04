@@ -148,8 +148,8 @@ export const DotsView = (props: Props) => {
 									className="border-presenter relative h-5 w-5 rounded-full border-[3px]"
 									style={{
 										backgroundColor: isTomorrow
-											? "var(--color-black)"
-											: "var(--color-presenter)",
+											? "var(--color-presenter)"
+											: "var(--color-white)",
 										gridColumn: isTomorrow ? answer.today : answer.tomorrow,
 										gridRow: idx + 1,
 									}}
