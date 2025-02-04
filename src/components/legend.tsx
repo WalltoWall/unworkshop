@@ -1,7 +1,6 @@
 "use client"
 
 import { cx } from "class-variance-authority"
-import { Colors } from "@/colors"
 import { text } from "@/styles/text"
 
 type RootProps = {
@@ -9,13 +8,8 @@ type RootProps = {
 	children: React.ReactNode
 }
 const Root = (props: RootProps) => {
-	const [color] = Colors.useActive()
-
 	return (
-		<div
-			style={Colors.style(color, 300)}
-			className={cx(props.className, "rounded-2xl bg-black px-5 py-4")}
-		>
+		<div className={cx(props.className, "rounded-2xl bg-black px-5 py-4")}>
 			{props.children}
 		</div>
 	)

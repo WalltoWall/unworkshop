@@ -21,16 +21,16 @@ export const PresenterSteps = (props: Props) => {
 				<button
 					onClick={() => setStep(step - 1)}
 					disabled={step === 1}
-					className="text-black transition hover:text-neutral-700 disabled:text-neutral-300"
+					className="hover:text-presenter text-black transition disabled:text-neutral-300"
 				>
 					<span className="sr-only">Previous Slider</span>
-					<ArrowLeftIcon className="size-7 text-neutral-500" />
+					<ArrowLeftIcon className="size-7" />
 				</button>
 
 				<button
 					onClick={() => setStep(step + 1)}
 					disabled={step === props.numSteps}
-					className="text-black transition hover:text-neutral-700 disabled:text-neutral-300"
+					className="hover:text-presenter text-black transition disabled:text-neutral-300"
 				>
 					<span className="sr-only">Next Slider</span>
 					<ArrowRightIcon className="size-7" />

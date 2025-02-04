@@ -2,6 +2,7 @@
 
 import { toPlainText } from "next-sanity"
 import * as R from "remeda"
+import { Colors } from "@/colors"
 import { Settings } from "@/components/SettingsMenu"
 import { PRESENTER_ID } from "@/constants"
 import { slugify } from "@/lib/slugify"
@@ -39,8 +40,13 @@ export const SlidersPresenterComponent = (props: Props) => {
 		R.map((answers) => answers[prompt]),
 	)
 
+	const [color] = Colors.useActive()
+
 	return (
-		<div className="relative m-5 flex grow flex-col">
+		<div
+			className="relative m-5 flex grow flex-col"
+			style={Colors.style(color, 300)}
+		>
 			<Key view={view} />
 
 			{isDots ? <DotsView answers={answers} /> : <div>Bars</div>}

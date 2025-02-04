@@ -2,10 +2,7 @@ import { CalendarIcon, CircleOffIcon, MoveRightIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
 import React from "react"
 import { cx } from "class-variance-authority"
-import { Colors } from "@/colors"
 import { Button } from "@/components/Button"
-import { useStep } from "@/lib/use-step"
-import type { Sliders } from "@/sanity/types.gen"
 
 const Bar = () => <div className="bg-presenter h-20" />
 
@@ -102,11 +99,10 @@ type Props = {
 export const DotsView = (props: Props) => {
 	const [isTomorrow, setIsTomorrow] = React.useState(false)
 	const [showLines, setShowLines] = React.useState(false)
-	const [color] = Colors.useActive()
 
 	return (
 		<>
-			<div className="flex grow flex-col pb-6" style={Colors.style(color, 300)}>
+			<div className="flex grow flex-col pb-6">
 				<div
 					className="grid grow grid-cols-[repeat(6,20px)] content-between gap-x-[calc((100%-120px)/5)] py-4"
 					style={{ gridTemplateRows: `repeat(${props.answers.length}, 20px)` }}
