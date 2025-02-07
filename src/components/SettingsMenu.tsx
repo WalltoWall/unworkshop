@@ -1,6 +1,7 @@
 import * as Popover from "@radix-ui/react-popover"
 import { CogIcon, EyeIcon, EyeOffIcon } from "lucide-react"
 import { cx } from "class-variance-authority"
+import { Colors } from "@/colors"
 
 type RootProps = {
 	children: React.ReactNode
@@ -54,7 +55,14 @@ const Toggle = (props: ToggleProps) => {
 	)
 }
 
+const ColorPicker = () => {
+	const [color, setColor] = Colors.useActive()
+
+	return <div></div>
+}
+
 export const Settings = {
 	Root,
 	Toggle,
+	ColorPicker,
 }
