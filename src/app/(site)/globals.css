@@ -111,4 +111,13 @@
 			background-color 5000000s linear 0s,
 			color 5000000s linear 0s;
 	}
+
+	dialog {
+		width: auto;
+		max-width: none;
+		max-height: none;
+		height: auto;
+		inset-inline-end: unset;
+		inset-inline-start: unset;
+	}
 }

@@ -1,0 +1,34 @@
+.dialog,
+.dialog::backdrop {
+	transition:
+		display var(--easing) allow-discrete,
+		overlay var(--easing) allow-discrete,
+		opacity linear,
+		transform var(--easing);
+}
+
+.dialog {
+	transform: translateX(100%);
+
+	&::backdrop {
+		opacity: 0;
+	}
+
+	&[open] {
+		transform: translateX(0%);
+
+		&::backdrop {
+			opacity: 1;
+		}
+	}
+}
+
+@starting-style {
+	.dialog[open] {
+		transform: translateX(100%);
+
+		&::backdrop {
+			opacity: 0;
+		}
+	}
+}
