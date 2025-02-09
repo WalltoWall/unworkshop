@@ -99,6 +99,13 @@ type Props = {
 	exercises: Array<{ name: string; type: Exercise["_type"]; steps: number }>
 }
 
+const easing = spring({
+	keyframes: [0, 1],
+	visualDuration: 0.3,
+	bounce: 0.05,
+})
+const style = { "--easing": easing.toString() } as React.CSSProperties
+
 export const NavSheet = (props: Props) => {
 	const [open, setOpen] = React.useState(false)
 	const params = useKickoffParams()
@@ -110,9 +117,6 @@ export const NavSheet = (props: Props) => {
 	function toggleNavVisibility() {
 		setOpen((o) => !o)
 	}
-
-	const easing = spring({ keyframes: [0, 1], visualDuration: 0.5 })
-	const style = { "--easing": easing.toString() } as React.CSSProperties
 
 	return (
 		<>

@@ -3,8 +3,8 @@
 	transition:
 		display var(--easing) allow-discrete,
 		overlay var(--easing) allow-discrete,
-		opacity linear,
-		transform var(--easing);
+		transform var(--easing),
+		opacity 0.3s ease-out;
 }
 
 .dialog {

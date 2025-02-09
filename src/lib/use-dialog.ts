@@ -26,13 +26,20 @@ export function useDialog({ open, setOpen, ref }: Props) {
 
 	// When the dialog is open, close it if someone clicks outside the active area.
 	React.useEffect(() => {
-		if (!open) return
+		if (!open || !ref.current) return
+		const dialog = ref.current
 
-		const closeIfOutsideClick = (e: Event) => {
-			const target = e.target as HTMLElement
-			if (ref.current?.contains(target)) return
+		const closeIfOutsideClick = (e: MouseEvent) => {
+			const rect = dialog.getBoundingClientRect()
+			const isInDialog =
+				rect.top <= e.clientY &&
+				e.clientY <= rect.top + rect.height &&
+				rect.left <= e.clientX &&
+				e.clientX <= rect.left + rect.width
 
-			ref.current?.close()
+			if (isInDialog) return
+
+			dialog.close()
 			document.removeEventListener("click", closeIfOutsideClick)
 		}
 

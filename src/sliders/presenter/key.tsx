@@ -13,6 +13,7 @@ export const Key = (props: { view: View }) => {
 				<motion.div
 					className="bg-presenter size-6"
 					animate={{ borderRadius: isDots ? "50%" : "0%" }}
+					initial={false}
 				/>
 				<Legend.Heading className="mb-0.5">Today</Legend.Heading>
 			</div>
@@ -24,6 +25,7 @@ export const Key = (props: { view: View }) => {
 						!isDots && styles.tomorrow,
 						"border-presenter size-6 border-2 bg-white",
 					)}
+					initial={false}
 				/>
 				<Legend.Heading className="mb-0.5">Tomorrow</Legend.Heading>
 			</div>

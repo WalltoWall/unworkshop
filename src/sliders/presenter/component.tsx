@@ -9,18 +9,19 @@ import { slugify } from "@/lib/slugify"
 import { useStep } from "@/lib/use-step"
 import type { Sliders } from "@/sanity/types.gen"
 import { useMultiplayerSliders } from "../use-multiplayer-sliders"
+import { BarsView } from "./bars-view"
 import { DotsView } from "./dots-view"
 import { Key } from "./key"
 import { PresenterSteps } from "./steps"
-import { useView } from "./use-view"
+import { $settings, useSettings } from "./use-sliders-settings"
 
 type Props = {
 	steps: Sliders["steps"]
 }
 
 export const SlidersPresenterComponent = (props: Props) => {
-	const [view, setView] = useView()
-	const isDots = view === "dots"
+	const settings = useSettings()
+	const isDots = settings.view === "dots"
 
 	const [step] = useStep()
 	const data = props.steps.at(step - 1)
@@ -45,11 +46,11 @@ export const SlidersPresenterComponent = (props: Props) => {
 	return (
 		<div
 			className="relative m-5 flex grow flex-col"
-			style={Colors.style(color, 300)}
+			style={Colors.style(color)}
 		>
-			<Key view={view} />
+			<Key view={settings.view} />
 
-			{isDots ? <DotsView answers={answers} /> : <div>Bars</div>}
+			{isDots ? <DotsView answers={answers} /> : <BarsView answers={answers} />}
 
 			<PresenterSteps
 				left={left}
@@ -61,10 +62,16 @@ export const SlidersPresenterComponent = (props: Props) => {
 			<Settings.Root className="mt-5 self-end">
 				<Settings.Toggle
 					checked={isDots}
-					onCheckedChanged={(checked) => setView(checked ? "dots" : "bars")}
+					onCheckedChanged={(checked) => {
+						$settings.set({
+							...$settings.get(),
+							view: checked ? "dots" : "bars",
+						})
+					}}
 				>
 					{isDots ? "Show Bars view" : "Show Dots View"}
 				</Settings.Toggle>
+				<Settings.ColorPicker />
 			</Settings.Root>
 		</div>
 	)

@@ -1,0 +1,9 @@
+.tomorrowBars {
+	background-image: repeating-linear-gradient(
+		-45deg,
+		var(--color-presenter),
+		var(--color-presenter) 2px,
+		rgba(0, 0, 0, 0) 2px,
+		rgba(0, 0, 0, 0) 18px
+	);
+}
