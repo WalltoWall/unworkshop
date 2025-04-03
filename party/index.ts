@@ -251,27 +251,19 @@ export default class Server implements Party.Server {
 		const yDoc = await unstable_getYDoc(this.room, this.OPTIONS)
 
 		switch (doc.type) {
-			case "form": {
-				yDoc.get("participants", Y.Map).clear()
-				yDoc.get("groups", Y.Map).clear()
-
-				break
-			}
-			case "sliders": {
-				yDoc.get("participants", Y.Map).clear()
-				yDoc.get("groups", Y.Map).clear()
-
-				break
-			}
+			case "form":
+			case "sliders":
 			case "quadrants": {
-				yDoc.get("participants", Y.Map).clear()
-				yDoc.get("groups", Y.Map).clear()
+				yDoc.getMap("participants").clear()
+				yDoc.getMap("groups").clear()
 
 				break
 			}
 			case "brainstorm": {
-				yDoc.get("steps", Y.Array).clear()
-				yDoc.get("groups", Y.Map).clear()
+				const steps = yDoc.getArray("steps")
+				steps.delete(0, steps.length)
+
+				yDoc.getMap("groups").clear()
 
 				break
 			}
