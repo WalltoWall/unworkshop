@@ -8,19 +8,20 @@ import { Participant } from "@/participant"
 import { text } from "@/styles/text"
 
 export const ParticipantGreeting = () => {
-	const participant = Participant.useInfo({ withRedirect: false })
 	const router = useRouter()
 	const params = useKickoffParams()
-	const pathname = usePathname()
 
-	const kickoffHref = `/kickoff/${params.code}/register`
+	const pathname = usePathname()
 	const onRegisterPage = pathname.endsWith("/register")
 
-	React.useEffect(() => router.prefetch(kickoffHref), [router, kickoffHref])
+	const participant = Participant.useInfo({ withRedirect: !onRegisterPage })
 
 	if (onRegisterPage) return null
 
 	function askToRegister() {
+		const kickoffHref = `/kickoff/${params.code}/register`
+		router.prefetch(kickoffHref)
+
 		Modal.open({
 			title: "Not you?",
 			description: "Press the confirm button to re-register under a new name.",
