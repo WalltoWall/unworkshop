@@ -6,7 +6,7 @@
 		"useIgnoreFile": false
 	},
 	"organizeImports": { "enabled": true },
-	"files": { "ignore": ["node_modules", "./worker-configuration.d.ts"] },
+	"files": { "ignore": ["node_modules", "worker-configuration.d.ts"] },
 	"formatter": { "enabled": true, "indentStyle": "tab", "lineWidth": 80 },
 	"javascript": { "formatter": { "semicolons": "asNeeded" } },
 	"linter": {
@@ -21,7 +21,8 @@
 				"useButtonType": "off"
 			},
 			"suspicious": {
-				"noConsoleLog": "warn"
+				"noConsoleLog": "warn",
+				"noArrayIndexKey": "off"
 			},
 			"correctness": {
 				"noUnusedVariables": "warn",

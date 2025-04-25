@@ -3,7 +3,6 @@ import { defineConfig } from "sanity"
 import { media, mediaAssetSource } from "sanity-plugin-media"
 import { structureTool } from "sanity/structure"
 import { Logo } from "@/components/Logo"
-import { env } from "@/env"
 import { schemaTypes } from "@/sanity/schemas"
 
 const config = defineConfig({
@@ -37,15 +36,15 @@ const config = defineConfig({
 		],
 	},
 
-	projectId: env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-	dataset: env.NEXT_PUBLIC_SANITY_DATASET,
+	projectId: import.meta.env.VITE_SANITY_DATASET!,
+	dataset: import.meta.env.VITE_SANITY_PROJECT_ID!,
 
 	studio: {
 		components: {
 			logo: () => (
 				<div style={{ display: "flex", gap: 8 }}>
 					<Logo style={{ width: "2.1875rem" }} />
-					<p style={{ fontWeight: 900 }}>ShopShop</p>
+					<p style={{ fontWeight: 900 }}>UnWorkshop</p>
 				</div>
 			),
 		},

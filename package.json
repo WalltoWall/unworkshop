@@ -1,60 +1,15 @@
 {
 	"name": "unworkshop",
-	"version": "0.1.0",
 	"private": true,
 	"type": "module",
+	"workspaces": ["packages/*"],
 	"scripts": {
-		"dev": "vite --port 3000",
 		"lint": "bunx -b biome check . --fix",
 		"format": "bunx -b biome format . --write",
-		"build": "tsc -b && vite build",
-		"preview": "bun run build && vite preview",
-		"deploy": "bun run build && wrangler deploy",
-		"cms:types": "bun run ./src/sanity/codegen.ts",
-		"cf:types": "wrangler types"
-	},
-	"dependencies": {
-		"@nanostores/persistent": "^1.0.0",
-		"@nanostores/react": "^1.0.0",
-		"@radix-ui/react-context-menu": "^2.2.12",
-		"@radix-ui/react-dialog": "^1.1.11",
-		"@radix-ui/react-popover": "^1.1.11",
-		"@radix-ui/react-slot": "^1.2.0",
-		"@sanity/client": "^6.29.1",
-		"@sanity/vision": "^3.86.1",
-		"@tanstack/react-router": "^1.117.1",
-		"class-variance-authority": "^0.7.1",
-		"clsx": "^2.1.1",
-		"embla-carousel-react": "^8.6.0",
-		"input-otp": "^1.4.2",
-		"lucide-react": "^0.503.0",
-		"motion": "^12.9.1",
-		"nanoid": "^5.1.5",
-		"nanostores": "^1.0.1",
-		"react": "^19.1.0",
-		"react-dom": "^19.1.0",
-		"react-error-boundary": "^5.0.0",
-		"remeda": "^2.21.3",
-		"sanity": "^3.86.1",
-		"sanity-plugin-media": "^3.0.2",
-		"sonner": "^2.0.3",
-		"ts-pattern": "^5.7.0",
-		"vaul": "^1.1.2",
-		"zod": "^4.0.0-beta.20250424T163858"
+		"dev:app": "cd ./packages/app && bun run dev"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
-		"@cloudflare/vite-plugin": "^1.0.12",
-		"@tailwindcss/vite": "^4.1.4",
-		"@types/bun": "^1.2.10",
-		"@types/node": "^22.15.2",
-		"@types/react": "^19.1.2",
-		"@types/react-dom": "^19.1.2",
-		"@vitejs/plugin-react-swc": "^3.9.0",
-		"tailwindcss": "^4.1.4",
-		"typescript": "^5.8.3",
-		"@tanstack/router-plugin": "^1.117.2",
-		"vite-tsconfig-paths": "^5.1.4",
-		"wrangler": "^4.13.2"
+		"typescript": "^5.8.3"
 	}
 }

@@ -1,8 +1,5 @@
-"use client"
-
 import { ChevronRightIcon } from "lucide-react"
 import React from "react"
-import { useRouter } from "next/navigation"
 import clsx from "clsx"
 import {
 	OTPInput,
@@ -11,12 +8,13 @@ import {
 } from "input-otp"
 import { toast } from "sonner"
 import { z } from "zod"
+import { router } from "@/router"
 
 const Slot = (props: SlotProps) => {
 	return (
 		<div
 			className={clsx(
-				"relative flex h-[4.5rem] w-10 items-center justify-center rounded-lg border border-emerald-600",
+				"relative flex h-[4.5rem] w-10 items-center justify-center rounded-lg border border-brand",
 				props.char &&
 					"bg-brand font-heading text-[48px] font-extrabold text-black uppercase",
 			)}
@@ -95,7 +93,7 @@ const CodeSchema = z
 	.transform((val) => {
 		const code = val.toLowerCase()
 
-		return code.slice(0, 3) + "-" + code.slice(3)
+		return `${code.slice(0, 3)}-${code.slice(3)}`
 	})
 
 type Props = {
@@ -103,8 +101,6 @@ type Props = {
 }
 
 export const CodeForm = (props: Props) => {
-	const router = useRouter()
-
 	function action(data: FormData) {
 		const res = CodeSchema.safeParse(data.get("code"))
 		if (!res.success) {
@@ -112,7 +108,7 @@ export const CodeForm = (props: Props) => {
 			return
 		}
 
-		router.push(`/${props.type}/${res.data}`)
+		router.navigate({ to: `/${props.type}/${res.data}` })
 	}
 
 	return (

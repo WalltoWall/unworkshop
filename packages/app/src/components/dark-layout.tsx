@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { Link } from "@tanstack/react-router"
 import { Logo } from "@/components/Logo"
 
 export const DarkLayout = (props: { children: React.ReactNode }) => {
@@ -8,7 +8,7 @@ export const DarkLayout = (props: { children: React.ReactNode }) => {
 			className="grid min-h-svh overflow-hidden bg-black text-white"
 		>
 			<div className="mx-auto flex max-w-md flex-col justify-between">
-				<Link href="/">
+				<Link to="/">
 					<Logo className="relative -right-20 -top-10 ml-auto w-[325px]" />
 				</Link>
 

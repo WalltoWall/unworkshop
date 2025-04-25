@@ -1,12 +1,36 @@
 @import "tailwindcss";
 
+@font-face {
+	font-family: "FontSans";
+	src: url("./assets/fonts/regular.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "FontHeading";
+	src: url("./assets/fonts/compressed.woff2") format("woff2");
+	font-weight: 800;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: "FontSerif";
+	src: url("./assets/fonts/serif.woff2") format("woff2");
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
 @theme {
 	--color-brand: oklch(74.48% 0.1727 158.48);
 	--color-presenter: var(--color-presenter);
 
-	--font-sans: "FontSans", "FontSans Fallback";
-	--font-serif: "FontSerif", "FontSerif Fallback";
-	--font-heading: "FontHeading", "FontHeading Fallback";
+	--font-sans: "FontSans", "sans-serif";
+	--font-serif: "FontSerif", "serif";
+	--font-heading: "FontHeading", "sans-serif";
 
 	@keyframes fadeIn {
 		from {
@@ -107,9 +131,7 @@
 	input:-webkit-autofill:hover,
 	input:-webkit-autofill:focus,
 	input:-webkit-autofill:active {
-		transition:
-			background-color 5000000s linear 0s,
-			color 5000000s linear 0s;
+		transition: background-color 5000000s linear 0s, color 5000000s linear 0s;
 	}
 
 	dialog {

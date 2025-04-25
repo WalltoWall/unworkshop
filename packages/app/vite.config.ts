@@ -11,7 +11,10 @@ export default defineConfig({
 		tsconfigPaths(),
 		tailwindcss(),
 		react(),
-		tanStackRouter(),
+		tanStackRouter({ autoCodeSplitting: true, target: "react" }),
 		cloudflare(),
 	],
+	optimizeDeps: {
+		exclude: ["sanity"],
+	},
 })

@@ -1,6 +1,4 @@
-export const UnworkshopTitle = (
-	props: React.ComponentPropsWithoutRef<"svg">,
-) => {
+export const UnworkshopTitle = (props: React.ComponentProps<"svg">) => {
 	return (
 		<svg viewBox="0 0 254.727 108" {...props}>
 			<g fill="none" fillRule="nonzero">

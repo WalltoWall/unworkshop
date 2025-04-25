@@ -1,0 +1,19 @@
+{
+	"name": "UnWorkshop",
+	"description": "Look in. Stand out.",
+	"display": "standalone",
+	"start_url": "/",
+	"background_color": "#000",
+	"theme_color": "#fff",
+	"icons": [
+		{
+			"src": "/icons/splash.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
+		{
+			"src": "/icons/icon.svg",
+			"sizes": "any"
+		}
+	]
+}
