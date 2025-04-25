@@ -6,14 +6,13 @@
 	"workspaces": ["packages/*"],
 	"scripts": {
 		"dev": "vite --port 3000",
-		"lint": "bunx -b biome check . --fix",
-		"format": "bunx -b biome format . --write",
 		"build": "tsc -b && vite build",
 		"preview": "bun run build && vite preview",
 		"deploy": "bun run build && wrangler deploy",
 		"cf:types": "wrangler types"
 	},
 	"dependencies": {
+		"@unworkshop/studio": "workspace:*",
 		"@nanostores/persistent": "^1.0.0",
 		"@nanostores/react": "^1.0.0",
 		"@radix-ui/react-context-menu": "^2.2.12",
@@ -40,7 +39,6 @@
 		"zod": "^4.0.0-beta.20250424T163858"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
 		"@cloudflare/vite-plugin": "^1.0.12",
 		"@tailwindcss/vite": "^4.1.4",
 		"@types/node": "^22.15.2",

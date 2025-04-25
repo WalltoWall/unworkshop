@@ -4,9 +4,7 @@
 	"version": "1.0.0",
 	"main": "package.json",
 	"license": "UNLICENSED",
-	"exports": {
-		"./*": ["./generated/*.ts"]
-	},
+	"exports": "./generated/types.ts",
 	"scripts": {
 		"dev": "sanity dev",
 		"start": "sanity start",
@@ -16,6 +14,7 @@
 		"types": "sanity typegen generate"
 	},
 	"dependencies": {
+		"@unworkshop/app": "workspace:*",
 		"@portabletext/react": "^3.2.1",
 		"@sanity/vision": "^3.86.1",
 		"react": "^18.2.0",

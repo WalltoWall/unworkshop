@@ -4,14 +4,15 @@ import { visionTool } from "@sanity/vision"
 import { media, mediaAssetSource } from "sanity-plugin-media"
 import { schemaTypes } from "./schemaTypes"
 import { Logo } from "@unworkshop/app/src/components/Logo"
+import { DATASET, PROJECT_ID } from "./constants"
 
 export default defineConfig({
 	name: "default",
 	title: "UnWorkshop",
 	subtitle: "Welcome back to the UnWorkshop CMS.",
 
-	projectId: "dvfxggqr",
-	dataset: "development",
+	projectId: PROJECT_ID,
+	dataset: DATASET,
 
 	document: { comments: { enabled: false } },
 	announcements: { enabled: false },

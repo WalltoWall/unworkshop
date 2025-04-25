@@ -4,7 +4,7 @@ import {
 	type SanityImageSource,
 } from "@sanity/asset-utils"
 import createImageUrlBuilder from "@sanity/image-url"
-import type * as ST from "@unworkshop/studio/types"
+import type * as ST from "@unworkshop/studio"
 
 export type MaybeSanityImage = Record<string, unknown> | undefined | null
 export type SanityImage = Omit<SanityImageSource, string> & {
