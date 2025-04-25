@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
 
-		"types": ["vite/client"],
+		"types": [],
 
 		"target": "ESNext",
 		"module": "ESNext",

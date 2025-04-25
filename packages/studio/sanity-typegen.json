@@ -1,0 +1,6 @@
+{
+	"path": ["./schemaTypes/**/*.{ts,tsx}", "../app/src/**/*.{ts,tsx}"],
+	"schema": "./generated/schema.json",
+	"generates": "./generated/types.ts",
+	"overloadClientMethods": true
+}

@@ -4,12 +4,15 @@
 	"version": "1.0.0",
 	"main": "package.json",
 	"license": "UNLICENSED",
+	"exports": {
+		"./*": ["./generated/*.ts"]
+	},
 	"scripts": {
 		"dev": "sanity dev",
 		"start": "sanity start",
 		"build": "sanity build",
 		"deploy": "sanity deploy",
-		"schema": "sanity schema extract --enforce-required-fields --workspace default",
+		"schema": "sanity schema extract --enforce-required-fields --workspace default --path ./generated/schema.json",
 		"types": "sanity typegen generate"
 	},
 	"dependencies": {

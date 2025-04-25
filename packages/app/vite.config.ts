@@ -14,7 +14,4 @@ export default defineConfig({
 		tanStackRouter({ autoCodeSplitting: true, target: "react" }),
 		cloudflare(),
 	],
-	optimizeDeps: {
-		exclude: ["sanity"],
-	},
 })

@@ -1,5 +1,4 @@
-import React from "react"
-import { defineQuery } from "next-sanity"
+import { defineQuery } from "groq"
 import { slugify } from "@/lib/slugify"
 import { sanity } from "./sanity-client"
 
@@ -19,9 +18,9 @@ export namespace Api {
 			}
 		}`)
 
-	export const getKickoff = React.cache((code: string) => {
-		return sanity.fetch(kickoffQ, { code })
-	})
+	export async function getKickoff(code: string) {
+		return await sanity.fetch(kickoffQ, { code })
+	}
 
 	const exerciseQ = defineQuery(`
 		*[_type == "kickoff" && code.current == $code][0].exercises[] {
@@ -32,7 +31,7 @@ export namespace Api {
 			_type == 'sliders' => { steps }
 		}`)
 
-	export const getExercise = React.cache(async (code: string, slug: string) => {
+	export async function getExercise(code: string, slug: string) {
 		const result = await sanity.fetch(exerciseQ, { code })
 		if (!result) return null
 
@@ -40,5 +39,5 @@ export namespace Api {
 		if (!exercise) return null
 
 		return exercise
-	})
+	}
 }

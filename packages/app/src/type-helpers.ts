@@ -1,3 +1,3 @@
-import type { Sliders } from "./sanity/types.gen"
+import type { Sliders } from "@unworkshop/studio/types"
 
 export type Exercise = Sliders

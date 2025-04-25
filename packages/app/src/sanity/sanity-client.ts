@@ -1,12 +1,9 @@
-import { createClient } from "next-sanity"
-import { Resource } from "sst"
-import { env } from "@/env"
+import { createClient } from "@sanity/client"
 
 export const sanity = createClient({
-	projectId: Resource.SanityProjectId.value,
-	dataset: Resource.SanityDataset.value,
-	apiVersion: env.NEXT_PUBLIC_SANITY_API_VERSION,
-	token: Resource.SanityToken.value,
+	projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
+	dataset: import.meta.env.VITE_SANITY_DATASET,
+	apiVersion: "2025-04-25",
 	perspective: "published",
 	useCdn: false,
 })
