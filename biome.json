@@ -7,7 +7,12 @@
 	},
 	"organizeImports": { "enabled": true },
 	"files": {
-		"ignore": ["node_modules", "worker-configuration.d.ts", "vite-env.d.ts"]
+		"ignore": [
+			"node_modules",
+			"worker-configuration.d.ts",
+			"vite-env.d.ts",
+			"public"
+		]
 	},
 	"formatter": { "enabled": true, "indentStyle": "tab", "lineWidth": 80 },
 	"javascript": { "formatter": { "semicolons": "asNeeded" } },

@@ -19,6 +19,7 @@
         "@radix-ui/react-popover": "^1.1.11",
         "@radix-ui/react-slot": "^1.2.0",
         "@tanstack/react-router": "^1.117.1",
+        "@unworkshop/studio": "workspace:*",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "embla-carousel-react": "^8.6.0",
@@ -38,7 +39,6 @@
         "zod": "^4.0.0-beta.20250424T163858",
       },
       "devDependencies": {
-        "@biomejs/biome": "^1.9.4",
         "@cloudflare/vite-plugin": "^1.0.12",
         "@tailwindcss/vite": "^4.1.4",
         "@tanstack/router-plugin": "^1.117.2",
@@ -58,6 +58,7 @@
       "dependencies": {
         "@portabletext/react": "^3.2.1",
         "@sanity/vision": "^3.86.1",
+        "@unworkshop/app": "workspace:*",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "sanity": "^3.86.1",
