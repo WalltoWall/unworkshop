@@ -1,16 +1,16 @@
-import { Warehouse } from "lucide-react"
+import { WarehouseIcon } from "lucide-react"
 import { defineArrayMember, defineField, defineType, type Slug } from "sanity"
 
 export const kickoff = defineType({
 	name: "kickoff",
 	title: "Kickoff",
 	type: "document",
-	icon: () => <Warehouse width={24} height={24} />,
+	icon: WarehouseIcon,
 
 	preview: {
 		select: { code: "code", title: "title" },
-		prepare(select) {
-			const { code, title } = select as { code?: Slug; title: string }
+		prepare(s) {
+			const { code, title } = s as { code?: Slug; title: string }
 
 			return {
 				title,
@@ -26,7 +26,7 @@ export const kickoff = defineType({
 			description:
 				"The name of this kickoff. Will be shown to attendees on the site.",
 			type: "string",
-			validation: (Rule) => Rule.required(),
+			validation: (r) => r.required(),
 		}),
 		defineField({
 			name: "code",
@@ -34,16 +34,16 @@ export const kickoff = defineType({
 			description:
 				'The project code for this kickoff. Will be used as the URL. Must be in the format of "abc-1234".',
 			type: "slug",
-			validation: (Rule) => [
-				Rule.required(),
-				Rule.custom((val) => {
-					if (val?.current?.toLowerCase() !== val?.current)
+			validation: (r) => [
+				r.required(),
+				r.custom((v) => {
+					if (v?.current?.toLowerCase() !== v?.current)
 						return "Code must be lowercase."
 
-					if (val?.current && val.current.length !== 8)
+					if (v?.current && v.current.length !== 8)
 						return "Code must be 8 characters in length."
 
-					if (val?.current?.at(3) !== "-")
+					if (v?.current?.at(3) !== "-")
 						return "The 3rd character in a code must be a hyphen (-)."
 
 					return true
@@ -56,7 +56,7 @@ export const kickoff = defineType({
 			description:
 				'The gretting shown to attendees when they register. Should be a short phrase like: "Good morning!"',
 			type: "string",
-			validation: (Rule) => Rule.required(),
+			validation: (r) => r.required(),
 		}),
 		defineField({
 			name: "exercises",
@@ -65,7 +65,7 @@ export const kickoff = defineType({
 			type: "array",
 			initialValue: [],
 			of: [defineArrayMember({ type: "sliders" })],
-			validation: (R) => R.required(),
+			validation: (r) => r.required(),
 		}),
 	],
 })

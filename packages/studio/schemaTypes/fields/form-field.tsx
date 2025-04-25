@@ -1,9 +1,9 @@
-import { FormInput } from "lucide-react"
+import { FormInputIcon } from "lucide-react"
 import { defineArrayMember, defineField } from "sanity"
 
 export const formFieldMember = defineArrayMember({
 	type: "object",
-	icon: () => <FormInput width={24} height={24} />,
+	icon: FormInputIcon,
 	preview: {
 		select: {
 			title: "prompt",
@@ -21,7 +21,7 @@ export const formFieldMember = defineArrayMember({
 			options: {
 				list: ["List", "Narrow", "Text", "Big Text", "Tagline"],
 			},
-			validation: (Rule) => Rule.required(),
+			validation: (r) => r.required(),
 		}),
 		defineField({
 			name: "prompt",
@@ -30,7 +30,7 @@ export const formFieldMember = defineArrayMember({
 				"The prompt that is shown above the form field. Supports basic markdown syntax.",
 			type: "text",
 			rows: 6,
-			validation: (Rule) => Rule.required(),
+			validation: (r) => r.required(),
 		}),
 		defineField({
 			name: "additionalText",
@@ -55,14 +55,14 @@ export const formFieldMember = defineArrayMember({
 					title: "Step",
 					description: "Specify the step to pull from.",
 					type: "number",
-					validation: (rule) => rule.required().positive(),
+					validation: (r) => r.required().positive(),
 				}),
 				defineField({
 					name: "field",
 					title: "Field",
 					description: "Specify the field of the step to pull from.",
 					type: "number",
-					validation: (rule) => rule.required().positive(),
+					validation: (r) => r.required().positive(),
 				}),
 				defineField({
 					name: "answer",
@@ -70,7 +70,7 @@ export const formFieldMember = defineArrayMember({
 					description:
 						'Specify the answer to pull. Only applicable when sourcing from "Narrow" fields into "Text" or "Big Text" fields.',
 					type: "number",
-					validation: (rule) => rule.positive(),
+					validation: (r) => r.positive(),
 				}),
 			],
 		}),
@@ -120,7 +120,7 @@ export const formFieldMember = defineArrayMember({
 			description: "Specify the minimum number of choices to narrow to.",
 			type: "number",
 			hidden: ({ parent }) => parent?.type !== "Narrow",
-			validation: (rule) => rule.positive(),
+			validation: (r) => r.positive(),
 		}),
 		defineField({
 			name: "max",
@@ -128,7 +128,7 @@ export const formFieldMember = defineArrayMember({
 			description: "Specify the maximum number of choices to narrow to.",
 			type: "number",
 			hidden: ({ parent }) => parent?.type !== "Narrow",
-			validation: (rule) => rule.positive(),
+			validation: (r) => r.positive(),
 		}),
 
 		// Tagline fields.

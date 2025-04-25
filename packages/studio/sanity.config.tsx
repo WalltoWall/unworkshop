@@ -1,19 +1,21 @@
-import { visionTool } from "@sanity/vision"
 import { defineConfig } from "sanity"
-import { media, mediaAssetSource } from "sanity-plugin-media"
 import { structureTool } from "sanity/structure"
-import { Logo } from "@/components/Logo"
-import { schemaTypes } from "@/sanity/schemas"
+import { visionTool } from "@sanity/vision"
+import { media, mediaAssetSource } from "sanity-plugin-media"
+import { schemaTypes } from "./schemaTypes"
+import { Logo } from "@unworkshop/app/src/components/Logo"
 
-const config = defineConfig({
+export default defineConfig({
 	name: "default",
-	title: "W|W Workshop",
+	title: "UnWorkshop",
 	subtitle: "Welcome back to the UnWorkshop CMS.",
-	basePath: "/admin",
 
-	tasks: { enabled: false },
-	scheduledPublishing: { enabled: false },
+	projectId: "dvfxggqr",
+	dataset: "development",
+
 	document: { comments: { enabled: false } },
+	announcements: { enabled: false },
+	tasks: { enabled: false },
 
 	logo: () => <Logo style={{ width: "2.1875rem" }} />,
 	icon: () => <Logo />,
@@ -35,9 +37,6 @@ const config = defineConfig({
 			},
 		],
 	},
-
-	projectId: import.meta.env.VITE_SANITY_DATASET!,
-	dataset: import.meta.env.VITE_SANITY_PROJECT_ID!,
 
 	studio: {
 		components: {
@@ -91,5 +90,3 @@ const config = defineConfig({
 
 	schema: { types: schemaTypes },
 })
-
-export default config

@@ -22,7 +22,8 @@
 			},
 			"suspicious": {
 				"noConsoleLog": "warn",
-				"noArrayIndexKey": "off"
+				"noArrayIndexKey": "off",
+				"noExplicitAny": "off"
 			},
 			"correctness": {
 				"noUnusedVariables": "warn",

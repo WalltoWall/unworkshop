@@ -29,7 +29,6 @@ export const defineBasicPortableTextField = (args: Args) => {
 						{ title: "Emphasis", value: "em" },
 						{ title: "Underline", value: "underline" },
 					],
-					// annotations: [{ type: "inlineLink" }],
 				},
 			}),
 		],

@@ -1,0 +1,28 @@
+{
+	"name": "@unworkshop/studio",
+	"private": true,
+	"version": "1.0.0",
+	"main": "package.json",
+	"license": "UNLICENSED",
+	"scripts": {
+		"dev": "sanity dev",
+		"start": "sanity start",
+		"build": "sanity build",
+		"deploy": "sanity deploy",
+		"schema": "sanity schema extract --enforce-required-fields --workspace default",
+		"types": "sanity typegen generate"
+	},
+	"dependencies": {
+		"@portabletext/react": "^3.2.1",
+		"@sanity/vision": "^3.86.1",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"sanity": "^3.86.1",
+		"sanity-plugin-media": "^3.0.2",
+		"styled-components": "^6.1.15"
+	},
+	"devDependencies": {
+		"@types/react": "^18.0.25",
+		"typescript": "^5.8.3"
+	}
+}
