@@ -1,4 +1,4 @@
-import { CodeForm } from "@/app/(site)/code-form"
+import { CodeForm } from "@/components/code-form"
 import { DarkLayout } from "@/components/dark-layout"
 import { UnworkshopTitle } from "@/components/unworkshop-title"
 import { text } from "@/styles/text"
@@ -8,8 +8,8 @@ export const Route = createFileRoute("/")({
 	component: Index,
 	head: () => ({
 		meta: [
-			{ name: "description", content: "Look in. Stand out." },
-			{ title: "UnWorkshop" },
+			{ name: "color-scheme", content: "dark" },
+			{ name: "theme-color", content: "#000" },
 		],
 	}),
 })

@@ -2,9 +2,9 @@ import { motion } from "motion/react"
 import { cx } from "class-variance-authority"
 import { Legend } from "@/components/legend"
 import styles from "./key.module.css"
-import type { View } from "./use-view"
+import type { SlidersSettings } from "./use-sliders-settings"
 
-export const Key = (props: { view: View }) => {
+export const Key = (props: { view: SlidersSettings.Schema["view"] }) => {
 	const isDots = props.view === "dots"
 
 	return (

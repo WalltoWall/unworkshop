@@ -1,5 +1,5 @@
+import { router } from "@/router"
 import React from "react"
-import { usePathname } from "next/navigation"
 
 type Props = {
 	open: boolean
@@ -8,10 +8,8 @@ type Props = {
 }
 
 export function useDialog({ open, setOpen, ref }: Props) {
-	const pathname = usePathname()
-
-	// Whenever the URL path changes, close the dialog.
-	React.useEffect(() => ref.current?.close(), [pathname, ref])
+	// Close after any history change
+	React.useEffect(() => router.subscribe("onLoad", () => ref.current?.close()))
 
 	// Sync close events, e.g. keyboard ESC with the dialog.
 	React.useEffect(() => {
@@ -24,10 +22,13 @@ export function useDialog({ open, setOpen, ref }: Props) {
 		return () => dialog.removeEventListener("close", syncCloseState)
 	}, [setOpen, ref])
 
-	// When the dialog is open, close it if someone clicks outside the active area.
 	React.useEffect(() => {
-		if (!open || !ref.current) return
+		if (!ref.current) return
 		const dialog = ref.current
+
+		if (!open) return dialog.close()
+
+		dialog.showModal()
 
 		const closeIfOutsideClick = (e: MouseEvent) => {
 			const rect = dialog.getBoundingClientRect()
@@ -43,13 +44,10 @@ export function useDialog({ open, setOpen, ref }: Props) {
 			document.removeEventListener("click", closeIfOutsideClick)
 		}
 
-		document.addEventListener("click", closeIfOutsideClick)
+		// The initial click that opens the dialog fires an event, so only add the
+		// listener after the next tick.
+		setTimeout(() => document.addEventListener("click", closeIfOutsideClick), 0)
 
 		return () => document.removeEventListener("click", closeIfOutsideClick)
-	}, [open, ref])
-
-	React.useEffect(() => {
-		if (open) ref.current?.showModal()
-		else ref.current?.close()
 	}, [open, ref])
 }

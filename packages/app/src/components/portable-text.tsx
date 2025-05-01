@@ -4,7 +4,7 @@ import {
 	PortableText as SanityPortableText,
 	type PortableTextProps,
 	type PortableTextReactComponents,
-} from "next-sanity"
+} from "@portabletext/react"
 
 const noop = () => null
 

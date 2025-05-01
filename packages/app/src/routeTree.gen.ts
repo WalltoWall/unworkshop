@@ -11,15 +11,89 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as KickoffImport } from './routes/kickoff'
+import { Route as CallbackImport } from './routes/callback'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
+import { Route as KickoffCodeImport } from './routes/kickoff.$code'
+import { Route as AuthenticatedPresenterImport } from './routes/_authenticated.presenter'
+import { Route as KickoffCodeExerciseSlugImport } from './routes/kickoff.$code_.$exerciseSlug'
+import { Route as AuthenticatedPresenterCodeImport } from './routes/_authenticated.presenter_.$code'
+import { Route as KickoffCodeExerciseSlugGroupsImport } from './routes/kickoff.$code_.$exerciseSlug.groups'
+import { Route as AuthenticatedPresenterCodeExerciseSlugImport } from './routes/_authenticated.presenter_.$code.$exerciseSlug'
+import { Route as KickoffCodeExerciseSlugGroupsGroupSlugImport } from './routes/kickoff.$code_.$exerciseSlug.groups_.$groupSlug'
 
 // Create/Update Routes
+
+const KickoffRoute = KickoffImport.update({
+  id: '/kickoff',
+  path: '/kickoff',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const CallbackRoute = CallbackImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
 } as any)
+
+const KickoffCodeRoute = KickoffCodeImport.update({
+  id: '/$code',
+  path: '/$code',
+  getParentRoute: () => KickoffRoute,
+} as any)
+
+const AuthenticatedPresenterRoute = AuthenticatedPresenterImport.update({
+  id: '/presenter',
+  path: '/presenter',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const KickoffCodeExerciseSlugRoute = KickoffCodeExerciseSlugImport.update({
+  id: '/$code_/$exerciseSlug',
+  path: '/$code/$exerciseSlug',
+  getParentRoute: () => KickoffRoute,
+} as any)
+
+const AuthenticatedPresenterCodeRoute = AuthenticatedPresenterCodeImport.update(
+  {
+    id: '/presenter_/$code',
+    path: '/presenter/$code',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any,
+)
+
+const KickoffCodeExerciseSlugGroupsRoute =
+  KickoffCodeExerciseSlugGroupsImport.update({
+    id: '/groups',
+    path: '/groups',
+    getParentRoute: () => KickoffCodeExerciseSlugRoute,
+  } as any)
+
+const AuthenticatedPresenterCodeExerciseSlugRoute =
+  AuthenticatedPresenterCodeExerciseSlugImport.update({
+    id: '/$exerciseSlug',
+    path: '/$exerciseSlug',
+    getParentRoute: () => AuthenticatedPresenterCodeRoute,
+  } as any)
+
+const KickoffCodeExerciseSlugGroupsGroupSlugRoute =
+  KickoffCodeExerciseSlugGroupsGroupSlugImport.update({
+    id: '/groups_/$groupSlug',
+    path: '/groups/$groupSlug',
+    getParentRoute: () => KickoffCodeExerciseSlugRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -32,39 +106,238 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
+      parentRoute: typeof rootRoute
+    }
+    '/callback': {
+      id: '/callback'
+      path: '/callback'
+      fullPath: '/callback'
+      preLoaderRoute: typeof CallbackImport
+      parentRoute: typeof rootRoute
+    }
+    '/kickoff': {
+      id: '/kickoff'
+      path: '/kickoff'
+      fullPath: '/kickoff'
+      preLoaderRoute: typeof KickoffImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/presenter': {
+      id: '/_authenticated/presenter'
+      path: '/presenter'
+      fullPath: '/presenter'
+      preLoaderRoute: typeof AuthenticatedPresenterImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/kickoff/$code': {
+      id: '/kickoff/$code'
+      path: '/$code'
+      fullPath: '/kickoff/$code'
+      preLoaderRoute: typeof KickoffCodeImport
+      parentRoute: typeof KickoffImport
+    }
+    '/_authenticated/presenter_/$code': {
+      id: '/_authenticated/presenter_/$code'
+      path: '/presenter/$code'
+      fullPath: '/presenter/$code'
+      preLoaderRoute: typeof AuthenticatedPresenterCodeImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/kickoff/$code_/$exerciseSlug': {
+      id: '/kickoff/$code_/$exerciseSlug'
+      path: '/$code/$exerciseSlug'
+      fullPath: '/kickoff/$code/$exerciseSlug'
+      preLoaderRoute: typeof KickoffCodeExerciseSlugImport
+      parentRoute: typeof KickoffImport
+    }
+    '/_authenticated/presenter_/$code/$exerciseSlug': {
+      id: '/_authenticated/presenter_/$code/$exerciseSlug'
+      path: '/$exerciseSlug'
+      fullPath: '/presenter/$code/$exerciseSlug'
+      preLoaderRoute: typeof AuthenticatedPresenterCodeExerciseSlugImport
+      parentRoute: typeof AuthenticatedPresenterCodeImport
+    }
+    '/kickoff/$code_/$exerciseSlug/groups': {
+      id: '/kickoff/$code_/$exerciseSlug/groups'
+      path: '/groups'
+      fullPath: '/kickoff/$code/$exerciseSlug/groups'
+      preLoaderRoute: typeof KickoffCodeExerciseSlugGroupsImport
+      parentRoute: typeof KickoffCodeExerciseSlugImport
+    }
+    '/kickoff/$code_/$exerciseSlug/groups_/$groupSlug': {
+      id: '/kickoff/$code_/$exerciseSlug/groups_/$groupSlug'
+      path: '/groups/$groupSlug'
+      fullPath: '/kickoff/$code/$exerciseSlug/groups/$groupSlug'
+      preLoaderRoute: typeof KickoffCodeExerciseSlugGroupsGroupSlugImport
+      parentRoute: typeof KickoffCodeExerciseSlugImport
+    }
   }
 }
 
 // Create and export the route tree
 
+interface AuthenticatedPresenterCodeRouteChildren {
+  AuthenticatedPresenterCodeExerciseSlugRoute: typeof AuthenticatedPresenterCodeExerciseSlugRoute
+}
+
+const AuthenticatedPresenterCodeRouteChildren: AuthenticatedPresenterCodeRouteChildren =
+  {
+    AuthenticatedPresenterCodeExerciseSlugRoute:
+      AuthenticatedPresenterCodeExerciseSlugRoute,
+  }
+
+const AuthenticatedPresenterCodeRouteWithChildren =
+  AuthenticatedPresenterCodeRoute._addFileChildren(
+    AuthenticatedPresenterCodeRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedPresenterRoute: typeof AuthenticatedPresenterRoute
+  AuthenticatedPresenterCodeRoute: typeof AuthenticatedPresenterCodeRouteWithChildren
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedPresenterRoute: AuthenticatedPresenterRoute,
+  AuthenticatedPresenterCodeRoute: AuthenticatedPresenterCodeRouteWithChildren,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
+interface KickoffCodeExerciseSlugRouteChildren {
+  KickoffCodeExerciseSlugGroupsRoute: typeof KickoffCodeExerciseSlugGroupsRoute
+  KickoffCodeExerciseSlugGroupsGroupSlugRoute: typeof KickoffCodeExerciseSlugGroupsGroupSlugRoute
+}
+
+const KickoffCodeExerciseSlugRouteChildren: KickoffCodeExerciseSlugRouteChildren =
+  {
+    KickoffCodeExerciseSlugGroupsRoute: KickoffCodeExerciseSlugGroupsRoute,
+    KickoffCodeExerciseSlugGroupsGroupSlugRoute:
+      KickoffCodeExerciseSlugGroupsGroupSlugRoute,
+  }
+
+const KickoffCodeExerciseSlugRouteWithChildren =
+  KickoffCodeExerciseSlugRoute._addFileChildren(
+    KickoffCodeExerciseSlugRouteChildren,
+  )
+
+interface KickoffRouteChildren {
+  KickoffCodeRoute: typeof KickoffCodeRoute
+  KickoffCodeExerciseSlugRoute: typeof KickoffCodeExerciseSlugRouteWithChildren
+}
+
+const KickoffRouteChildren: KickoffRouteChildren = {
+  KickoffCodeRoute: KickoffCodeRoute,
+  KickoffCodeExerciseSlugRoute: KickoffCodeExerciseSlugRouteWithChildren,
+}
+
+const KickoffRouteWithChildren =
+  KickoffRoute._addFileChildren(KickoffRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof AuthenticatedRouteWithChildren
+  '/callback': typeof CallbackRoute
+  '/kickoff': typeof KickoffRouteWithChildren
+  '/presenter': typeof AuthenticatedPresenterRoute
+  '/kickoff/$code': typeof KickoffCodeRoute
+  '/presenter/$code': typeof AuthenticatedPresenterCodeRouteWithChildren
+  '/kickoff/$code/$exerciseSlug': typeof KickoffCodeExerciseSlugRouteWithChildren
+  '/presenter/$code/$exerciseSlug': typeof AuthenticatedPresenterCodeExerciseSlugRoute
+  '/kickoff/$code/$exerciseSlug/groups': typeof KickoffCodeExerciseSlugGroupsRoute
+  '/kickoff/$code/$exerciseSlug/groups/$groupSlug': typeof KickoffCodeExerciseSlugGroupsGroupSlugRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof AuthenticatedRouteWithChildren
+  '/callback': typeof CallbackRoute
+  '/kickoff': typeof KickoffRouteWithChildren
+  '/presenter': typeof AuthenticatedPresenterRoute
+  '/kickoff/$code': typeof KickoffCodeRoute
+  '/presenter/$code': typeof AuthenticatedPresenterCodeRouteWithChildren
+  '/kickoff/$code/$exerciseSlug': typeof KickoffCodeExerciseSlugRouteWithChildren
+  '/presenter/$code/$exerciseSlug': typeof AuthenticatedPresenterCodeExerciseSlugRoute
+  '/kickoff/$code/$exerciseSlug/groups': typeof KickoffCodeExerciseSlugGroupsRoute
+  '/kickoff/$code/$exerciseSlug/groups/$groupSlug': typeof KickoffCodeExerciseSlugGroupsGroupSlugRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/callback': typeof CallbackRoute
+  '/kickoff': typeof KickoffRouteWithChildren
+  '/_authenticated/presenter': typeof AuthenticatedPresenterRoute
+  '/kickoff/$code': typeof KickoffCodeRoute
+  '/_authenticated/presenter_/$code': typeof AuthenticatedPresenterCodeRouteWithChildren
+  '/kickoff/$code_/$exerciseSlug': typeof KickoffCodeExerciseSlugRouteWithChildren
+  '/_authenticated/presenter_/$code/$exerciseSlug': typeof AuthenticatedPresenterCodeExerciseSlugRoute
+  '/kickoff/$code_/$exerciseSlug/groups': typeof KickoffCodeExerciseSlugGroupsRoute
+  '/kickoff/$code_/$exerciseSlug/groups_/$groupSlug': typeof KickoffCodeExerciseSlugGroupsGroupSlugRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | ''
+    | '/callback'
+    | '/kickoff'
+    | '/presenter'
+    | '/kickoff/$code'
+    | '/presenter/$code'
+    | '/kickoff/$code/$exerciseSlug'
+    | '/presenter/$code/$exerciseSlug'
+    | '/kickoff/$code/$exerciseSlug/groups'
+    | '/kickoff/$code/$exerciseSlug/groups/$groupSlug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | ''
+    | '/callback'
+    | '/kickoff'
+    | '/presenter'
+    | '/kickoff/$code'
+    | '/presenter/$code'
+    | '/kickoff/$code/$exerciseSlug'
+    | '/presenter/$code/$exerciseSlug'
+    | '/kickoff/$code/$exerciseSlug/groups'
+    | '/kickoff/$code/$exerciseSlug/groups/$groupSlug'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/callback'
+    | '/kickoff'
+    | '/_authenticated/presenter'
+    | '/kickoff/$code'
+    | '/_authenticated/presenter_/$code'
+    | '/kickoff/$code_/$exerciseSlug'
+    | '/_authenticated/presenter_/$code/$exerciseSlug'
+    | '/kickoff/$code_/$exerciseSlug/groups'
+    | '/kickoff/$code_/$exerciseSlug/groups_/$groupSlug'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  CallbackRoute: typeof CallbackRoute
+  KickoffRoute: typeof KickoffRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  CallbackRoute: CallbackRoute,
+  KickoffRoute: KickoffRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +350,66 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/",
+        "/_authenticated",
+        "/callback",
+        "/kickoff"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
+      "children": [
+        "/_authenticated/presenter",
+        "/_authenticated/presenter_/$code"
+      ]
+    },
+    "/callback": {
+      "filePath": "callback.tsx"
+    },
+    "/kickoff": {
+      "filePath": "kickoff.tsx",
+      "children": [
+        "/kickoff/$code",
+        "/kickoff/$code_/$exerciseSlug"
+      ]
+    },
+    "/_authenticated/presenter": {
+      "filePath": "_authenticated.presenter.tsx",
+      "parent": "/_authenticated"
+    },
+    "/kickoff/$code": {
+      "filePath": "kickoff.$code.tsx",
+      "parent": "/kickoff"
+    },
+    "/_authenticated/presenter_/$code": {
+      "filePath": "_authenticated.presenter_.$code.tsx",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/presenter_/$code/$exerciseSlug"
+      ]
+    },
+    "/kickoff/$code_/$exerciseSlug": {
+      "filePath": "kickoff.$code_.$exerciseSlug.tsx",
+      "parent": "/kickoff",
+      "children": [
+        "/kickoff/$code_/$exerciseSlug/groups",
+        "/kickoff/$code_/$exerciseSlug/groups_/$groupSlug"
+      ]
+    },
+    "/_authenticated/presenter_/$code/$exerciseSlug": {
+      "filePath": "_authenticated.presenter_.$code.$exerciseSlug.tsx",
+      "parent": "/_authenticated/presenter_/$code"
+    },
+    "/kickoff/$code_/$exerciseSlug/groups": {
+      "filePath": "kickoff.$code_.$exerciseSlug.groups.tsx",
+      "parent": "/kickoff/$code_/$exerciseSlug"
+    },
+    "/kickoff/$code_/$exerciseSlug/groups_/$groupSlug": {
+      "filePath": "kickoff.$code_.$exerciseSlug.groups_.$groupSlug.tsx",
+      "parent": "/kickoff/$code_/$exerciseSlug"
     }
   }
 }

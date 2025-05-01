@@ -1,6 +1,7 @@
-import { parseAsStringLiteral, useQueryState } from "nuqs"
+import { useSearch } from "@tanstack/react-router"
+import { z } from "zod"
 
-export const variants = [
+export const Variant = z.literal([
 	"red",
 	"orange",
 	"amber",
@@ -18,11 +19,12 @@ export const variants = [
 	"fuchsia",
 	"pink",
 	"rose",
-] as const
+])
+export const variants = Array.from(Variant.values)
 
-export type Variant = (typeof variants)[number]
+export type Variant = z.infer<typeof Variant>
 
-const classes: Record<Variant, string> = {
+const vars: Record<Variant, string> = {
 	red: "var(--color-red-400)",
 	orange: "var(--color-orange-400)",
 	amber: "var(--color-amber-400)",
@@ -56,14 +58,15 @@ export type Brightness =
 	| 950
 
 export function style(v: Variant) {
-	return {
-		"--color-presenter": classes[v],
-	} as React.CSSProperties
+	return { "--color-presenter": vars[v] } as React.CSSProperties
 }
 
 export function useActive() {
-	return useQueryState(
-		"color",
-		parseAsStringLiteral(variants).withDefault("amber"),
-	)
+	const search = useSearch({
+		from: "/_authenticated/presenter_/$code/$exerciseSlug",
+	})
+
+	return search.color
 }
+
+export const fallback: Variant = "amber"

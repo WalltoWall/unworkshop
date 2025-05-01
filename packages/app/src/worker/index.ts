@@ -1,12 +1,12 @@
-export default {
-	fetch(request) {
-		const url = new URL(request.url)
+import { Hono } from "hono"
+import { logger } from "hono/logger"
+import { partyserverMiddleware } from "hono-party"
+export { Sliders } from "../sliders/party"
 
-		if (url.pathname.startsWith("/api/")) {
-			return Response.json({
-				name: "Cloudflare",
-			})
-		}
-		return new Response(null, { status: 404 })
-	},
-} satisfies ExportedHandler<Env>
+const app = new Hono<{ Bindings: Env }>()
+app.use(logger())
+app.use("*", partyserverMiddleware())
+
+app.get("/api", (c) => c.text("CloudFlare"))
+
+export default app

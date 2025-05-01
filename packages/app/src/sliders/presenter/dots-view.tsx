@@ -111,7 +111,7 @@ export const DotsView = (props: Props) => {
 						{showLines &&
 							props.answers.map((answer, idx) => (
 								<Line
-									key={"line-" + idx}
+									key={`line-${idx}`}
 									col={[answer.today, answer.tomorrow ?? answer.today]}
 									row={[idx + 1, idx + 1]}
 								/>
@@ -119,7 +119,7 @@ export const DotsView = (props: Props) => {
 
 						{props.answers.map((answer, idx) => (
 							<motion.div
-								key={"dot-" + idx}
+								key={`dot-${idx}`}
 								layout
 								layoutDependency={isTomorrow}
 								className="border-presenter relative h-5 w-5 rounded-full border-3"
@@ -140,7 +140,7 @@ export const DotsView = (props: Props) => {
 						{showLines &&
 							props.answers.map((answer, idx) => (
 								<motion.div
-									key={"line-dot-" + idx}
+									key={`line-dot-${idx}`}
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 1 }}
 									exit={{ opacity: 0, transition: { delay: 0.25 } }}

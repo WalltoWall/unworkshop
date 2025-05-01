@@ -2,6 +2,7 @@ import * as Popover from "@radix-ui/react-popover"
 import { CogIcon, EyeIcon, EyeOffIcon } from "lucide-react"
 import { cx } from "class-variance-authority"
 import { Colors } from "@/colors"
+import { Link } from "@tanstack/react-router"
 
 type RootProps = {
 	children: React.ReactNode
@@ -58,7 +59,7 @@ const Toggle = (props: ToggleProps) => {
 }
 
 const ColorPicker = () => {
-	const [color, setColor] = Colors.useActive()
+	const color = Colors.useActive()
 
 	return (
 		<div className="flex flex-wrap gap-2">
@@ -66,9 +67,10 @@ const ColorPicker = () => {
 				const style = Colors.style(v)
 
 				return (
-					<button
+					<Link
 						key={v}
-						onClick={() => setColor(v)}
+						to="."
+						search={(p) => ({ ...p, color: v })}
 						className={cx(
 							"border-presenter size-6 rounded-full border-3 transition duration-300 ease-out hover:scale-120 focus:scale-120",
 							color === v ? "bg-black" : "bg-presenter",
@@ -76,7 +78,7 @@ const ColorPicker = () => {
 						style={style}
 					>
 						<span className="sr-only">Change color to {v}</span>
-					</button>
+					</Link>
 				)
 			})}
 		</div>

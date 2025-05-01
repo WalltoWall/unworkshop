@@ -1,29 +1,25 @@
 import { ArrowRightIcon } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
 import { cx } from "class-variance-authority"
 import { Text } from "@/components/Text"
-import { type CardGradientData } from "@/lib/card-gradients"
-import { type CardIllustrationData } from "@/lib/card-illustrations"
+import type { CardGradientData } from "@/lib/card-gradients"
+import type { CardIllustrationData } from "@/lib/card-illustrations"
+import { createLink, type LinkComponent } from "@tanstack/react-router"
 
-interface Props {
+interface Props extends React.ComponentProps<"a"> {
 	name: string
 	gradient: CardGradientData
 	illustration: CardIllustrationData
-	href: string
 	label?: string
 }
 
-export const ExerciseCard = (props: Props) => {
+const _ExerciseCard = ({ children, ...props }: Props) => {
 	return (
-		<Link
-			href={props.href}
+		<a
 			className={cx(
 				"group/card relative grid aspect-[289/160] grid-cols-[4fr,6fr] overflow-hidden rounded-lg bg-gradient-to-r transition hover:brightness-105",
 				props.gradient,
 			)}
-			suppressHydrationWarning
-			prefetch
+			{...props}
 		>
 			<div className="self-end pb-4 pl-3">
 				<Text style="heading" size={24}>
@@ -39,15 +35,20 @@ export const ExerciseCard = (props: Props) => {
 				</div>
 			</div>
 
-			<Image
+			<img
 				src={props.illustration.src}
-				priority
 				alt=""
 				className={cx(
 					"absolute top-0 right-0 object-contain",
 					props.illustration.className,
 				)}
 			/>
-		</Link>
+		</a>
 	)
+}
+
+const CreatedExerciseCard = createLink(_ExerciseCard)
+
+export const ExerciseCard: LinkComponent<typeof _ExerciseCard> = (props) => {
+	return <CreatedExerciseCard {...props} />
 }

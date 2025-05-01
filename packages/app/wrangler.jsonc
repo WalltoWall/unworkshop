@@ -3,12 +3,21 @@
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
+	"$schema": "../../node_modules/wrangler/config-schema.json",
 	"name": "unworkshop",
 	"main": "src/worker/index.ts",
 	"compatibility_date": "2025-04-24",
 	"assets": {
 		"not_found_handling": "single-page-application"
 	},
-	"observability": { "enabled": true }
+	"observability": { "enabled": true },
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "Sliders",
+				"class_name": "Sliders"
+			}
+		]
+	},
+	"migrations": [{ "tag": "v1", "new_classes": ["Sliders"] }]
 }

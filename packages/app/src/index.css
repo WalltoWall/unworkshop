@@ -29,8 +29,8 @@
 	--color-presenter: var(--color-presenter);
 
 	--font-sans: "FontSans", "sans-serif";
-	--font-serif: "FontSerif", "serif";
 	--font-heading: "FontHeading", "sans-serif";
+	--font-serif: "FontSerif", "serif";
 
 	@keyframes fadeIn {
 		from {

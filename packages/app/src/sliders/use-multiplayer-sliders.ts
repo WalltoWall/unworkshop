@@ -1,16 +1,53 @@
-import { useSyncedStore } from "@syncedstore/react"
-import { useExerciseParams } from "@/lib/use-exercise-params"
-import { useMultiplayer } from "@/lib/use-multiplayer"
-import type { SlidersAnswers } from "./types"
+import { Participant } from "@/participant"
+import { useParams } from "@tanstack/react-router"
+import usePartySocket from "partysocket/react"
+import React from "react"
+import { SlidersS } from "./schemas"
+import { match } from "ts-pattern"
 
-export function useMultiplayerSliders(id: string) {
-	const params = useExerciseParams()
-	const multiplayer = useMultiplayer<SlidersAnswers>({
-		slug: params.slug,
-		code: params.code,
+export function useMultiplayerSliders() {
+	const [answer, setAnswer] = React.useState<SlidersS.Answer>({})
+	const participant = Participant.useInfoOrThrow()
+	const params = useParams({ strict: false })
+
+	const id = params.groupSlug ?? participant.id
+	const room = `${params.code}::${params.exerciseSlug}`
+
+	const socket = usePartySocket({
+		host: window.location.host,
+		party: "sliders",
+		room,
 		id,
-	})
-	const state = useSyncedStore(multiplayer.store)
+		onMessage: (e) => {
+			const data = JSON.parse(e.data)
+			const event = SlidersS.Event.parse(data)
 
-	return { state, multiplayer }
+			match(event)
+				.with({ type: "init" }, (msg) => setAnswer(msg.answer))
+				.with({ type: "update" }, (msg) => setAnswer(msg.answer))
+				.exhaustive()
+		},
+	})
+
+	const actions = {
+		changeAnswer: (args: {
+			type: SlidersS.AnswerType
+			prompt: string
+			value: number
+		}) => {
+			const msg: SlidersS.Message = {
+				type: "change",
+				payload: {
+					id,
+					prompt: args.prompt,
+					type: args.type,
+					value: args.value,
+				},
+			}
+
+			socket.send(JSON.stringify(msg))
+		},
+	}
+
+	return { answer, actions, connecting: socket.readyState !== socket.OPEN }
 }

@@ -1,3 +1,3 @@
-import type { Sliders } from "@unworkshop/studio"
+import type * as ST from "@unworkshop/studio"
 
-export type Exercise = Sliders
+export type Exercise = NonNullable<ST.ExerciseQResult>[number]

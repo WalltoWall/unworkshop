@@ -1,13 +1,9 @@
-"use client"
-
 import { ArrowBigLeftIcon, ArrowBigRightIcon, CheckIcon } from "lucide-react"
-import React from "react"
-import { useRouter } from "next/navigation"
 import { cx } from "class-variance-authority"
 import * as R from "remeda"
-import { useKickoffParams } from "@/lib/use-kickoff-params"
-import { useStep } from "@/lib/use-step"
 import { text } from "@/styles/text"
+import { getRouteApi } from "@tanstack/react-router"
+import { router } from "@/router"
 
 const MAX_PAGINATION_DOTS = 3
 
@@ -16,17 +12,22 @@ interface Props {
 	className?: string
 }
 
+const exerciseRoute = getRouteApi("/kickoff/$code_/$exerciseSlug")
+
 export const Steps = ({ steps, className }: Props) => {
-	const [step, setStep] = useStep()
-	const router = useRouter()
-	const params = useKickoffParams()
+	const { step } = exerciseRoute.useSearch()
+	const params = exerciseRoute.useParams()
+	const navigate = exerciseRoute.useNavigate()
 	if (step > steps) throw new Error("Viewing a step that shouldn't exist.")
 
 	const onLastStep = step === steps
 
-	const nextStep = () => setStep(step + 1)
-	const prevStep = () => setStep(step - 1)
-	const finalize = () => router.push(`/kickoff/${params.code}`)
+	const setStep = (step: number) => navigate({ search: { step } })
+	const nextStep = () => navigate({ search: (p) => ({ step: p.step + 1 }) })
+	const prevStep = () => navigate({ search: (p) => ({ step: p.step - 1 }) })
+	const finalize = () => {
+		router.navigate({ to: "/kickoff/$code", params: { code: params.code } })
+	}
 
 	return (
 		<div className={cx(className, "flex items-center justify-between")}>

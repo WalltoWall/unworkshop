@@ -1,5 +1,4 @@
-import * as React from "react"
-import Link, { type LinkProps } from "next/link"
+import { Link } from "@tanstack/react-router"
 import { cva, type VariantProps } from "class-variance-authority"
 
 const button = cva(
@@ -17,6 +16,7 @@ const button = cva(
 				sm: "h-8 text-[16px] px-4 gap-1.5",
 				md: "h-10 text-[21px] px-4 gap-2 pb-px",
 				base: "h-11 text-[24px] px-5 gap-2.5 pb-px",
+				icon: "size-10",
 			},
 			outline: {
 				true: "bg-transparent",
@@ -30,6 +30,7 @@ const button = cva(
 			rounded: {
 				base: "rounded-2xl",
 				sm: "rounded-lg",
+				full: "rounded-full",
 			},
 			fontFamily: {
 				heading: "font-heading",
@@ -64,12 +65,14 @@ const button = cva(
 	},
 )
 
-type PlainButtonProps = React.ComponentProps<"button">
-type PlainAnchorProps = Omit<React.ComponentProps<"a">, "href"> &
-	Pick<LinkProps, "href">
+type PlainButtonProps = Omit<React.ComponentProps<"button">, "children">
+type LinkProps = Omit<React.ComponentProps<typeof Link>, "children">
 type ButtonVariants = VariantProps<typeof button>
 
-export type ButtonProps = (PlainButtonProps | PlainAnchorProps) & ButtonVariants
+export type ButtonProps = (PlainButtonProps | LinkProps) &
+	ButtonVariants & {
+		children: React.ReactNode
+	}
 
 /**
  * Smartly renders a <button> element or a `<Link />` component with
@@ -111,7 +114,7 @@ export const Button = ({
 		fontFamily,
 	})
 
-	if ("href" in props && props.href) {
+	if ("to" in props) {
 		return (
 			<Link
 				className={className}

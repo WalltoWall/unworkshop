@@ -1,5 +1,5 @@
 import { defineConfig } from "vite"
-import react from "@vitejs/plugin-react-swc"
+import react from "@vitejs/plugin-react"
 import tsconfigPaths from "vite-tsconfig-paths"
 import { cloudflare } from "@cloudflare/vite-plugin"
 import tailwindcss from "@tailwindcss/vite"
@@ -10,8 +10,12 @@ export default defineConfig({
 	plugins: [
 		tsconfigPaths(),
 		tailwindcss(),
-		react(),
 		tanStackRouter({ autoCodeSplitting: true, target: "react" }),
+		react({
+			babel: {
+				plugins: [["babel-plugin-react-compiler"]],
+			},
+		}),
 		cloudflare(),
 	],
 })
