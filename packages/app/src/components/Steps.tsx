@@ -14,6 +14,7 @@ interface Props {
 
 const exerciseRoute = getRouteApi("/kickoff/$code_/$exerciseSlug")
 
+// TODO: Migrate to Link components
 export const Steps = ({ steps, className }: Props) => {
 	const { step } = exerciseRoute.useSearch()
 	const params = exerciseRoute.useParams()

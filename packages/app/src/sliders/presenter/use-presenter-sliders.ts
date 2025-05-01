@@ -4,6 +4,7 @@ import React from "react"
 import { SlidersS } from "../schemas"
 import { match } from "ts-pattern"
 import { PRESENTER_ID } from "@/constants"
+import { nanoid } from "nanoid"
 
 export function usePresenterSliders() {
 	const [answers, setAnswers] = React.useState<SlidersS.AllAnswers>({})
@@ -15,7 +16,8 @@ export function usePresenterSliders() {
 		host: window.location.host,
 		party: "sliders",
 		room,
-		id: PRESENTER_ID,
+		id: nanoid(8),
+		query: { id: PRESENTER_ID },
 		onMessage: (e) => {
 			const data = JSON.parse(e.data)
 			const event = SlidersS.PresenterEvent.parse(data)

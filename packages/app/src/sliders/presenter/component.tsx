@@ -26,13 +26,15 @@ export const SlidersPresenterComponent = (props: Props) => {
 	const data = props.steps.at(search.step - 1)
 	if (!data) throw new Error("No valid step data found.")
 
+	const prompt = slugifyPortableText(data.prompt)
+
 	const left = data.sliders.at(0)?.left ?? data.sliders.at(1)?.left
 	const right = data.sliders.at(0)?.right ?? data.sliders.at(1)?.right
 	if (!left) throw new Error("No valid 'left' slider value found.")
 	if (!right) throw new Error("No valid 'right' slider value found.")
 
 	const presenter = usePresenterSliders()
-	const prompt = slugifyPortableText(data.prompt)
+
 	const answers = R.pipe(
 		presenter.answers,
 		R.values(),

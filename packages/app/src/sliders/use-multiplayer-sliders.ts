@@ -4,6 +4,7 @@ import usePartySocket from "partysocket/react"
 import React from "react"
 import { SlidersS } from "./schemas"
 import { match } from "ts-pattern"
+import { nanoid } from "nanoid"
 
 export function useMultiplayerSliders() {
 	const [answer, setAnswer] = React.useState<SlidersS.Answer>({})
@@ -17,7 +18,8 @@ export function useMultiplayerSliders() {
 		host: window.location.host,
 		party: "sliders",
 		room,
-		id,
+		id: nanoid(8),
+		query: { id },
 		onMessage: (e) => {
 			const data = JSON.parse(e.data)
 			const event = SlidersS.Event.parse(data)

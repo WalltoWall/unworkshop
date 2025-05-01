@@ -40,8 +40,12 @@ export const BarsView = (props: Props) => {
 		mass: 1,
 	}
 
-	const getHeight = (total: number) =>
-		`${(total / props.answers.length) * 100}%`
+	const getHeight = (total: number) => {
+		const val = total / props.answers.length
+		if (Number.isNaN(val)) return "0%"
+
+		return `${val * 100}%`
+	}
 
 	const cycleShowState = () => {
 		if (sliders.show === "both") {
