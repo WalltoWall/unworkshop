@@ -125,6 +125,36 @@ export type SanityAssetSourceData = {
   url?: string;
 };
 
+export type Brainstorm = {
+  _type: "brainstorm";
+  name: string;
+  illustration: "speechBubbles" | "rollingBoards" | "clocksAndHands" | "seeSaw" | "usVsThem" | "targetAudienceA" | "targetAudienceB";
+  groups?: Array<string>;
+  steps: Array<{
+    prompt: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: never;
+      markDefs?: Array<{
+        _key: string;
+      } & TextColor>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    helpText: string;
+    placeholder?: string;
+    color: SimplerColor;
+    _type: "step";
+    _key: string;
+  }>;
+};
+
 export type Sliders = {
   _type: "sliders";
   name: string;
@@ -141,10 +171,8 @@ export type Sliders = {
       style?: "normal";
       listItem?: never;
       markDefs?: Array<{
-        href?: string;
-        _type: "link";
         _key: string;
-      }>;
+      } & TextColor>;
       level?: number;
       _type: "block";
       _key: string;
@@ -160,10 +188,8 @@ export type Sliders = {
         style?: "normal";
         listItem?: never;
         markDefs?: Array<{
-          href?: string;
-          _type: "link";
           _key: string;
-        }>;
+        } & TextColor>;
         level?: number;
         _type: "block";
         _key: string;
@@ -189,7 +215,9 @@ export type Kickoff = {
   greeting: string;
   exercises: Array<{
     _key: string;
-  } & Sliders>;
+  } & Sliders | {
+    _key: string;
+  } & Brainstorm>;
 };
 
 export type MediaTag = {
@@ -207,11 +235,29 @@ export type Slug = {
   source?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | SanityAssetSourceData | Sliders | Kickoff | MediaTag | Slug;
+export type HighlightColor = {
+  _type: "highlightColor";
+  label?: string;
+  value?: string;
+};
+
+export type TextColor = {
+  _type: "textColor";
+  label?: string;
+  value?: string;
+};
+
+export type SimplerColor = {
+  _type: "simplerColor";
+  label?: string;
+  value?: string;
+};
+
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityImageHotspot | SanityImageCrop | SanityFileAsset | SanityImageAsset | SanityImageMetadata | Geopoint | SanityAssetSourceData | Brainstorm | Sliders | Kickoff | MediaTag | Slug | HighlightColor | TextColor | SimplerColor;
 export declare const internalGroqTypeReferenceTo: unique symbol;
-// Source: ../app/src/sanity/client.ts
+// Source: ../app/src/sanity/api.ts
 // Variable: kickoffQ
-// Query: *[_type == "kickoff" && code.current == $code][0] {			title,			"code": code.current,			greeting,			exercises[] { 				name, 				illustration, 				groups, 				"type": _type, 				_type == 'sliders' => { "steps": count(steps) }			}		}
+// Query: *[_type == "kickoff" && code.current == $code][0] {			title,			"code": code.current,			greeting,			exercises[] { 				name, 				illustration, 				groups, 				"type": _type, 				_type == 'sliders' => { "steps": count(steps) },				_type == 'brainstorm' => { "steps": count(steps) }			}		}
 export type KickoffQResult = {
   title: string;
   code: string;
@@ -220,13 +266,46 @@ export type KickoffQResult = {
     name: string;
     illustration: "clocksAndHands" | "rollingBoards" | "seeSaw" | "speechBubbles" | "targetAudienceA" | "targetAudienceB" | "usVsThem";
     groups: Array<string> | null;
+    type: "brainstorm";
+    steps: number;
+  } | {
+    name: string;
+    illustration: "clocksAndHands" | "rollingBoards" | "seeSaw" | "speechBubbles" | "targetAudienceA" | "targetAudienceB" | "usVsThem";
+    groups: Array<string> | null;
     type: "sliders";
     steps: number;
   }>;
 } | null;
 // Variable: exerciseQ
-// Query: *[_type == "kickoff" && code.current == $code][0].exercises[] {			name,			groups,			"type": _type,			_type == 'sliders' => { steps }		}
+// Query: *[_type == "kickoff" && code.current == $code][0].exercises[] {			name,			groups,			"type": _type,			_type == 'sliders' => { steps },			_type == 'brainstorm' => { steps }		}
 export type ExerciseQResult = Array<{
+  name: string;
+  groups: Array<string> | null;
+  type: "brainstorm";
+  steps: Array<{
+    prompt: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal";
+      listItem?: never;
+      markDefs?: Array<{
+        _key: string;
+      } & TextColor>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    helpText: string;
+    placeholder?: string;
+    color: SimplerColor;
+    _type: "step";
+    _key: string;
+  }>;
+} | {
   name: string;
   groups: Array<string> | null;
   type: "sliders";
@@ -241,10 +320,8 @@ export type ExerciseQResult = Array<{
       style?: "normal";
       listItem?: never;
       markDefs?: Array<{
-        href?: string;
-        _type: "link";
         _key: string;
-      }>;
+      } & TextColor>;
       level?: number;
       _type: "block";
       _key: string;
@@ -260,10 +337,8 @@ export type ExerciseQResult = Array<{
         style?: "normal";
         listItem?: never;
         markDefs?: Array<{
-          href?: string;
-          _type: "link";
           _key: string;
-        }>;
+        } & TextColor>;
         level?: number;
         _type: "block";
         _key: string;
@@ -282,7 +357,7 @@ export type ExerciseQResult = Array<{
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    "\n\t\t*[_type == \"kickoff\" && code.current == $code][0] {\n\t\t\ttitle,\n\t\t\t\"code\": code.current,\n\t\t\tgreeting,\n\t\t\texercises[] { \n\t\t\t\tname, \n\t\t\t\tillustration, \n\t\t\t\tgroups, \n\t\t\t\t\"type\": _type, \n\n\t\t\t\t_type == 'sliders' => { \"steps\": count(steps) }\n\t\t\t}\n\t\t}": KickoffQResult;
-    "\n\t\t*[_type == \"kickoff\" && code.current == $code][0].exercises[] {\n\t\t\tname,\n\t\t\tgroups,\n\t\t\t\"type\": _type,\n\n\t\t\t_type == 'sliders' => { steps }\n\t\t}": ExerciseQResult;
+    "\n\t\t*[_type == \"kickoff\" && code.current == $code][0] {\n\t\t\ttitle,\n\t\t\t\"code\": code.current,\n\t\t\tgreeting,\n\t\t\texercises[] { \n\t\t\t\tname, \n\t\t\t\tillustration, \n\t\t\t\tgroups, \n\t\t\t\t\"type\": _type, \n\n\t\t\t\t_type == 'sliders' => { \"steps\": count(steps) },\n\t\t\t\t_type == 'brainstorm' => { \"steps\": count(steps) }\n\t\t\t}\n\t\t}": KickoffQResult;
+    "\n\t\t*[_type == \"kickoff\" && code.current == $code][0].exercises[] {\n\t\t\tname,\n\t\t\tgroups,\n\t\t\t\"type\": _type,\n\n\t\t\t_type == 'sliders' => { steps },\n\t\t\t_type == 'brainstorm' => { steps }\n\t\t}": ExerciseQResult;
   }
 }

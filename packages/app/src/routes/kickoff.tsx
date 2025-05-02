@@ -31,7 +31,7 @@ function RouteComponent() {
 
 	return (
 		<>
-			<div className="mx-auto flex min-h-svh w-full max-w-[32rem] flex-col px-7 pb-16 text-black lg:pb-8">
+			<div className="mx-auto flex min-h-svh w-full max-w-[32rem] flex-col px-4 pb-16 text-black lg:pb-8">
 				<header className="flex items-center justify-between gap-2 pt-4.5 pb-6">
 					<ConditionalWrap
 						condition={Boolean(params.code)}

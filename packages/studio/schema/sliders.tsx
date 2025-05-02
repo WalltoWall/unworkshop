@@ -12,7 +12,7 @@ export const sliders = defineField({
 	preview: {
 		select: { name: "name", steps: "steps" },
 		prepare: (s) => ({
-			title: s.name,
+			title: `${s.name} - (Sliders)`,
 			subtitle: pluralize`${s.steps?.length ?? 0} step[|s].`,
 		}),
 	},

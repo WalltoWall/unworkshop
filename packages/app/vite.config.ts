@@ -11,11 +11,7 @@ export default defineConfig({
 		tsconfigPaths(),
 		tailwindcss(),
 		tanStackRouter({ autoCodeSplitting: false, target: "react" }),
-		react({
-			babel: {
-				plugins: [["babel-plugin-react-compiler"]],
-			},
-		}),
+		react({ babel: { plugins: [["babel-plugin-react-compiler"]] } }),
 		cloudflare(),
 	],
 })

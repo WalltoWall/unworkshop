@@ -15,12 +15,15 @@
 	},
 	"dependencies": {
 		"@portabletext/react": "^3.2.1",
+		"@sanity/color-input": "^4.0.3",
 		"@sanity/vision": "^3.86.1",
 		"@unworkshop/app": "workspace:*",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
+		"remeda": "^2.21.3",
 		"sanity": "^3.86.1",
 		"sanity-plugin-media": "^3.0.2",
+		"sanity-plugin-simpler-color-input": "^3.0.1",
 		"styled-components": "^6.1.17"
 	},
 	"devDependencies": {

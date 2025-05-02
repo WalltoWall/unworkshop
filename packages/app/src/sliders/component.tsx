@@ -9,10 +9,10 @@ import { slugifyPortableText } from "@/lib/slugify-portable-text"
 
 type Props = { steps: ST.Sliders["steps"] }
 
-const exerciseRoute = getRouteApi("/kickoff/$code_/$exerciseSlug")
+const route = getRouteApi("/kickoff/$code_/$exerciseSlug")
 
 export const SlidersComponent = (props: Props) => {
-	const search = exerciseRoute.useSearch()
+	const search = route.useSearch()
 	const { answer, actions, connecting } = useMultiplayerSliders()
 
 	const stepData = props.steps.at(search.step - 1)

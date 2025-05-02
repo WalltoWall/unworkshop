@@ -5,6 +5,7 @@ import {
 	type PortableTextProps,
 	type PortableTextReactComponents,
 } from "@portabletext/react"
+import { Colors } from "@/colors"
 
 const noop = () => null
 
@@ -15,11 +16,31 @@ const defaultComponents: PortableTextReactComponents = {
 		"strike-through": (props) => (
 			<span className="line-through">{props.children}</span>
 		),
+		textColor: ({ children, value }) => (
+			<span
+				style={Colors.style(Colors.Variant.parse(value.label.toLowerCase()))}
+				className="text-presenter"
+			>
+				{children}
+			</span>
+		),
+		highlightColor: ({ children, value }) => (
+			<span
+				style={Colors.style(Colors.Variant.parse(value.label.toLowerCase()))}
+				className="text-presenter"
+			>
+				{children}
+			</span>
+		),
 	},
 
 	types: {},
 	block: {
-		normal: (props) => <p className="whitespace-pre-line">{props.children}</p>,
+		normal: (props) => (
+			<p className="whitespace-pre-line text-16 leading-[1.4]">
+				{props.children}
+			</p>
+		),
 	},
 	listItem: (props) => <li>{props.children}</li>,
 

@@ -14,7 +14,8 @@ export namespace Api {
 				groups, 
 				"type": _type, 
 
-				_type == 'sliders' => { "steps": count(steps) }
+				_type == 'sliders' => { "steps": count(steps) },
+				_type == 'brainstorm' => { "steps": count(steps) }
 			}
 		}`)
 
@@ -28,7 +29,8 @@ export namespace Api {
 			groups,
 			"type": _type,
 
-			_type == 'sliders' => { steps }
+			_type == 'sliders' => { steps },
+			_type == 'brainstorm' => { steps }
 		}`)
 
 	export async function getExercise(code: string, slug: string) {

@@ -24,6 +24,7 @@ export const defineBasicPortableTextField = (args: Args) => {
 				styles: [],
 				lists: [],
 				marks: {
+					annotations: [{ type: "textColor" }],
 					decorators: [
 						{ title: "Strong", value: "strong" },
 						{ title: "Emphasis", value: "em" },

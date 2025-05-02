@@ -64,7 +64,11 @@ export const kickoff = defineType({
 			description: "The list of exercises for this kickoff.",
 			type: "array",
 			initialValue: [],
-			of: [defineArrayMember({ type: "sliders" })],
+			options: { insertMenu: { showIcons: true, views: [{ name: "grid" }] } },
+			of: [
+				defineArrayMember({ type: "sliders" }),
+				defineArrayMember({ type: "brainstorm" }),
+			],
 			validation: (r) => r.required(),
 		}),
 	],
