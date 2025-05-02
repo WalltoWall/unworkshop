@@ -1,6 +1,6 @@
 import { cx } from "class-variance-authority"
 import { Arrow } from "./icons/Arrow"
-import { Spinner } from "./Spinner"
+import { Spinner } from "./spinner"
 
 export interface ArrowButtonProps {
 	direction: "prev" | "next"

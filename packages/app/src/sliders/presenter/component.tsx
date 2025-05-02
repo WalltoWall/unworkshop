@@ -1,5 +1,5 @@
 import { Colors } from "@/colors"
-import { Settings } from "@/components/SettingsMenu"
+import { Settings } from "@/components/settings-menu"
 import type { Sliders } from "@unworkshop/studio"
 import { BarsView } from "./bars-view"
 import { DotsView } from "./dots-view"
