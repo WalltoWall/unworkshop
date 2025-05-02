@@ -3,7 +3,6 @@ import { Button } from "@/components/Button"
 import clsx from "clsx"
 import { CheckIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
-import React from "react"
 
 const bgs: Record<Colors.Variant, string> = {
 	red: "var(--color-red-200)",
@@ -46,27 +45,28 @@ const borders: Record<Colors.Variant, string> = {
 }
 
 const colors: Record<Colors.Variant, string> = {
-	red: "var(--color-red-700)",
-	orange: "var(--color-orange-700)",
-	amber: "var(--color-amber-700)",
-	yellow: "var(--color-yellow-700)",
-	lime: "var(--color-lime-700)",
-	green: "var(--color-green-700)",
-	emerald: "var(--color-emerald-700)",
-	teal: "var(--color-teal-700)",
-	cyan: "var(--color-cyan-700)",
-	sky: "var(--color-sky-700)",
-	blue: "var(--color-blue-700)",
-	indigo: "var(--color-indigo-700)",
-	violet: "var(--color-violet-700)",
-	purple: "var(--color-purple-700)",
-	fuchsia: "var(--color-fuchsia-700)",
-	pink: "var(--color-pink-700)",
-	rose: "var(--color-rose-700)",
+	red: "var(--color-red-800)",
+	orange: "var(--color-orange-800)",
+	amber: "var(--color-amber-800)",
+	yellow: "var(--color-yellow-800)",
+	lime: "var(--color-lime-800)",
+	green: "var(--color-green-800)",
+	emerald: "var(--color-emerald-800)",
+	teal: "var(--color-teal-800)",
+	cyan: "var(--color-cyan-800)",
+	sky: "var(--color-sky-800)",
+	blue: "var(--color-blue-800)",
+	indigo: "var(--color-indigo-800)",
+	violet: "var(--color-violet-800)",
+	purple: "var(--color-purple-800)",
+	fuchsia: "var(--color-fuchsia-800)",
+	pink: "var(--color-pink-800)",
+	rose: "var(--color-rose-800)",
 }
 
 type NoteProps = {
 	color: Colors.Variant
+	placeholder?: string
 	className?: string
 	idx: number
 	addNew: () => void
@@ -94,10 +94,18 @@ const Note = (props: NoteProps) => {
 			initial={{ y: LIFT, opacity: 1 - OPACITY_FACTOR }}
 			exit={{ scale: scale - SCALE_FACTOR, opacity: 0 }}
 			className={clsx(
-				"absolute inset-0 rounded-lg shadow-md font-semibold px-4 py-3 flex flex-col border",
+				"absolute inset-0 rounded-lg shadow-md font-semibold px-4 py-3 flex flex-col border gap-4 sm:py-4",
 				props.className,
 			)}
 		>
+			{props.idx === 0 && (
+				<textarea
+					className="resize-none grow outline-none sm:text-lg text-base"
+					spellCheck={false}
+					placeholder={props.placeholder}
+				/>
+			)}
+
 			<Button
 				className="ml-auto rounded-full mt-auto text-white"
 				size="icon"

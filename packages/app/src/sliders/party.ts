@@ -81,7 +81,5 @@ export class Sliders extends Server {
 			.exhaustive()
 
 		this.updatePresenters()
-
-		console.log(this.answers)
 	}
 }

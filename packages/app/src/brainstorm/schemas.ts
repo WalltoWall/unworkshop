@@ -1,0 +1,28 @@
+import { z } from "zod"
+
+export namespace BrainstormS {
+	export const Answer = z.record(z.string(), z.array(z.string()))
+	export type Answer = z.infer<typeof Answer>
+
+	export const AllAnswers = z.record(z.string(), Answer)
+	export type AllAnswers = z.infer<typeof AllAnswers>
+
+	// Participant incoming events
+	export const Message = z.discriminatedUnion([
+		z.interface({ type: z.literal("answer"), answer: Answer }),
+		z.interface({
+			type: z.literal("submission"),
+			payload: z.object({
+				id: z.string(),
+				step: z.int(),
+				value: z.string(),
+			}),
+		}),
+
+		z.interface({
+			type: z.literal("presenter"),
+			answers: AllAnswers,
+		}),
+	])
+	export type Message = z.infer<typeof Message>
+}

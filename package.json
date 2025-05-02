@@ -8,6 +8,8 @@
 		"format": "bunx -b biome format . --write",
 		"dev:app": "cd ./packages/app && bun run dev",
 		"dev:studio": "cd ./packages/studio && bun run dev",
+
+		"app:types": "cd ./packages/app/ && bun run cf:types",
 		"studio:types": "cd ./packages/studio && bun run schema && bun run types",
 
 		"deploy:app": "cd ./packages/app && bun run deploy"
