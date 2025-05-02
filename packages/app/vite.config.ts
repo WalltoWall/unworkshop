@@ -10,7 +10,7 @@ export default defineConfig({
 	plugins: [
 		tsconfigPaths(),
 		tailwindcss(),
-		tanStackRouter({ autoCodeSplitting: true, target: "react" }),
+		tanStackRouter({ autoCodeSplitting: false, target: "react" }),
 		react({
 			babel: {
 				plugins: [["babel-plugin-react-compiler"]],

@@ -8,7 +8,9 @@
 		"format": "bunx -b biome format . --write",
 		"dev:app": "cd ./packages/app && bun run dev",
 		"dev:studio": "cd ./packages/studio && bun run dev",
-		"studio:types": "cd ./packages/studio && bun run schema && bun run types"
+		"studio:types": "cd ./packages/studio && bun run schema && bun run types",
+
+		"deploy:app": "cd ./packages/app && bun run deploy"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
