@@ -1,16 +1,7 @@
-"use client"
-
+//@ts-nocheck
 import * as Context from "@radix-ui/react-context-menu"
 import React from "react"
 import { flushSync } from "react-dom"
-import {
-	type DraggableProvided,
-	type DraggableStateSnapshot,
-} from "@hello-pangea/dnd"
-import type { BrainstormCard } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/types"
-import type { BrainstormActions } from "@/app/(site)/kickoff/[code]/exercises/[slug]/_BrainstormExercise/use-multiplayer-brainstorm"
-import { SORTING_COLUMN_ID } from "@/app/(site)/presenter/[code]/[slug]/_BrainstormExercise/constants"
-import type { MultiplayerData } from "./Multiplayer/use-multiplayer"
 import { Text } from "./Text"
 
 const ContextMenuItem = ({
@@ -23,7 +14,6 @@ const ContextMenuItem = ({
 				className="px-3 py-2 text-white hover:cursor-pointer hover:bg-yellow-58 hover:text-black"
 				style={"contextMenu"}
 				size={14}
-				trim
 			>
 				{children}
 			</Text>

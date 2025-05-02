@@ -1,7 +1,9 @@
+import type React from "react"
+
 type Props = {
 	condition: boolean
 	children: React.ReactNode
-	wrap: (props: { children: React.ReactNode }) => JSX.Element
+	wrap: (props: { children: React.ReactNode }) => React.JSX.Element
 }
 
 /**
