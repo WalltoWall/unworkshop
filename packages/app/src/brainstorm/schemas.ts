@@ -15,12 +15,10 @@ export namespace BrainstormS {
 		}),
 		z.interface({
 			type: z.literal("update"),
-			msgId: z.string(),
 			answer: Answer,
 		}),
 		z.interface({
 			type: z.literal("submission"),
-			msgId: z.string(),
 			payload: z.object({
 				id: z.string(),
 				step: z.int(),
@@ -29,7 +27,6 @@ export namespace BrainstormS {
 		}),
 		z.interface({
 			type: z.literal("edit"),
-			msgId: z.string(),
 			payload: z.object({
 				id: z.string(),
 				step: z.int(),

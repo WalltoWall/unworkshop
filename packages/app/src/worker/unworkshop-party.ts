@@ -5,9 +5,15 @@ import {
 	type ConnectionContext,
 } from "partyserver"
 
+type UnworkshopMsg<T> = { data: T; id: string }
+
 export class UnworkshopPartyServer<T> extends PartyServer {
 	sendMessage(message: T, conn: Connection) {
 		conn.send(JSON.stringify(message))
+	}
+
+	unwrapUnworkshopMessage(message: UnworkshopMsg<T>): T {
+		return message.data
 	}
 
 	updatePresenters(message: T) {
