@@ -6,7 +6,6 @@ import { Stickies } from "./stickies"
 import { useMultiplayerBrainstorm } from "./use-multiplayer-brainstorm"
 import React from "react"
 import { debounce } from "perfect-debounce"
-import * as R from "remeda"
 
 type Props = {
 	steps: ST.Brainstorm["steps"]
@@ -30,16 +29,12 @@ export const BrainstormComponent = (props: Props) => {
 		actions.submission({ step: search.step, value })
 	}
 
-	const throttledEdit = R.funnel(actions.edit, {
-		minGapMs: 100,
-		triggerAt: "start",
-		reducer: (_, args) => args,
-	})
+	const editAction = debounce(actions.edit, 150)
 
 	const onNoteChange = (value: string, idx: number) => {
 		React.startTransition(async () => {
 			setOptimisticAnswers((p) => p.toSpliced(idx, 1, value))
-			throttledEdit.call()
+			await editAction({ step: search.step, value, idx })
 		})
 	}
 

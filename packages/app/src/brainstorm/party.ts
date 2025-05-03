@@ -15,7 +15,7 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 			this.sendMessage({ type: "presenter", answers: this.answers }, connection)
 		} else {
 			const answer = this.answers[groupId] ?? {}
-			this.sendMessage({ type: "answer", answer }, connection)
+			this.sendMessage({ type: "init", answer }, connection)
 		}
 	}
 
@@ -31,7 +31,11 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 				this.answers[id][step] ??= []
 				this.answers[id][step].push(value)
 
-				this.updateRoom(id, { type: "answer", answer: this.answers[id] })
+				this.updateRoom(id, {
+					type: "update",
+					answer: this.answers[id],
+					msgId: message.msgId,
+				})
 			})
 			.with({ type: "edit" }, (message) => {
 				const { id, step, idx, value } = message.payload
@@ -40,7 +44,11 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 				this.answers[id][step] ??= []
 				this.answers[id][step][idx] = value
 
-				this.updateRoom(id, { type: "answer", answer: this.answers[id] })
+				this.updateRoom(id, {
+					type: "update",
+					answer: this.answers[id],
+					msgId: message.msgId,
+				})
 			})
 			.otherwise(noop)
 

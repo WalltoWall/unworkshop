@@ -7,8 +7,11 @@ import { BrainstormS } from "./schemas"
 import { match } from "ts-pattern"
 import { noop } from "motion/react"
 
+type CachedResolver = PromiseWithResolvers<unknown>
+
 export function useMultiplayerBrainstorm() {
 	const [answer, setAnswer] = React.useState<BrainstormS.Answer>({})
+	const [cache] = React.useState(() => new Map<string, CachedResolver>())
 	const participant = Participant.useInfoOrThrow()
 	const params = useParams({ strict: false })
 
@@ -26,37 +29,56 @@ export function useMultiplayerBrainstorm() {
 			const event = BrainstormS.Message.parse(data)
 
 			match(event)
-				.with({ type: "answer" }, (msg) => setAnswer(msg.answer))
+				.with({ type: "init" }, (msg) => setAnswer(msg.answer))
+				.with({ type: "update" }, (msg) => {
+					const resolver = cache.get(msg.msgId)
+					resolver?.resolve(null)
+
+					setAnswer(msg.answer)
+				})
 				.otherwise(noop)
 		},
 	})
 
+	const actionMessage = (msg: BrainstormS.Message) => {
+		if (msg.type !== "submission" && msg.type !== "edit") return
+
+		const resolver = Promise.withResolvers()
+		cache.set(msg.msgId, resolver)
+
+		setTimeout(() => {
+			cache.delete(msg.msgId)
+			resolver.reject(new Error("Socket message timed out."))
+		}, 10000)
+
+		socket.send(JSON.stringify(msg))
+
+		return resolver.promise
+	}
+
 	const actions = {
 		submission: (args: { step: number; value: string }) => {
-			const msg: BrainstormS.Message = {
+			return actionMessage({
 				type: "submission",
+				msgId: nanoid(8),
 				payload: {
 					id,
 					step: args.step,
 					value: args.value,
 				},
-			}
-
-			socket.send(JSON.stringify(msg))
+			})
 		},
 		edit: (args: { step: number; value: string; idx: number }) => {
-			console.log("edit")
-			const msg: BrainstormS.Message = {
+			return actionMessage({
 				type: "edit",
+				msgId: nanoid(8),
 				payload: {
 					id,
 					step: args.step,
 					idx: args.idx,
 					value: args.value,
 				},
-			}
-
-			socket.send(JSON.stringify(msg))
+			})
 		},
 	}
 
