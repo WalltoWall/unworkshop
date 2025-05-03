@@ -1,10 +1,9 @@
-import React from "react"
 import clsx from "clsx"
 
 export const Spinner = ({
 	className,
 	...props
-}: React.ComponentPropsWithoutRef<"svg">) => {
+}: React.ComponentProps<"svg">) => {
 	return (
 		<svg
 			className={clsx("animate-spin", className)}

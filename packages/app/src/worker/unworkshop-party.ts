@@ -6,15 +6,17 @@ import {
 } from "partyserver"
 
 export class UnworkshopPartyServer<T> extends PartyServer {
+	sendMessage(message: T, conn: Connection) {
+		conn.send(JSON.stringify(message))
+	}
+
 	updatePresenters(message: T) {
 		this.updateRoom(PRESENTER_ID, message)
 	}
 
 	updateRoom(id: string, message: T) {
-		const msg = JSON.stringify(message)
-
 		for (const conn of this.getConnections(id)) {
-			conn.send(msg)
+			this.sendMessage(message, conn)
 		}
 	}
 

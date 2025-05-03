@@ -3,6 +3,7 @@ import { Button } from "@/components/Button"
 import clsx from "clsx"
 import { CheckIcon } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
+import React from "react"
 
 const bgs: Record<Colors.Variant, string> = {
 	red: "var(--color-red-200)",
@@ -69,7 +70,9 @@ type NoteProps = {
 	placeholder?: string
 	className?: string
 	idx: number
-	addNew: () => void
+	onNoteSubmit: (value: string) => void
+	onNoteChange: (value: string) => void
+	value: string
 }
 
 const SCALE_FACTOR = 0.04
@@ -77,9 +80,20 @@ const LIFT = 30
 const OPACITY_FACTOR = 0.1
 
 const Note = (props: NoteProps) => {
+	const rTextArea = React.useRef<HTMLTextAreaElement>(null)
 	const scale = 1 - SCALE_FACTOR * props.idx
 	const y = -LIFT * props.idx
 	const opacity = 1 - OPACITY_FACTOR * props.idx
+
+	function action() {
+		if (!rTextArea.current) return
+
+		props.onNoteSubmit(rTextArea.current.value)
+	}
+
+	function onChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+		props.onNoteChange(e.target.value)
+	}
 
 	return (
 		<motion.li
@@ -94,26 +108,31 @@ const Note = (props: NoteProps) => {
 			initial={{ y: LIFT, opacity: 1 - OPACITY_FACTOR }}
 			exit={{ scale: scale - SCALE_FACTOR, opacity: 0 }}
 			className={clsx(
-				"absolute inset-0 rounded-lg shadow-md font-semibold px-4 py-3 flex flex-col border gap-4 sm:py-4",
+				"absolute inset-0 rounded-lg shadow-md font-semibold px-4 py-3 border sm:py-4",
 				props.className,
 			)}
 		>
-			{props.idx === 0 && (
-				<textarea
-					className="resize-none grow outline-none sm:text-lg text-base"
-					spellCheck={false}
-					placeholder={props.placeholder}
-				/>
-			)}
+			<form className="flex flex-col gap-4 h-full" action={action}>
+				{props.idx === 0 && (
+					<textarea
+						ref={rTextArea}
+						className="resize-none grow outline-none sm:text-lg text-base"
+						spellCheck={false}
+						placeholder={props.placeholder}
+						value={props.value}
+						onChange={onChange}
+					/>
+				)}
 
-			<Button
-				className="ml-auto rounded-full mt-auto text-white"
-				size="icon"
-				onClick={props.addNew}
-			>
-				<span className="sr-only">Submit Sticky</span>
-				<CheckIcon className="size-4" />
-			</Button>
+				<Button
+					className="ml-auto rounded-full mt-auto text-white"
+					size="icon"
+					type="submit"
+				>
+					<span className="sr-only">Submit Sticky</span>
+					<CheckIcon className="size-4" />
+				</Button>
+			</form>
 		</motion.li>
 	)
 }

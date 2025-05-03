@@ -1,10 +1,11 @@
+import React from "react"
 import { Participant } from "@/participant"
 import { useParams } from "@tanstack/react-router"
 import { nanoid } from "nanoid"
 import usePartySocket from "partysocket/react"
-import React from "react"
 import { BrainstormS } from "./schemas"
 import { match } from "ts-pattern"
+import { noop } from "motion/react"
 
 export function useMultiplayerBrainstorm() {
 	const [answer, setAnswer] = React.useState<BrainstormS.Answer>({})
@@ -26,11 +27,38 @@ export function useMultiplayerBrainstorm() {
 
 			match(event)
 				.with({ type: "answer" }, (msg) => setAnswer(msg.answer))
-				.otherwise(() => {})
+				.otherwise(noop)
 		},
 	})
 
-	const actions = {}
+	const actions = {
+		submission: (args: { step: number; value: string }) => {
+			const msg: BrainstormS.Message = {
+				type: "submission",
+				payload: {
+					id,
+					step: args.step,
+					value: args.value,
+				},
+			}
+
+			socket.send(JSON.stringify(msg))
+		},
+		edit: (args: { step: number; value: string; idx: number }) => {
+			console.log("edit")
+			const msg: BrainstormS.Message = {
+				type: "edit",
+				payload: {
+					id,
+					step: args.step,
+					idx: args.idx,
+					value: args.value,
+				},
+			}
+
+			socket.send(JSON.stringify(msg))
+		},
+	}
 
 	return { answer, actions, connecting: socket.readyState !== socket.OPEN }
 }

@@ -3,8 +3,10 @@ import { PortableText } from "@/components/portable-text"
 import { getRouteApi } from "@tanstack/react-router"
 import type * as ST from "@unworkshop/studio"
 import { Stickies } from "./stickies"
-import React from "react"
 import { useMultiplayerBrainstorm } from "./use-multiplayer-brainstorm"
+import React from "react"
+import { debounce } from "perfect-debounce"
+import * as R from "remeda"
 
 type Props = {
 	steps: ST.Brainstorm["steps"]
@@ -21,9 +23,32 @@ export const BrainstormComponent = (props: Props) => {
 	const color = Colors.Variant.parse(stepData.color.label?.toLowerCase())
 	const { answer, actions, connecting } = useMultiplayerBrainstorm()
 
-	const answers = answer[`step-${search.step}`] ?? []
+	const answers = answer[search.step] ?? []
+	const [optimisticAnswers, setOptimisticAnswers] = React.useOptimistic(answers)
 
-	const addNew = () => {}
+	const onNoteSubmit = (value: string) => {
+		actions.submission({ step: search.step, value })
+	}
+
+	const throttledEdit = R.funnel(actions.edit, {
+		minGapMs: 100,
+		triggerAt: "start",
+		reducer: (_, args) => args,
+	})
+
+	const onNoteChange = (value: string, idx: number) => {
+		React.startTransition(async () => {
+			setOptimisticAnswers((p) => p.toSpliced(idx, 1, value))
+			throttledEdit.call()
+		})
+	}
+
+	React.useEffect(() => {
+		if (connecting) return
+		if (answers.length !== 0) return
+
+		actions.submission({ step: search.step, value: "" })
+	}, [connecting, answers.length, actions.submission, search.step])
 
 	return (
 		<div className="py-3 flex flex-col gap-y-3 grow">
@@ -35,15 +60,17 @@ export const BrainstormComponent = (props: Props) => {
 			</div>
 
 			<Stickies.Stack className="mt-auto mb-7.5">
-				{answers
+				{optimisticAnswers
 					.toReversed()
-					.slice(0, 5)
-					.map((a, idx) => (
+					.slice(0, 4)
+					.map((value, idx) => (
 						<Stickies.Note
 							color={color}
-							key={a}
+							key={idx}
+							value={value}
 							idx={idx}
-							addNew={addNew}
+							onNoteSubmit={onNoteSubmit}
+							onNoteChange={(value) => onNoteChange(value, idx)}
 							placeholder={stepData.placeholder}
 						/>
 					))}

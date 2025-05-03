@@ -10,11 +10,21 @@ export namespace BrainstormS {
 	// Participant incoming events
 	export const Message = z.discriminatedUnion([
 		z.interface({ type: z.literal("answer"), answer: Answer }),
+
 		z.interface({
 			type: z.literal("submission"),
 			payload: z.object({
 				id: z.string(),
 				step: z.int(),
+				value: z.string(),
+			}),
+		}),
+		z.interface({
+			type: z.literal("edit"),
+			payload: z.object({
+				id: z.string(),
+				step: z.int(),
+				idx: z.number(),
 				value: z.string(),
 			}),
 		}),
