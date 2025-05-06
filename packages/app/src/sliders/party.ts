@@ -1,85 +1,52 @@
-import {
-	Server,
-	type Connection,
-	type ConnectionContext,
-	type WSMessage,
-} from "partyserver"
+import type { Connection, ConnectionContext, WSMessage } from "partyserver"
 import { SlidersS } from "./schemas"
 import { match } from "ts-pattern"
-import { PRESENTER_ID } from "@/constants"
+import { PRESENTER_GROUP_ID } from "@/constants"
+import { UnworkshopPartyServer } from "@/worker/unworkshop-party"
+import { nanoid } from "nanoid"
+import { noop } from "@/lib/noop"
+import { DEFAULT_ANSWER } from "./constants"
 
-export class Sliders extends Server {
+export class Sliders extends UnworkshopPartyServer<SlidersS.Message> {
 	answers: SlidersS.AllAnswers = {}
 
-	updatePresenters() {
-		const presenterE: SlidersS.PresenterEvent = {
-			type: "update",
-			answers: this.answers,
-		}
-		const msg = JSON.stringify(presenterE)
-
-		for (const conn of this.getConnections(PRESENTER_ID)) {
-			conn.send(msg)
-		}
-	}
-
-	getGroupId(ctx: ConnectionContext) {
-		const url = new URL(ctx.request.url)
-		const id = url.searchParams.get("id")
-		if (!id) {
-			throw new Error(
-				"Invalid request. All connections must supply an id via query paramaters.",
-			)
-		}
-
-		return id
-	}
-
-	getConnectionTags(_connection: Connection, ctx: ConnectionContext): string[] {
-		return [this.getGroupId(ctx)]
-	}
-
 	onConnect(connection: Connection, ctx: ConnectionContext): void {
-		const groupId = this.getGroupId(ctx)
+		const group = this.getGroup(ctx)
+		const msgId = nanoid(6)
 
-		if (groupId === PRESENTER_ID) {
-			const presenterE: SlidersS.PresenterEvent = {
-				type: "update",
-				answers: this.answers,
-			}
-			const msg = JSON.stringify(presenterE)
+		let data: SlidersS.Message
 
-			connection.send(msg)
+		if (group === PRESENTER_GROUP_ID) {
+			data = { type: "presenter", answers: this.answers }
 		} else {
-			const answer = this.answers[groupId] ?? {}
-			const e: SlidersS.Event = { type: "init", answer }
-			const msg = JSON.stringify(e)
-
-			connection.send(msg)
+			data = { type: "update", answer: this.answers[group] ?? {} }
 		}
+
+		this.sendMessage({ conn: connection, data, msgId })
 	}
 
-	onMessage(_: Connection, message: WSMessage): void | Promise<void> {
-		const data = JSON.parse(message.toString())
-		const msg = SlidersS.Message.parse(data)
+	onMessage(_: Connection, message: WSMessage): void {
+		const msg = this.parseUnworkshopMsg(message, SlidersS.Message)
 
-		match(msg)
-			.with({ type: "change" }, (message) => {
-				const { id, prompt, type, value } = message.payload
+		match(msg.data)
+			.with({ type: "change" }, (data) => {
+				const { id, prompt, type, value } = data.payload
 
 				this.answers[id] ??= {}
-				this.answers[id][prompt] ??= { today: 1 }
+				this.answers[id][prompt] ??= DEFAULT_ANSWER
 				this.answers[id][prompt][type] = value
 
-				const e: SlidersS.Event = { type: "update", answer: this.answers[id] }
-				const msg = JSON.stringify(e)
-
-				for (const conn of this.getConnections(id)) {
-					conn.send(msg)
-				}
+				this.updateGroup({
+					group: id,
+					msgId: msg.id,
+					data: { type: "update", answer: this.answers[id] },
+				})
 			})
-			.exhaustive()
+			.otherwise(noop)
 
-		this.updatePresenters()
+		this.updatePresenters({
+			msgId: msg.id,
+			data: { type: "presenter", answers: this.answers },
+		})
 	}
 }

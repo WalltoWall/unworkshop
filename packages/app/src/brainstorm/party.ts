@@ -1,5 +1,5 @@
 import { match } from "ts-pattern"
-import { PRESENTER_ID } from "@/constants"
+import { PRESENTER_GROUP_ID } from "@/constants"
 import { UnworkshopPartyServer } from "@/worker/unworkshop-party"
 import type { Connection, ConnectionContext, WSMessage } from "partyserver"
 import { BrainstormS } from "./schemas"
@@ -10,15 +10,15 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 	answers: BrainstormS.AllAnswers = {}
 
 	onConnect(connection: Connection, ctx: ConnectionContext): void {
-		const roomId = this.getRoomId(ctx)
+		const group = this.getGroup(ctx)
 		const msgId = nanoid(6)
 
 		let data: BrainstormS.Message
 
-		if (roomId === PRESENTER_ID) {
+		if (group === PRESENTER_GROUP_ID) {
 			data = { type: "presenter", answers: this.answers }
 		} else {
-			data = { type: "init", answer: this.answers[roomId] ?? {} }
+			data = { type: "init", answer: this.answers[group] ?? {} }
 		}
 
 		this.sendMessage({ conn: connection, data, msgId })
@@ -35,8 +35,8 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 				this.answers[id][step] ??= []
 				this.answers[id][step].push({ id: nanoid(6), value: "" })
 
-				this.updateRoom({
-					roomId: id,
+				this.updateGroup({
+					group: id,
 					msgId: msg.id,
 					data: {
 						type: "update",
@@ -55,8 +55,8 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 
 				this.answers[id][step][idx] = { ...sticky, value }
 
-				this.updateRoom({
-					roomId: id,
+				this.updateGroup({
+					group: id,
 					msgId: msg.id,
 					data: {
 						type: "update",

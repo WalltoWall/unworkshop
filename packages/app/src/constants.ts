@@ -1,1 +1,1 @@
-export const PRESENTER_ID = "unworkshop-presenter"
+export const PRESENTER_GROUP_ID = "unworkshop-presenter"

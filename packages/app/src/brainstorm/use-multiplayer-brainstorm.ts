@@ -8,6 +8,8 @@ export function useMultiplayerBrainstorm() {
 	const [answer, setAnswer] = React.useState<BrainstormS.Answer>({})
 
 	const { connecting, action, id } = useUnworkshopSocket({
+		party: "brainstorm",
+		type: "participant",
 		onMessage: (msg) => {
 			match(msg)
 				.with({ type: "init" }, (msg) => setAnswer(msg.answer))

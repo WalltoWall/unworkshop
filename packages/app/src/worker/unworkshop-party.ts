@@ -1,4 +1,4 @@
-import { PRESENTER_ID } from "@/constants"
+import { PRESENTER_GROUP_ID } from "@/constants"
 import {
 	Server as PartyServer,
 	type Connection,
@@ -29,32 +29,32 @@ export class UnworkshopPartyServer<T> extends PartyServer {
 	}
 
 	updatePresenters(args: { msgId: string; data: T }) {
-		this.updateRoom({
-			roomId: PRESENTER_ID,
+		this.updateGroup({
+			group: PRESENTER_GROUP_ID,
 			data: args.data,
 			msgId: args.msgId,
 		})
 	}
 
-	updateRoom(args: { roomId: string; msgId: string; data: T }) {
-		for (const conn of this.getConnections(args.roomId)) {
+	updateGroup(args: { group: string; msgId: string; data: T }) {
+		for (const conn of this.getConnections(args.group)) {
 			this.sendMessage({ msgId: args.msgId, data: args.data, conn })
 		}
 	}
 
-	getRoomId(ctx: ConnectionContext) {
+	getGroup(ctx: ConnectionContext) {
 		const url = new URL(ctx.request.url)
-		const id = url.searchParams.get("id")
-		if (!id) {
+		const group = url.searchParams.get("group")
+		if (!group) {
 			throw new Error(
-				"Invalid request. All connections must supply an id via query paramaters.",
+				"Invalid request. All connections must supply `group` via query paramaters.",
 			)
 		}
 
-		return id
+		return group
 	}
 
 	getConnectionTags(_: Connection, ctx: ConnectionContext): string[] {
-		return [this.getRoomId(ctx)]
+		return [this.getGroup(ctx)]
 	}
 }

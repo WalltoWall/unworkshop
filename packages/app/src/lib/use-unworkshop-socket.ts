@@ -1,8 +1,10 @@
+import { PRESENTER_GROUP_ID } from "@/constants"
 import { Participant } from "@/participant"
 import { useParams } from "@tanstack/react-router"
 import { nanoid } from "nanoid"
 import usePartySocket from "partysocket/react"
 import React from "react"
+import { match } from "ts-pattern"
 import { z } from "zod"
 
 const DEFAULT_TIMEOUT = 10000
@@ -12,6 +14,8 @@ type Args<T> = {
 	timeout?: number
 	onMessage: (msg: T) => void
 	schema: z.ZodType<T>
+	party: "sliders" | "brainstorm"
+	type: "presenter" | "participant"
 }
 
 export function useUnworkshopSocket<T>(args: Args<T>) {
@@ -19,17 +23,20 @@ export function useUnworkshopSocket<T>(args: Args<T>) {
 	const participant = Participant.useInfoOrThrow()
 	const params = useParams({ strict: false })
 
-	const id = params.groupSlug ?? participant.id
+	const group = match(args.type)
+		.with("presenter", () => PRESENTER_GROUP_ID)
+		.with("participant", () => params.groupSlug ?? participant.id)
+		.exhaustive()
 	const room = `${params.code}::${params.exerciseSlug}`
 
 	const UnworkshopMsg = z.object({ data: args.schema, id: z.string() })
 
 	const socket = usePartySocket({
 		host: window.location.host,
-		party: "brainstorm",
+		party: args.party,
 		room,
 		id: nanoid(6),
-		query: { id },
+		query: { group },
 		onMessage: (e) => {
 			const raw = JSON.parse(e.data)
 			const msg = UnworkshopMsg.parse(raw)
@@ -61,7 +68,7 @@ export function useUnworkshopSocket<T>(args: Args<T>) {
 		socket,
 		action,
 		connecting: socket.readyState !== socket.OPEN,
-		id,
+		id: group,
 		room,
 		participant,
 	}
