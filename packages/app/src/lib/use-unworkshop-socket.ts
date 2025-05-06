@@ -28,7 +28,7 @@ export function useUnworkshopSocket<T>(args: Args<T>) {
 		host: window.location.host,
 		party: "brainstorm",
 		room,
-		id: nanoid(8),
+		id: nanoid(6),
 		query: { id },
 		onMessage: (e) => {
 			const raw = JSON.parse(e.data)
@@ -42,7 +42,7 @@ export function useUnworkshopSocket<T>(args: Args<T>) {
 	})
 
 	const action = (data: T) => {
-		const msg = { data, id: nanoid(8) }
+		const msg = { data, id: nanoid(6) }
 
 		const resolver = Promise.withResolvers()
 		cache.set(msg.id, resolver)

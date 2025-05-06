@@ -4,54 +4,71 @@ import { UnworkshopPartyServer } from "@/worker/unworkshop-party"
 import type { Connection, ConnectionContext, WSMessage } from "partyserver"
 import { BrainstormS } from "./schemas"
 import { noop } from "../lib/noop"
+import { nanoid } from "nanoid"
 
 export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 	answers: BrainstormS.AllAnswers = {}
 
 	onConnect(connection: Connection, ctx: ConnectionContext): void {
-		const groupId = this.getGroupId(ctx)
+		const roomId = this.getRoomId(ctx)
+		const msgId = nanoid(6)
 
-		if (groupId === PRESENTER_ID) {
-			this.sendMessage({ type: "presenter", answers: this.answers }, connection)
+		let data: BrainstormS.Message
+
+		if (roomId === PRESENTER_ID) {
+			data = { type: "presenter", answers: this.answers }
 		} else {
-			const answer = this.answers[groupId] ?? {}
-			this.sendMessage({ type: "init", answer }, connection)
+			data = { type: "init", answer: this.answers[roomId] ?? {} }
 		}
+
+		this.sendMessage({ conn: connection, data, msgId })
 	}
 
 	onMessage(_: Connection, message: WSMessage): void {
-		const data = JSON.parse(message.toString())
-		const msg = BrainstormS.Message.parse(data)
+		const msg = this.parseUnworkshopMsg(message, BrainstormS.Message)
 
-		match(msg)
-			.with({ type: "submission" }, (message) => {
-				const { id, value, step } = message.payload
+		match(msg.data)
+			.with({ type: "add" }, (data) => {
+				const { id, step } = data.payload
 
 				this.answers[id] ??= {}
 				this.answers[id][step] ??= []
-				this.answers[id][step].push(value)
+				this.answers[id][step].push({ id: nanoid(6), value: "" })
 
-				this.updateRoom(id, {
-					type: "update",
-					answer: this.answers[id],
-					msgId: message.msgId,
+				this.updateRoom({
+					roomId: id,
+					msgId: msg.id,
+					data: {
+						type: "update",
+						answer: this.answers[id],
+					},
 				})
 			})
-			.with({ type: "edit" }, (message) => {
-				const { id, step, idx, value } = message.payload
+			.with({ type: "edit" }, (data) => {
+				const { id, step, idx, value } = data.payload
 
 				this.answers[id] ??= {}
 				this.answers[id][step] ??= []
-				this.answers[id][step][idx] = value
 
-				this.updateRoom(id, {
-					type: "update",
-					answer: this.answers[id],
-					msgId: message.msgId,
+				const sticky = this.answers[id][step][idx]
+				if (!sticky) return
+
+				this.answers[id][step][idx] = { ...sticky, value }
+
+				this.updateRoom({
+					roomId: id,
+					msgId: msg.id,
+					data: {
+						type: "update",
+						answer: this.answers[id],
+					},
 				})
 			})
 			.otherwise(noop)
 
-		this.updatePresenters({ type: "presenter", answers: this.answers })
+		this.updatePresenters({
+			msgId: msg.id,
+			data: { type: "presenter", answers: this.answers },
+		})
 	}
 }

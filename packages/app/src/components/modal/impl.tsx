@@ -1,5 +1,3 @@
-"use client"
-
 import { useStore } from "@nanostores/react"
 import { CircleXIcon } from "lucide-react"
 import { atom } from "nanostores"

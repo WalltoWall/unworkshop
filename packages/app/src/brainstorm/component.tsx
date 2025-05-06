@@ -6,6 +6,9 @@ import { Stickies } from "./stickies"
 import { useMultiplayerBrainstorm } from "./use-multiplayer-brainstorm"
 import React from "react"
 import { debounce } from "perfect-debounce"
+import { nanoid } from "nanoid"
+import { Button } from "@/components/Button"
+import { ExpandIcon, PlusIcon } from "lucide-react"
 
 type Props = {
 	steps: ST.Brainstorm["steps"]
@@ -15,25 +18,33 @@ const route = getRouteApi("/kickoff/$code_/$exerciseSlug")
 
 export const BrainstormComponent = (props: Props) => {
 	const search = route.useSearch()
+	const expanded = Stickies.useExpanded()
+	const { answer, actions, connecting } = useMultiplayerBrainstorm()
 
 	const stepData = props.steps.at(search.step - 1)
 	if (!stepData) throw new Error("Something went wrong.")
 
 	const color = Colors.Variant.parse(stepData.color.label?.toLowerCase())
-	const { answer, actions, connecting } = useMultiplayerBrainstorm()
 
 	const answers = answer[search.step] ?? []
 	const [optimisticAnswers, setOptimisticAnswers] = React.useOptimistic(answers)
 
-	const onNoteSubmit = (value: string) => {
-		actions.submission({ step: search.step, value })
+	const addNewNote = () => {
+		React.startTransition(async () => {
+			setOptimisticAnswers((p) => [...p, { id: nanoid(6), value: "" }])
+			await actions.add({ step: search.step })
+		})
 	}
 
 	const editAction = debounce(actions.edit, 150)
 
-	const onNoteChange = (value: string, idx: number) => {
+	const onNoteChange = (value: string, stickyId: string) => {
 		React.startTransition(async () => {
-			setOptimisticAnswers((p) => p.toSpliced(idx, 1, value))
+			const idx = optimisticAnswers.findIndex((s) => s.id === stickyId)
+			const sticky = optimisticAnswers.at(idx)
+			if (idx === -1 || !sticky) return
+
+			setOptimisticAnswers((p) => p.toSpliced(idx, 1, { id: sticky.id, value }))
 			await editAction({ step: search.step, value, idx })
 		})
 	}
@@ -42,8 +53,12 @@ export const BrainstormComponent = (props: Props) => {
 		if (connecting) return
 		if (answers.length !== 0) return
 
-		actions.submission({ step: search.step, value: "" })
-	}, [connecting, answers.length, actions.submission, search.step])
+		actions.add({ step: search.step })
+	}, [connecting, answers.length, actions.add, search.step])
+
+	const visibleAnswers = expanded
+		? optimisticAnswers.toReversed()
+		: optimisticAnswers.toReversed().slice(0, 7)
 
 	return (
 		<div className="py-3 flex flex-col gap-y-3 grow">
@@ -54,22 +69,41 @@ export const BrainstormComponent = (props: Props) => {
 				</p>
 			</div>
 
-			<Stickies.Stack className="mt-auto mb-7.5">
-				{optimisticAnswers
-					.toReversed()
-					.slice(0, 4)
-					.map((value, idx) => (
+			<div className="relative mt-auto mb-7.5">
+				<Stickies.Stack>
+					{visibleAnswers.map((s, idx) => (
 						<Stickies.Note
 							color={color}
-							key={idx}
-							value={value}
+							key={s.id}
+							value={s.value}
 							idx={idx}
-							onNoteSubmit={onNoteSubmit}
-							onNoteChange={(value) => onNoteChange(value, idx)}
+							onNoteChange={(v) => onNoteChange(v, s.id)}
 							placeholder={stepData.placeholder}
 						/>
 					))}
-			</Stickies.Stack>
+				</Stickies.Stack>
+
+				<div className="absolute bottom-3 right-3 flex gap-2">
+					<Button
+						className="rounded-full text-white"
+						size="icon"
+						onClick={Stickies.expand}
+					>
+						<span className="sr-only">See all stickies</span>
+						<ExpandIcon className="size-4" />
+					</Button>
+
+					<Button
+						className="rounded-full text-white"
+						size="icon"
+						onClick={addNewNote}
+						disabled={optimisticAnswers.at(-1)?.value.length === 0}
+					>
+						<span className="sr-only">Submit sticky</span>
+						<PlusIcon className="size-4" />
+					</Button>
+				</div>
+			</div>
 		</div>
 	)
 }

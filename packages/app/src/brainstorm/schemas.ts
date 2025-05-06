@@ -1,7 +1,13 @@
 import { z } from "zod"
 
 export namespace BrainstormS {
-	export const Answer = z.record(z.string(), z.array(z.string()))
+	export const Sticky = z.object({
+		id: z.string(),
+		value: z.string(),
+	})
+	export type Sticky = z.infer<typeof Sticky>
+
+	export const Answer = z.record(z.string(), z.array(Sticky))
 	export type Answer = z.infer<typeof Answer>
 
 	export const AllAnswers = z.record(z.string(), Answer)
@@ -18,11 +24,10 @@ export namespace BrainstormS {
 			answer: Answer,
 		}),
 		z.interface({
-			type: z.literal("submission"),
+			type: z.literal("add"),
 			payload: z.object({
 				id: z.string(),
 				step: z.int(),
-				value: z.string(),
 			}),
 		}),
 		z.interface({

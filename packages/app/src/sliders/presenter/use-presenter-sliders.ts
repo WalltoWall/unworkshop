@@ -16,7 +16,7 @@ export function usePresenterSliders() {
 		host: window.location.host,
 		party: "sliders",
 		room,
-		id: nanoid(8),
+		id: nanoid(6),
 		query: { id: PRESENTER_ID },
 		onMessage: (e) => {
 			const data = JSON.parse(e.data)

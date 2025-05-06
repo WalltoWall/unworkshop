@@ -3,30 +3,46 @@ import {
 	Server as PartyServer,
 	type Connection,
 	type ConnectionContext,
+	type WSMessage,
 } from "partyserver"
+import { z } from "zod"
 
 type UnworkshopMsg<T> = { data: T; id: string }
 
 export class UnworkshopPartyServer<T> extends PartyServer {
-	sendMessage(message: T, conn: Connection) {
-		conn.send(JSON.stringify(message))
+	schema: z.ZodObject<{ data: z.ZodType<T>; id: z.ZodString }> | null = null
+
+	sendMessage(args: { msgId: string; data: T; conn: Connection }) {
+		const msg: UnworkshopMsg<T> = { data: args.data, id: args.msgId }
+
+		args.conn.send(JSON.stringify(msg))
 	}
 
-	unwrapUnworkshopMessage(message: UnworkshopMsg<T>): T {
-		return message.data
+	parseUnworkshopMsg(
+		message: WSMessage,
+		schema: z.ZodType<T>,
+	): UnworkshopMsg<T> {
+		this.schema ??= z.object({ data: schema, id: z.string() })
+		const raw = JSON.parse(message.toString())
+
+		return this.schema.parse(raw)
 	}
 
-	updatePresenters(message: T) {
-		this.updateRoom(PRESENTER_ID, message)
+	updatePresenters(args: { msgId: string; data: T }) {
+		this.updateRoom({
+			roomId: PRESENTER_ID,
+			data: args.data,
+			msgId: args.msgId,
+		})
 	}
 
-	updateRoom(id: string, message: T) {
-		for (const conn of this.getConnections(id)) {
-			this.sendMessage(message, conn)
+	updateRoom(args: { roomId: string; msgId: string; data: T }) {
+		for (const conn of this.getConnections(args.roomId)) {
+			this.sendMessage({ msgId: args.msgId, data: args.data, conn })
 		}
 	}
 
-	getGroupId(ctx: ConnectionContext) {
+	getRoomId(ctx: ConnectionContext) {
 		const url = new URL(ctx.request.url)
 		const id = url.searchParams.get("id")
 		if (!id) {
@@ -39,6 +55,6 @@ export class UnworkshopPartyServer<T> extends PartyServer {
 	}
 
 	getConnectionTags(_: Connection, ctx: ConnectionContext): string[] {
-		return [this.getGroupId(ctx)]
+		return [this.getRoomId(ctx)]
 	}
 }

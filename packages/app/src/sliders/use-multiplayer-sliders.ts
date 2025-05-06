@@ -18,7 +18,7 @@ export function useMultiplayerSliders() {
 		host: window.location.host,
 		party: "sliders",
 		room,
-		id: nanoid(8),
+		id: nanoid(6),
 		query: { id },
 		onMessage: (e) => {
 			const data = JSON.parse(e.data)

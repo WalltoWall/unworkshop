@@ -18,13 +18,12 @@ export function useMultiplayerBrainstorm() {
 	})
 
 	const actions = {
-		submission: (args: { step: number; value: string }) => {
+		add: (args: { step: number }) => {
 			return action({
-				type: "submission",
+				type: "add",
 				payload: {
 					id,
 					step: args.step,
-					value: args.value,
 				},
 			})
 		},
