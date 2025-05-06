@@ -106,6 +106,7 @@
 @layer base {
 	html {
 		text-rendering: optimizeLegibility;
+		overflow: hidden;
 	}
 
 	/** Prevent flash of highlighted color on interactable element press. */

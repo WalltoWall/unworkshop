@@ -15,22 +15,18 @@ export namespace BrainstormS {
 
 	// Participant incoming events
 	export const Message = z.discriminatedUnion([
-		z.interface({
-			type: z.literal("init"),
-			answer: Answer,
-		}),
-		z.interface({
+		z.object({
 			type: z.literal("update"),
 			answer: Answer,
 		}),
-		z.interface({
+		z.object({
 			type: z.literal("add"),
 			payload: z.object({
 				id: z.string(),
 				step: z.int(),
 			}),
 		}),
-		z.interface({
+		z.object({
 			type: z.literal("edit"),
 			payload: z.object({
 				id: z.string(),
@@ -39,7 +35,15 @@ export namespace BrainstormS {
 				value: z.string(),
 			}),
 		}),
-		z.interface({
+		z.object({
+			type: z.literal("delete"),
+			payload: z.object({
+				id: z.string(),
+				step: z.int(),
+				idx: z.number(),
+			}),
+		}),
+		z.object({
 			type: z.literal("presenter"),
 			answers: AllAnswers,
 		}),

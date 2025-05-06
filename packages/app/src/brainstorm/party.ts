@@ -18,7 +18,7 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 		if (group === PRESENTER_GROUP_ID) {
 			data = { type: "presenter", answers: this.answers }
 		} else {
-			data = { type: "init", answer: this.answers[group] ?? {} }
+			data = { type: "update", answer: this.answers[group] ?? {} }
 		}
 
 		this.sendMessage({ conn: connection, data, msgId })
@@ -54,6 +54,23 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 				if (!sticky) return
 
 				this.answers[id][step][idx] = { ...sticky, value }
+
+				this.updateGroup({
+					group: id,
+					msgId: msg.id,
+					data: {
+						type: "update",
+						answer: this.answers[id],
+					},
+				})
+			})
+			.with({ type: "delete" }, (data) => {
+				const { id, step, idx } = data.payload
+
+				this.answers[id] ??= {}
+				this.answers[id][step] ??= []
+
+				this.answers[id][step].splice(idx, 1)
 
 				this.updateGroup({
 					group: id,

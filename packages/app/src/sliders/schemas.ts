@@ -20,8 +20,8 @@ export namespace SlidersS {
 	export type AllAnswers = z.infer<typeof AllAnswers>
 
 	export const Message = z.discriminatedUnion([
-		z.interface({ type: z.literal("update"), answer: Answer }),
-		z.interface({
+		z.object({ type: z.literal("update"), answer: Answer }),
+		z.object({
 			type: z.literal("change"),
 			payload: z.object({
 				id: z.string(),
@@ -30,8 +30,7 @@ export namespace SlidersS {
 				value: AnswerValue,
 			}),
 		}),
-
-		z.interface({
+		z.object({
 			type: z.literal("presenter"),
 			answers: AllAnswers,
 		}),

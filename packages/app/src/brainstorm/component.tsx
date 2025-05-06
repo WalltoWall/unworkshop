@@ -29,23 +29,39 @@ export const BrainstormComponent = (props: Props) => {
 	const answers = answer[search.step] ?? []
 	const [optimisticAnswers, setOptimisticAnswers] = React.useOptimistic(answers)
 
-	const addNewNote = () => {
+	function addNewNote() {
 		React.startTransition(async () => {
 			setOptimisticAnswers((p) => [...p, { id: nanoid(6), value: "" }])
 			await actions.add({ step: search.step })
 		})
 	}
 
-	const editAction = debounce(actions.edit, 150)
+	const editNote = debounce(actions.edit, 150)
 
-	const onNoteChange = (value: string, stickyId: string) => {
+	function updateNote(value: string, stickyId: string) {
 		React.startTransition(async () => {
 			const idx = optimisticAnswers.findIndex((s) => s.id === stickyId)
 			const sticky = optimisticAnswers.at(idx)
 			if (idx === -1 || !sticky) return
 
 			setOptimisticAnswers((p) => p.toSpliced(idx, 1, { id: sticky.id, value }))
-			await editAction({ step: search.step, value, idx })
+			await editNote({ step: search.step, value, idx })
+		})
+	}
+
+	function deleteNote(stickyId: string) {
+		React.startTransition(async () => {
+			const idx = optimisticAnswers.findIndex((s) => s.id === stickyId)
+			const sticky = optimisticAnswers.at(idx)
+			if (idx === -1 || !sticky) return
+
+			const confirmed = confirm(
+				`Are you sure you wanted to delete: "${sticky.value}"?`,
+			)
+			if (!confirmed) return
+
+			setOptimisticAnswers((p) => p.toSpliced(idx, 1))
+			await actions.delete({ step: search.step, idx })
 		})
 	}
 
@@ -58,7 +74,7 @@ export const BrainstormComponent = (props: Props) => {
 
 	const visibleAnswers = expanded
 		? optimisticAnswers.toReversed()
-		: optimisticAnswers.toReversed().slice(0, 7)
+		: optimisticAnswers.toReversed().slice(0, 5)
 
 	return (
 		<div className="py-3 flex flex-col gap-y-3 grow">
@@ -77,7 +93,8 @@ export const BrainstormComponent = (props: Props) => {
 							key={s.id}
 							value={s.value}
 							idx={idx}
-							onNoteChange={(v) => onNoteChange(v, s.id)}
+							onNoteChange={(v) => updateNote(v, s.id)}
+							onNoteDelete={() => deleteNote(s.id)}
 							placeholder={stepData.placeholder}
 						/>
 					))}

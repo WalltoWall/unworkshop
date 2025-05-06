@@ -18,6 +18,7 @@ const button = cva(
 				md: "h-10 text-[21px] px-4 gap-2 pb-px",
 				base: "h-11 text-[24px] px-5 gap-2.5 pb-px",
 				icon: "size-8",
+				iconSm: "size-5",
 			},
 			outline: {
 				true: "bg-transparent",

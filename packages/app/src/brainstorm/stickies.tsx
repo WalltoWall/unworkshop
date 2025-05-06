@@ -4,7 +4,10 @@ import { AnimatePresence, motion, type MotionProps } from "motion/react"
 import React from "react"
 import { atom } from "nanostores"
 import { useStore } from "@nanostores/react"
+import { XIcon } from "lucide-react"
+import { Button } from "@/components/Button"
 
+const MotionButton = motion(Button)
 const $expanded = atom(false)
 
 const bgs: Record<Colors.Variant, string> = {
@@ -73,7 +76,9 @@ type NoteProps = {
 	className?: string
 	idx: number
 	onNoteChange?: (value: string) => void
+	onNoteDelete?: () => void
 	value?: string
+	ref?: React.Ref<HTMLLIElement>
 }
 
 const SCALE_FACTOR = 0.04
@@ -99,14 +104,27 @@ const Note = (props: NoteProps) => {
 
 	const transition: MotionProps["transition"] = {
 		type: "spring",
-		bounce: expanded ? 0.05 : 0,
-		duration: expanded ? 0.7 : 1,
+		bounce: expanded ? 0 : 0,
+		duration: expanded ? 0.35 : 0.7,
+	}
+
+	const initial: MotionProps["initial"] = {
+		y: expanded ? 0 : LIFT,
+		opacity: expanded ? 1 : 0.25,
+		scale: expanded ? 1 : 1 + SCALE_FACTOR,
+	}
+	const exit = {
+		scale: scale - SCALE_FACTOR,
+		opacity: 0,
+		transition: expanded
+			? { duration: 0.2, type: "spring", bounce: 0 }
+			: transition,
 	}
 
 	return (
 		<motion.li
 			layout
-			layoutDependency={expanded}
+			ref={props.ref}
 			style={{
 				background: bgs[props.color],
 				color: colors[props.color],
@@ -115,29 +133,40 @@ const Note = (props: NoteProps) => {
 			}}
 			animate={animate}
 			transition={transition}
-			initial={{
-				y: LIFT,
-				opacity: 0.25,
-				scale: 1 + SCALE_FACTOR,
-			}}
-			exit={{ scale: scale - SCALE_FACTOR, opacity: 0 }}
+			initial={initial}
+			exit={exit}
 			className={clsx(
 				"rounded-lg shadow-md font-semibold border",
-				expanded ? "px-4 py-3" : "absolute inset-0 pl-4 pt-3 pb-10 pr-10",
+				expanded
+					? "px-4 py-3 relative snap-start max-w-[30rem] w-full"
+					: "absolute inset-0 pl-4 pt-3 pb-10 pr-10",
 				props.className,
 			)}
 		>
 			{(props.idx === 0 || expanded) && (
 				<motion.textarea
 					layout="position"
-					layoutDependency={expanded}
 					ref={rTextArea}
 					className="resize-none grow outline-none sm:text-lg text-base w-full h-full field-sizing-content"
 					spellCheck={false}
 					placeholder={expanded ? undefined : props.placeholder}
 					value={props.value}
 					onChange={onChange}
+					autoFocus={!expanded}
 				/>
+			)}
+			{expanded && (
+				<MotionButton
+					className="absolute -top-2 -right-2"
+					onClick={props.onNoteDelete}
+					size="iconSm"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 0.35 }}
+				>
+					<span className="sr-only">Submit sticky</span>
+					<XIcon className="size-3.5" />
+				</MotionButton>
 			)}
 		</motion.li>
 	)
@@ -151,7 +180,7 @@ type StackProps = {
 
 const Stack = (props: StackProps) => {
 	const expanded = useExpanded()
-	const rContainer = React.useRef<HTMLDivElement>(null)
+	const rContainer = React.useRef<HTMLOListElement>(null)
 	const rOverlay = React.useRef<HTMLDivElement>(null)
 
 	React.useEffect(() => {
@@ -187,26 +216,18 @@ const Stack = (props: StackProps) => {
 				)}
 			/>
 
-			<motion.div
+			<ol
 				ref={rContainer}
-				layoutRoot={expanded}
 				className={clsx(
-					expanded &&
-						"fixed inset-0 overflow-auto h-svh z-20 overscroll-contain",
+					expanded
+						? "flex flex-col gap-4 p-4 h-svh z-20 overscroll-contain overflow-auto fixed inset-0 snap-y snap-mandatory items-center scroll-pt-4"
+						: "aspect-square relative",
+					props.className,
 				)}
+				aria-live="polite"
 			>
-				<ol
-					className={clsx(
-						expanded
-							? "flex flex-col gap-4 max-w-[32rem] mx-auto justify-center py-8 px-4"
-							: "aspect-square relative",
-						props.className,
-					)}
-					aria-live="polite"
-				>
-					<AnimatePresence>{props.children}</AnimatePresence>
-				</ol>
-			</motion.div>
+				<AnimatePresence mode="popLayout">{props.children}</AnimatePresence>
+			</ol>
 		</>
 	)
 }

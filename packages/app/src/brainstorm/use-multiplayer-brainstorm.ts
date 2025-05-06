@@ -12,7 +12,6 @@ export function useMultiplayerBrainstorm() {
 		type: "participant",
 		onMessage: (msg) => {
 			match(msg)
-				.with({ type: "init" }, (msg) => setAnswer(msg.answer))
 				.with({ type: "update" }, (msg) => setAnswer(msg.answer))
 				.otherwise(noop)
 		},
@@ -23,22 +22,21 @@ export function useMultiplayerBrainstorm() {
 		add: (args: { step: number }) => {
 			return action({
 				type: "add",
-				payload: {
-					id,
-					step: args.step,
-				},
+				payload: { id, step: args.step },
 			})
 		},
 
 		edit: (args: { step: number; value: string; idx: number }) => {
 			return action({
 				type: "edit",
-				payload: {
-					id,
-					step: args.step,
-					idx: args.idx,
-					value: args.value,
-				},
+				payload: { id, ...args },
+			})
+		},
+
+		delete: (args: { step: number; idx: number }) => {
+			return action({
+				type: "delete",
+				payload: { id, ...args },
 			})
 		},
 	}
