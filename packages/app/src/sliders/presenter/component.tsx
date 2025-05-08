@@ -9,7 +9,7 @@ import { getRouteApi } from "@tanstack/react-router"
 import { slugifyPortableText } from "@/lib/slugify-portable-text"
 import { usePresenterSliders } from "./use-presenter-sliders"
 import * as R from "remeda"
-import { Loader } from "./loader"
+import { PresenterLoader } from "@/components/presenter-loader"
 
 type Props = {
 	steps: Sliders["steps"]
@@ -38,7 +38,6 @@ export const SlidersPresenterComponent = (props: Props) => {
 	const answers = R.pipe(
 		presenter.answers,
 		R.values(),
-		// biome-ignore lint/style/noNonNullAssertion: Made safe by filter on next line.
 		R.map((answers) => answers[prompt]!),
 		R.filter((v) => Boolean(v)),
 	)
@@ -63,7 +62,7 @@ export const SlidersPresenterComponent = (props: Props) => {
 			<Key view={search.sliders.view} />
 
 			{presenter.connecting ? (
-				<Loader />
+				<PresenterLoader />
 			) : isDots ? (
 				<DotsView answers={answers} />
 			) : (

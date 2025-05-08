@@ -36,7 +36,6 @@ function RouteComponent() {
 					<ConditionalWrap
 						condition={Boolean(params.code)}
 						wrap={(props) => (
-							// biome-ignore lint/style/noNonNullAssertion: Asserted by `condition`
 							<Link to="/kickoff/$code" params={{ code: params.code! }}>
 								{props.children}
 							</Link>

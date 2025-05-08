@@ -17,6 +17,7 @@ const UserInfo = z.object({
 	picture: z.url(),
 	name: z.string(),
 })
+type UserInfo = z.infer<typeof UserInfo>
 
 const client = createClient({
 	clientID: "unworkshop",
@@ -39,7 +40,7 @@ export async function login(redirectTo: string) {
 	localStorage.setItem(CHALLENGE_KEY, JSON.stringify(result.challenge))
 	localStorage.setItem(REDIRECT_TO_KEY, redirectTo)
 
-	location.replace(result.url)
+	location.href = result.url
 }
 
 export async function handleCallback(code: string) {
@@ -90,9 +91,23 @@ export async function getToken() {
 	return access
 }
 
-export function getUserInfo() {
+type GetInfoArgs = {
+	assert?: boolean
+}
+
+export function getInfo(args: GetInfoArgs & { assert: true }): UserInfo
+export function getInfo(args?: GetInfoArgs): UserInfo | null
+export function getInfo(args: GetInfoArgs = {}): UserInfo | null {
 	const access = localStorage.getItem(ACCESS_TOKEN_KEY)
-	if (!access) throw new Error("Unauthorized.")
+	const { assert = false } = args
+
+	if (assert) {
+		if (!access) throw new Error("Unauthorized.")
+
+		return UserInfo.parse(decodeJwt(access).properties)
+	}
+
+	if (!access) return null
 
 	return UserInfo.parse(decodeJwt(access).properties)
 }

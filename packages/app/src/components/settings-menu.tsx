@@ -1,4 +1,4 @@
-import * as Popover from "@radix-ui/react-popover"
+import { Popover } from "radix-ui"
 import { CogIcon, EyeIcon, EyeOffIcon } from "lucide-react"
 import { cx } from "class-variance-authority"
 import { Colors } from "@/colors"
@@ -25,7 +25,7 @@ const Root = (props: RootProps) => {
 					align="end"
 					alignOffset={30}
 					sideOffset={-4}
-					className="z-50 flex w-48 flex-col gap-4 rounded-2xl bg-black px-5 py-4 text-white"
+					className="z-50 flex w-48 flex-col gap-4 rounded-2xl bg-black p-4 text-white"
 				>
 					{props.children}
 				</Popover.Content>

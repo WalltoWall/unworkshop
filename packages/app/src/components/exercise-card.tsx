@@ -1,9 +1,9 @@
 import { ArrowRightIcon } from "lucide-react"
 import { cx } from "class-variance-authority"
-import { Text } from "@/components/Text"
 import type { CardGradientData } from "@/lib/card-gradients"
 import type { CardIllustrationData } from "@/lib/card-illustrations"
 import { createLink, type LinkComponent } from "@tanstack/react-router"
+import { text } from "@/styles/text"
 
 interface Props extends React.ComponentProps<"a"> {
 	name: string
@@ -22,14 +22,12 @@ const _ExerciseCard = ({ children, ...props }: Props) => {
 			{...props}
 		>
 			<div className="self-end pb-4 pl-3">
-				<Text style="heading" size={24}>
-					{props.name}
-				</Text>
+				<h2 className={text({ style: "heading", size: 24 })}>{props.name}</h2>
 
 				<div className="mt-1 flex items-end gap-1">
-					<Text style="copy" size={16}>
+					<p className={text({ style: "copy", size: 16 })}>
 						{props.label ?? "Start Exercise"}
-					</Text>
+					</p>
 
 					<ArrowRightIcon className="mb-px size-3.5 transition ease-out group-hover/card:translate-x-1" />
 				</div>

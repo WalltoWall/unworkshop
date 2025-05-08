@@ -1,10 +1,10 @@
 import { Api } from "@/sanity/api"
-import { Text } from "@/components/Text"
 import { createFileRoute, linkOptions, notFound } from "@tanstack/react-router"
 import { slugify } from "@/lib/slugify"
 import { CardGradientSequence } from "@/lib/card-gradients"
 import { ExerciseCard } from "@/components/exercise-card"
 import { illustrations } from "@/lib/card-illustrations"
+import { text } from "@/styles/text"
 
 export const Route = createFileRoute("/kickoff/$code")({
 	component: RouteComponent,
@@ -26,9 +26,7 @@ function RouteComponent() {
 
 	return (
 		<div className="space-y-6">
-			<Text style="heading" size={40}>
-				Exercises
-			</Text>
+			<p className={text({ style: "heading", size: 40 })}>Exercises</p>
 
 			<ul className="grid gap-4">
 				{data.kickoff.exercises.map((e) => {

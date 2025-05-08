@@ -9,6 +9,7 @@ import { debounce } from "perfect-debounce"
 import { nanoid } from "nanoid"
 import { Button } from "@/components/Button"
 import { ExpandIcon, PlusIcon } from "lucide-react"
+import { useTinykeys } from "@/lib/use-tinykeys"
 
 type Props = {
 	steps: ST.Brainstorm["steps"]
@@ -29,7 +30,13 @@ export const BrainstormComponent = (props: Props) => {
 	const answers = answer[search.step] ?? []
 	const [optimisticAnswers, setOptimisticAnswers] = React.useOptimistic(answers)
 
+	useTinykeys({ "$mod+Enter": addNewNote })
+
+	const submissionDisabled = optimisticAnswers.at(-1)?.value.length === 0
+
 	function addNewNote() {
+		if (submissionDisabled) return
+
 		React.startTransition(async () => {
 			setOptimisticAnswers((p) => [...p, { id: nanoid(6), value: "" }])
 			await actions.add({ step: search.step })
@@ -114,7 +121,7 @@ export const BrainstormComponent = (props: Props) => {
 						className="rounded-full text-white"
 						size="icon"
 						onClick={addNewNote}
-						disabled={optimisticAnswers.at(-1)?.value.length === 0}
+						disabled={submissionDisabled}
 					>
 						<span className="sr-only">Submit sticky</span>
 						<PlusIcon className="size-4" />

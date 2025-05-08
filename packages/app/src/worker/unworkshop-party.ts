@@ -42,6 +42,12 @@ export class UnworkshopPartyServer<T> extends PartyServer {
 		}
 	}
 
+	getName(ctx: ConnectionContext) {
+		const url = new URL(ctx.request.url)
+
+		return url.searchParams.get("name")
+	}
+
 	getGroup(ctx: ConnectionContext) {
 		const url = new URL(ctx.request.url)
 		const group = url.searchParams.get("group")

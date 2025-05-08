@@ -12,6 +12,8 @@ import {
 	notFound,
 	Outlet,
 	useMatches,
+	useParams,
+	useSearch,
 } from "@tanstack/react-router"
 
 export const Route = createFileRoute("/_authenticated/presenter_/$code")({
@@ -33,11 +35,20 @@ export const Route = createFileRoute("/_authenticated/presenter_/$code")({
 function RouteComponent() {
 	const { kickoff } = Route.useLoaderData()
 	const params = Route.useParams()
+	const exerciseSlug = useParams({
+		select: (s) => s.exerciseSlug,
+		strict: false,
+	})
+	const step = useSearch({ strict: false, select: (s) => s.step }) ?? 1
 	const matches = useMatches()
 	const gradientSequence = new CardGradientSequence()
 
 	const isPresenterCodeLanding =
 		matches.at(-1)?.routeId === "/_authenticated/presenter_/$code"
+
+	const exercise = kickoff.exercises.find(
+		(e) => slugify(e.name) === exerciseSlug,
+	)
 
 	return (
 		<div className="flex h-svh flex-col">
@@ -50,7 +61,7 @@ function RouteComponent() {
 					<Logo className="size-13 text-white" />
 
 					<h1 className={text({ size: 48, style: "heading" })}>
-						{kickoff.title}
+						{exercise ? `${exercise.name} (Step ${step})` : kickoff.title}
 					</h1>
 				</Link>
 

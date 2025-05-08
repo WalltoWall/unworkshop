@@ -25,13 +25,19 @@ export function isRegistered() {
 	return Boolean($participant.get())
 }
 
-export function useInfo() {
-	return useStore($participant)
+type UseInfoArgs = {
+	assert?: boolean
 }
 
-export function useInfoOrThrow() {
-	const participant = useInfo()
-	if (!participant) throw new Error("No participant found, but is required.")
+export function useInfo(args: UseInfoArgs & { assert: true }): Info
+export function useInfo(args?: UseInfoArgs): Info | null
+export function useInfo(args: UseInfoArgs = {}): Info | null {
+	const participant = useStore($participant)
+	const { assert = false } = args
+
+	if (assert && !participant) {
+		throw new Error("No participant found, but is required.")
+	}
 
 	return participant
 }

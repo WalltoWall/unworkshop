@@ -1,3 +1,4 @@
+import { Auth } from "@/auth"
 import { PRESENTER_GROUP_ID } from "@/constants"
 import { Participant } from "@/participant"
 import { useParams } from "@tanstack/react-router"
@@ -20,14 +21,19 @@ type Args<T> = {
 
 export function useUnworkshopSocket<T>(args: Args<T>) {
 	const [cache] = React.useState(() => new Map<string, CachedResolver>())
-	const participant = Participant.useInfoOrThrow()
+	const participant = Participant.useInfo({
+		assert: args.type === "participant",
+	})
 	const params = useParams({ strict: false })
+	const user = Auth.getInfo()
 
 	const group = match(args.type)
 		.with("presenter", () => PRESENTER_GROUP_ID)
-		.with("participant", () => params.groupSlug ?? participant.id)
+		.with("participant", () => params.groupSlug ?? participant!.id)
 		.exhaustive()
 	const room = `${params.code}::${params.exerciseSlug}`
+	const connectionId = nanoid(6)
+	const name = participant?.name || user?.name || connectionId
 
 	const UnworkshopMsg = z.object({ data: args.schema, id: z.string() })
 
@@ -35,8 +41,8 @@ export function useUnworkshopSocket<T>(args: Args<T>) {
 		host: window.location.host,
 		party: args.party,
 		room,
-		id: nanoid(6),
-		query: { group },
+		id: connectionId,
+		query: { group, name },
 		onMessage: (e) => {
 			const raw = JSON.parse(e.data)
 			const msg = UnworkshopMsg.parse(raw)

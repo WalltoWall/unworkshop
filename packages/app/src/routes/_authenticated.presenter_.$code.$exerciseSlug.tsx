@@ -1,6 +1,7 @@
 import { Colors } from "@/colors"
 import { Api } from "@/sanity/api"
 import { SlidersPresenterComponent } from "@/sliders/presenter/component"
+import { BrainstormPresenterComponent } from "@/brainstorm/presenter/component"
 import { SlidersSettings } from "@/sliders/presenter/use-sliders-settings"
 import {
 	createFileRoute,
@@ -9,11 +10,13 @@ import {
 } from "@tanstack/react-router"
 import { match } from "ts-pattern"
 import { z } from "zod"
+import { BranstormSettings } from "@/brainstorm/presenter/use-brainstorm-settings"
 
 const defaultSearch = {
 	step: 1,
 	color: Colors.fallback,
 	sliders: SlidersSettings.fallback,
+	brainstorm: BranstormSettings.fallback,
 }
 
 export const Route = createFileRoute(
@@ -34,6 +37,7 @@ export const Route = createFileRoute(
 		step: z.number().min(1).default(defaultSearch.step),
 		color: Colors.Variant.default(defaultSearch.color),
 		sliders: SlidersSettings.Schema.default(defaultSearch.sliders),
+		brainstorm: BranstormSettings.Schema.default(defaultSearch.brainstorm),
 	}),
 	search: {
 		middlewares: [
@@ -41,6 +45,7 @@ export const Route = createFileRoute(
 				step: defaultSearch.step,
 				color: defaultSearch.color,
 				sliders: defaultSearch.sliders,
+				brainstorm: defaultSearch.brainstorm,
 			}),
 		],
 	},
@@ -52,6 +57,9 @@ function RouteComponent() {
 	return match(exercise)
 		.with({ type: "sliders" }, (e) => (
 			<SlidersPresenterComponent steps={e.steps} />
+		))
+		.with({ type: "brainstorm" }, (e) => (
+			<BrainstormPresenterComponent steps={e.steps} />
 		))
 		.exhaustive()
 }

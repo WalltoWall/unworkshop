@@ -3,7 +3,7 @@ import React from "react"
 import { getRouteApi, Link, useParams, useSearch } from "@tanstack/react-router"
 import { cx } from "class-variance-authority"
 import * as R from "remeda"
-import { match } from "ts-pattern"
+import { match, P } from "ts-pattern"
 import { slugify } from "@/lib/slugify"
 import { useDialog } from "@/lib/use-dialog"
 import { text } from "@/styles/text"
@@ -163,7 +163,7 @@ export const NavSheet = (props: Props) => {
 								</Link>
 
 								{match(e)
-									.with({ type: "sliders" }, (e) => (
+									.with({ type: P.union("brainstorm", "sliders") }, (e) => (
 										<ul className="flex flex-col gap-1 pl-6">
 											{R.range(0, e.steps).map((idx) => (
 												<StepLink

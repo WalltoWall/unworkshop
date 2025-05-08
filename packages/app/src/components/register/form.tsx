@@ -1,10 +1,10 @@
 import registerIllustration from "@/assets/images/register-illustration.jpg"
 import { Logo } from "@/components/Logo"
-import { Text } from "@/components/Text"
 import { Participant } from "@/participant"
 import z from "zod"
 import { RegisterInput } from "./input"
 import { getRouteApi } from "@tanstack/react-router"
+import { text } from "@/styles/text"
 
 const route = getRouteApi("/kickoff/$code")
 
@@ -19,26 +19,50 @@ export const RegisterForm = () => {
 	return (
 		<form className="flex grow flex-col justify-between gap-8" action={action}>
 			<div>
-				<Text style="heading" size={64} className="!normal-case">
+				<h1
+					className={text({
+						style: "heading",
+						size: 64,
+						class: "!normal-case",
+					})}
+				>
 					{data.kickoff.greeting}
-				</Text>
+				</h1>
 
 				<div className="flex w-full flex-wrap items-center">
-					<Text size={64} style="heading" className="!normal-case">
+					<div
+						className={text({
+							size: 64,
+							style: "heading",
+							class: "!normal-case",
+						})}
+					>
 						Let's
-					</Text>
+					</div>
 
 					<div className="ml-3 flex items-center">
 						<Logo className="-mr-1.5 w-[53px] rotate-6" />
-						<Text size={64} style="heading" className="!normal-case">
+						<div
+							className={text({
+								size: 64,
+								style: "heading",
+								class: "!normal-case",
+							})}
+						>
 							ravel
-						</Text>
+						</div>
 					</div>
 				</div>
 
-				<Text size={64} style="heading" className="!normal-case">
+				<div
+					className={text({
+						size: 64,
+						style: "heading",
+						class: "!normal-case",
+					})}
+				>
 					your brand.
-				</Text>
+				</div>
 
 				<img
 					src={registerIllustration}
@@ -49,15 +73,27 @@ export const RegisterForm = () => {
 			</div>
 
 			<div className="flex flex-col items-center gap-3 text-center">
-				<Text style="heading" size={24} asChild className="text-green-40">
-					<h2>Let's get started</h2>
-				</Text>
+				<h2
+					className={text({
+						class: "text-brand",
+						size: 24,
+						style: "heading",
+					})}
+				>
+					Let's get started
+				</h2>
 
 				<RegisterInput />
 
-				<Text style="copy" size={12} className="text-gray-500">
+				<p
+					className={text({
+						class: "text-neutral-500",
+						size: 12,
+						style: "copy",
+					})}
+				>
 					Don't worry, your answers will be anonymous.
-				</Text>
+				</p>
 			</div>
 		</form>
 	)

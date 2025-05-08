@@ -5,23 +5,39 @@ import type { Connection, ConnectionContext, WSMessage } from "partyserver"
 import { BrainstormS } from "./schemas"
 import { noop } from "../lib/noop"
 import { nanoid } from "nanoid"
+import { DEFAULT_PRESENTER_STATE } from "./constants"
 
 export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
+	state: BrainstormS.PresenterState = DEFAULT_PRESENTER_STATE
 	answers: BrainstormS.AllAnswers = {}
 
-	onConnect(connection: Connection, ctx: ConnectionContext): void {
+	onConnect(conn: Connection, ctx: ConnectionContext): void {
 		const group = this.getGroup(ctx)
 		const msgId = nanoid(6)
 
 		let data: BrainstormS.Message
 
 		if (group === PRESENTER_GROUP_ID) {
-			data = { type: "presenter", answers: this.answers }
+			data = {
+				type: "presenter-all",
+				answers: this.answers,
+				state: this.state,
+			}
+			this.state.sorters[conn.id] = { name: this.getName(ctx) || conn.id }
 		} else {
 			data = { type: "update", answer: this.answers[group] ?? {} }
 		}
 
-		this.sendMessage({ conn: connection, data, msgId })
+		this.sendMessage({ conn, data, msgId })
+	}
+
+	onClose(conn: Connection) {
+		delete this.state.sorters[conn.id]
+
+		this.updatePresenters({
+			data: { type: "update-presenter-state", state: this.state },
+			msgId: nanoid(6),
+		})
 	}
 
 	onMessage(_: Connection, message: WSMessage): void {
@@ -43,6 +59,10 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 						answer: this.answers[id],
 					},
 				})
+				this.updatePresenters({
+					msgId: msg.id,
+					data: { type: "update-presenter-answers", answers: this.answers },
+				})
 			})
 			.with({ type: "edit" }, (data) => {
 				const { id, step, idx, value } = data.payload
@@ -63,6 +83,10 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 						answer: this.answers[id],
 					},
 				})
+				this.updatePresenters({
+					msgId: msg.id,
+					data: { type: "update-presenter-answers", answers: this.answers },
+				})
 			})
 			.with({ type: "delete" }, (data) => {
 				const { id, step, idx } = data.payload
@@ -80,12 +104,27 @@ export class Brainstorm extends UnworkshopPartyServer<BrainstormS.Message> {
 						answer: this.answers[id],
 					},
 				})
+				this.updatePresenters({
+					msgId: msg.id,
+					data: { type: "update-presenter-answers", answers: this.answers },
+				})
+			})
+			.with({ type: "add-unsorted-column" }, () => {
+				this.state.unsortedColumns++
+
+				this.updatePresenters({
+					msgId: msg.id,
+					data: { type: "update-presenter-state", state: this.state },
+				})
+			})
+			.with({ type: "delete-unsorted-column" }, () => {
+				this.state.unsortedColumns--
+
+				this.updatePresenters({
+					msgId: msg.id,
+					data: { type: "update-presenter-state", state: this.state },
+				})
 			})
 			.otherwise(noop)
-
-		this.updatePresenters({
-			msgId: msg.id,
-			data: { type: "presenter", answers: this.answers },
-		})
 	}
 }
