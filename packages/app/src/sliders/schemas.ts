@@ -10,7 +10,7 @@ export namespace SlidersS {
 	export const Answer = z.record(
 		z.string(),
 		z.object({
-			today: AnswerValue.default(1),
+			today: AnswerValue.default(4),
 			tomorrow: AnswerValue.optional(),
 		}),
 	)
@@ -18,22 +18,4 @@ export namespace SlidersS {
 
 	export const AllAnswers = z.record(z.string(), Answer)
 	export type AllAnswers = z.infer<typeof AllAnswers>
-
-	export const Message = z.discriminatedUnion([
-		z.object({ type: z.literal("update"), answer: Answer }),
-		z.object({
-			type: z.literal("change"),
-			payload: z.object({
-				id: z.string(),
-				prompt: z.string(),
-				type: AnswerType,
-				value: AnswerValue,
-			}),
-		}),
-		z.object({
-			type: z.literal("presenter"),
-			answers: AllAnswers,
-		}),
-	])
-	export type Message = z.infer<typeof Message>
 }

@@ -21,7 +21,7 @@ export const Exercise = (props: Props) => {
 					.with({ type: "brainstorm" }, (e) => (
 						<BrainstormComponent steps={e.steps} />
 					))
-					.exhaustive()}
+					.otherwise(() => null)}
 			</div>
 
 			<Steps steps={numSteps} />

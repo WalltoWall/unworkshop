@@ -1,81 +1,52 @@
-import { Auth } from "@/auth"
+import useYProvider from "y-partyserver/react"
 import { PRESENTER_GROUP_ID } from "@/constants"
 import { Participant } from "@/participant"
 import { useParams } from "@tanstack/react-router"
-import { nanoid } from "nanoid"
-import usePartySocket from "partysocket/react"
 import React from "react"
 import { match } from "ts-pattern"
-import { z } from "zod"
+import { getYjsDoc, syncedStore } from "@syncedstore/core"
+import { useSyncedStore } from "@syncedstore/react"
 
-const DEFAULT_TIMEOUT = 10000
-
-type CachedResolver = PromiseWithResolvers<unknown>
-type Args<T> = {
-	timeout?: number
-	onMessage: (msg: T) => void
-	schema: z.ZodType<T>
-	party: "sliders" | "brainstorm"
-	type: "presenter" | "participant"
+type DocTypeDescription = {
+	[key: string]: "xml" | "text" | Array<any> | object
 }
 
-export function useUnworkshopSocket<T>(args: Args<T>) {
-	const [cache] = React.useState(() => new Map<string, CachedResolver>())
+type Args = {
+	type: "participant" | "presenter"
+	party: "brainstorm" | "sliders" | "brainstorm-presenter"
+}
+
+export function useUnworkshopSocket<T extends DocTypeDescription>(args: Args) {
+	const [connecting, setConnecting] = React.useState(true)
+	const params = useParams({ strict: false })
 	const participant = Participant.useInfo({
 		assert: args.type === "participant",
 	})
-	const params = useParams({ strict: false })
-	const user = Auth.getInfo()
+	const room = `${params.code}::${params.exerciseSlug}`
+
+	const store = syncedStore({ answers: {} as T })
+	const doc = getYjsDoc(store)
+
+	const state = useSyncedStore(store)
+
+	const provider = useYProvider({
+		host: window.location.host,
+		party: args.party,
+		doc,
+		room,
+	})
 
 	const group = match(args.type)
 		.with("presenter", () => PRESENTER_GROUP_ID)
 		.with("participant", () => params.groupSlug ?? participant!.id)
 		.exhaustive()
-	const room = `${params.code}::${params.exerciseSlug}`
-	const connectionId = nanoid(6)
-	const name = participant?.name || user?.name || connectionId
 
-	const UnworkshopMsg = z.object({ data: args.schema, id: z.string() })
+	React.useEffect(() => {
+		const onSync = (isSynced: boolean) => setConnecting(!isSynced)
+		provider.on("sync", onSync)
 
-	const socket = usePartySocket({
-		host: window.location.host,
-		party: args.party,
-		room,
-		id: connectionId,
-		query: { group, name },
-		onMessage: (e) => {
-			const raw = JSON.parse(e.data)
-			const msg = UnworkshopMsg.parse(raw)
+		return () => provider.off("sync", onSync)
+	}, [])
 
-			const resolver = cache.get(msg.id)
-			resolver?.resolve(null)
-
-			args.onMessage(msg.data)
-		},
-	})
-
-	const action = (data: T) => {
-		const msg = { data, id: nanoid(6) }
-
-		const resolver = Promise.withResolvers()
-		cache.set(msg.id, resolver)
-
-		setTimeout(() => {
-			cache.delete(msg.id)
-			resolver.reject(new Error("Socket message timed out."))
-		}, args.timeout ?? DEFAULT_TIMEOUT)
-
-		socket.send(JSON.stringify(msg))
-
-		return resolver.promise
-	}
-
-	return {
-		socket,
-		action,
-		connecting: socket.readyState !== socket.OPEN,
-		id: group,
-		room,
-		participant,
-	}
+	return { connecting, group, state }
 }

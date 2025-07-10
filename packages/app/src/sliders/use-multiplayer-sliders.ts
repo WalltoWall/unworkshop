@@ -1,22 +1,13 @@
-import React from "react"
-import { SlidersS } from "./schemas"
-import { match } from "ts-pattern"
+import { DEFAULT_ANSWER } from "./constants"
+import type { SlidersS } from "./schemas"
 import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
-import { noop } from "@/lib/noop"
 
 export function useMultiplayerSliders() {
-	const [answer, setAnswer] = React.useState<SlidersS.Answer>({})
+	const { connecting, group, state } = useUnworkshopSocket<SlidersS.AllAnswers>(
+		{ party: "sliders", type: "participant" },
+	)
 
-	const { connecting, action, id } = useUnworkshopSocket({
-		party: "sliders",
-		type: "participant",
-		onMessage: (msg) => {
-			match(msg)
-				.with({ type: "update" }, (msg) => setAnswer(msg.answer))
-				.otherwise(noop)
-		},
-		schema: SlidersS.Message,
-	})
+	const answer = state.answers[group]
 
 	const actions = {
 		change: (args: {
@@ -24,7 +15,16 @@ export function useMultiplayerSliders() {
 			prompt: string
 			value: number
 		}) => {
-			return action({ type: "change", payload: { id, ...args } })
+			state.answers[group] ??= {}
+
+			state.answers[group][args.prompt] ??= DEFAULT_ANSWER
+			const promptAnswer = state.answers[group][args.prompt]!
+
+			if (args.type === "today") {
+				promptAnswer.today = args.value
+			} else {
+				promptAnswer.tomorrow = args.value
+			}
 		},
 	}
 

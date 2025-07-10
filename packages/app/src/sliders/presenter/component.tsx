@@ -38,7 +38,7 @@ export const SlidersPresenterComponent = (props: Props) => {
 	const answers = R.pipe(
 		presenter.answers,
 		R.values(),
-		R.map((answers) => answers[prompt]!),
+		R.map((answers) => answers?.[prompt]!),
 		R.filter((v) => Boolean(v)),
 	)
 

@@ -1,66 +1,51 @@
-import { PRESENTER_GROUP_ID } from "@/constants"
-import {
-	Server as PartyServer,
-	type Connection,
-	type ConnectionContext,
-	type WSMessage,
-} from "partyserver"
-import { z } from "zod"
+import type { Connection } from "partyserver"
+import { YServer } from "y-partyserver"
+import * as Y from "yjs"
 
-type UnworkshopMsg<T> = { data: T; id: string }
-
-export class UnworkshopPartyServer<T> extends PartyServer {
-	schema: z.ZodObject<{ data: z.ZodType<T>; id: z.ZodString }> | null = null
-
-	sendMessage(args: { msgId: string; data: T; conn: Connection }) {
-		const msg: UnworkshopMsg<T> = { data: args.data, id: args.msgId }
-
-		args.conn.send(JSON.stringify(msg))
+export class UnworkshopPartyServer extends YServer<Env> {
+	static callbackOptions = {
+		debounceWait: 2000,
+		debounceMaxWait: 10000,
+		timeout: 5000,
 	}
 
-	parseUnworkshopMsg(
-		message: WSMessage,
-		schema: z.ZodType<T>,
-	): UnworkshopMsg<T> {
-		this.schema ??= z.object({ data: schema, id: z.string() })
-		const raw = JSON.parse(message.toString())
-
-		return this.schema.parse(raw)
+	onError(connection: Connection, error: unknown): void | Promise<void> {
+		console.error(`Connection: ${connection.id} errored:`, error)
 	}
 
-	updatePresenters(args: { msgId: string; data: T }) {
-		this.updateGroup({
-			group: PRESENTER_GROUP_ID,
-			data: args.data,
-			msgId: args.msgId,
-		})
+	async onStart() {
+		this.ctx.storage.sql.exec(
+			"CREATE TABLE IF NOT EXISTS documents (id TEXT PRIMARY KEY, content BLOB)",
+		)
+
+		return super.onStart()
 	}
 
-	updateGroup(args: { group: string; msgId: string; data: T }) {
-		for (const conn of this.getConnections(args.group)) {
-			this.sendMessage({ msgId: args.msgId, data: args.data, conn })
-		}
+	// load a document from a database, or some remote resource
+	// and apply it on to the Yjs document instance at `this.document`
+	async onLoad() {
+		const doc = [
+			...this.ctx.storage.sql.exec(
+				"SELECT * FROM documents WHERE id = ? LIMIT 1",
+				this.name,
+			),
+		][0]
+		if (!doc) return
+
+		const update = new Uint8Array(doc.content as ArrayBuffer)
+
+		Y.applyUpdate(this.document, update)
 	}
 
-	getName(ctx: ConnectionContext) {
-		const url = new URL(ctx.request.url)
+	// called every few seconds after edits, and when the room empties
+	// you can use this to write to a database or some external storage
+	async onSave() {
+		const update = Y.encodeStateAsUpdate(this.document)
 
-		return url.searchParams.get("name")
-	}
-
-	getGroup(ctx: ConnectionContext) {
-		const url = new URL(ctx.request.url)
-		const group = url.searchParams.get("group")
-		if (!group) {
-			throw new Error(
-				"Invalid request. All connections must supply `group` via query paramaters.",
-			)
-		}
-
-		return group
-	}
-
-	getConnectionTags(_: Connection, ctx: ConnectionContext): string[] {
-		return [this.getGroup(ctx)]
+		this.ctx.storage.sql.exec(
+			"INSERT OR REPLACE INTO documents (id, content) VALUES (?, ?)",
+			this.name,
+			update,
+		)
 	}
 }

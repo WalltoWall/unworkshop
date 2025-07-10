@@ -31,7 +31,7 @@ export const Route = createFileRoute(
 	},
 
 	head: ({ loaderData }) => ({
-		meta: [{ title: `${loaderData.exercise.name} | UnWorkshop` }],
+		meta: [{ title: `${loaderData?.exercise.name} | UnWorkshop` }],
 	}),
 	validateSearch: z.object({
 		step: z.number().min(1).default(defaultSearch.step),

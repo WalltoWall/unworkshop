@@ -1,45 +1,43 @@
-import { BrainstormS } from "./schemas"
-import { match } from "ts-pattern"
-import { noop } from "motion/react"
+import { nanoid } from "nanoid"
 import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
-import React from "react"
+import type { BrainstormS } from "./schemas"
 
 export function useMultiplayerBrainstorm() {
-	const [answer, setAnswer] = React.useState<BrainstormS.Answer>({})
+	const { connecting, group, state } =
+		useUnworkshopSocket<BrainstormS.AllAnswers>({
+			party: "brainstorm",
+			type: "participant",
+		})
 
-	const { connecting, action, id } = useUnworkshopSocket({
-		party: "brainstorm",
-		type: "participant",
-		onMessage: (msg) => {
-			match(msg)
-				.with({ type: "update" }, (msg) => setAnswer(msg.answer))
-				.otherwise(noop)
-		},
-		schema: BrainstormS.Message,
-	})
+	function safeGetAnswer() {
+		state.answers[group] ??= {}
+
+		return state.answers[group]
+	}
 
 	const actions = {
 		add: (args: { step: number }) => {
-			return action({
-				type: "add",
-				payload: { id, step: args.step },
-			})
-		},
+			const answer = safeGetAnswer()
 
-		edit: (args: { step: number; value: string; idx: number }) => {
-			return action({
-				type: "edit",
-				payload: { id, ...args },
-			})
+			answer[args.step] ??= []
+			answer[args.step]?.push({ id: nanoid(6), value: "" })
 		},
+		edit: (args: { step: number; value: string; id: string }) => {
+			const answer = safeGetAnswer()
 
-		delete: (args: { step: number; idx: number }) => {
-			return action({
-				type: "delete",
-				payload: { id, ...args },
-			})
+			const sticky = answer[args.step]?.find((s) => s.id === args.id)
+			if (!sticky) return
+
+			sticky.value = args.value
+		},
+		delete: (args: { id: string; step: number }) => {
+			const answer = safeGetAnswer()
+			const idx = answer[args.step]?.findIndex((s) => s.id === args.id) ?? -1
+			if (idx === -1) return
+
+			answer[args.step]?.splice(idx, 1)
 		},
 	}
 
-	return { answer, actions, connecting }
+	return { answer: state.answers[group], actions, connecting, state }
 }
