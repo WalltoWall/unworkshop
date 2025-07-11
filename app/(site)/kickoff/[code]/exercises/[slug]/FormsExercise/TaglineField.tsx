@@ -1,32 +1,40 @@
 import React from "react"
 import clsx from "clsx"
+import { clone } from "remeda"
 import { AddButton } from "./AddButton"
 import { HighlightedResponses } from "./HighlightedResponses"
 import { Prompt } from "./Prompt"
-import { Textarea, textareaStyles } from "./Textarea"
+import { Textarea, textareaStyles, type TextareaSize } from "./Textarea"
 import type { FieldProps, FormFieldAnswer } from "./types"
 import { getBadWords, getTaglineVariant, sanitizeString } from "./utils"
 
 const INPUT_NAME = "answer"
+const DEFAULT_RESPONSE_COUNT = 2
 
 interface HighlighterTextareaProps
 	extends Omit<React.ComponentPropsWithoutRef<"textarea">, "value"> {
 	value: string
 	badWords: Set<string>
 	invalidClassName?: string
+	textareaSize?: TextareaSize
 }
 
 const HighlighterTextarea = ({
 	className,
 	badWords,
 	invalidClassName = "text-red-63",
+	textareaSize,
 	...props
 }: HighlighterTextareaProps) => {
 	const words = props.value.split(" ")
 
 	return (
 		<div className={clsx(className, "relative flex rounded-lg")}>
-			<Textarea className="text-black/0 caret-black" {...props} />
+			<Textarea
+				className="text-black/0 caret-black"
+				size={textareaSize}
+				{...props}
+			/>
 
 			<div
 				className={clsx(
@@ -72,12 +80,23 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 	const answerOne = answer?.responses.at(0) ?? ""
 	const answerTwo = answer?.responses.at(1)
 
-	const handleChange = (answerOne: string, answerTwo?: string) => {
-		const answers = [answerOne]
-		if (typeof answerTwo === "string") answers.push(answerTwo)
+	const handleChange = (value: string, idx: number) => {
+		const cloned = clone(answer?.responses ?? [])
+		cloned[idx] = value
 
 		actions.submitFieldAnswer({
-			answer: { type: "Tagline", responses: answers },
+			answer: { type: "Tagline", responses: cloned },
+			fieldIdx: props.fieldIdx,
+			stepIdx: props.stepIdx,
+		})
+	}
+
+	const addAdditionalResponse = () => {
+		const cloned = clone(answer?.responses ?? [])
+		cloned.push("")
+
+		actions.submitFieldAnswer({
+			answer: { type: "Tagline", responses: cloned },
 			fieldIdx: props.fieldIdx,
 			stepIdx: props.stepIdx,
 		})
@@ -94,13 +113,17 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 		placeholder: props.field.placeholder,
 	}
 
-	// TODO: The children type of <Prompt> only accepts strings, not React
+	// HACK: The children type of <Prompt> only accepts strings, not React
 	// nodes. This is usually fine, but since we have an expression here things
 	// kind of break. Just need to not be lazy and change the prompt field in
 	// the CMS to be a rich text field.
 	const prompt = `Your brand in ${sourceResponses.length.toString()} words.`
 
 	const allowMultiple = props.field.allowMultiple ?? true
+	const maxResponses = props.field.responseCount ?? DEFAULT_RESPONSE_COUNT
+	const responseCount = answer?.responses.length ?? 0
+
+	const showAddButton = allowMultiple && responseCount < maxResponses
 
 	return (
 		<div>
@@ -121,29 +144,21 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 				{props.field.prompt}
 			</Prompt>
 
-			<HighlighterTextarea
-				value={answerOne}
-				onChange={(e) => handleChange(e.currentTarget.value, answerTwo)}
-				invalidClassName={variant.invalidTextCn}
-				{...sharedInputProps}
-			/>
-
-			{typeof answerTwo === "undefined" && !props.readOnly && allowMultiple && (
-				<AddButton
-					className="mt-2.5"
-					onClick={() => handleChange(answerOne, "")}
-				>
-					Add another response
-				</AddButton>
-			)}
-
-			{typeof answerTwo !== "undefined" && allowMultiple && (
+			{answer?.responses.map((r, idx) => (
 				<HighlighterTextarea
-					value={answerTwo}
-					onChange={(e) => handleChange(answerOne, e.currentTarget.value)}
+					key={idx}
+					value={r}
 					invalidClassName={variant.invalidTextCn}
+					onChange={(e) => handleChange(e.currentTarget.value, idx)}
+					textareaSize="small"
 					{...sharedInputProps}
 				/>
+			))}
+
+			{showAddButton && (
+				<AddButton className="mt-2.5" onClick={addAdditionalResponse}>
+					Add another response
+				</AddButton>
 			)}
 		</div>
 	)

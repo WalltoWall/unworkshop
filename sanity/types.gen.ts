@@ -16,61 +16,6 @@ import "@sanity/client"
  */
 
 // Source: schema.json
-export type SanityImagePaletteSwatch = {
-	_type: "sanity.imagePaletteSwatch"
-	background?: string
-	foreground?: string
-	population?: number
-	title?: string
-}
-
-export type SanityImagePalette = {
-	_type: "sanity.imagePalette"
-	darkMuted?: SanityImagePaletteSwatch
-	lightVibrant?: SanityImagePaletteSwatch
-	darkVibrant?: SanityImagePaletteSwatch
-	vibrant?: SanityImagePaletteSwatch
-	dominant?: SanityImagePaletteSwatch
-	lightMuted?: SanityImagePaletteSwatch
-	muted?: SanityImagePaletteSwatch
-}
-
-export type SanityImageDimensions = {
-	_type: "sanity.imageDimensions"
-	height?: number
-	width?: number
-	aspectRatio?: number
-}
-
-export type SanityFileAsset = {
-	_id: string
-	_type: "sanity.fileAsset"
-	_createdAt: string
-	_updatedAt: string
-	_rev: string
-	originalFilename?: string
-	label?: string
-	title?: string
-	description?: string
-	altText?: string
-	sha1hash?: string
-	extension?: string
-	mimeType?: string
-	size?: number
-	assetId?: string
-	uploadId?: string
-	path?: string
-	url?: string
-	source?: SanityAssetSourceData
-}
-
-export type Geopoint = {
-	_type: "geopoint"
-	lat?: number
-	lng?: number
-	alt?: number
-}
-
 export type Exercise = {
 	_id: string
 	_type: "exercise"
@@ -115,6 +60,7 @@ export type Exercise = {
 				_weak?: boolean
 				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 			}
+			media?: unknown
 			hotspot?: SanityImageHotspot
 			crop?: SanityImageCrop
 			alt?: string
@@ -128,6 +74,7 @@ export type Exercise = {
 				_weak?: boolean
 				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 			}
+			media?: unknown
 			hotspot?: SanityImageHotspot
 			crop?: SanityImageCrop
 			alt?: string
@@ -191,6 +138,7 @@ export type Exercise = {
 				_weak?: boolean
 				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 			}
+			media?: unknown
 			hotspot?: SanityImageHotspot
 			crop?: SanityImageCrop
 			alt?: string
@@ -203,6 +151,7 @@ export type Exercise = {
 				_weak?: boolean
 				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 			}
+			media?: unknown
 			hotspot?: SanityImageHotspot
 			crop?: SanityImageCrop
 			alt?: string
@@ -215,6 +164,7 @@ export type Exercise = {
 				_weak?: boolean
 				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 			}
+			media?: unknown
 			hotspot?: SanityImageHotspot
 			crop?: SanityImageCrop
 			alt?: string
@@ -227,6 +177,7 @@ export type Exercise = {
 				_weak?: boolean
 				[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 			}
+			media?: unknown
 			hotspot?: SanityImageHotspot
 			crop?: SanityImageCrop
 			alt?: string
@@ -253,69 +204,13 @@ export type Exercise = {
 				max?: number
 				color?: "red" | "green" | "yellow"
 				allowMultiple?: boolean
+				responseCount?: number
 				_key: string
 			}>
 			_type: "step"
 			_key: string
 		}>
 	}
-}
-
-export type SanityImageCrop = {
-	_type: "sanity.imageCrop"
-	top?: number
-	bottom?: number
-	left?: number
-	right?: number
-}
-
-export type SanityImageHotspot = {
-	_type: "sanity.imageHotspot"
-	x?: number
-	y?: number
-	height?: number
-	width?: number
-}
-
-export type SanityImageAsset = {
-	_id: string
-	_type: "sanity.imageAsset"
-	_createdAt: string
-	_updatedAt: string
-	_rev: string
-	originalFilename?: string
-	label?: string
-	title?: string
-	description?: string
-	altText?: string
-	sha1hash?: string
-	extension?: string
-	mimeType?: string
-	size?: number
-	assetId?: string
-	uploadId?: string
-	path?: string
-	url?: string
-	metadata?: SanityImageMetadata
-	source?: SanityAssetSourceData
-}
-
-export type SanityAssetSourceData = {
-	_type: "sanity.assetSourceData"
-	name?: string
-	id?: string
-	url?: string
-}
-
-export type SanityImageMetadata = {
-	_type: "sanity.imageMetadata"
-	location?: Geopoint
-	dimensions?: SanityImageDimensions
-	palette?: SanityImagePalette
-	lqip?: string
-	blurHash?: string
-	hasAlpha?: boolean
-	isOpaque?: boolean
 }
 
 export type Participant = {
@@ -332,7 +227,6 @@ export type Participant = {
 		_weak?: boolean
 		[internalGroqTypeReferenceTo]?: "kickoff"
 	}
-	onboarded: boolean
 }
 
 export type Kickoff = {
@@ -362,28 +256,140 @@ export type MediaTag = {
 	name?: Slug
 }
 
+export type SanityImagePaletteSwatch = {
+	_type: "sanity.imagePaletteSwatch"
+	background?: string
+	foreground?: string
+	population?: number
+	title?: string
+}
+
+export type SanityImagePalette = {
+	_type: "sanity.imagePalette"
+	darkMuted?: SanityImagePaletteSwatch
+	lightVibrant?: SanityImagePaletteSwatch
+	darkVibrant?: SanityImagePaletteSwatch
+	vibrant?: SanityImagePaletteSwatch
+	dominant?: SanityImagePaletteSwatch
+	lightMuted?: SanityImagePaletteSwatch
+	muted?: SanityImagePaletteSwatch
+}
+
+export type SanityImageDimensions = {
+	_type: "sanity.imageDimensions"
+	height?: number
+	width?: number
+	aspectRatio?: number
+}
+
+export type SanityImageHotspot = {
+	_type: "sanity.imageHotspot"
+	x?: number
+	y?: number
+	height?: number
+	width?: number
+}
+
+export type SanityImageCrop = {
+	_type: "sanity.imageCrop"
+	top?: number
+	bottom?: number
+	left?: number
+	right?: number
+}
+
+export type SanityFileAsset = {
+	_id: string
+	_type: "sanity.fileAsset"
+	_createdAt: string
+	_updatedAt: string
+	_rev: string
+	originalFilename?: string
+	label?: string
+	title?: string
+	description?: string
+	altText?: string
+	sha1hash?: string
+	extension?: string
+	mimeType?: string
+	size?: number
+	assetId?: string
+	uploadId?: string
+	path?: string
+	url?: string
+	source?: SanityAssetSourceData
+}
+
+export type SanityImageAsset = {
+	_id: string
+	_type: "sanity.imageAsset"
+	_createdAt: string
+	_updatedAt: string
+	_rev: string
+	originalFilename?: string
+	label?: string
+	title?: string
+	description?: string
+	altText?: string
+	sha1hash?: string
+	extension?: string
+	mimeType?: string
+	size?: number
+	assetId?: string
+	uploadId?: string
+	path?: string
+	url?: string
+	metadata?: SanityImageMetadata
+	source?: SanityAssetSourceData
+}
+
+export type SanityImageMetadata = {
+	_type: "sanity.imageMetadata"
+	location?: Geopoint
+	dimensions?: SanityImageDimensions
+	palette?: SanityImagePalette
+	lqip?: string
+	blurHash?: string
+	hasAlpha?: boolean
+	isOpaque?: boolean
+}
+
+export type Geopoint = {
+	_type: "geopoint"
+	lat?: number
+	lng?: number
+	alt?: number
+}
+
 export type Slug = {
 	_type: "slug"
 	current: string
 	source?: string
 }
 
+export type SanityAssetSourceData = {
+	_type: "sanity.assetSourceData"
+	name?: string
+	id?: string
+	url?: string
+}
+
 export type AllSanitySchemaTypes =
-	| SanityImagePaletteSwatch
-	| SanityImagePalette
-	| SanityImageDimensions
-	| SanityFileAsset
-	| Geopoint
 	| Exercise
-	| SanityImageCrop
-	| SanityImageHotspot
-	| SanityImageAsset
-	| SanityAssetSourceData
-	| SanityImageMetadata
 	| Participant
 	| Kickoff
 	| MediaTag
+	| SanityImagePaletteSwatch
+	| SanityImagePalette
+	| SanityImageDimensions
+	| SanityImageHotspot
+	| SanityImageCrop
+	| SanityFileAsset
+	| SanityImageAsset
+	| SanityImageMetadata
+	| Geopoint
 	| Slug
+	| SanityAssetSourceData
 export declare const internalGroqTypeReferenceTo: unique symbol
 // Source: client.ts
 // Variable: kickoffQuery
@@ -441,6 +447,7 @@ export type KickoffQueryResult = {
 					_weak?: boolean
 					[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 				}
+				media?: unknown
 				hotspot?: SanityImageHotspot
 				crop?: SanityImageCrop
 				alt?: string
@@ -454,6 +461,7 @@ export type KickoffQueryResult = {
 					_weak?: boolean
 					[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 				}
+				media?: unknown
 				hotspot?: SanityImageHotspot
 				crop?: SanityImageCrop
 				alt?: string
@@ -517,6 +525,7 @@ export type KickoffQueryResult = {
 					_weak?: boolean
 					[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 				}
+				media?: unknown
 				hotspot?: SanityImageHotspot
 				crop?: SanityImageCrop
 				alt?: string
@@ -529,6 +538,7 @@ export type KickoffQueryResult = {
 					_weak?: boolean
 					[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 				}
+				media?: unknown
 				hotspot?: SanityImageHotspot
 				crop?: SanityImageCrop
 				alt?: string
@@ -541,6 +551,7 @@ export type KickoffQueryResult = {
 					_weak?: boolean
 					[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 				}
+				media?: unknown
 				hotspot?: SanityImageHotspot
 				crop?: SanityImageCrop
 				alt?: string
@@ -553,6 +564,7 @@ export type KickoffQueryResult = {
 					_weak?: boolean
 					[internalGroqTypeReferenceTo]?: "sanity.imageAsset"
 				}
+				media?: unknown
 				hotspot?: SanityImageHotspot
 				crop?: SanityImageCrop
 				alt?: string
@@ -579,6 +591,7 @@ export type KickoffQueryResult = {
 					max?: number
 					color?: "green" | "red" | "yellow"
 					allowMultiple?: boolean
+					responseCount?: number
 					_key: string
 				}>
 				_type: "step"
@@ -603,7 +616,6 @@ export type ParticipantQueryResult = {
 		_weak?: boolean
 		[internalGroqTypeReferenceTo]?: "kickoff"
 	}
-	onboarded: boolean
 } | null
 // Variable: participantWithKickoffCodeQuery
 // Query: *[_type == "participant" && _id == $id][0] {			...,			kickoff->{ "code": code.current }		}
@@ -618,7 +630,6 @@ export type ParticipantWithKickoffCodeQueryResult = {
 	kickoff: {
 		code: string
 	}
-	onboarded: boolean
 } | null
 // Variable: participantsInKickoffQuery
 // Query: *[_type == "participant" && kickoff._ref == $kickoffId]
@@ -636,7 +647,6 @@ export type ParticipantsInKickoffQueryResult = Array<{
 		_weak?: boolean
 		[internalGroqTypeReferenceTo]?: "kickoff"
 	}
-	onboarded: boolean
 }>
 
 declare module "@sanity/client" {
