@@ -4,6 +4,7 @@ import { structureTool } from "sanity/structure"
 import { Logo } from "@/components/Logo"
 import { schemaTypes } from "@/sanity/schemas"
 import { env } from "@/env"
+import { DeleteAnswersAction } from "./schemas/documents/Exercise"
 
 const config = defineConfig({
 	name: "default",
@@ -13,7 +14,7 @@ const config = defineConfig({
 
 	tasks: { enabled: false },
 	scheduledPublishing: { enabled: false },
-	document: { comments: { enabled: false } },
+	document: { actions: [DeleteAnswersAction], comments: { enabled: false } },
 
 	logo: () => <Logo style={{ width: "2.1875rem" }} />,
 	icon: () => <Logo />,

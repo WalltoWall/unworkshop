@@ -4,10 +4,79 @@ import {
 	ListOrdered,
 	RemoveFormatting,
 } from "lucide-react"
-import { defineArrayMember, defineField, defineType } from "sanity"
+import React from "react"
+import { CloseCircleIcon } from "@sanity/icons"
+import { useToast } from "@sanity/ui"
+import {
+	defineArrayMember,
+	defineField,
+	defineType,
+	useClient,
+	type DocumentActionComponent,
+} from "sanity"
 import { pluralize } from "@/lib/pluralize"
 import { formFieldMember } from "@/sanity/schemas/fields/formField"
 import { altText } from "../fields/altText"
+
+async function deletePartykitAnswers(id: string) {
+	const res = await fetch(`/api/delete-answers/${id}`, { method: "POST" })
+	const data = await res.text()
+
+	console.info(data)
+}
+
+export const DeleteAnswersAction: DocumentActionComponent = (props) => {
+	const [open, setOpen] = React.useState(false)
+	const client = useClient({ apiVersion: "2025-07-15" })
+	const toast = useToast()
+
+	if (props.type !== "exercise") return null
+
+	async function deleteAnswers() {
+		try {
+			await Promise.all([
+				client.patch(props.id).unset(["answers"]).commit(),
+				deletePartykitAnswers(props.id),
+			])
+
+			toast.push({
+				status: "info",
+				title: "Deleted answers",
+				description: "Exericse answers have been deleted.",
+			})
+		} catch (err) {
+			const msg =
+				err instanceof Error
+					? err.message
+					: "Failed to delete exercise answers."
+
+			toast.push({
+				status: "error",
+				title: "Something went wrong",
+				description: msg,
+			})
+		}
+	}
+
+	return {
+		label: "Delete Answers",
+		tone: "critical",
+		icon: CloseCircleIcon,
+		onHandle: () => {
+			setOpen(true)
+		},
+		dialog: open && {
+			type: "confirm",
+			onCancel: props.onComplete,
+			onConfirm: async () => {
+				await deleteAnswers()
+				props.onComplete()
+			},
+			message: "Are you sure you want to delete all answers?",
+			tone: "critical",
+		},
+	}
+}
 
 export const Exercise = defineType({
 	name: "exercise",
