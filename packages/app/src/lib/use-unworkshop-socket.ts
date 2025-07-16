@@ -7,29 +7,37 @@ import useYProvider from "y-partyserver/react"
 import { PRESENTER_GROUP_ID } from "@/constants"
 import { Participant } from "@/participant"
 
+// This comes from the kebab-case version of the exported `PartyServer` class.
+// See: @/src/worker/unworkshop-party.ts
+const PARTY_NAME = "unworkshop-party"
+
 type DocTypeDescription = {
 	[key: string]: "xml" | "text" | Array<any> | object
 }
 
-type Args = {
+type Args<T extends DocTypeDescription> = {
 	type: "participant" | "presenter"
+	shape: T
 }
 
-export function useUnworkshopSocket<T extends DocTypeDescription>(args: Args) {
-	const [connecting, setConnecting] = React.useState(true)
+export function useUnworkshopSocket<T extends DocTypeDescription>(
+	args: Args<T>,
+) {
 	const params = useParams({ strict: false })
 	const participant = Participant.useInfo({
 		assert: args.type === "participant",
 	})
 	const room = `${params.code}::${params.exerciseSlug}`
 
-	const store = syncedStore({ answers: {} as T })
-	const doc = getYjsDoc(store)
-	const state = useSyncedStore(store)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: We dont want consumers of the hook to be required to `useMemo` `shape`.
+	const store = React.useMemo(() => syncedStore(args.shape), [])
+	const doc = React.useMemo(() => getYjsDoc(store), [store])
 
+	const state = useSyncedStore(store)
 	const provider = useYProvider({
 		host: location.host,
 		doc,
+		party: PARTY_NAME,
 		room,
 	})
 
@@ -38,12 +46,17 @@ export function useUnworkshopSocket<T extends DocTypeDescription>(args: Args) {
 		.with("participant", () => params.groupSlug ?? participant!.id)
 		.exhaustive()
 
-	React.useEffect(() => {
-		const onSync = (isSynced: boolean) => setConnecting(!isSynced)
-		provider.on("sync", onSync)
+	const subscribe = React.useCallback(
+		(cb: () => void) => {
+			provider.on("sync", cb)
 
-		return () => provider.off("sync", onSync)
-	}, [provider])
+			return () => provider.off("sync", cb)
+		},
+		[provider],
+	)
+	const getSnapshot = React.useCallback(() => provider.synced, [provider])
 
-	return { connecting, group, state }
+	const synced = React.useSyncExternalStore(subscribe, getSnapshot)
+
+	return { connecting: !synced, group, state }
 }

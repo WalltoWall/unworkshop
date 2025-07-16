@@ -3,22 +3,19 @@ import { DEFAULT_ANSWER } from "./constants"
 import type { SlidersS } from "./schemas"
 
 export function useMultiplayerSliders() {
-	const { connecting, group, state } = useUnworkshopSocket<SlidersS.AllAnswers>(
-		{ type: "participant" },
-	)
+	const { connecting, group, state } = useUnworkshopSocket<SlidersS.Shape>({
+		type: "participant",
+		shape: { groupAnswers: {} },
+	})
 
-	const answer = state.answers[group]
+	const answer = state.groupAnswers[group]
 
 	const actions = {
-		change: (args: {
-			type: SlidersS.AnswerType
-			prompt: string
-			value: number
-		}) => {
-			state.answers[group] ??= {}
+		change: (args: { type: SlidersS.Type; prompt: string; value: number }) => {
+			state.groupAnswers[group] ??= {}
 
-			state.answers[group][args.prompt] ??= DEFAULT_ANSWER
-			const promptAnswer = state.answers[group][args.prompt]!
+			state.groupAnswers[group][args.prompt] ??= DEFAULT_ANSWER
+			const promptAnswer = state.groupAnswers[group][args.prompt]!
 
 			if (args.type === "today") {
 				promptAnswer.today = args.value

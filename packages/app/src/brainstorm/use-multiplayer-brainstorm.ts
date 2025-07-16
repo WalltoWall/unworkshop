@@ -3,26 +3,26 @@ import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
 import type { BrainstormS } from "./schemas"
 
 export function useMultiplayerBrainstorm() {
-	const { connecting, group, state } =
-		useUnworkshopSocket<BrainstormS.AllAnswers>({
-			type: "participant",
-		})
+	const { connecting, group, state } = useUnworkshopSocket<BrainstormS.Shape>({
+		type: "participant",
+		shape: { groupAnswers: {} },
+	})
 
-	function safeGetAnswer() {
-		state.answers[group] ??= {}
+	function upsertGroupAnswer() {
+		state.groupAnswers[group] ??= {}
 
-		return state.answers[group]
+		return state.groupAnswers[group]
 	}
 
 	const actions = {
 		add: (args: { step: number }) => {
-			const answer = safeGetAnswer()
+			const answer = upsertGroupAnswer()
 
 			answer[args.step] ??= []
 			answer[args.step]?.push({ id: nanoid(6), value: "" })
 		},
 		edit: (args: { step: number; value: string; id: string }) => {
-			const answer = safeGetAnswer()
+			const answer = upsertGroupAnswer()
 
 			const sticky = answer[args.step]?.find((s) => s.id === args.id)
 			if (!sticky) return
@@ -30,7 +30,7 @@ export function useMultiplayerBrainstorm() {
 			sticky.value = args.value
 		},
 		delete: (args: { id: string; step: number }) => {
-			const answer = safeGetAnswer()
+			const answer = upsertGroupAnswer()
 			const idx = answer[args.step]?.findIndex((s) => s.id === args.id) ?? -1
 			if (idx === -1) return
 
@@ -38,5 +38,5 @@ export function useMultiplayerBrainstorm() {
 		},
 	}
 
-	return { answer: state.answers[group], actions, connecting, state }
+	return { answer: state.groupAnswers[group], actions, connecting, state }
 }

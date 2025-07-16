@@ -1,13 +1,13 @@
-import { Colors } from "@/colors"
-import { PortableText } from "@/components/portable-text"
 import { getRouteApi } from "@tanstack/react-router"
 import type * as ST from "@unworkshop/studio"
+import { ExpandIcon, PlusIcon } from "lucide-react"
+import React from "react"
+import { Colors } from "@/colors"
+import { Button } from "@/components/Button"
+import { PortableText } from "@/components/portable-text"
+import { useTinykeys } from "@/lib/use-tinykeys"
 import { Stickies } from "./stickies"
 import { useMultiplayerBrainstorm } from "./use-multiplayer-brainstorm"
-import React from "react"
-import { Button } from "@/components/Button"
-import { ExpandIcon, PlusIcon } from "lucide-react"
-import { useTinykeys } from "@/lib/use-tinykeys"
 
 type Props = {
 	steps: ST.Brainstorm["steps"]

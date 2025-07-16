@@ -1,13 +1,14 @@
-import { Colors } from "@/colors"
-import type { Brainstorm } from "@unworkshop/studio"
 import { getRouteApi } from "@tanstack/react-router"
-import { PresenterLoader } from "@/components/presenter-loader"
-import { usePresenterBrainstorm } from "./use-presenter-brainstorm"
-import { Settings } from "@/components/settings-menu"
+import type { Brainstorm } from "@unworkshop/studio"
 import * as R from "remeda"
+import { Colors } from "@/colors"
+import { PresenterLoader } from "@/components/presenter-loader"
+import { Settings } from "@/components/settings-menu"
 import { bucket } from "@/lib/bucket"
-import { Unsorted } from "./unsorted"
 import { useMultiplayerBrainstorm } from "../use-multiplayer-brainstorm"
+import { Unsorted } from "./unsorted"
+import { usePresenterBrainstorm } from "./use-presenter-brainstorm"
+import { DEFAULT_BUCKETS } from "./constants"
 
 type Props = {
 	steps: Brainstorm["steps"]
@@ -42,7 +43,7 @@ export const BrainstormPresenterComponent = (props: Props) => {
 	const isLoading = presenter.connecting || participants.connecting
 
 	const answers = R.pipe(
-		participants.state.answers,
+		participants.state.groupAnswers,
 		R.values(),
 		R.flatMap((answer) => answer?.[search.step]!),
 		R.filter((val) => Boolean(val?.value)),
@@ -54,7 +55,7 @@ export const BrainstormPresenterComponent = (props: Props) => {
 			(a) =>
 				!presenter.state.columns.some((col) => col.stickies.includes(a.id)),
 		),
-		(items) => bucket(items, presenter.state.buckets),
+		(items) => bucket(items, presenter.state.meta.buckets ?? DEFAULT_BUCKETS),
 	)
 
 	const sorted = answers.filter((a) =>

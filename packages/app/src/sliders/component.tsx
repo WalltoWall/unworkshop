@@ -1,13 +1,12 @@
-import React from "react"
 import { toPlainText } from "@portabletext/react"
-import { PortableText } from "@/components/portable-text"
-import type * as ST from "@unworkshop/studio"
-import { RangeSlider } from "./range-slider"
 import { getRouteApi } from "@tanstack/react-router"
-import { useMultiplayerSliders } from "./use-multiplayer-sliders"
-import { SlidersS } from "./schemas"
+import type * as ST from "@unworkshop/studio"
+import { PortableText } from "@/components/portable-text"
 import { slugifyPortableText } from "@/lib/slugify-portable-text"
 import { DEFAULT_ANSWER } from "./constants"
+import { RangeSlider } from "./range-slider"
+import { SlidersS } from "./schemas"
+import { useMultiplayerSliders } from "./use-multiplayer-sliders"
 
 type Props = { steps: ST.Sliders["steps"] }
 
@@ -23,7 +22,7 @@ export const SlidersComponent = (props: Props) => {
 	const prompt = slugifyPortableText(stepData.prompt)
 
 	function onRangeChange(e: React.ChangeEvent<HTMLInputElement>) {
-		const type = SlidersS.AnswerType.parse(e.currentTarget.name)
+		const type = SlidersS.Type.parse(e.currentTarget.name)
 		const value = e.currentTarget.valueAsNumber
 
 		actions.change({
@@ -44,7 +43,7 @@ export const SlidersComponent = (props: Props) => {
 
 				{!connecting &&
 					stepData.sliders.map((s, idx) => {
-						const name: SlidersS.AnswerType = idx === 0 ? "today" : "tomorrow"
+						const name: SlidersS.Type = idx === 0 ? "today" : "tomorrow"
 
 						return (
 							<RangeSlider

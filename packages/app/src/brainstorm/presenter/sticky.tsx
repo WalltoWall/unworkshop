@@ -1,5 +1,5 @@
-import { Colors } from "@/colors"
 import clsx from "clsx"
+import { Colors } from "@/colors"
 
 type Props = {
 	color?: Colors.Variant

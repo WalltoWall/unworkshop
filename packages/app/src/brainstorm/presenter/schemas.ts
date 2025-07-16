@@ -6,7 +6,11 @@ export namespace BrainstormPresenterS {
 		color: Colors.Variant
 		stickies: string[]
 	}
-	export type State = {
-		state: { columns: Column[]; buckets: number }
+
+	export type Shape = {
+		columns: Column[]
+		meta: {
+			buckets?: number
+		}
 	}
 }

@@ -1,10 +1,10 @@
-import { ContextMenu } from "radix-ui"
-import type { BrainstormS } from "../schemas"
-import type { BrainstormPresenterActions } from "./use-presenter-brainstorm"
-import { AddUnsortedColumnButton } from "./add-unsorted-column-button"
-import { useTinykeys } from "@/lib/use-tinykeys"
-import { Sticky } from "./sticky"
 import clsx from "clsx"
+import { ContextMenu } from "radix-ui"
+import { useTinykeys } from "@/lib/use-tinykeys"
+import type { BrainstormS } from "../schemas"
+import { AddUnsortedColumnButton } from "./add-unsorted-column-button"
+import { Sticky } from "./sticky"
+import type { BrainstormPresenterActions } from "./use-presenter-brainstorm"
 
 type Props = {
 	actions: BrainstormPresenterActions
