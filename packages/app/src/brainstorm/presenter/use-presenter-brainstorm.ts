@@ -8,7 +8,6 @@ export type BrainstormPresenterActions = ReturnType<
 export function usePresenterBrainstorm() {
 	const socket = useUnworkshopSocket<BrainstormPresenterS.State>({
 		type: "presenter",
-		party: "brainstorm-presenter",
 	})
 
 	const state = socket.state.answers.state ?? { buckets: 5, columns: [] }

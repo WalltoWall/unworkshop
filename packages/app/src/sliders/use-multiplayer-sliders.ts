@@ -1,10 +1,10 @@
+import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
 import { DEFAULT_ANSWER } from "./constants"
 import type { SlidersS } from "./schemas"
-import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
 
 export function useMultiplayerSliders() {
 	const { connecting, group, state } = useUnworkshopSocket<SlidersS.AllAnswers>(
-		{ party: "sliders", type: "participant" },
+		{ type: "participant" },
 	)
 
 	const answer = state.answers[group]

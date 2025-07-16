@@ -1,9 +1,8 @@
-import { SlidersS } from "../schemas"
 import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
+import type { SlidersS } from "../schemas"
 
 export function usePresenterSliders() {
 	const { connecting, state } = useUnworkshopSocket<SlidersS.AllAnswers>({
-		party: "sliders",
 		type: "presenter",
 	})
 

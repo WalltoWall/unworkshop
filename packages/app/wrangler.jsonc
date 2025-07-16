@@ -14,22 +14,10 @@
 	"durable_objects": {
 		"bindings": [
 			{
-				"name": "SLIDERS",
-				"class_name": "Sliders"
-			},
-			{
-				"name": "BRAINSTORM",
-				"class_name": "Brainstorm"
-			},
-			{
-				"name": "BRAINSTORM_PRESENTER",
-				"class_name": "BrainstormPresenter"
+				"name": "UNWORKSHOP_PARTY",
+				"class_name": "UnworkshopParty"
 			}
 		]
 	},
-	"migrations": [
-		{ "tag": "v1", "new_sqlite_classes": ["Sliders"] },
-		{ "tag": "v2", "new_sqlite_classes": ["Brainstorm"] },
-		{ "tag": "v3", "new_sqlite_classes": ["BrainstormPresenter"] }
-	]
+	"migrations": [{ "tag": "v1", "new_sqlite_classes": ["UnworkshopParty"] }]
 }

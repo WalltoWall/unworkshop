@@ -2,7 +2,7 @@ import type { Connection } from "partyserver"
 import { YServer } from "y-partyserver"
 import * as Y from "yjs"
 
-export class UnworkshopPartyServer extends YServer<Env> {
+export class UnworkshopParty extends YServer<Env> {
 	static callbackOptions = {
 		debounceWait: 2000,
 		debounceMaxWait: 10000,

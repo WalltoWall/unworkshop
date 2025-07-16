@@ -5,7 +5,6 @@ import type { BrainstormS } from "./schemas"
 export function useMultiplayerBrainstorm() {
 	const { connecting, group, state } =
 		useUnworkshopSocket<BrainstormS.AllAnswers>({
-			party: "brainstorm",
 			type: "participant",
 		})
 

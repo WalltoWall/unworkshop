@@ -1,11 +1,11 @@
-import useYProvider from "y-partyserver/react"
-import { PRESENTER_GROUP_ID } from "@/constants"
-import { Participant } from "@/participant"
+import { getYjsDoc, syncedStore } from "@syncedstore/core"
+import { useSyncedStore } from "@syncedstore/react"
 import { useParams } from "@tanstack/react-router"
 import React from "react"
 import { match } from "ts-pattern"
-import { getYjsDoc, syncedStore } from "@syncedstore/core"
-import { useSyncedStore } from "@syncedstore/react"
+import useYProvider from "y-partyserver/react"
+import { PRESENTER_GROUP_ID } from "@/constants"
+import { Participant } from "@/participant"
 
 type DocTypeDescription = {
 	[key: string]: "xml" | "text" | Array<any> | object
@@ -13,7 +13,6 @@ type DocTypeDescription = {
 
 type Args = {
 	type: "participant" | "presenter"
-	party: "brainstorm" | "sliders" | "brainstorm-presenter"
 }
 
 export function useUnworkshopSocket<T extends DocTypeDescription>(args: Args) {
@@ -26,12 +25,10 @@ export function useUnworkshopSocket<T extends DocTypeDescription>(args: Args) {
 
 	const store = syncedStore({ answers: {} as T })
 	const doc = getYjsDoc(store)
-
 	const state = useSyncedStore(store)
 
 	const provider = useYProvider({
-		host: window.location.host,
-		party: args.party,
+		host: location.host,
 		doc,
 		room,
 	})
@@ -46,7 +43,7 @@ export function useUnworkshopSocket<T extends DocTypeDescription>(args: Args) {
 		provider.on("sync", onSync)
 
 		return () => provider.off("sync", onSync)
-	}, [])
+	}, [provider])
 
 	return { connecting, group, state }
 }

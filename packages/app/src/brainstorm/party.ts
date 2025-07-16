@@ -1,3 +1,0 @@
-import { UnworkshopPartyServer } from "@/worker/unworkshop-party"
-
-export class Brainstorm extends UnworkshopPartyServer {}

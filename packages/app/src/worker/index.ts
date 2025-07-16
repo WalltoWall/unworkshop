@@ -8,8 +8,6 @@ app.use("*", partyserverMiddleware())
 
 app.get("/api", (c) => c.text("CloudFlare"))
 
-export { Sliders } from "../sliders/party"
-export { Brainstorm } from "../brainstorm/party"
-export { BrainstormPresenter } from "../brainstorm/presenter/party"
+export { UnworkshopParty } from "./unworkshop-party"
 
 export default app
