@@ -1,0 +1,2 @@
+- Add a timer tab.
+- Re-UX the presenter view.

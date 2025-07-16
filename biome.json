@@ -1,22 +1,26 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.1.1/schema.json",
 	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
 		"useIgnoreFile": false
 	},
-	"organizeImports": { "enabled": true },
 	"files": {
-		"ignore": [
-			"node_modules",
-			"worker-configuration.d.ts",
-			"vite-env.d.ts",
-			"public",
-			"routeTree.gen.ts"
+		"ignoreUnknown": false,
+		"includes": [
+			"./packages/**/*",
+			"!node_modules",
+			"!vite-env.d.ts",
+			"!routeTree.gen.ts",
+			"!worker-configuration.d.ts",
+			"!public"
 		]
 	},
-	"formatter": { "enabled": true, "indentStyle": "tab", "lineWidth": 80 },
-	"javascript": { "formatter": { "semicolons": "asNeeded" } },
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 80
+	},
 	"linter": {
 		"enabled": true,
 		"rules": {
@@ -29,7 +33,7 @@
 				"useButtonType": "off"
 			},
 			"suspicious": {
-				"noConsoleLog": "warn",
+				"noConsole": "warn",
 				"noArrayIndexKey": "off",
 				"noExplicitAny": "off"
 			},
@@ -39,6 +43,20 @@
 			},
 			"style": {
 				"noNonNullAssertion": "off"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "double",
+			"semicolons": "asNeeded"
+		}
+	},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
 			}
 		}
 	}

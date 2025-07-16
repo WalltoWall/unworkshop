@@ -2,7 +2,9 @@
 	"name": "unworkshop",
 	"private": true,
 	"type": "module",
-	"workspaces": ["packages/*"],
+	"workspaces": [
+		"packages/*"
+	],
 	"scripts": {
 		"lint": "bunx -b biome check . --fix",
 		"format": "bunx -b biome format . --write",
@@ -13,7 +15,7 @@
 		"deploy:app": "cd ./packages/app && bun run deploy"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
+		"@biomejs/biome": "^2.1.1",
 		"typescript": "^5.8.3"
 	}
 }
