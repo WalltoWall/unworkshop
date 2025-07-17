@@ -1,11 +1,11 @@
-import { ChevronRightIcon } from "lucide-react"
-import React from "react"
+import { ChevronRightIcon } from "@heroicons/react/16/solid"
 import clsx from "clsx"
 import {
 	OTPInput,
 	REGEXP_ONLY_DIGITS_AND_CHARS,
 	type SlotProps,
 } from "input-otp"
+import React from "react"
 import { toast } from "sonner"
 import { z } from "zod"
 import { router } from "@/router"
@@ -80,7 +80,7 @@ const CodeInput = () => {
 					className="bg-brand absolute -right-5 -bottom-5 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-black"
 					type="submit"
 				>
-					<ChevronRightIcon className="size-4 text-black" strokeWidth={3} />
+					<ChevronRightIcon className="size-4 text-black" />
 				</button>
 			)}
 		</div>

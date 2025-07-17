@@ -1,10 +1,10 @@
+import { XCircleIcon } from "@heroicons/react/24/solid"
 import { useStore } from "@nanostores/react"
-import { CircleXIcon } from "lucide-react"
 import { atom } from "nanostores"
 import { Drawer } from "vaul"
+import { root } from "@/root"
 import { text } from "@/styles/text"
 import { Button } from "../Button"
-import { root } from "@/root"
 
 export type Info = {
 	open: boolean
@@ -43,7 +43,7 @@ export const Component = () => {
 				<Drawer.Overlay className="fixed inset-0 bg-black/40" />
 				<Drawer.Content className="fixed inset-x-0 bottom-0 w-full rounded-t-[24px] bg-white px-6 pt-5 pb-10 focus:outline-none">
 					<Drawer.Close className="absolute top-3 right-4 fill-black text-white transition hover:fill-neutral-700">
-						<CircleXIcon className="size-6 fill-inherit text-inherit" />
+						<XCircleIcon className="size-6 fill-inherit text-inherit" />
 					</Drawer.Close>
 
 					<div className="mx-auto w-full max-w-[36rem]">

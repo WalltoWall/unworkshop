@@ -1,6 +1,7 @@
+import { PlusIcon } from "@heroicons/react/16/solid"
+import { ArrowsPointingOutIcon } from "@heroicons/react/20/solid"
 import { getRouteApi } from "@tanstack/react-router"
 import type * as ST from "@unworkshop/studio"
-import { ExpandIcon, PlusIcon } from "lucide-react"
 import React from "react"
 import { Colors } from "@/colors"
 import { Button } from "@/components/Button"
@@ -73,7 +74,7 @@ export const BrainstormComponent = (props: Props) => {
 						onClick={Stickies.expand}
 					>
 						<span className="sr-only">See all stickies</span>
-						<ExpandIcon className="size-4" />
+						<ArrowsPointingOutIcon className="size-4" />
 					</Button>
 
 					<Button

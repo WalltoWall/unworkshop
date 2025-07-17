@@ -9,6 +9,7 @@ import { useMultiplayerBrainstorm } from "../use-multiplayer-brainstorm"
 import { Unsorted } from "./unsorted"
 import { usePresenterBrainstorm } from "./use-presenter-brainstorm"
 import { DEFAULT_BUCKETS } from "./constants"
+import { SortedColumns } from "./sorted-columns"
 
 type Props = {
 	steps: Brainstorm["steps"]
@@ -58,10 +59,6 @@ export const BrainstormPresenterComponent = (props: Props) => {
 		(items) => bucket(items, presenter.state.meta.buckets ?? DEFAULT_BUCKETS),
 	)
 
-	const sorted = answers.filter((a) =>
-		Boolean(presenter.state.columns.some((col) => col.stickies.includes(a.id))),
-	)
-
 	return (
 		<div
 			className="relative py-5 px-4 flex grow flex-col"
@@ -70,16 +67,15 @@ export const BrainstormPresenterComponent = (props: Props) => {
 			{isLoading ? (
 				<PresenterLoader />
 			) : (
-				<div className="w-full h-full">
+				<div className="w-full h-full flex flex-col gap-8">
 					{search.brainstorm.sorter === "visible" && (
 						<Unsorted actions={presenter.actions} items={unsorted} />
 					)}
 
-					<div>
-						{sorted.map((a) => (
-							<div key={a.id}>{a.value}</div>
-						))}
-					</div>
+					<SortedColumns
+						actions={presenter.actions}
+						columns={presenter.state.columns}
+					/>
 				</div>
 			)}
 

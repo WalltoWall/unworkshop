@@ -1,8 +1,9 @@
-import { Popover } from "radix-ui"
-import { CogIcon, EyeIcon, EyeOffIcon } from "lucide-react"
-import { cx } from "class-variance-authority"
-import { Colors } from "@/colors"
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid"
+import { CogIcon } from "@heroicons/react/24/solid"
 import { Link } from "@tanstack/react-router"
+import { cx } from "class-variance-authority"
+import { Popover } from "radix-ui"
+import { Colors } from "@/colors"
 
 type RootProps = {
 	children: React.ReactNode
@@ -13,10 +14,7 @@ const Root = (props: RootProps) => {
 		<Popover.Root>
 			<Popover.Trigger className={cx(props.className, "group")}>
 				<span className="sr-only">Open Settings Menu</span>
-				<CogIcon
-					className="size-10 text-black transition group-hover:text-neutral-700"
-					strokeWidth={3}
-				/>
+				<CogIcon className="size-10 text-black transition group-hover:text-neutral-700" />
 			</Popover.Trigger>
 
 			<Popover.Portal>
@@ -50,7 +48,7 @@ const Toggle = (props: ToggleProps) => {
 			{props.checked ? (
 				<EyeIcon className="size-4.5" />
 			) : (
-				<EyeOffIcon className="size-4.5" />
+				<EyeSlashIcon className="size-4.5" />
 			)}
 
 			<span className="text-[12px] leading-none">{props.children}</span>

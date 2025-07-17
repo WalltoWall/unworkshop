@@ -1,4 +1,5 @@
 import { useSearch } from "@tanstack/react-router"
+import { randomInteger } from "remeda"
 import { z } from "zod"
 
 export const Variant = z.literal([
@@ -143,4 +144,8 @@ export function stickyStyle(v: Variant) {
 		color: stickyVars.colors[v],
 		borderColor: stickyVars.borders[v],
 	}
+}
+
+export function random() {
+	return variants[randomInteger(0, variants.length - 1)] || fallback
 }

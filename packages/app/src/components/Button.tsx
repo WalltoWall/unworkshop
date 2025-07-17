@@ -10,7 +10,7 @@ const button = cva(
 			color: {
 				gray: "border-neutral-700 text-black bg-neutral-700",
 				black:
-					"border-black text-white bg-black hover:bg-neutral-700 disabled:bg-neutral-600 disabled:border-neutral-600",
+					"border-black text-white bg-black hover:bg-neutral-700 hover:border-neutral-700 disabled:bg-neutral-600 disabled:border-neutral-600",
 			},
 			size: {
 				xs: "h-9 text-[12px] px-3 gap-1.5",

@@ -1,8 +1,8 @@
+import { ArrowPathIcon } from "@heroicons/react/20/solid"
 import React from "react"
-import { Logo } from "@/components/Logo"
-import { Button } from "@/components/Button"
 import { Auth } from "@/auth"
-import { Loader2Icon } from "lucide-react"
+import { Button } from "@/components/Button"
+import { Logo } from "@/components/Logo"
 
 export const LoginForm = () => {
 	const [pending, setPending] = React.useState(false)
@@ -24,7 +24,7 @@ export const LoginForm = () => {
 					disabled={pending}
 				>
 					{pending ? (
-						<Loader2Icon className="size-5 animate-spin" />
+						<ArrowPathIcon className="size-5 animate-spin" />
 					) : (
 						"Continue with Google"
 					)}

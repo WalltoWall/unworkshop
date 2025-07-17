@@ -1,7 +1,7 @@
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react"
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/solid"
+import { getRouteApi, Link } from "@tanstack/react-router"
 import { cx } from "class-variance-authority"
 import { text } from "@/styles/text"
-import { getRouteApi, Link } from "@tanstack/react-router"
 
 type Props = {
 	left: string
@@ -27,7 +27,7 @@ export const PresenterSteps = (props: Props) => {
 					className="hover:text-presenter text-black transition aria-disabled:text-neutral-300"
 				>
 					<span className="sr-only">Previous Slider</span>
-					<ArrowLeftIcon className="size-7" />
+					<ArrowLeftIcon className="size-6" />
 				</Link>
 
 				<Link
@@ -37,7 +37,7 @@ export const PresenterSteps = (props: Props) => {
 					className="hover:text-presenter text-black transition aria-disabled:text-neutral-300"
 				>
 					<span className="sr-only">Next Slider</span>
-					<ArrowRightIcon className="size-7" />
+					<ArrowRightIcon className="size-6" />
 				</Link>
 			</div>
 

@@ -1,7 +1,7 @@
-import { Auth } from "@/auth"
-import { Loader2Icon } from "lucide-react"
+import { ArrowPathIcon } from "@heroicons/react/24/outline"
 import { createFileRoute } from "@tanstack/react-router"
 import { z } from "zod"
+import { Auth } from "@/auth"
 import { text } from "@/styles/text"
 
 export const Route = createFileRoute("/callback")({
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/callback")({
 function RouteComponent() {
 	return (
 		<div className="flex h-svh flex-col items-center justify-center gap-3 bg-background p-6 md:p-10 bg-white">
-			<Loader2Icon className="animate-spin size-8" />
+			<ArrowPathIcon className="animate-spin size-8" />
 			<h1 className={text({ style: "heading", size: 24 })}>Logging in...</h1>
 		</div>
 	)

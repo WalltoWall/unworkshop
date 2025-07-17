@@ -1,10 +1,10 @@
-import { Colors } from "@/colors"
-import clsx from "clsx"
-import { AnimatePresence, motion, type MotionProps } from "motion/react"
-import React from "react"
-import { atom } from "nanostores"
+import { XMarkIcon } from "@heroicons/react/16/solid"
 import { useStore } from "@nanostores/react"
-import { XIcon } from "lucide-react"
+import clsx from "clsx"
+import { AnimatePresence, type MotionProps, motion } from "motion/react"
+import { atom } from "nanostores"
+import React from "react"
+import { Colors } from "@/colors"
 import { Button } from "@/components/Button"
 
 const MotionButton = motion.create(Button)
@@ -103,7 +103,7 @@ const Note = (props: NoteProps) => {
 					transition={{ delay: 0.35 }}
 				>
 					<span className="sr-only">Submit sticky</span>
-					<XIcon className="size-3.5" />
+					<XMarkIcon className="size-3.5" />
 				</MotionButton>
 			)}
 		</motion.li>

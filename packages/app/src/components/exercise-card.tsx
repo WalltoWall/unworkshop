@@ -1,8 +1,8 @@
-import { ArrowRightIcon } from "lucide-react"
+import { ArrowRightIcon } from "@heroicons/react/16/solid"
+import { createLink, type LinkComponent } from "@tanstack/react-router"
 import { cx } from "class-variance-authority"
 import type { CardGradientData } from "@/lib/card-gradients"
 import type { CardIllustrationData } from "@/lib/card-illustrations"
-import { createLink, type LinkComponent } from "@tanstack/react-router"
 import { text } from "@/styles/text"
 
 interface Props extends React.ComponentProps<"a"> {

@@ -1,4 +1,4 @@
-import { ArrowRightCircle } from "lucide-react"
+import { ArrowRightCircleIcon } from "@heroicons/react/20/solid"
 import { cx } from "class-variance-authority"
 
 export const RegisterInput = (props: { className?: string }) => {
@@ -23,7 +23,7 @@ export const RegisterInput = (props: { className?: string }) => {
 
 			<button className="hover:text-green-40 shrink-0 px-3 py-1 transition">
 				<span className="sr-only">Confirm registration</span>
-				<ArrowRightCircle className="size-5" />
+				<ArrowRightCircleIcon className="size-5" />
 			</button>
 		</div>
 	)

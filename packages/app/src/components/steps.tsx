@@ -1,8 +1,10 @@
-import { ArrowBigLeftIcon, ArrowBigRightIcon, CheckIcon } from "lucide-react"
+import { CheckIcon } from "@heroicons/react/20/solid"
+import { getRouteApi, Link, linkOptions } from "@tanstack/react-router"
 import { cx } from "class-variance-authority"
 import * as R from "remeda"
 import { text } from "@/styles/text"
-import { getRouteApi, Link, linkOptions } from "@tanstack/react-router"
+import { ArrowBigLeftIcon } from "./icon/arrow-big-left"
+import { ArrowBigRightIcon } from "./icon/arrow-big-right"
 
 const MAX_PAGINATION_DOTS = 3
 
@@ -68,7 +70,7 @@ export const Steps = ({ steps, className }: Props) => {
 					{...finalizeOpts}
 				>
 					{step === steps ? (
-						<CheckIcon className="size-3.5" strokeWidth={3} />
+						<CheckIcon className="size-5" strokeWidth={3} />
 					) : (
 						<span className={text({ size: 16, class: "mb-0.5 font-bold" })}>
 							{step}

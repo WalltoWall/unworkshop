@@ -2,15 +2,28 @@ import type { Connection } from "partyserver"
 import { YServer } from "y-partyserver"
 import * as Y from "yjs"
 
+const TWO_SECONDS = 2000
+const TEN_SECONDS = 10000
+const FIVE_SECONDS = 5000
+
 export class UnworkshopParty extends YServer<Env> {
 	static callbackOptions = {
-		debounceWait: 2000,
-		debounceMaxWait: 10000,
-		timeout: 5000,
+		debounceWait: TWO_SECONDS,
+		debounceMaxWait: TEN_SECONDS,
+		timeout: FIVE_SECONDS,
 	}
 
-	onError(connection: Connection, error: unknown): void | Promise<void> {
-		console.error(`Connection: ${connection.id} errored:`, error)
+	onError(connection: Connection, error: unknown) {
+		if (error instanceof Error) {
+			if (error.message === "Network connection lost.") return
+
+			return console.error(
+				`Unknown error from ${connection.id}:`,
+				error.message,
+			)
+		}
+
+		console.error(`Unknown error from ${connection.id}:`, error)
 	}
 
 	async onStart() {
@@ -21,15 +34,14 @@ export class UnworkshopParty extends YServer<Env> {
 		return super.onStart()
 	}
 
-	// load a document from a database, or some remote resource
-	// and apply it on to the Yjs document instance at `this.document`
+	// Load a document from storage. Apply the update to the `yjs` document at
+	// `this.document`.
 	async onLoad() {
-		const doc = [
-			...this.ctx.storage.sql.exec(
-				"SELECT * FROM documents WHERE id = ? LIMIT 1",
-				this.name,
-			),
-		][0]
+		const rows = this.ctx.storage.sql.exec(
+			"SELECT * FROM documents WHERE id = ? LIMIT 1",
+			this.name,
+		)
+		const doc = rows.next().value
 		if (!doc) return
 
 		const update = new Uint8Array(doc.content as ArrayBuffer)
@@ -37,8 +49,8 @@ export class UnworkshopParty extends YServer<Env> {
 		Y.applyUpdate(this.document, update)
 	}
 
-	// called every few seconds after edits, and when the room empties
-	// you can use this to write to a database or some external storage
+	// Called every few seconds during edits, and when the room empties.
+	// Write to a database or some external storage to persist data.
 	async onSave() {
 		const update = Y.encodeStateAsUpdate(this.document)
 

@@ -11,6 +11,7 @@
 		"cf:types": "wrangler types"
 	},
 	"dependencies": {
+		"@heroicons/react": "^2.2.0",
 		"@nanostores/persistent": "^1.1.0",
 		"@nanostores/react": "^1.0.0",
 		"@openauthjs/openauth": "^0.4.3",
@@ -27,7 +28,6 @@
 		"hono-party": "^0.0.13",
 		"input-otp": "^1.4.2",
 		"jose": "^6.0.12",
-		"lucide-react": "^0.525.0",
 		"motion": "^12.23.6",
 		"nanoid": "^5.1.5",
 		"nanostores": "^1.0.1",

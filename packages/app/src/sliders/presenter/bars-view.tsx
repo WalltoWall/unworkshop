@@ -1,10 +1,10 @@
-import { cx } from "class-variance-authority"
-import * as R from "remeda"
-import styles from "./bars-view.module.css"
+import { ChartBarSquareIcon } from "@heroicons/react/20/solid"
 import { getRouteApi } from "@tanstack/react-router"
+import { cx } from "class-variance-authority"
 import { motion, type Transition } from "motion/react"
+import * as R from "remeda"
 import { Button } from "@/components/Button"
-import { ChartColumnBigIcon } from "lucide-react"
+import styles from "./bars-view.module.css"
 
 type Props = {
 	answers: Array<{ today: number; tomorrow?: number }>
@@ -116,7 +116,7 @@ export const BarsView = (props: Props) => {
 			<div className="absolute top-0 right-0 flex min-w-48 flex-col gap-2">
 				<Button size="md" onClick={cycleShowState}>
 					{buttonLabel}
-					<ChartColumnBigIcon className={cx("mt-0.5 size-5")} />
+					<ChartBarSquareIcon className={cx("mt-0.5 size-5")} />
 				</Button>
 			</div>
 		</>

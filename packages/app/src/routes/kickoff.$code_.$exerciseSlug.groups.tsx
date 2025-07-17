@@ -1,7 +1,7 @@
+import { ArrowRightIcon } from "@heroicons/react/20/solid"
+import { createFileRoute, getRouteApi, Link } from "@tanstack/react-router"
 import { slugify } from "@/lib/slugify"
 import { text } from "@/styles/text"
-import { Link, createFileRoute, getRouteApi } from "@tanstack/react-router"
-import { ArrowRightIcon } from "lucide-react"
 
 export const Route = createFileRoute("/kickoff/$code_/$exerciseSlug/groups")({
 	component: RouteComponent,
@@ -30,7 +30,7 @@ function RouteComponent() {
 							className="hover:bg-brand focus:bg-brand flex items-center justify-between rounded-lg bg-neutral-200 px-3 pt-3.5 pb-4 leading-none transition"
 						>
 							<p className={text({ size: 32, style: "heading" })}>{group}</p>
-							<ArrowRightIcon className="mt-1 size-5" strokeWidth={3} />
+							<ArrowRightIcon className="mt-1 size-5" />
 						</Link>
 					</li>
 				))}

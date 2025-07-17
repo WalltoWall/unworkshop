@@ -1,7 +1,11 @@
-import { CalendarIcon, CircleOffIcon, MoveRightIcon } from "lucide-react"
+import {
+	ArrowLongRightIcon,
+	CalendarIcon,
+	NoSymbolIcon,
+} from "@heroicons/react/20/solid"
+import { cx } from "class-variance-authority"
 import { AnimatePresence, motion } from "motion/react"
 import React from "react"
-import { cx } from "class-variance-authority"
 import { Button } from "@/components/Button"
 
 const Bar = () => <div className="bg-presenter h-20" />
@@ -185,12 +189,12 @@ export const DotsView = (props: Props) => {
 					{showLines ? (
 						<>
 							Hide Lines
-							<CircleOffIcon className="mt-0.5 size-5" />
+							<NoSymbolIcon className="mt-0.5 size-5" />
 						</>
 					) : (
 						<>
 							Show Lines
-							<MoveRightIcon className="mt-0.5 size-5" />
+							<ArrowLongRightIcon className="mt-0.5 size-5" />
 						</>
 					)}
 				</Button>
