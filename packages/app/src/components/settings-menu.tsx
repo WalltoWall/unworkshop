@@ -1,9 +1,10 @@
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/20/solid"
 import { CogIcon } from "@heroicons/react/24/solid"
-import { Link } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 import { cx } from "class-variance-authority"
 import { Popover } from "radix-ui"
 import { Colors } from "@/colors"
+import { ColorSwatchPicker } from "./color-swatch-picker"
 
 type RootProps = {
 	children: React.ReactNode
@@ -58,27 +59,15 @@ const Toggle = (props: ToggleProps) => {
 
 const ColorPicker = () => {
 	const color = Colors.useActive()
+	const navigate = useNavigate()
 
 	return (
 		<div className="flex flex-wrap gap-2">
-			{Colors.variants.map((v) => {
-				const style = Colors.style(v)
-
-				return (
-					<Link
-						key={v}
-						to="."
-						search={(p) => ({ ...p, color: v })}
-						className={cx(
-							"border-presenter size-6 rounded-full border-3 transition duration-300 ease-out hover:scale-120 focus:scale-120",
-							color === v ? "bg-black" : "bg-presenter",
-						)}
-						style={style}
-					>
-						<span className="sr-only">Change color to {v}</span>
-					</Link>
-				)
-			})}
+			<ColorSwatchPicker
+				hover
+				activeColor={color}
+				onSwatchClick={(color) => navigate({ to: ".", search: { color } })}
+			/>
 		</div>
 	)
 }

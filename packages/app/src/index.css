@@ -75,6 +75,10 @@
 	}
 }
 
+@utility text-trim {
+	text-box-trim: trim-both cap alphabetic;
+}
+
 @layer base {
 	html {
 		text-rendering: optimizeLegibility;
@@ -84,8 +88,17 @@
 	/** Prevent flash of highlighted color on interactable element press. */
 	a,
 	input,
-	button {
+	button,
+	select,
+	summary {
 		-webkit-tap-highlight-color: #0000;
+	}
+
+	a,
+	button,
+	select,
+	summary {
+		cursor: pointer;
 	}
 
 	/** Interactable elements have a consistent outline style. */

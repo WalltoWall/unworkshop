@@ -53,7 +53,7 @@ const Note = (props: NoteProps) => {
 		opacity: expanded ? 1 : 0.25,
 		scale: expanded ? 1 : 1 + SCALE_FACTOR,
 	}
-	const exit = {
+	const exit: MotionProps["exit"] = {
 		scale: scale - SCALE_FACTOR,
 		opacity: 0,
 		transition: expanded

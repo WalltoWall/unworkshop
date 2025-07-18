@@ -14,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/presenter")({
 	}),
 })
 
+// TODO: Making this just a list of all of the kickoffs.
 function RouteComponent() {
 	return (
 		<DarkLayout>

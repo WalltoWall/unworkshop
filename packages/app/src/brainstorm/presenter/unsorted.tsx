@@ -1,24 +1,25 @@
 import { PlusIcon } from "@heroicons/react/20/solid"
-import clsx from "clsx"
 import { ContextMenu } from "radix-ui"
 import { useTinykeys } from "@/lib/use-tinykeys"
 import type { BrainstormS } from "../schemas"
-import { Sticky } from "./sticky"
+import type { BrainstormPresenterS } from "./schemas"
+import { UnsortedSticky } from "./unsorted-sticky"
 import type { BrainstormPresenter } from "./use-presenter-brainstorm"
 
 type Props = {
 	actions: BrainstormPresenter["actions"]
-	items: BrainstormS.Sticky[][]
+	columns: BrainstormPresenterS.Column[]
+	buckets: BrainstormS.Sticky[][]
 }
 
-export const Unsorted = ({ actions, items }: Props) => {
-	const hasOneBucket = items.length === 1
+export const Unsorted = ({ actions, buckets, columns }: Props) => {
+	const hasOneBucket = buckets.length === 1
 
 	useTinykeys({
 		"$mod+d": (e) => {
+			e.preventDefault()
 			if (hasOneBucket) return
 
-			e.preventDefault()
 			actions.deleteBucket()
 		},
 		"$mod+a": (e) => {
@@ -30,21 +31,22 @@ export const Unsorted = ({ actions, items }: Props) => {
 	return (
 		<ContextMenu.Root>
 			<ContextMenu.Trigger className="bg-neutral-100 rounded-xl overflow-auto min-h-38 py-3 px-4 flex gap-1">
-				{items.map((col, idx) => (
+				{buckets.map((bucket, idx) => (
 					<div
 						className="flex flex-col-reverse gap-1 shrink-0 w-36 empty:bg-neutral-200 rounded-lg empty:shadow-inner"
 						key={idx}
 					>
-						{col.map((a) => (
-							<Sticky
-								key={a.id}
-								className={clsx(
-									"p-2 text-sm border-neutral-300 bg-white text-neutral-950 text-center truncate",
-									"first:h-36 first:text-left first:whitespace-pre-line",
-								)}
+						{bucket.map((s, idx) => (
+							<UnsortedSticky
+								key={s.id}
+								stickyId={s.id}
+								className="first:h-36 first:text-left first:whitespace-pre-line text-center"
+								hoverable={idx === 0}
+								columns={columns}
+								actions={actions}
 							>
-								{a.value}
-							</Sticky>
+								{s.value}
+							</UnsortedSticky>
 						))}
 					</div>
 				))}

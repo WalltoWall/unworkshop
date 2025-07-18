@@ -3,6 +3,7 @@ import React from "react"
 import { Auth } from "@/auth"
 import { Button } from "@/components/Button"
 import { Logo } from "@/components/Logo"
+import { GoogleIcon } from "./icon/google"
 
 export const LoginForm = () => {
 	const [pending, setPending] = React.useState(false)
@@ -26,7 +27,9 @@ export const LoginForm = () => {
 					{pending ? (
 						<ArrowPathIcon className="size-5 animate-spin" />
 					) : (
-						"Continue with Google"
+						<>
+							Login With Google <GoogleIcon className="size-5 mt-0.5" />
+						</>
 					)}
 				</Button>
 			</div>

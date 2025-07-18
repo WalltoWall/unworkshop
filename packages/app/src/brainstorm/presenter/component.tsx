@@ -10,6 +10,8 @@ import { Unsorted } from "./unsorted"
 import { usePresenterBrainstorm } from "./use-presenter-brainstorm"
 import { DEFAULT_BUCKETS } from "./constants"
 import { SortedColumns } from "./sorted-columns"
+import type { BrainstormPresenterS } from "./schemas"
+import type { BrainstormS } from "../schemas"
 
 type Props = {
 	steps: Brainstorm["steps"]
@@ -50,13 +52,23 @@ export const BrainstormPresenterComponent = (props: Props) => {
 		R.filter((val) => Boolean(val?.value)),
 	)
 
-	const unsorted = R.pipe(
-		answers,
-		R.filter(
-			(a) =>
-				!presenter.state.columns.some((col) => col.stickies.includes(a.id)),
-		),
-		(items) => bucket(items, presenter.state.meta.buckets ?? DEFAULT_BUCKETS),
+	const unsorted: BrainstormS.Sticky[] = []
+	const sorted: BrainstormS.Sticky[] = []
+
+	answers.forEach((a) => {
+		const isSorted = presenter.state.columns.some((col) =>
+			col.stickies.includes(a.id),
+		)
+		if (isSorted) {
+			sorted.push(a)
+		} else {
+			unsorted.push(a)
+		}
+	})
+
+	const unsortedBuckets = bucket(
+		unsorted,
+		presenter.state.meta.buckets ?? DEFAULT_BUCKETS,
 	)
 
 	return (
@@ -69,12 +81,17 @@ export const BrainstormPresenterComponent = (props: Props) => {
 			) : (
 				<div className="w-full h-full flex flex-col gap-8">
 					{search.brainstorm.sorter === "visible" && (
-						<Unsorted actions={presenter.actions} items={unsorted} />
+						<Unsorted
+							actions={presenter.actions}
+							buckets={unsortedBuckets}
+							columns={presenter.state.columns}
+						/>
 					)}
 
 					<SortedColumns
 						actions={presenter.actions}
 						columns={presenter.state.columns}
+						sorted={sorted}
 					/>
 				</div>
 			)}

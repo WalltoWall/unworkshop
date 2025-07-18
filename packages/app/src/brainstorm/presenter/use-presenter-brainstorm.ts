@@ -1,8 +1,10 @@
 import { nanoid } from "nanoid"
 import React from "react"
+import { clone } from "remeda"
 import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
 import { DEFAULT_BUCKETS } from "./constants"
 import type { BrainstormPresenterS } from "./schemas"
+import type { BrainstormS } from "../schemas"
 
 export type BrainstormPresenter = ReturnType<typeof usePresenterBrainstorm>
 
@@ -22,6 +24,16 @@ export function usePresenterBrainstorm() {
 				state.meta.buckets = (state.meta.buckets ?? DEFAULT_BUCKETS) - 1
 			},
 
+			assignSticky: (args: {
+				columnId: BrainstormPresenterS.Column["id"]
+				stickyId: BrainstormS.Sticky["id"]
+			}) => {
+				const col = state.columns.find((col) => col.id === args.columnId)
+				if (!col) return
+
+				col.stickies.push(args.stickyId)
+			},
+
 			addColumn: (args: Pick<BrainstormPresenterS.Column, "color">) => {
 				state.columns.push({
 					color: args.color,
@@ -36,6 +48,10 @@ export function usePresenterBrainstorm() {
 
 				state.columns.splice(idx, 1)
 			},
+			updateColumns: (newColumns: BrainstormPresenterS.Column[]) => {
+				state.columns.splice(0, state.columns.length, ...clone(newColumns))
+			},
+
 			updateColumnTitle: (
 				args: Pick<BrainstormPresenterS.Column, "title" | "id">,
 			) => {
