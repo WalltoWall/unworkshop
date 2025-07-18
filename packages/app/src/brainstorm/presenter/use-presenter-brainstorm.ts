@@ -1,41 +1,58 @@
+import { useParams } from "@tanstack/react-router"
 import { nanoid } from "nanoid"
 import React from "react"
 import { clone } from "remeda"
 import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
-import { DEFAULT_BUCKETS } from "./constants"
-import type { BrainstormPresenterS } from "./schemas"
 import type { BrainstormS } from "../schemas"
+import { useMultiplayerBrainstorm } from "../use-multiplayer-brainstorm"
+import { DEFAULT_STEP } from "./constants"
+import type { BrainstormPresenterS } from "./schemas"
 
-export type BrainstormPresenter = ReturnType<typeof usePresenterBrainstorm>
+type Args = {
+	stepIdx: number
+}
 
-export function usePresenterBrainstorm() {
+export type BrainstormPresenter = ReturnType<
+	typeof usePresenterBrainstorm
+>["presenter"]
+
+export function usePresenterBrainstorm(args: Args) {
+	const params = useParams({ strict: false })
+	const participants = useMultiplayerBrainstorm("presenter")
 	const socket = useUnworkshopSocket<BrainstormPresenterS.Shape>({
 		type: "presenter",
-		shape: { columns: [], meta: {} },
+		shape: { steps: {} },
+		room: `${params.code}::${params.exerciseSlug}::presenter`,
 	})
 
-	const state = socket.state
+	socket.state.steps[args.stepIdx] ??= DEFAULT_STEP
+	const state = socket.state.steps[args.stepIdx]
+
 	const actions = React.useMemo(
 		() => ({
 			addBucket: () => {
-				state.meta.buckets = (state.meta.buckets ?? DEFAULT_BUCKETS) + 1
+				if (!state?.buckets) return
+
+				state.buckets++
 			},
 			deleteBucket: () => {
-				state.meta.buckets = (state.meta.buckets ?? DEFAULT_BUCKETS) - 1
+				if (!state?.buckets) return
+
+				state.buckets--
 			},
 
 			assignSticky: (args: {
 				columnId: BrainstormPresenterS.Column["id"]
 				stickyId: BrainstormS.Sticky["id"]
 			}) => {
-				const col = state.columns.find((col) => col.id === args.columnId)
+				const col = state?.columns.find((col) => col.id === args.columnId)
 				if (!col) return
 
 				col.stickies.push(args.stickyId)
 			},
 
 			addColumn: (args: Pick<BrainstormPresenterS.Column, "color">) => {
-				state.columns.push({
+				state?.columns.push({
 					color: args.color,
 					stickies: [],
 					title: "",
@@ -43,19 +60,21 @@ export function usePresenterBrainstorm() {
 				})
 			},
 			deleteColumn: (args: Pick<BrainstormPresenterS.Column, "id">) => {
+				if (!state?.columns) return
+
 				const idx = state.columns.findIndex((col) => col.id === args.id)
 				if (idx === -1) return
 
 				state.columns.splice(idx, 1)
 			},
 			updateColumns: (newColumns: BrainstormPresenterS.Column[]) => {
-				state.columns.splice(0, state.columns.length, ...clone(newColumns))
+				state?.columns.splice(0, state.columns.length, ...clone(newColumns))
 			},
 
 			updateColumnTitle: (
 				args: Pick<BrainstormPresenterS.Column, "title" | "id">,
 			) => {
-				const col = state.columns.find((col) => col.id === args.id)
+				const col = state?.columns.find((col) => col.id === args.id)
 				if (!col) return
 
 				col.title = args.title
@@ -63,18 +82,23 @@ export function usePresenterBrainstorm() {
 			updateColumnColor: (
 				args: Pick<BrainstormPresenterS.Column, "color" | "id">,
 			) => {
-				const col = state.columns.find((col) => col.id === args.id)
+				const col = state?.columns.find((col) => col.id === args.id)
 				if (!col) return
 
 				col.color = args.color
 			},
+
+			deleteSticky: (args: { stickyId: BrainstormS.Sticky["id"] }) => {},
 		}),
 		[state],
 	)
 
 	return {
-		connecting: socket.connecting,
-		state,
-		actions,
+		presenter: {
+			connecting: socket.connecting,
+			state,
+			actions,
+		},
+		participants,
 	}
 }

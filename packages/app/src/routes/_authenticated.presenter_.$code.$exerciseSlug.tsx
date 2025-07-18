@@ -1,8 +1,3 @@
-import { Colors } from "@/colors"
-import { Api } from "@/sanity/api"
-import { SlidersPresenterComponent } from "@/sliders/presenter/component"
-import { BrainstormPresenterComponent } from "@/brainstorm/presenter/component"
-import { SlidersSettings } from "@/sliders/presenter/use-sliders-settings"
 import {
 	createFileRoute,
 	notFound,
@@ -10,7 +5,12 @@ import {
 } from "@tanstack/react-router"
 import { match } from "ts-pattern"
 import { z } from "zod"
+import { BrainstormPresenterComponent } from "@/brainstorm/presenter/component"
 import { BranstormSettings } from "@/brainstorm/presenter/use-brainstorm-settings"
+import { Colors } from "@/colors"
+import { Api } from "@/sanity/api"
+import { SlidersPresenterComponent } from "@/sliders/presenter/component"
+import { SlidersSettings } from "@/sliders/presenter/use-sliders-settings"
 
 const defaultSearch = {
 	step: 1,

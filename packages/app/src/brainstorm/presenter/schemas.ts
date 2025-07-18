@@ -8,10 +8,12 @@ export namespace BrainstormPresenterS {
 		stickies: string[]
 	}
 
-	export type Shape = {
+	export type Step = {
 		columns: Column[]
-		meta: {
-			buckets?: number
-		}
+		buckets?: number
+	}
+
+	export type Shape = {
+		steps: Record<number, Step>
 	}
 }

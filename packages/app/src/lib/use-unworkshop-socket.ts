@@ -1,9 +1,10 @@
-import { getYjsDoc, syncedStore } from "@syncedstore/core"
+import { getYjsDoc, syncedStore, Y } from "@syncedstore/core"
 import { useSyncedStore } from "@syncedstore/react"
 import { useParams } from "@tanstack/react-router"
 import React from "react"
 import { match } from "ts-pattern"
 import useYProvider from "y-partyserver/react"
+import YProvider from "y-partyserver/provider"
 import { PRESENTER_GROUP_ID } from "@/constants"
 import { Participant } from "@/participant"
 
@@ -18,6 +19,7 @@ type DocTypeDescription = {
 type Args<T extends DocTypeDescription> = {
 	type: "participant" | "presenter"
 	shape: T
+	room?: string
 }
 
 export function useUnworkshopSocket<T extends DocTypeDescription>(
@@ -27,19 +29,22 @@ export function useUnworkshopSocket<T extends DocTypeDescription>(
 	const participant = Participant.useInfo({
 		assert: args.type === "participant",
 	})
-	const room = `${params.code}::${params.exerciseSlug}`
+	const room = args.room ?? `${params.code}::${params.exerciseSlug}`
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: We dont want consumers of the hook to be required to `useMemo` `shape`.
 	const store = React.useMemo(() => syncedStore(args.shape), [])
 	const doc = React.useMemo(() => getYjsDoc(store), [store])
 
+	const provider = React.useMemo(
+		() =>
+			new YProvider(location.host, room, doc, {
+				connect: false,
+				party: PARTY_NAME,
+			}),
+		[room, doc],
+	)
+
 	const state = useSyncedStore(store)
-	const provider = useYProvider({
-		host: location.host,
-		doc,
-		party: PARTY_NAME,
-		room,
-	})
 
 	const group = match(args.type)
 		.with("presenter", () => PRESENTER_GROUP_ID)
@@ -57,6 +62,12 @@ export function useUnworkshopSocket<T extends DocTypeDescription>(
 	const getSnapshot = React.useCallback(() => provider.synced, [provider])
 
 	const synced = React.useSyncExternalStore(subscribe, getSnapshot)
+
+	React.useEffect(() => {
+		provider.connect()
+
+		return () => provider.disconnect()
+	}, [provider])
 
 	return { connecting: !synced, group, state }
 }

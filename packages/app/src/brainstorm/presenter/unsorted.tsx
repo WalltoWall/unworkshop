@@ -67,23 +67,23 @@ export const Unsorted = ({ actions, buckets, columns }: Props) => {
 			<ContextMenu.Portal>
 				<ContextMenu.Content
 					alignOffset={5}
-					className="bg-black text-white w-48 rounded-lg text-sm p-1"
+					className="bg-black text-white w-48 rounded-lg text-sm py-1.5 px-1"
 				>
 					<ContextMenu.Item
 						onClick={actions.addBucket}
-						className="-mx-1 py-1 px-3 data-[highlighted]:bg-neutral-700 rounded ease-out duration-150 data-[highlighted]:outline-none data-[disabled]:opacity-60 flex justify-between items-baseline cursor-default"
+						className="-mx-1 py-1 px-3 data-[highlighted]:bg-neutral-700 ease-out duration-150 data-[highlighted]:outline-none data-[disabled]:opacity-60 flex justify-between items-baseline cursor-default text-xs"
 					>
 						Add Bucket
-						<span className="text-neutral-400 text-xs">⌘+A</span>
+						<span className="text-neutral-400 text-[10px]">⌘+A</span>
 					</ContextMenu.Item>
 
 					<ContextMenu.Item
 						onClick={actions.deleteBucket}
 						disabled={hasOneBucket}
-						className="-mx-1 py-1 px-3 data-[highlighted]:bg-neutral-700 rounded ease-out duration-150 data-[highlighted]:outline-none data-[disabled]:opacity-60 flex justify-between items-baseline cursor-default"
+						className="-mx-1 py-1 px-3 data-[highlighted]:bg-neutral-700 ease-out duration-150 data-[highlighted]:outline-none data-[disabled]:opacity-60 flex justify-between items-baseline cursor-default text-xs"
 					>
 						Delete Bucket
-						<span className="text-neutral-400 text-xs">⌘+D</span>
+						<span className="text-neutral-400 text-[10px]">⌘+D</span>
 					</ContextMenu.Item>
 				</ContextMenu.Content>
 			</ContextMenu.Portal>

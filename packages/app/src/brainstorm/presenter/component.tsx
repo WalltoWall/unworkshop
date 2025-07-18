@@ -5,13 +5,11 @@ import { Colors } from "@/colors"
 import { PresenterLoader } from "@/components/presenter-loader"
 import { Settings } from "@/components/settings-menu"
 import { bucket } from "@/lib/bucket"
-import { useMultiplayerBrainstorm } from "../use-multiplayer-brainstorm"
-import { Unsorted } from "./unsorted"
-import { usePresenterBrainstorm } from "./use-presenter-brainstorm"
+import type { BrainstormS } from "../schemas"
 import { DEFAULT_BUCKETS } from "./constants"
 import { SortedColumns } from "./sorted-columns"
-import type { BrainstormPresenterS } from "./schemas"
-import type { BrainstormS } from "../schemas"
+import { Unsorted } from "./unsorted"
+import { usePresenterBrainstorm } from "./use-presenter-brainstorm"
 
 type Props = {
 	steps: Brainstorm["steps"]
@@ -21,15 +19,15 @@ const route = getRouteApi("/_authenticated/presenter_/$code/$exerciseSlug")
 
 export const BrainstormPresenterComponent = (props: Props) => {
 	const search = route.useSearch()
-	const navigate = route.useNavigate()
-
+	const stepIdx = search.step - 1
 	const isSorterVisible = search.brainstorm.sorter === "visible"
 
-	const data = props.steps.at(search.step - 1)
+	const navigate = route.useNavigate()
+
+	const data = props.steps.at(stepIdx)
 	if (!data) throw new Error("No valid step data found.")
 
-	const presenter = usePresenterBrainstorm()
-	const participants = useMultiplayerBrainstorm()
+	const { participants, presenter } = usePresenterBrainstorm({ stepIdx })
 
 	function toggleSorter() {
 		navigate({
@@ -56,7 +54,7 @@ export const BrainstormPresenterComponent = (props: Props) => {
 	const sorted: BrainstormS.Sticky[] = []
 
 	answers.forEach((a) => {
-		const isSorted = presenter.state.columns.some((col) =>
+		const isSorted = presenter.state?.columns.some((col) =>
 			col.stickies.includes(a.id),
 		)
 		if (isSorted) {
@@ -68,7 +66,7 @@ export const BrainstormPresenterComponent = (props: Props) => {
 
 	const unsortedBuckets = bucket(
 		unsorted,
-		presenter.state.meta.buckets ?? DEFAULT_BUCKETS,
+		presenter.state?.buckets ?? DEFAULT_BUCKETS,
 	)
 
 	return (
@@ -76,7 +74,7 @@ export const BrainstormPresenterComponent = (props: Props) => {
 			className="relative py-5 px-4 flex grow flex-col"
 			style={Colors.style(search.color)}
 		>
-			{isLoading ? (
+			{isLoading || !presenter.state ? (
 				<PresenterLoader />
 			) : (
 				<div className="w-full h-full flex flex-col gap-8">
@@ -90,6 +88,7 @@ export const BrainstormPresenterComponent = (props: Props) => {
 
 					<SortedColumns
 						actions={presenter.actions}
+						participantActions={participants.actions}
 						columns={presenter.state.columns}
 						sorted={sorted}
 					/>

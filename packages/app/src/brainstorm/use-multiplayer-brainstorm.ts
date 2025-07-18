@@ -2,16 +2,18 @@ import { nanoid } from "nanoid"
 import { useUnworkshopSocket } from "@/lib/use-unworkshop-socket"
 import type { BrainstormS } from "./schemas"
 
-export function useMultiplayerBrainstorm() {
+export function useMultiplayerBrainstorm(
+	type: "participant" | "presenter" = "participant",
+) {
 	const { connecting, group, state } = useUnworkshopSocket<BrainstormS.Shape>({
-		type: "participant",
+		type,
 		shape: { groupAnswers: {} },
 	})
 
-	function upsertGroupAnswer() {
-		state.groupAnswers[group] ??= {}
+	function upsertGroupAnswer(grp = group) {
+		state.groupAnswers[grp] ??= {}
 
-		return state.groupAnswers[group]
+		return state.groupAnswers[grp]
 	}
 
 	const actions = {

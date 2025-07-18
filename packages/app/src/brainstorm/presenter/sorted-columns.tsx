@@ -10,17 +10,24 @@ import { Colors } from "@/colors"
 import { ColorSwatchPicker } from "@/components/color-swatch-picker"
 import { TooltipButton } from "../../components/tooltip-button"
 import type { BrainstormS } from "../schemas"
+import type { BrainstormMultiplayer } from "../use-multiplayer-brainstorm"
 import type { BrainstormPresenterS } from "./schemas"
-import type { BrainstormPresenter } from "./use-presenter-brainstorm"
 import { SortedSticky } from "./sorted-sticky"
+import type { BrainstormPresenter } from "./use-presenter-brainstorm"
 
 type ColumnProps = {
 	column: BrainstormPresenterS.Column
 	actions: BrainstormPresenter["actions"]
+	participantActions: BrainstormMultiplayer["actions"]
 	sortedStickyMap: Map<string, BrainstormS.Sticky>
 }
 
-const Column = ({ column, actions, sortedStickyMap }: ColumnProps) => {
+const Column = ({
+	participantActions,
+	column,
+	actions,
+	sortedStickyMap,
+}: ColumnProps) => {
 	const [popoverOpen, setPopoverOpen] = React.useState(false)
 	const style = Colors.style(column.color)
 
@@ -98,6 +105,7 @@ const Column = ({ column, actions, sortedStickyMap }: ColumnProps) => {
 						return (
 							<SortedSticky
 								key={stickyId}
+								participantActions={participantActions}
 								color={column.color}
 								sticky={sticky}
 								actions={actions}
@@ -113,10 +121,16 @@ const Column = ({ column, actions, sortedStickyMap }: ColumnProps) => {
 type Props = {
 	actions: BrainstormPresenter["actions"]
 	columns: BrainstormPresenterS.Column[]
+	participantActions: BrainstormMultiplayer["actions"]
 	sorted: BrainstormS.Sticky[]
 }
 
-export const SortedColumns = ({ sorted, actions, columns }: Props) => {
+export const SortedColumns = ({
+	sorted,
+	actions,
+	columns,
+	participantActions,
+}: Props) => {
 	// Used for quick lookups by sticky ID. Used when rendering a column's
 	// stickies since a column only stores its stickies by ID.
 	const sortedStickyMap = new Map(sorted.map((s) => [s.id, s]))
@@ -133,6 +147,7 @@ export const SortedColumns = ({ sorted, actions, columns }: Props) => {
 			{columns.map((col) => (
 				<Column
 					key={col.id}
+					participantActions={participantActions}
 					column={col}
 					actions={actions}
 					sortedStickyMap={sortedStickyMap}
