@@ -34,7 +34,7 @@ export const Textarea = ({
 				className,
 				textareaStyles,
 				sizeCn,
-				"resize-y [field-sizing:content]",
+				"resize-y",
 			)}
 			onChange={rememberCursor.onChange}
 			value={value}
