@@ -30,7 +30,12 @@ export const Textarea = ({
 	return (
 		<textarea
 			ref={rememberCursor.ref as React.RefObject<HTMLTextAreaElement>}
-			className={clsx(className, textareaStyles, sizeCn, "resize-y")}
+			className={clsx(
+				className,
+				textareaStyles,
+				sizeCn,
+				"resize-y [field-sizing:content]",
+			)}
 			onChange={rememberCursor.onChange}
 			value={value}
 			{...props}
