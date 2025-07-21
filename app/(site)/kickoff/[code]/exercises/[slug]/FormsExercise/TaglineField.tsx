@@ -150,7 +150,7 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 					value={r}
 					invalidClassName={variant.invalidTextCn}
 					onChange={(e) => handleChange(e.currentTarget.value, idx)}
-					textareaSize="small"
+					textareaSize="default"
 					{...sharedInputProps}
 				/>
 			))}
