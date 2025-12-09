@@ -144,21 +144,33 @@ export const TaglineField = ({ source, answer, actions, ...props }: Props) => {
 				{props.field.prompt}
 			</Prompt>
 
-			{answer?.responses.map((r, idx) => (
+			{allowMultiple ? (
+				<>
+					{answer?.responses.map((r, idx) => (
+						<HighlighterTextarea
+							key={idx}
+							value={r}
+							invalidClassName={variant.invalidTextCn}
+							onChange={(e) => handleChange(e.currentTarget.value, idx)}
+							textareaSize="default"
+							{...sharedInputProps}
+						/>
+					))}
+
+					{showAddButton && (
+						<AddButton className="mt-2.5" onClick={addAdditionalResponse}>
+							Add another response
+						</AddButton>
+					)}
+				</>
+			) : (
 				<HighlighterTextarea
-					key={idx}
-					value={r}
+					value={answer?.responses.at(0) ?? ""}
 					invalidClassName={variant.invalidTextCn}
-					onChange={(e) => handleChange(e.currentTarget.value, idx)}
+					onChange={(e) => handleChange(e.currentTarget.value, 0)}
 					textareaSize="default"
 					{...sharedInputProps}
 				/>
-			))}
-
-			{showAddButton && (
-				<AddButton className="mt-2.5" onClick={addAdditionalResponse}>
-					Add another response
-				</AddButton>
 			)}
 		</div>
 	)
